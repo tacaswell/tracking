@@ -47,9 +47,9 @@ particle_track* track_box::at(int n){
   if (n>length)
     return NULL;
   if(n<length/2)
-    return t_first->get_from_front(n);
+    return t_first->step_forwards(n);
   else
-    return t_last->get_from_back(n);
+    return t_last->step_backwards(n);
 
 }
 

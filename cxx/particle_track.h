@@ -88,7 +88,9 @@ public:
   ///Destructor
   ~particle_track();
 
-
+  /**
+     calls base class print
+   */
   void print();
   /**
      recursive print function for printing out the sequence of a
@@ -116,15 +118,17 @@ public:
 
   /**
      returns the particle n from the current particle forward down the
-     list where n=0 is the current particle.
+     list where n=0 is the current particle.  If the end of the track
+     is reached   throws an error.
    */
-  particle_track* get_from_front(int n);
+  particle_track* step_forwards(int n);
   
   /**
      returns the particle n from the current particle backwards up the
-     list where n=0 is the current particle.
+     list where n=0 is the current particle.  If the front of the
+     track is reached throws an error
    */
-  particle_track* get_from_back(int n);
+  particle_track* step_backwards(int n);
 
   
 

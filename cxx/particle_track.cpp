@@ -81,7 +81,7 @@ void particle_track::set_prev(particle_track* n_prev){
 }
 
 
-particle_track* particle_track::get_from_front(int n){
+particle_track* particle_track::step_forwards(int n){
   if(n==0)
     return this;
 
@@ -89,16 +89,16 @@ particle_track* particle_track::get_from_front(int n){
     throw "out of range";
     
   //check for obo bugs
-  return next->get_from_front(--n);
+  return next->step_forwards(--n);
 }
 
-particle_track* particle_track::get_from_back(int n){
+particle_track* particle_track::step_backwards(int n){
   if(n==0)
     return this;
   //check for obo bugs
   if (prev == NULL)
     throw "out of range";
-  return prev->get_from_front(--n);
+  return prev->step_forwards(--n);
 }
 
 void particle_track::set_track(track_box* i_track){
