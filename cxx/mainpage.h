@@ -35,7 +35,7 @@
  href="http://jfi.uchicago.edu/~tcaswell/track_doc/tarball_rev_TTAR.tar">
  revision TREV</a>
 
-A public svn server is forthcoming.
+The code is also available via svn at svn://innoue.uchicago.edu/tracking
 
  
 
