@@ -126,6 +126,8 @@ public:
    */
   particle_track* get_from_back(int n);
 
+  
+
   /**
      sets what track the particle belongs to.  Each particle can only
      belong to one track.  This code will do sanity checks to make
@@ -162,9 +164,15 @@ public:
      belong to one track.
    */
   track_box* get_track();
+
+  /**
+     Retruns the identifer of the track_box the particle is in
+   */
   int get_track_id();
-  
-    virtual double get_value(wrapper::p_vals type);
+  /**
+     Returns the value of type for this particle.x
+   */
+  virtual double get_value(wrapper::p_vals type);
   
 
 };

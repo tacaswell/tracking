@@ -1,4 +1,4 @@
-//Copyright 2008,2009 Thomas A Caswell
+x1//Copyright 2008,2009 Thomas A Caswell
 //tcaswell@uchicago.edu
 //http://jfi.uchicago.edu/~tcaswell
 //
@@ -25,21 +25,98 @@
 
 
 /** @mainpage Particle Identification and Tracking
+   
+@authors Thomas A Caswell
     
- @authors Thomas A Caswell
-    
- This is an implementation in c++ of the algorithms developed by
- Croker and Grier.  
+This is an implementation in c++ of the particle tracking algorithms
+developed by Croker and Grier.  This algorithm has been implemented a
+number of times.
 
- The current revision is <a
- href="http://jfi.uchicago.edu/~tcaswell/track_doc/tarball_rev_TTAR.tar">
- revision TREV</a>
+<TABLE>
+<TR>
+<TD>
+Crocker and Grier
+</TD>
+<TD>
+<a href="http://physics.nyu.edu/grierlab/software.html">
+http://physics.nyu.edu/grierlab/software.html
+</a>
+</TD>
+<TD>
+IDL
+</TD>
+</TR>
 
-The code is also available via svn at svn://innoue.uchicago.edu/tracking
+<TR>
+<TD>
+Crocker and Weeks
+</TD>
+<TD>
+<a href = "http://www.physics.emory.edu/~weeks/idl/">
+http://www.physics.emory.edu/~weeks/idl/
+</a>
+</TD>
+<TD>
+IDL
+</TD>
+</TR>
 
+<TR>
+<TD>
+Blair and Dufresne
+</TD>
+<TD>
+<a herf="http://physics.georgetown.edu/matlab/">
+http://physics.georgetown.edu/matlab/
+</a>
+</TD>
+<TD>
+MATLAB
+</TD>
+</TR>
+
+
+
+</TABLE>
+
+The primary advantage of this implementation is that it is
+significantly faster than implantation in IDL or MATLAB simply because
+they are interpreted languages (~8x against the Blair code but I think
+that can be improved) .  However, this implementation also provides
+structural advantages and allows information about the particle's
+spatial and temporal neighborhood to be quickly extracted.
+
+The code is very flexible and can be readily adapted to N-dimensions,
+but currently only 2 and 3 dimensions have been implemented.  The
+format of the input and output data is extremely flexible.  There is a
+wrapper class that can be quickly subclasses to allow the program to
+take input/give output to basically anything.  Currently there are
+implementations for input/output from/to text files and MATLAB.
+
+Currently only track linking has been implemented, but the long
+term goal is to move all static and dynamic measurements in to
+this frame work.  There is also a long term plan to merge Peter Lu's
+particle identification code into this frame work.  The most current
+version of that code, as well as a MATLAB wrapper for it is available
+at 
+<a href="http://plutarc.sourceforge.net/">http://plutarc.sourceforge.net/</a>
  
 
-&copy; 2008   <a href="http://jfi.uchicago.edu/~tcaswell"> Thomas A Caswell</a>
+
+
+ 
+The most recent code is revision TREV avaialble at
+<KBD>svn://innoue.uchicago.edu/tracking/trunk</KBD> or as a <a
+href="http://jfi.uchicago.edu/~tcaswell/track_doc/tars/tarball_rev_TTAR.tar">
+tarball</a>.
+
+The current 'stable' version is 0.1 and is available at 
+<KBD>svn://innoue.uchicago.edu/tracking/tags/tracking-0.1</KBD>
+or as a <a
+href="http://jfi.uchicago.edu/~tcaswell/track_doc/tars/tracking-0.1.tar">
+tarball</a>.
+
+&copy; 2008,2009  <a href="http://jfi.uchicago.edu/~tcaswell"> Thomas A Caswell</a>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
