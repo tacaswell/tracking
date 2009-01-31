@@ -116,7 +116,12 @@ or as a <a
 href="http://jfi.uchicago.edu/~tcaswell/track_doc/tars/tracking-0.1.tar">
 tarball</a>.
 
+Funded by a Keck Grant to Heinrich Jaeger, Sidney Nagel, Wendy Zhang 
+and Margaret Gardel
+
+
 &copy; 2008,2009  <a href="http://jfi.uchicago.edu/~tcaswell"> Thomas A Caswell</a>
+
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
