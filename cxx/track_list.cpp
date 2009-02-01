@@ -23,8 +23,14 @@
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
 #include "track_list.h"
+#include "particle_track.h"
+#include "track_shelf.h"
 
 using namespace tracking;
+using std::vector;
+using std::set;
+using std::list;
+
 
 void track_list::link_next(list<particle_track*>* new_next){
   //tracks->print();

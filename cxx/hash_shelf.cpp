@@ -25,9 +25,11 @@
 #include "hash_shelf.h"
 #include <stdexcept> // out_of_range exception
 
+using namespace tracking;
+using std::list;
 
-///Constructor.
-/**
+//Constructor.
+/*
    Constructs a hash table from the particles contained in
    the master box.  The imagesize is the size in pixel of
    the initial data set.  This is use in initialization and 
@@ -36,7 +38,7 @@
    are always square.  If the image size is is not a multiple
    of ppb the edges of the grid will hang off of the image.
 */
-using namespace tracking;
+
 // hash_shelf::hash_shelf(master_box & mb,unsigned int imsz1, 
 // 		       unsigned int imsz2, unsigned int PPB):  ppb(PPB),
 // 							       plane_number(0)
@@ -51,6 +53,9 @@ using namespace tracking;
 //       push(p);
 //     }
 //     }
+
+
+
 
 void hash_shelf::push(particle_base * p){
   (hash.at(hash_function(p))).push(p);

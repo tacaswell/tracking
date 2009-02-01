@@ -23,6 +23,7 @@
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
 #include <vector>
+#include <list>
 #include "hash_shelf.h"
 #include "particle.h"
 #include "master_box_t.h"
@@ -31,6 +32,7 @@
 #include "track_shelf.h"
 
 #include "wrapper.h"
+
 #ifndef HASH_CASE
 #define HASH_CASE
 
@@ -120,7 +122,7 @@ protected:
      @param max_disp
      the maximum allowed displacement when looking for possible partcicles
   */
-  void fill_pos_link_next(list<particle_track*>* tlist, 
+  void fill_pos_link_next(std::list<particle_track*>* tlist, 
 			  vector<hash_shelf*>::iterator in_it, double max_disp);
 
   ///hack to get 3d to work, clean this up.

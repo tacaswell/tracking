@@ -23,7 +23,13 @@
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
 #include "track_shelf.h"
+#include "histogram.h"
+#include "track_box.h"
+#include "particle.h"
+
+#include <iostream>
 using namespace tracking;
+using utilities::Histogram;
 
 track_shelf::~track_shelf(){
   for(map<int,track_box*>::iterator it = track_map.begin();
@@ -51,11 +57,7 @@ void track_shelf::add_to_track(int track, particle_track* next_particle){
 
 void track_shelf::remove_track(int track){
   map<int,track_box*>::iterator it = track_map.find(track);
-  if(it == track_map.end())
-    throw "not in map";
-  delete it->second;
-  it->second = NULL;
-  track_map.erase(it);
+  remove_track_internal_(it);
 }
 
 track_box* track_shelf::get_track(int track){
@@ -63,6 +65,22 @@ track_box* track_shelf::get_track(int track){
   if(it == track_map.end())
     throw "not in map";
   return it->second;
+}
+
+void track_shelf::remove_short_tracks(int min_length){
+  int tmp_length;
+  
+  for(map<int,track_box*>::iterator it = track_map.begin();
+      it!=track_map.end(); ){
+      tmp_length = ((*it).second)->get_length();
+      if( tmp_length< min_length){
+	remove_track_internal_(it++);
+      }
+      else{
+	it++;
+      }
+  }
+
 }
 
 void track_shelf::print(){
@@ -74,10 +92,27 @@ void track_shelf::print(){
    }
 }
 
+
+
 void track_shelf::set_shelf(){
   for(map<int,track_box* >::iterator it = track_map.begin();
       it!= track_map.end(); it++)
     ((*it).second)->set_track();
 
 	
+}
+
+void track_shelf::remove_track_internal_(  map<int,track_box*>::iterator it)
+{
+  if(it == track_map.end())
+    throw "not in map";
+  delete it->second;
+  it->second = NULL;
+  track_map.erase(it);
+}
+
+void track_shelf::track_length_histogram(Histogram & hist_in){
+  for(map<int,track_box*>::iterator it = track_map.begin();
+      it!=track_map.end(); it++)
+    hist_in.add_data_point(((*it).second)->get_length());
 }

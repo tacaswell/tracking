@@ -23,12 +23,16 @@
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
 #include <list>
-#include "particle.h"
-#include "track_shelf.h"
+#include <set>
+#include <vector>
+#include "particle_track.h"
+//#include "track_shelf.h"
 
 #ifndef TRACK_LIST
 #define TRACK_LIST
 namespace tracking{
+
+class track_shelf;
 /**
    List wrapper class for us in the track linking portion of the code.
    It is a list of particle_track pointers and functions to do the looping
@@ -42,28 +46,28 @@ public:
   ///finds the links between the list of particles held by the pointer
   ///in this object and the list being handed in.  The list handed in
   ///is destroyed! be aware of this .
-  void link_next(list<particle_track*>* new_next);
+  void link_next(std::list<particle_track*>* new_next);
 
   ///Sets up the object to start linking tracks.  The object passed in
   ///is DESTROYED (eventually), be aware of this!
-  track_list(list<particle_track*>* first_list,
+  track_list(std::list<particle_track*>* first_list,
 	     double i_max_disp,track_shelf* in_tracks);
 
   ~track_list();
   
 protected:
   ///Pointer to list of 'previous' particles
-  list<particle_track*> * p_list;
-  ///Pointer to list of 'next' particles
-  list<particle_track*> * n_list;
+  std::list<particle_track*> * p_list;
+  ///Pointer to std::list of 'next' particles
+  std::list<particle_track*> * n_list;
   
   ///pointer to copy of current 'next' for next iteration 
-  list<particle_track*>* store_list;
+  std::list<particle_track*>* store_list;
   
   ///List for the 'previous' particles in the subnetwork
-  set<particle_track*,bool(*)(particle_track*,particle_track*)> p_sub_net;
+  std::set<particle_track*,bool(*)(particle_track*,particle_track*)> p_sub_net;
   ///list for the 'next' particles in the subnetworks
-  set<particle_track*,bool(*)(particle_track*,particle_track*)> n_sub_net;
+  std::set<particle_track*,bool(*)(particle_track*,particle_track*)> n_sub_net;
 
   track_shelf* tracks;
 
@@ -90,26 +94,26 @@ protected:
   void clean_lists();
   
   ///for removing stuff from lists and cleaning up the possible link lists
-  list<particle_track*>::iterator erase(list<particle_track*>* in,
-					list<particle_track*>::iterator it);
+  std::list<particle_track*>::iterator erase(std::list<particle_track*>* in,
+					std::list<particle_track*>::iterator it);
   
   ///for sorting lists of particles
   static bool part_lt(particle_track* a, particle_track* b);
   
 
-  void recur_fnc_np(vector<pair<particle_track*, particle_track*> >* min,
-		    vector<pair<particle_track*, particle_track*> >* cur,
+  void recur_fnc_np(std::vector<std::pair<particle_track*, particle_track*> >* min,
+		    std::vector<std::pair<particle_track*, particle_track*> >* cur,
 		    double disp,double& min_disp,
-		    set<particle_track*>::iterator it,
-		    const set<particle_track*>::iterator& itend);
+		    std::set<particle_track*>::iterator it,
+		    const std::set<particle_track*>::iterator& itend);
 
-  void recur_fnc_pn(vector<pair<particle_track*, particle_track*> >* min,
-		    vector<pair<particle_track*, particle_track*> >* cur,
+  void recur_fnc_pn(std::vector<std::pair<particle_track*, particle_track*> >* min,
+		    std::vector<std::pair<particle_track*, particle_track*> >* cur,
 		    double disp,double & min_disp,
-		    set<particle_track*>::iterator it,
-		    const set<particle_track*>::iterator& itend);
+		    std::set<particle_track*>::iterator it,
+		    const std::set<particle_track*>::iterator& itend);
 
-  void  link_pairs(vector<pair<particle_track*, particle_track*> >& in);
+  void  link_pairs(std::vector<std::pair<particle_track*, particle_track*> >& in);
   
 };
 

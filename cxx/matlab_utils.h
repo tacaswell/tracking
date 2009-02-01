@@ -27,7 +27,7 @@
 
 #ifndef UTILS
 #define UTILS
-namespace utils{
+namespace utilities{
 /**
    Converts a std::vector an mxArray for output from the mexfunction.
    This assumes, but does not check that the contents of the vector

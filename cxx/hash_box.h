@@ -121,7 +121,7 @@ public:
      is returned.  This function allocates heap that needs to be cleaned
      up!
    */
-  list<particle_track*>* box_to_list();
+  std::list<particle_track*>* box_to_list();
   
   //lots more of these along different components, likely reason to extend
   //these critters, however I haven't decided the most effective method of

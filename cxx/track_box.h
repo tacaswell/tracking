@@ -32,8 +32,6 @@ namespace tracking{
    Box class for dealing with tracks.  Essentially roling my own
    linked list class
 */
-
-
 class track_box{
 public:
   ///retruns the nth particle of the track.
@@ -60,10 +58,15 @@ public:
   
   /**
      outputs the particles in the track to what ever output
-     wrapper they are pointing at
+     wrapper they are pointing at.  This function needs to be
+     renamed
    */
   void set_track();
 
+  /**
+     Returns the length of the track
+   */
+  int get_length(){return length;};
 protected:
   ///Pointer to first particle in track
   particle_track * t_first;

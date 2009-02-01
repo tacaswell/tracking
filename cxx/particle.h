@@ -38,12 +38,6 @@
 #ifndef PARTICLE_BASE
 #define PARTICLE_BASE
 namespace tracking{
- 
-using std::vector;
-using std::set;
-using std::list;
-using std::cout;
-using std::endl;
 
 
 /**
@@ -55,8 +49,6 @@ using std::endl;
    tracking pruposes).  Need to roll my own dll class
 
  */
-
-
 class particle_base{
 protected:
   ///A running total of all particles created 
@@ -67,10 +59,10 @@ protected:
   wrapper_o_base* wrapper_out;
   ///Vector of the types of data that
   ///remove this
-  set<wrapper::p_vals> data_types_old;
+  std::set<wrapper::p_vals> data_types_old;
   ///pointer to set in the master_box that determines what types of
   ///data the particles contain
-  set<wrapper::p_vals>* data_types;
+  std::set<wrapper::p_vals>* data_types;
   ///Identifier that comes from the wrapper
   int ind;
   
@@ -95,7 +87,7 @@ public:
      one
    */
   particle_base(wrapper_i_base * i_data, wrapper_o_base* o_out, 
-		int i_ind,  set<wrapper::p_vals>* contents_in);
+		int i_ind,  std::set<wrapper::p_vals>* contents_in);
   
   ///default Destructor, made virtual
   virtual ~particle_base(){

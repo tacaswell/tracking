@@ -75,7 +75,7 @@ protected:
   unsigned int  imagesz1;
   unsigned int  imagesz2;
 
-  set<wrapper::p_vals> data_types;
+  std::set<wrapper::p_vals> data_types;
   
 public:
   

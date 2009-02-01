@@ -51,12 +51,12 @@ protected:
      pointer to a list of particles to be used durring the tracking
      process
    */
-  list<pair<particle_track*, double> >* n_pos_link;
+  std::list<pair<particle_track*, double> >* n_pos_link;
   /**h
      pointer to a list of particles to be used durring the tracking
      process
   */
-  list<pair<particle_track*, double> >* p_pos_link;
+  std::list<pair<particle_track*, double> >* p_pos_link;
 
 
 public:
@@ -82,7 +82,7 @@ public:
 		 int i_ind, track_box* i_track = NULL);
 
   particle_track(wrapper_i_base * i_data, wrapper_o_base* o_out, 
-		int i_ind,  set<wrapper::p_vals>* contents_in);
+		int i_ind,  std::set<wrapper::p_vals>* contents_in);
 
 
   ///Destructor

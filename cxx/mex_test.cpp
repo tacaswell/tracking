@@ -52,11 +52,11 @@
 
 #include "mex.h"
 
-#include "matlab_utils.h"
+#include "matlab_utilities.h"
 
 using namespace tracking;
-using utils::array_to_mat;
-using utils::vector_to_mat;
+using utilities::array_to_mat;
+using utilities::vector_to_mat;
 
 
 extern void _main();

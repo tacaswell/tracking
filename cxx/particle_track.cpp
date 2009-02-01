@@ -28,6 +28,7 @@
 #include <iostream>
 
 using namespace tracking;
+using std::set;
 /*
 particle_track::particle_track(wrapper_i_base * i_data, 
 			       wrapper_o_base* o_out, int i_ind, 
@@ -98,7 +99,7 @@ particle_track* particle_track::step_backwards(int n){
   //check for obo bugs
   if (prev == NULL)
     throw "out of range";
-  return prev->step_forwards(--n);
+  return prev->step_backwards(--n);
 }
 
 void particle_track::set_track(track_box* i_track){

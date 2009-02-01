@@ -26,10 +26,12 @@
 #define HIST
 
 #include <vector>
-//forward declared until I acctuly implement it
-//#include "generic_wrapper.h"
-class Generic_wrapper;
+
+#include <iostream>
+
 namespace utilities{
+//forward declare
+class Generic_wrapper;
 /**
    Base class for historgram objects.
    Implements a linearly spaced histogram.
@@ -123,6 +125,8 @@ private:
   
 template<class T>
 void Histogram::add_data_point(T in){
+  using std::cout;
+  using std::endl;
   double tmp_in = (double) in;
   if(tmp_in < bottom_edge_){
     ++under_count_;
@@ -134,6 +138,7 @@ void Histogram::add_data_point(T in){
   }
   
   //  ++(*(hist_array_ptr_ + ((int)((tmp_in - bottom_edge_)/bin_width_))));
+  //  cout<<in<<"\t"<<((int)((tmp_in - bottom_edge_)/bin_width_))<<endl;
   ++hist_array_[((int)((tmp_in - bottom_edge_)/bin_width_))];
   
 }

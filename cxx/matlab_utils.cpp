@@ -22,9 +22,9 @@
 //containing parts covered by the terms of MATLAB User License, the
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
-#include "matlab_utils.h"
+#include "matlab_utilities.h"
 
-using namespace utils;
+using namespace utilities;
 
 void array_to_mat(mxArray** out, double * in, int rows, int cols){
   *out = mxCreateDoubleMatrix(rows,cols, mxREAL);

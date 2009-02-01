@@ -25,6 +25,12 @@
 #include "particle.h"
 
 using namespace tracking;
+ 
+using std::vector;
+using std::set;
+using std::list;
+using std::cout;
+using std::endl;
 
 int particle_base::running_total = 0;
 

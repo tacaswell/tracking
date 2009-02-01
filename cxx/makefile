@@ -18,7 +18,7 @@ MATLABHOME = /usr/local/matlab
 MEX        = mex
 CXX        = g++
 CXXFLAGS = -O3 -fno-inline -Wall -ansi -D_GNU_SOURCE -fPIC	\
--fno-omit-frame-pointer -pthread -pg  $(INCLUDE) 
+-fno-omit-frame-pointer -pthread   $(INCLUDE) 
 #-DMX_COMPAT_32
 LIBS       = -lm
 
@@ -29,12 +29,14 @@ CXXLIBS = -Wl,-rpath-link,/usr/local/matlab/bin/glnxa64	\
 MCXX = 	$(CXX) $(CXXFLAGS) $(MINCLUDE) -c -o $@ $<
 
 
-track_2d: $(objects) $(mex_objects) track_2d.cpp
-	  $(MEX) -o  $(MEXFLAGS)  $(LIBS) -output track_2D.$(MEXSUFFIX) $^
-
 
 prog.out: $(objects) $(c_objects)
 	$(CXX) $(CXXFLAGS) -o prog $(objects) $(c_objects)
+
+
+track_2d: $(objects) $(mex_objects) track_2d.cpp
+	  $(MEX) -o  $(MEXFLAGS)  $(LIBS) -output track_2D.$(MEXSUFFIX) $^
+
 
 test_e: test2.o histogram.o
 	$(CXX) $(CXXFLAGS) -o test_prog $^
@@ -79,7 +81,7 @@ particle_track.o: particle.h wrapper.h wrapper_i.h wrapper_o.h track_box.h
 #track_objects
 track_box.o: track_box.h particle.h
 track_list.o: particle.h track_list.h 
-track_shelf.o : particle.h track_box.h track_shelf.h
+track_shelf.o : particle.h track_box.h track_shelf.h histogram.h
 
 #helper objects
 histogram.o: histogram.h
@@ -89,7 +91,7 @@ histogram.o: histogram.h
 test.o: wrapper_i.h particle.h master_box.h hash_box.h hash_shelf.h	\
 	params.h wrapper_o.h wrapper.h track_box.h hash_case.h		\
 	track_list.h track_shelf.h hash_shelf3d.h hash_case3d.h		\
-	wrapper_i_ning_hd.h params_ning_hd.h
+	wrapper_i_ning_hd.h params_ning_hd.h histogram.h
 
 
 m_prog: $(objects) $(mex_objects) $(mex_code)

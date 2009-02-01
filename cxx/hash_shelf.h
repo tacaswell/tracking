@@ -107,7 +107,7 @@ public:
      this shelf in a list form.  This makes new objects on the
      heap, be aware of this for memory leaks.
    */
-  list<particle_track*> * shelf_to_list();
+  std::list<particle_track*> * shelf_to_list();
 
 private:
   ///Initialization function

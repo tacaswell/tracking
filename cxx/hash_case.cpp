@@ -25,6 +25,7 @@
 #include "hash_case.h"
 #include <stdexcept> // out_of_range exception
 using namespace tracking;
+using std::list;
 
 void hash_case::print(){
   for(unsigned int j = 0; j<h_case.size();j++){

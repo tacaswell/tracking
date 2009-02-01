@@ -46,12 +46,15 @@
 #include "params_ning.h"
 #include "hash_case3d.h"
 
+#include "histogram.h"
+
 using namespace tracking;
 using std::cout;
 using std::ifstream;
 using std::endl;
 using std::ios;
 
+using utilities::Histogram;
 /*//defined constants*/
 #define NUMCOLUMNS 6
 
@@ -111,12 +114,13 @@ int main(){
   //end nonsense
   //there has to be a better way to do this
 
+  int num_particles = 1000000;
   
-  params_file p_in = params_file(6606497,"rawdata_from_matlab.txt",contents);
+  params_file p_in = params_file(num_particles,"rawdata_from_matlab.txt",contents);
 
   contents.insert(pair<wrapper::p_vals, int>(wrapper::d_trackid,3));
   
-  params_file p_out = params_file(6606497,"new_out.txt",contents);
+  params_file p_out = params_file(num_particles,"new_out.txt",contents);
 
 
   master_box_t<particle_track>bt(&p_in,&p_out);
@@ -126,17 +130,29 @@ int main(){
   dims.push_back(512);
   dims.push_back(1385);
 
-  hash_case s(bt,dims,5,1462);
+
+  int frames;
+  frames = bt.get_particle(bt.size() -1)->get_value(wrapper::d_frame);
+
+  hash_case s(bt,dims,5,frames+1);
   
   track_shelf tracks;
   
   s.link(5,tracks);
 
+  Histogram hist1(25,0,frames);
+  Histogram hist2(25,0,frames);
+
+  tracks.track_length_histogram(hist1);
+  tracks.remove_short_tracks(200);
+  tracks.track_length_histogram(hist2);
+  hist1.print();
+  hist2.print();
 
 
-  bt.initialize_out();
-  tracks.set_shelf();
-  bt.finalize_out();
+//   bt.initialize_out();
+//   tracks.set_shelf();
+//   bt.finalize_out();
 
 
   return 0;

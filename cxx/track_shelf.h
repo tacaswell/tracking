@@ -23,19 +23,26 @@
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
 #include <map>
-#include "track_box.h"
-#include "particle.h"
 
 #ifndef TRACK_SHELF
 #define TRACK_SHELF
+
+//forward declare histogram
+namespace utilities{
+class Histogram;
+}
+
 namespace tracking{
+//forward declare classes
+class track_box;
+class particle_track;
+
 /**
    Top level class for holding the track boxes. (which are the head of
    the linked lists made of particle_track objects) eventually I think
    all the track_* classes but this one will be made completely
    private with friend functions.
 */
-
 class track_shelf{
 
 public:
@@ -57,7 +64,8 @@ public:
 
   /**Removes the track specified.  Removes and destroys the track.  Be
      aware of this and make sure there arn't any dangling refernces
-     left.  
+     left.   However, this does not clear the pointers amoung the member
+     particles
      @param 
      track unique ID of track to be removed
    */
@@ -70,12 +78,26 @@ public:
    */
   track_box* get_track(int track);
 
+  /**
+     Removes all tracks from the shelf that are shorter than n.
+     This does not clear the link information in the particle_track
+     objects.
+     @param min_length
+     the minimum length of tracks left in the shelf after 
+   */
+  void remove_short_tracks(int min_length);
+
   void print();
 
   /**
      Sets all of the particles in shelf to their respective wrappers
   */
   void set_shelf();
+
+  /**
+     Generates a histogram of the lengths of all the tracks in the track_shelf
+   */
+  void track_length_histogram(utilities::Histogram & in);
 
   ///Constructor
   track_shelf(){};
@@ -92,7 +114,12 @@ protected:
       coding time) by not having the extra baggage to keep track of
       everything is worth it.  
   */
-  map<int,track_box*> track_map;  
+  std::map<int,track_box*> track_map;  
+
+  /**
+     internal private function to do track removal to make maintianign code simpler
+   */
+  void remove_track_internal_(  std::map<int,track_box*>::iterator it);
 };
 }
 

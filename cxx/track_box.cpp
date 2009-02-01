@@ -57,7 +57,7 @@ particle_track* track_box::at(int n){
 void track_box::push_back(particle_track * next){
   if( next==NULL)
     return;
-  ++length;
+
   //use the level of indrection so that we don't
   //have to reimplement the sanity checking
   //at this point
@@ -65,6 +65,8 @@ void track_box::push_back(particle_track * next){
   next->set_prev(t_last);
   next->set_track(this);
   t_last = next;
+  //increment last incase something goes wrong
+  ++length;
 }
 
 

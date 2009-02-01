@@ -24,6 +24,7 @@
 //the resulting work.
 #include "hash_box.h"
 using namespace tracking;
+using std::list;
 void hash_box::append(hash_box* next){
   
   vector<particle_base *>::iterator it;
