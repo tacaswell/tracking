@@ -163,8 +163,15 @@ hash_case::hash_case(master_box_t<particle> & mb,vector<int> img_dims,
   particle_base *p;
   for(unsigned int j = 0; j<mb.size(); j++){
     p = mb.get_particle(j);
-    //    cout<<(int)p->get_value(wrapper::d_frame)<<"-";
-    (h_case.at((int)p->get_value(wrapper::d_frame)))->push(p);
+    try{//    cout<<(int)p->get_value(wrapper::d_frame)<<"-";
+      (h_case.at((int)p->get_value(wrapper::d_frame)))->push(p);
+    }
+    catch(...){
+      int yar = (int)p->get_value(wrapper::d_frame);
+      cout<<"trying to put in to shelf: "<<yar<<endl;
+      return;
+    }
+  
   }
   //  cout<<endl;
 }

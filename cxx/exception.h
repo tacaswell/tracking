@@ -1,4 +1,4 @@
-//Copyright 2008,2009 Thomas A Caswell
+//Copyright 2009 Thomas A Caswell
 //tcaswell@uchicago.edu
 //http://jfi.uchicago.edu/~tcaswell
 //
@@ -22,35 +22,23 @@
 //containing parts covered by the terms of MATLAB User License, the
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
-#include "mex.h"
-#include <vector>
-
-#ifndef MATLAB_UTILS
-#define MATLAB_UTILS
+#include <string>
+#include <stdexcept>
 namespace utilities{
 /**
-   Converts a std::vector an mxArray for output from the mexfunction.
-   This assumes, but does not check that the contents of the vector
-   are a number of some sort that can sensibly be cast to a double.
-   This function justs copies the order, so if the 1-D array is
-   secretly a 2D array, it may get transposed
+   Exception class derived from the standard range_error
+   class to indicate when a linked list has stepped over it's
+   range
 */
-template<class T>
-void vector_to_mat(mxArray** out, std::vector<T> &in){
-  *out = mxCreateDoubleMatrix(1,in.size(), mxREAL);
-   double*data = mxGetPr(*out);
-   int j = 0;
-   typename std::vector< T >::iterator it;
-   for(it = in.begin(); it<in.end(); it++,j++)
-     data[j] = (double)(*it);
+class Ll_range_error:public std::range_error{
+
+
+public:
+  explicit Ll_range_error(const std::string & _arg):
+    std::range_error(_arg){};
 };
-/**
-   Converts an 2 dimension array using c-style indexing to
-   an mexArray.
-*/
-void array_to_mat(mxArray** out, double * in, int rows, int cols);
+
+
+
 
 }
-
-
-#endif

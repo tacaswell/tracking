@@ -38,6 +38,21 @@ public:
   ///returns null if n > length
   particle_track * at(int n);
 
+  /**
+     Returns a pointer to the first particle in the track
+   */
+  particle_track * get_first(){
+    return t_first;
+  }
+
+  /**
+     Returns a pointer to the last particle in the track
+   */
+  particle_track * get_last(int n){
+    return t_last;
+  }
+
+
   ///adds the particle next the end of the track
   void push(particle_track* next);
   ///Extracts velocity vector from track, details of implementation

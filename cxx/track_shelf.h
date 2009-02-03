@@ -30,6 +30,8 @@
 //forward declare histogram
 namespace utilities{
 class Histogram;
+template<class T>
+struct Svector;
 }
 
 namespace tracking{
@@ -98,6 +100,12 @@ public:
      Generates a histogram of the lengths of all the tracks in the track_shelf
    */
   void track_length_histogram(utilities::Histogram & in);
+
+
+  /**
+     Generates the MSD plot for all the tarcks in this shelf.
+   */
+  void msd(utilities::Svector<double> & msd_vec,utilities::Svector<int> & entry_count);
 
   ///Constructor
   track_shelf(){};

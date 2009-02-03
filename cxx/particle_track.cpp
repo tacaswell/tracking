@@ -26,9 +26,10 @@
 #include "track_box.h"
 #include <typeinfo>
 #include <iostream>
-
+#include "exception.h"
 using namespace tracking;
 using std::set;
+using utilities::Ll_range_error;
 /*
 particle_track::particle_track(wrapper_i_base * i_data, 
 			       wrapper_o_base* o_out, int i_ind, 
@@ -87,7 +88,8 @@ particle_track* particle_track::step_forwards(int n){
     return this;
 
   if (next == NULL)
-    throw "out of range";
+    throw Ll_range_error("past front");
+
     
   //check for obo bugs
   return next->step_forwards(--n);
@@ -96,9 +98,11 @@ particle_track* particle_track::step_forwards(int n){
 particle_track* particle_track::step_backwards(int n){
   if(n==0)
     return this;
-  //check for obo bugs
+
   if (prev == NULL)
-    throw "out of range";
+    throw Ll_range_error("past back");
+  
+  //check for obo bugs
   return prev->step_backwards(--n);
 }
 

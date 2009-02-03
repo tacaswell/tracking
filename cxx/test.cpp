@@ -47,6 +47,7 @@
 #include "hash_case3d.h"
 
 #include "histogram.h"
+#include "svector.h"
 
 using namespace tracking;
 using std::cout;
@@ -55,15 +56,8 @@ using std::endl;
 using std::ios;
 
 using utilities::Histogram;
-/*//defined constants*/
-#define NUMCOLUMNS 6
+using utilities::Svector;
 
-
-void vec_print2(vector<double> in){
-  for(unsigned int j = 0 ; j<in.size(); j++)
-    cout<<in.at(j)<<"\t";
-  cout<<endl;
-}
 
 
 
@@ -114,9 +108,10 @@ int main(){
   //end nonsense
   //there has to be a better way to do this
 
-  int num_particles = 1000000;
+  int num_particles = 6000000;
   
-  params_file p_in = params_file(num_particles,"rawdata_from_matlab.txt",contents);
+    params_file p_in = params_file(num_particles,"rawdata_from_matlab.txt",contents);
+  //  params_file p_in = params_file(num_particles,"new_dummy.txt",contents);
 
   contents.insert(pair<wrapper::p_vals, int>(wrapper::d_trackid,3));
   
@@ -126,29 +121,56 @@ int main(){
   master_box_t<particle_track>bt(&p_in,&p_out);
   cout<<"total number of particles is: "<<bt.size()<<endl;;
   
+   int x_dim = 1385;
+   int y_dim = 512;
+//  int x_dim = 150;
+//  int y_dim = 150;
+  
   vector<int> dims;
-  dims.push_back(512);
-  dims.push_back(1385);
+  dims.push_back(y_dim);
+  dims.push_back(x_dim);
+
 
 
   int frames;
-  frames = bt.get_particle(bt.size() -1)->get_value(wrapper::d_frame);
+  frames = (int)bt.get_particle(bt.size() -1)->get_value(wrapper::d_frame);
 
+  
   hash_case s(bt,dims,5,frames+1);
+  
+
   
   track_shelf tracks;
   
+
+
   s.link(5,tracks);
 
-  Histogram hist1(25,0,frames);
-  Histogram hist2(25,0,frames);
 
-  tracks.track_length_histogram(hist1);
+
+  Svector<double> msd_vec;
+  Svector<int> msd_count_vec;
+  
+  msd_vec.data.resize(500);
+  msd_count_vec.data.resize(500);
+
+
   tracks.remove_short_tracks(200);
-  tracks.track_length_histogram(hist2);
-  hist1.print();
-  hist2.print();
 
+  tracks.msd(msd_vec, msd_count_vec);
+  
+  msd_vec.print();
+  msd_count_vec.print();
+  
+
+//   Histogram hist1(25,0,frames);
+//   Histogram hist2(25,0,frames);
+
+//   tracks.track_length_histogram(hist1);
+//   tracks.remove_short_tracks(200);
+//   tracks.track_length_histogram(hist2);
+//   hist1.print();
+//   hist2.print();
 
 //   bt.initialize_out();
 //   tracks.set_shelf();

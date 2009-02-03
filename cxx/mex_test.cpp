@@ -52,12 +52,18 @@
 
 #include "mex.h"
 
-#include "matlab_utilities.h"
+#include "matlab_utils.h"
+
+
+#include "histogram.h"
+#include "svector.h"
+
 
 using namespace tracking;
 using utilities::array_to_mat;
 using utilities::vector_to_mat;
-
+using utilities::Svector;
+using utilities::Histogram;
 
 extern void _main();
 void mexFunction( int nlhs, mxArray *plhs[], 
@@ -102,7 +108,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
   //  contents[wrapper::d_index] = 5;
   //  contents.insert(pair<wrapper::p_vals, int>(wrapper::d_trackid,3));
   //  params_matlab p_out = params_matlab(plhs,contents,mxGetM(*prhs),contents.size());
-  params_file p_out = params_file(mxGetM(*prhs),contents);
+  params_file p_out = params_file(5,contents);
   //  master_box b = master_box(&p,&p,6);
 
   master_box_t<particle_track>bt(&p_in,&p_out);
@@ -110,29 +116,55 @@ void mexFunction( int nlhs, mxArray *plhs[],
   vector<int> dims;	
   //  for(int t = 0; t<3;t++)	
   //    dims.push_back(80);    
-
-  dims.push_back(512);
-  dims.push_back(1385);
+  dims.push_back(520);
+  dims.push_back(1400);
 
   //  dims.push_back(50);
-
+  track_shelf tracks;
+    
   cout<<"total number of particles is: "<<bt.size()<<endl;;
 
-  hash_case s(bt,dims,5,1462);
+    hash_case s(bt,dims,5,1462);
+    s.link(5,tracks);
+
+
 
   //  s.print();
-  track_shelf tracks;
-
-  //  s.link(5,tracks);
 
 
-  cout<<endl;
-  bt.initialize_out();
-  for (int j = 0;j<bt.size();j++){
-    //    (bt.get_particle(j))->print();
-    (bt.get_particle(j))->set_particle();
-  }
-  bt.finalize_out();
+  
+
+  Histogram hist1(25,0,100);
+   Histogram hist2(25,0,100);
+
+   tracks.track_length_histogram(hist1);
+   tracks.remove_short_tracks(10);
+   tracks.track_length_histogram(hist2);
+   hist1.print();
+   hist2.print();
+
+  
+
+  Svector<double> msd_vec;
+  Svector<int> msd_count_vec;
+  
+  msd_vec.data.resize(50);
+  msd_count_vec.data.resize(50);
+
+
+
+  tracks.msd(msd_vec, msd_count_vec);
+
+  vector_to_mat(plhs, msd_vec.data);
+  vector_to_mat(plhs+1, msd_count_vec.data);
+
+//   cout<<endl;
+//   bt.initialize_out();
+//   for (int j = 0;j<bt.size();j++){
+//     //    (bt.get_particle(j))->print();
+//     (bt.get_particle(j))->set_particle();
+//   }
+//   bt.finalize_out();
   
  //  vector<double> bin_c, bin_r; 
 //   s.gofr(9, 20, bin_c, bin_r);

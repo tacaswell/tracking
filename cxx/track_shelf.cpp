@@ -22,14 +22,24 @@
 //containing parts covered by the terms of MATLAB User License, the
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
+
 #include "track_shelf.h"
 #include "histogram.h"
 #include "track_box.h"
 #include "particle.h"
+#include "svector.h"
+
+#include "exception.h"
 
 #include <iostream>
+using std::map;
+
 using namespace tracking;
 using utilities::Histogram;
+using utilities::Svector;
+using utilities::Ll_range_error;
+
+typedef  map<int,track_box*> tr_map;
 
 track_shelf::~track_shelf(){
   for(map<int,track_box*>::iterator it = track_map.begin();
@@ -115,4 +125,59 @@ void track_shelf::track_length_histogram(Histogram & hist_in){
   for(map<int,track_box*>::iterator it = track_map.begin();
       it!=track_map.end(); it++)
     hist_in.add_data_point(((*it).second)->get_length());
+}
+
+void track_shelf::msd(Svector<double> & msd_vec,Svector<int> & entry_count){
+  //this exception needs to get it's own class or something
+  if(msd_vec.data.size()!=entry_count.data.size())
+    throw "Vector size's don't match, change this exception";
+
+  int max_time_step = msd_vec.data.size();
+
+
+  double disp_sq_sum;
+  int tmp_count;
+
+  particle_track* current = NULL;
+  particle_track* next = NULL;
+
+  bool not_past_end = false;
+
+  
+
+  for(map<int,track_box*>::iterator working_track = track_map.begin();
+      working_track!=track_map.end(); working_track++)
+    {
+      
+      //      cout<<"Track legnth: "<<(*working_track).second->get_length()<<endl;
+      for(int j = 0; j<((*working_track).second->get_length()-1) && j < max_time_step;j++){
+	tmp_count =0;
+	disp_sq_sum = 0;
+	
+	not_past_end = true;
+
+	current = (*working_track).second->get_first();
+	
+	while(not_past_end){
+	  try{
+	    next = current->step_forwards(j+1);
+	    disp_sq_sum += current->distancesq(next);
+	    ++tmp_count;
+	    current = next;
+	  }
+	  catch(Ll_range_error & e){
+	    not_past_end = false;
+	    msd_vec.data.at(j) += disp_sq_sum/tmp_count;
+	    ++(entry_count.data.at(j));
+	  }
+	}
+      }
+    }
+
+  vector<double>::iterator it = msd_vec.data.begin();
+  vector<int>::iterator it2 = entry_count.data.begin();
+  for(;it<msd_vec.data.end();it++, it2++)
+    (*it) = (*it)/(double)(*(it2));
+    
+  
 }

@@ -29,11 +29,12 @@
 #include <vector>
 #include <iostream>
 namespace utilities{
+class Generic_wrapper;
+
 /**
    A class that is basically a wrapper of the STL vector to carry around a pointer
    to a Generic_wrapper to facilitate output
 */
-class Generic_wrapper;
 template<class T>
 struct Svector{
   Generic_wrapper * out;

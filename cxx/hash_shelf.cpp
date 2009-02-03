@@ -25,6 +25,8 @@
 #include "hash_shelf.h"
 #include <stdexcept> // out_of_range exception
 
+#include<iostream>
+
 using namespace tracking;
 using std::list;
 
@@ -58,7 +60,13 @@ using std::list;
 
 
 void hash_shelf::push(particle_base * p){
-  (hash.at(hash_function(p))).push(p);
+  try{
+    (hash.at(hash_function(p))).push(p);
+  }
+  catch(...){
+    std::cout<<"the problem is here"<<std::endl;
+    return;
+  }    
 //   cout<<"particle: "<<endl;
 //   p->print();
 //   cout<<"hash_box: "<<hash_function(p)<<endl;

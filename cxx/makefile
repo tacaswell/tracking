@@ -2,7 +2,7 @@ objects = wrapper_i_file.o  hash_box.o hash_shelf.o		\
 	 gofr_free.o wrapper_o_file.o particle_track.o track_box.o	\
 	 hash_case.o track_list.o track_shelf.o particle_base.o		\
 	 wrapper_i_ning.o hash_shelf3d.o wrapper_i_ning_hd.o		\
-	 wrapper_base.o wrapper_i.o histogram.o
+	 wrapper_base.o wrapper_i.o histogram.o 
 
 c_objects = test.o
 
@@ -29,6 +29,9 @@ CXXLIBS = -Wl,-rpath-link,/usr/local/matlab/bin/glnxa64	\
 MCXX = 	$(CXX) $(CXXFLAGS) $(MINCLUDE) -c -o $@ $<
 
 
+#testing execuatables
+m_prog: $(objects) $(mex_objects) $(mex_code)
+	  $(MEX) -o  $(MEXFLAGS)  $(LIBS) -output testing.$(MEXSUFFIX) $^
 
 prog.out: $(objects) $(c_objects)
 	$(CXX) $(CXXFLAGS) -o prog $(objects) $(c_objects)
@@ -41,8 +44,14 @@ track_2d: $(objects) $(mex_objects) track_2d.cpp
 test_e: test2.o histogram.o
 	$(CXX) $(CXXFLAGS) -o test_prog $^
 
+
+
+
+
+#random computation
 gofr_free.o: hash_box.h hash_shelf.h
 
+#hash objects
 hash_box.o: hash_box.h particle.h
 hash_case.o :hash_shelf.h particle.h master_box_t.h wrapper.h	\
 	track_list.h track_shelf.h hash_case.h
@@ -81,11 +90,11 @@ particle_track.o: particle.h wrapper.h wrapper_i.h wrapper_o.h track_box.h
 #track_objects
 track_box.o: track_box.h particle.h
 track_list.o: particle.h track_list.h 
-track_shelf.o : particle.h track_box.h track_shelf.h histogram.h
+track_shelf.o : particle.h track_box.h track_shelf.h histogram.h exception.h
 
 #helper objects
 histogram.o: histogram.h
-
+exception.o: exception.h
 
 #testing objects
 test.o: wrapper_i.h particle.h master_box.h hash_box.h hash_shelf.h	\
@@ -93,9 +102,6 @@ test.o: wrapper_i.h particle.h master_box.h hash_box.h hash_shelf.h	\
 	track_list.h track_shelf.h hash_shelf3d.h hash_case3d.h		\
 	wrapper_i_ning_hd.h params_ning_hd.h histogram.h
 
-
-m_prog: $(objects) $(mex_objects) $(mex_code)
-	  $(MEX) -o  $(MEXFLAGS)  $(LIBS) -output testing.$(MEXSUFFIX) $^
 
 test2.o: histogram.h
 

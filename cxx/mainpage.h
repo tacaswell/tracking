@@ -1,4 +1,4 @@
-x1//Copyright 2008,2009 Thomas A Caswell
+//Copyright 2008,2009 Thomas A Caswell
 //tcaswell@uchicago.edu
 //http://jfi.uchicago.edu/~tcaswell
 //
