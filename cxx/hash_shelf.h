@@ -108,6 +108,15 @@ public:
      heap, be aware of this for memory leaks.
    */
   std::list<particle_track*> * shelf_to_list();
+  
+  /**
+     Computes the mean displacement of a frame.  This is done to deal
+     with possible flows in the sample.  If a particle has no tracking
+     data it is ignored, if it has two then the mean of the forwrad
+     and backward dispacements are added, if the particle only has one
+     link then half of the displacement is added.
+  */
+  void compute_mean_
 
 private:
   ///Initialization function
@@ -146,7 +155,17 @@ protected:
   //@}
   ///stores the plane number of the 
   int plane_number;
+  
+  /**
+     Stores the average x-displacement for this shelf
+   */
+  double mean_x_disp;
 
+
+  /**
+     Stores the average y-displacement for this shelf
+   */
+  double mean_y_disp;
 
   
 };

@@ -107,6 +107,13 @@ public:
    */
   void msd(utilities::Svector<double> & msd_vec,utilities::Svector<int> & entry_count);
 
+  /**
+     Computes the average fourier transform of the tracks
+   */
+  void track_fft();
+
+
+
   ///Constructor
   track_shelf(){};
   ///Destructor.  Destroys all of the tracks contained in the shelf
