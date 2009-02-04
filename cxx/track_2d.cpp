@@ -48,7 +48,7 @@
 
 #include "mex.h"
 
-#include "matlab_utilities.h"
+#include "matlab_utils.h"
 
 using namespace tracking;
 using utilities::array_to_mat;

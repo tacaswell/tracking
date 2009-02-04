@@ -102,13 +102,18 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
 
   params_matlab p_in = params_matlab(prhs,contents);
+  contents.insert(pair<wrapper::p_vals, int>(wrapper::d_trackid,3));
+  
+  params_matlab p_out = params_matlab(plhs,contents,mxGetM(*prhs),contents.size());
+  
+
   // params_ning p_in = params_ning(3,100*1000,contents);
 
   //  contents.insert(pair<wrapper::p_vals, int>(wrapper::d_unqid,4));
   //  contents[wrapper::d_index] = 5;
   //  contents.insert(pair<wrapper::p_vals, int>(wrapper::d_trackid,3));
   //  params_matlab p_out = params_matlab(plhs,contents,mxGetM(*prhs),contents.size());
-  params_file p_out = params_file(5,contents);
+  //  params_file p_out = params_file(5,contents);
   //  master_box b = master_box(&p,&p,6);
 
   master_box_t<particle_track>bt(&p_in,&p_out);
@@ -123,26 +128,32 @@ void mexFunction( int nlhs, mxArray *plhs[],
   track_shelf tracks;
     
   cout<<"total number of particles is: "<<bt.size()<<endl;;
+  
+  hash_case s(bt,dims,5,1462);
+  s.link(5,tracks);
+  
+  bt.initialize_out();
+  tracks.set_shelf();
+  bt.finalize_out();
 
-    hash_case s(bt,dims,5,1462);
-    s.link(5,tracks);
 
+  return;
 
 
   //  s.print();
 
 
   
-
+  
   Histogram hist1(25,0,100);
-   Histogram hist2(25,0,100);
-
-   tracks.track_length_histogram(hist1);
-   tracks.remove_short_tracks(10);
-   tracks.track_length_histogram(hist2);
-   hist1.print();
-   hist2.print();
-
+  Histogram hist2(25,0,100);
+  
+  tracks.track_length_histogram(hist1);
+  tracks.remove_short_tracks(10);
+  tracks.track_length_histogram(hist2);
+  hist1.print();
+  hist2.print();
+  
   
 
   Svector<double> msd_vec;
