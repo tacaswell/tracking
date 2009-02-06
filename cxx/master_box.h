@@ -24,6 +24,7 @@
 //the resulting work.
 #include <vector>
 #include <iostream>
+#include <set>
 #include "particle.h"
 #include "particle_track.h"
 #include "params.h"
@@ -67,7 +68,7 @@ namespace tracking{
        parameter object.
     */
     wrapper_o_base * out_wrapper;
-    set<wrapper::p_vals> data_types;
+    std::set<wrapper::p_vals> data_types;
   
   public:
     ///Returns the size of the box, ie number of particles

@@ -116,7 +116,7 @@ public:
      and backward dispacements are added, if the particle only has one
      link then half of the displacement is added.
   */
-  void compute_mean_
+  void compute_mean_(){};
 
 private:
   ///Initialization function
