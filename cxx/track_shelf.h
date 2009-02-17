@@ -111,8 +111,13 @@ public:
      Computes the average fourier transform of the tracks
    */
   void track_fft();
-
-
+  
+  /**
+     generates a histogram of the msd of the specified time step
+     @param time_step integer greater than zero less than maximum track length
+     @param in histogram to be filled.  Is not cleared
+   */
+  void msd_hist(int time_step ,utilities::Histogram & in);
 
   ///Constructor
   track_shelf(){};

@@ -84,6 +84,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 			   wrapper::d_ypos, 
 			   wrapper::d_frame};
   int tmp2[] = {0, 1, 2 };
+  
 
   vector<wrapper::p_vals > tmp3(tmp, tmp+3);
   vector<wrapper::p_vals>::iterator it1 = tmp3.begin();
@@ -137,7 +138,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
   bt.finalize_out();
 
 
-  return;
+ 
 
 
   //  s.print();
@@ -159,76 +160,21 @@ void mexFunction( int nlhs, mxArray *plhs[],
   Svector<double> msd_vec;
   Svector<int> msd_count_vec;
   
-  msd_vec.data.resize(50);
-  msd_count_vec.data.resize(50);
+//   msd_vec.data.resize(100);
+//   msd_count_vec.data.resize(100);
 
 
 
-  tracks.msd(msd_vec, msd_count_vec);
-
-  vector_to_mat(plhs, msd_vec.data);
-  vector_to_mat(plhs+1, msd_count_vec.data);
-
-//   cout<<endl;
-//   bt.initialize_out();
-//   for (int j = 0;j<bt.size();j++){
-//     //    (bt.get_particle(j))->print();
-//     (bt.get_particle(j))->set_particle();
-//   }
-//   bt.finalize_out();
-  
- //  vector<double> bin_c, bin_r; 
-//   s.gofr(9, 20, bin_c, bin_r);
-//   vector_to_mat(plhs+1,bin_c);
-
-  /*vector<double> b;
-    for(int j = 0; j<15;j++)
-    b.push_back(j);
-  
-    vector_to_mat(plhs+1,b);
-  */
-
-  // hash_box tmp;
-  //
-  //
-  //
-
-
-    
-  //   //s.print();
-
-  //   //  hash_shelf* f = s.return_shelf(0);
-
-
-  //   //  f->get_region(5,5,&tmp,1);
-  //   //  tmp.print();
-  
-  //
-
-  //   
-  //   tracks.print();
-
+//   tracks.msd(msd_vec, msd_count_vec);
 
   
-  //vec_print2(bin_c);
-
-
-
-  //   for(int j = 0; j<15; j++){
-  //     (b.get_particle(j))->set_particle();
-  //   }
-
-  //   b.finalize_out();
+//  vector_to_mat(plhs+1, msd_count_vec.data);
   
-  //   track_box tb = track_box(dynamic_cast<particle_track*>(b.get_particle(0)));
-  //   tb.print();
+  Histogram hist3(25,0,400);
+  tracks.msd_hist(25,hist3);
+  vector<int> tmp465 = hist3.get_bin_values();
+  vector_to_mat(plhs, tmp465);
   
-  //   for(int j = 1; j<15; j++){
-  //     tb.push_back(dynamic_cast<particle_track*>(b.get_particle(j)));
-  //   }
-  
-  //  tb.print();
 
-  //  muntrace();
   return;
 }

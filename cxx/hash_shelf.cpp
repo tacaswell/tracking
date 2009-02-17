@@ -23,6 +23,7 @@
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
 #include "hash_shelf.h"
+#include <exception>
 #include <stdexcept> // out_of_range exception
 
 #include<iostream>
@@ -63,8 +64,17 @@ void hash_shelf::push(particle_base * p){
   try{
     (hash.at(hash_function(p))).push(p);
   }
+  catch (std::exception& e)    {
+    cout << e.what() << endl;
+    std::cout<<hash_function(p)<<"\t"<<hash.size()<<std::endl;
+    std::cout<<p->get_value(wrapper::d_ypos)<<"\t"<<p->get_value(wrapper::d_xpos)<<std::endl;
+    p->print();
+    throw;
+
+  }
   catch(...){
     std::cout<<"the problem is here"<<std::endl;
+
     return;
   }    
 //   cout<<"particle: "<<endl;
@@ -101,7 +111,7 @@ void hash_shelf::init2(){
   hash.clear();
   for(vector<int>::iterator it = img_dims.begin();
       it<img_dims.end(); it++)
-    hash_dims.push_back((*it)%ppb==0?(*it)/ppb:(1+(*it)/ppb));
+    hash_dims.push_back((*it)%ppb==0?(*it)/ppb:(1+(*it)/ppb)+1);
 			
 
 

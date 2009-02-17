@@ -181,3 +181,37 @@ void track_shelf::msd(Svector<double> & msd_vec,Svector<int> & entry_count){
     
   
 }
+
+void track_shelf::msd_hist(int time_step ,utilities::Histogram & in){
+
+  particle_track* current = NULL;
+  particle_track* next = NULL;
+
+  bool not_past_end = false;
+
+  
+
+  for(map<int,track_box*>::iterator working_track = track_map.begin();
+      working_track!=track_map.end(); working_track++)
+    {
+      
+      //      cout<<"Track legnth: "<<(*working_track).second->get_length()<<endl;
+	
+      not_past_end = true;
+
+      current = (*working_track).second->get_first();
+	
+      while(not_past_end){
+	try{
+	  next = current->step_forwards(time_step+1);
+	  in.add_data_point( current->distancesq(next));
+	  current = next;
+	}
+	catch(Ll_range_error & e){
+	  not_past_end = false;
+	}
+      }
+ 
+    }
+    
+}
