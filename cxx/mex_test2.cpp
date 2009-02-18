@@ -65,73 +65,87 @@ using utilities::vector_to_mat;
 using utilities::Svector;
 using utilities::Histogram;
 
+
+//globals :(
+master_
 extern void _main();
 void mexFunction( int nlhs, mxArray *plhs[], 
 		  int nrhs, const mxArray* prhs[] ){
 
-  if(nlhs!=2 && nrhs!=1){
-    cout<<"Error, wrong number of arguments"<<endl;
-    return;
+  
+  double mode;
+
+  if (!mxIsDouble(prhs[0]) ||  
+      mxGetN(prhs[0])*mxGetM(prhs[0]) != 1  || mxIsComplex(prhs[0])) {
+    mexErrMsgTxt("Input argument must be a real scalar double");
   }
 
-  //nonsense to get the map set up
-  map<wrapper::p_vals, int> contents;
-//   wrapper::p_vals tmp[] = {wrapper::d_index,wrapper::d_xpos,
-// 			   wrapper::d_ypos, wrapper::d_zpos, 
-// 			   wrapper::d_frame};
-//   int tmp2[] = {0, 1, 2 ,3,4};
-  wrapper::p_vals tmp[] = {wrapper::d_xpos,
-			   wrapper::d_ypos, 
-			   wrapper::d_frame};
-  int tmp2[] = {0, 1, 2 };
-  
+  mode = mxGetScaler(prhs[0]);
 
-  vector<wrapper::p_vals > tmp3(tmp, tmp+3);
-  vector<wrapper::p_vals>::iterator it1 = tmp3.begin();
-
-  vector<int> tmp4(tmp2, tmp2+3);
-  vector<int>::iterator it2 = tmp4.begin();
-
-  map<wrapper::p_vals, int>::iterator it3 = contents.begin();
-
-  for( ;it2<tmp4.end() && it1<tmp3.end() ; it1++, it2++, it3++)
-    contents.insert(it3,pair<wrapper::p_vals, int>(*it1, *it2));
-  //end nonsense
-  //there has to be a better way to do this
-
-  
-
-
-  params_matlab p_in = params_matlab(prhs,contents);
-  contents.insert(pair<wrapper::p_vals, int>(wrapper::d_trackid,3));
-  
-  params_matlab p_out = params_matlab(plhs,contents,mxGetM(*prhs),contents.size());
-  
-
-  // params_ning p_in = params_ning(3,100*1000,contents);
-
-  //  contents.insert(pair<wrapper::p_vals, int>(wrapper::d_unqid,4));
-  //  contents[wrapper::d_index] = 5;
-  //  contents.insert(pair<wrapper::p_vals, int>(wrapper::d_trackid,3));
-  //  params_matlab p_out = params_matlab(plhs,contents,mxGetM(*prhs),contents.size());
-  //  params_file p_out = params_file(5,contents);
-  //  master_box b = master_box(&p,&p,6);
-
-  master_box_t<particle_track>bt(&p_in,&p_out);
-  
-  vector<int> dims;	
-  //  for(int t = 0; t<3;t++)	
-  //    dims.push_back(80);    
-  dims.push_back(520);
-  dims.push_back(1400);
-
-  //  dims.push_back(50);
-  track_shelf tracks;
+  if(mexIsLocked()){
     
-  cout<<"total number of particles is: "<<bt.size()<<endl;;
+  }
+  else{
+    //nonsense to get the map set up
+    map<wrapper::p_vals, int> contents;
+    //   wrapper::p_vals tmp[] = {wrapper::d_index,wrapper::d_xpos,
+    // 			   wrapper::d_ypos, wrapper::d_zpos, 
+    // 			   wrapper::d_frame};
+    //   int tmp2[] = {0, 1, 2 ,3,4};
+    wrapper::p_vals tmp[] = {wrapper::d_xpos,
+			     wrapper::d_ypos, 
+			     wrapper::d_frame};
+    int tmp2[] = {0, 1, 2 };
   
-  hash_case s(bt,dims,5,1462);
-  s.link(5,tracks);
+
+    vector<wrapper::p_vals > tmp3(tmp, tmp+3);
+    vector<wrapper::p_vals>::iterator it1 = tmp3.begin();
+
+    vector<int> tmp4(tmp2, tmp2+3);
+    vector<int>::iterator it2 = tmp4.begin();
+
+    map<wrapper::p_vals, int>::iterator it3 = contents.begin();
+
+    for( ;it2<tmp4.end() && it1<tmp3.end() ; it1++, it2++, it3++)
+      contents.insert(it3,pair<wrapper::p_vals, int>(*it1, *it2));
+    //end nonsense
+    //there has to be a better way to do this
+
+  
+
+
+    params_matlab p_in = params_matlab(prhs,contents);
+    contents.insert(pair<wrapper::p_vals, int>(wrapper::d_trackid,3));
+  
+    params_matlab p_out = params_matlab(plhs,contents,mxGetM(*prhs),contents.size());
+  
+
+    // params_ning p_in = params_ning(3,100*1000,contents);
+
+    //  contents.insert(pair<wrapper::p_vals, int>(wrapper::d_unqid,4));
+    //  contents[wrapper::d_index] = 5;
+    //  contents.insert(pair<wrapper::p_vals, int>(wrapper::d_trackid,3));
+    //  params_matlab p_out = params_matlab(plhs,contents,mxGetM(*prhs),contents.size());
+    //  params_file p_out = params_file(5,contents);
+    //  master_box b = master_box(&p,&p,6);
+
+    master_box_t<particle_track>bt(&p_in,&p_out);
+  
+    vector<int> dims;	
+    //  for(int t = 0; t<3;t++)	
+    //    dims.push_back(80);    
+    dims.push_back(520);
+    dims.push_back(1400);
+
+    //  dims.push_back(50);
+    track_shelf tracks;
+    
+    cout<<"total number of particles is: "<<bt.size()<<endl;;
+  
+    hash_case s(bt,dims,5,1462);
+    s.link(5,tracks);
+
+  }
   
   bt.initialize_out();
   tracks.set_shelf();

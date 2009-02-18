@@ -66,7 +66,7 @@ public:
   }
 
 
-  int get_ounder_count(){
+  int get_under_count(){
     return under_count_;
   }
   /**
