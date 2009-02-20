@@ -35,12 +35,17 @@ void hash_case::print(){
 }
 
 
+hash_case::hash_case()
+  :inited(false){
+
+}
 
 
 hash_case::~hash_case(){
   for(unsigned int j = 0; j<h_case.size(); j++){
     delete h_case.at(j);
   }
+  std::cout<<"hc dead"<<std::endl;
 }
 
 void hash_case::rehash(unsigned int ppb){

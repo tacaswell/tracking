@@ -4,13 +4,20 @@ SET(MATLAB_UTIL_SRC wrapper_i_matlab.cpp wrapper_o_matlab.cpp matlab_utils.cpp)
 
 
 
-#add_executable (tracking_cmd ${COMMON_TRACK_SRC} test.cpp)
+# add_executable (tracking_cmd ${COMMON_TRACK_SRC} test.cpp)
 
 
 
 add_library(test SHARED mex_test.cpp ${COMMON_TRACK_SRC} ${MATLAB_UTIL_SRC})
 target_link_libraries(test ${MATLAB_LIBRARIES})
 set_target_properties(test PROPERTIES
+    PREFIX ""
+    SUFFIX  ".${MATLAB_MEXFILE_EXT}"
+)
+
+add_library(test2 SHARED mex_test2.cpp ${COMMON_TRACK_SRC} ${MATLAB_UTIL_SRC})
+target_link_libraries(test2 ${MATLAB_LIBRARIES})
+set_target_properties(test2 PROPERTIES
     PREFIX ""
     SUFFIX  ".${MATLAB_MEXFILE_EXT}"
 )

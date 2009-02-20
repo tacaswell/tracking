@@ -51,6 +51,8 @@
 
 
 #include "mex.h"
+#include "matrix.h"
+
 
 #include "matlab_utils.h"
 
@@ -65,27 +67,95 @@ using utilities::vector_to_mat;
 using utilities::Svector;
 using utilities::Histogram;
 
+extern void _main();
 
 //globals :(
-master_
-extern void _main();
+master_box_t<particle_track> master_box;
+hash_case hcase;
+track_shelf tracks;
+
+
+void my_mex_exit_func(void)
+ {
+// 	delete hcase;
+// 	hcase = NULL;
+
+// 	delete master_box;
+// 	master_box = NULL;
+	
+	cout<<"ran at exit"<<endl;
+
+ }
+
 void mexFunction( int nlhs, mxArray *plhs[], 
 		  int nrhs, const mxArray* prhs[] ){
 
-  
-  double mode;
-
-  if (!mxIsDouble(prhs[0]) ||  
-      mxGetN(prhs[0])*mxGetM(prhs[0]) != 1  || mxIsComplex(prhs[0])) {
-    mexErrMsgTxt("Input argument must be a real scalar double");
-  }
-
-  mode = mxGetScaler(prhs[0]);
+  mexAtExit(my_mex_exit_func);
 
   if(mexIsLocked()){
+      int mode;
+
+      if (!mxIsDouble(prhs[0]) ||  
+	  mxGetN(prhs[0])*mxGetM(prhs[0]) != 1  || mxIsComplex(prhs[0])) {
+	mexErrMsgTxt("Input argument must be a real scalar double");
+      }
+      
+      mode = (int) mxGetScalar(prhs[0]);
+      
+	
+      Histogram hist1(25,0,100);
+      Histogram hist2(25,0,100);
+
+
+      switch(mode){
+	//-1 cleans up the library
+      case -1:
+	
+// 	delete hcase;
+// 	hcase = NULL;
+
+// 	delete master_box;
+// 	master_box = NULL;
+
+	mexUnlock();	
+	
+	cout<<"unlocked"<<endl;
+	
+	break;
+	
+	//trim tracks
+      case 0:
+	if(nrhs != 2)
+	  mexErrMsgTxt("need 2 input arguments");
+  
+	tracks.track_length_histogram(hist1);
+	tracks.remove_short_tracks((int) mxGetScalar(prhs[1]));
+	tracks.track_length_histogram(hist2);
+	hist1.print();
+	hist2.print();
+
+	break;
+
+	
+      case 1:
+	break;
+	
+      case 2:
+	break;
+	
+      case 3:
+	break;
+
+      }
+      
+      
+      
     
   }
   else{
+    
+    
+    
     //nonsense to get the map set up
     map<wrapper::p_vals, int> contents;
     //   wrapper::p_vals tmp[] = {wrapper::d_index,wrapper::d_xpos,
@@ -110,15 +180,13 @@ void mexFunction( int nlhs, mxArray *plhs[],
       contents.insert(it3,pair<wrapper::p_vals, int>(*it1, *it2));
     //end nonsense
     //there has to be a better way to do this
-
   
-
-
     params_matlab p_in = params_matlab(prhs,contents);
     contents.insert(pair<wrapper::p_vals, int>(wrapper::d_trackid,3));
   
-    params_matlab p_out = params_matlab(plhs,contents,mxGetM(*prhs),contents.size());
-  
+    params_matlab p_out 
+      = params_matlab(plhs,contents,mxGetM(*prhs),contents.size());
+    
 
     // params_ning p_in = params_ning(3,100*1000,contents);
 
@@ -129,7 +197,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
     //  params_file p_out = params_file(5,contents);
     //  master_box b = master_box(&p,&p,6);
 
-    master_box_t<particle_track>bt(&p_in,&p_out);
+    master_box.init(&p_in,&p_out);
   
     vector<int> dims;	
     //  for(int t = 0; t<3;t++)	
@@ -138,18 +206,19 @@ void mexFunction( int nlhs, mxArray *plhs[],
     dims.push_back(1400);
 
     //  dims.push_back(50);
-    track_shelf tracks;
+    //    tracks = new track_shelf();
     
-    cout<<"total number of particles is: "<<bt.size()<<endl;;
-  
-    hash_case s(bt,dims,5,1462);
-    s.link(5,tracks);
+    cout<<"total number of particles is: "<<master_box.size()<<endl;
+    
+    //    hcase.init(master_box,dims,5,1462);
+    //    hcase.link(5,tracks);
+    mexLock();
 
   }
   
-  bt.initialize_out();
-  tracks.set_shelf();
-  bt.finalize_out();
+//   bt.initialize_out();
+//   tracks.set_shelf();
+//   bt.finalize_out();
 
 
  
@@ -159,15 +228,6 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
 
   
-  
-  Histogram hist1(25,0,100);
-  Histogram hist2(25,0,100);
-  
-  tracks.track_length_histogram(hist1);
-  tracks.remove_short_tracks(10);
-  tracks.track_length_histogram(hist2);
-  hist1.print();
-  hist2.print();
   
   
 
@@ -184,11 +244,11 @@ void mexFunction( int nlhs, mxArray *plhs[],
   
 //  vector_to_mat(plhs+1, msd_count_vec.data);
   
-  Histogram hist3(100,0,1000);
-  tracks.msd_hist(25,hist3);
-  vector<int> tmp465 = hist3.get_bin_values();
-  vector_to_mat(plhs, tmp465);
-  cout<<hist3.get_over_count()<<hist3.get_under_count()<<endl;
+//   Histogram hist3(100,0,1000);
+//   tracks.msd_hist(25,hist3);
+//   vector<int> tmp465 = hist3.get_bin_values();
+//   vector_to_mat(plhs, tmp465);
+//   cout<<hist3.get_over_count()<<hist3.get_under_count()<<endl;
 
   return;
 }

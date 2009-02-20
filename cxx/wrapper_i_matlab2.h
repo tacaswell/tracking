@@ -37,8 +37,8 @@ class params_matlab;
 
 class wrapper_i_matlab:public wrapper_i_base{
 private:
-  ///Pointer to matlab array that holds the data
-  //  const mxArray * data_array;
+  ///Pointer to double array that holds the data
+  doumle * data_array;
   ///The number of rows in the array.  This isn't strictly needed,
   ///hoever it should make returning values faster by amoritizing the
   ///dereference cost, maybe
@@ -47,8 +47,9 @@ private:
   ///This isn't strictly needed, hoever it should make returning
   ///values faster by amoritizing the dereference cost, maybe
   int cols;
-  ///anchor to data with in array
-  double * first;
+  
+  //anchor to data with in array
+  //  double * first;
 protected:
 
   void init();

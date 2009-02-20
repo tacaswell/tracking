@@ -108,7 +108,7 @@ int main(){
   //end nonsense
   //there has to be a better way to do this
 
-  int num_particles = 6000000;
+  int num_particles = 1000000;
   
     params_file p_in = params_file(num_particles,"rawdata_from_matlab.txt",contents);
   //  params_file p_in = params_file(num_particles,"new_dummy.txt",contents);

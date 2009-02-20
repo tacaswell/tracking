@@ -41,6 +41,64 @@ namespace tracking{
 
 template <class particle>
 class master_box_t{
+  
+public:
+  
+  
+  ///prints out a representation of this in some useful way
+  void print();
+    
+  ///add next particle
+  void push(particle* next){
+    particle_vec.push_back(next);
+  };
+
+  ///return a pointer to particle in the location
+  particle * get_particle(int n){
+    return particle_vec.at(n);
+  }
+  
+  void append_to_data_types(wrapper::p_vals type){
+    data_types.insert(type);
+  }
+
+  
+  ///Constructor for a master_box_t based on
+  ///data read in from a txt file
+  master_box_t(params* prams_in, params* prams_out);
+
+
+  master_box_t();
+
+  ///Constructor that uses n to determine which type of particle
+  ///objects to make
+  master_box_t(params_file* params_in,params_file* params_out, int n);
+    
+  ///Returns the total number of particles contained in the
+  ///master_box_t.
+  unsigned int size(){ return particle_vec.size();}
+
+  ///Finalized the out_wrapper (ie, write to disk)
+  void finalize_out(){
+    out_wrapper->finalize_wrapper();
+  }
+
+  ///initialize the out_wrapper
+  void initialize_out(){
+    out_wrapper->initialize_wrapper();
+  }
+  
+
+  ///Cleans up hanging lists from the tracking procedure
+  void clean_pos_link();
+
+  /**
+     public facing initilization attemting to deal with matlab
+   */
+  void init(params* prams_in, params* prams_out);
+
+  ~master_box_t();
+
 protected:
   /**
      Vector that contains pointers to all of the particles that are
@@ -76,60 +134,32 @@ protected:
   unsigned int  imagesz2;
 
   std::set<wrapper::p_vals> data_types;
-  
-public:
-  
-  
-  ///prints out a representation of this in some useful way
-  void print();
-    
-  ///add next particle
-  void push(particle* next){
-    particle_vec.push_back(next);
-  };
 
-  ///return a pointer to particle in the location
-  particle * get_particle(int n){
-    return particle_vec.at(n);
-  }
-  
-  void append_to_data_types(wrapper::p_vals type){
-    data_types.insert(type);
-  }
-
-  
-  ///Constructor for a master_box_t based on
-  ///data read in from a txt file
-  master_box_t(params* prams_in, params* prams_out);
-
-  ///Constructor that uses n to determine which type of particle
-  ///objects to make
-  master_box_t(params_file* params_in,params_file* params_out, int n);
-    
-  ///Returns the total number of particles contained in the
-  ///master_box_t.
-  unsigned int size(){ return particle_vec.size();}
-
-  ///Finalized the out_wrapper (ie, write to disk)
-  void finalize_out(){
-    out_wrapper->finalize_wrapper();
-  }
-
-  ///initialize the out_wrapper
-  void initialize_out(){
-    out_wrapper->initialize_wrapper();
-  }
-  
-
-  ///Cleans up hanging lists from the tracking procedure
-  void clean_pos_link();
-
-  ~master_box_t();
 };
 
 
+
 template <class particle>
-master_box_t<particle>::master_box_t(params* params_in,params* params_out ){
+master_box_t<particle>::master_box_t(params* params_in,params* params_out )
+ :in_wrapper(NULL),out_wrapper(NULL){
+  
+  init(params_in,params_out );
+
+}
+
+template <class particle>
+master_box_t<particle>::master_box_t()
+  :in_wrapper(NULL),out_wrapper(NULL){
+  
+
+}
+
+template <class particle>
+void master_box_t<particle>::init(params* params_in, params* params_out){
+  if(in_wrapper!=NULL || out_wrapper !=NULL){
+    std::cout<<"can't re-initialize"<<std::endl;
+    return;
+  }
   
   in_wrapper = params_in->make_wrapper_in();
   out_wrapper = params_out->make_wrapper_out();
@@ -143,6 +173,7 @@ master_box_t<particle>::master_box_t(params* params_in,params* params_out ){
   }
   
 }
+
 template <class particle>
 void master_box_t<particle>::print(){
   for(unsigned int j = 0; j<particle_vec.size();j++)
@@ -159,6 +190,8 @@ master_box_t<particle>::~master_box_t(){
   //deletes the wrapper objects
   delete in_wrapper;
   delete out_wrapper;
+  
+  std::cout<<"mb dead"<<std::endl;
 }
 
 

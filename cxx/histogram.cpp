@@ -40,6 +40,7 @@ void Histogram::print(){
       it<hist_array_.end(); it++)
     cout<<*it<<"\t";
   cout<<endl;
+  cout<<"over: "<<over_count_ <<"\t"<<"under: "<<under_count_<<endl;
 }
 
 

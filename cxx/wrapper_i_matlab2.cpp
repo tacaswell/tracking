@@ -83,10 +83,13 @@ wrapper_i_matlab::~wrapper_i_matlab(){
 
 wrapper_i_matlab::wrapper_i_matlab(params_matlab* param):
   wrapper_i_base(param->contains),
-   rows(mxGetM(*(param->data_in))),
-  cols(mxGetN(*(param->data_in))), first(mxGetPr(*(param->data_in)))
+  rows(mxGetM(*(param->data_in))),
+  cols(mxGetN(*(param->data_in))))
 {
+  double * tmp = mxGetPr(*(param->data_in));
+  data_array = malloc(rows * cols * sizeof(double));
   
+
   //   //nonsense to get the map set up
   //   p_vals tmp[] = {d_index, d_xpos, d_ypos, d_I, d_r2, d_frame};
   //   int tmp2[] = {0, 1, 2 ,3,4,5};

@@ -76,6 +76,12 @@ public:
   hash_case(master_box_t<particle> & mb,vector<int> img_dims, 
 	    unsigned int ppb, int frames);
   
+  template <class particle>
+  void  init(master_box_t<particle> & mb,vector<int> img_dims, 
+	    unsigned int ppb, int frames);
+  
+  hash_case();
+  
 
   ///Print out a sensible representation of the data
   void print();
@@ -125,34 +131,50 @@ protected:
   void fill_pos_link_next(std::list<particle_track*>* tlist, 
 			  vector<hash_shelf*>::iterator in_it, double max_disp);
 
-  ///hack to get 3d to work, clean this up.
-  hash_case(){};
+  
+  
 
-
+  bool inited;
 
 };
 
-template<class particle>
-hash_case::hash_case(master_box_t<particle> & mb,unsigned int imsz1, 
-		     unsigned int imsz2, unsigned int ppb, int frames){
-  mb.append_to_data_types(wrapper::d_next);
-  mb.append_to_data_types(wrapper::d_prev);
-  h_case.resize(frames);
-  for(unsigned int j = 0; j<h_case.size(); j++){
-    h_case.at(j) = new hash_shelf(imsz1,imsz2, ppb,j);
-  }
-  // cout<<
-  particle_base *p;
-  for(unsigned int j = 0; j<mb.size(); j++){
-    p = mb.get_particle(j);
-    (h_case.at(p->get_value(wrapper::d_frame)))->push(p);
-  }
-}
+// template<class particle>
+// hash_case::hash_case(master_box_t<particle> & mb,unsigned int imsz1, 
+// 		     unsigned int imsz2, unsigned int ppb, int frames){
+//   inited = true;
+//   mb.append_to_data_types(wrapper::d_next);
+//   mb.append_to_data_types(wrapper::d_prev);
+//   h_case.resize(frames);
+//   for(unsigned int j = 0; j<h_case.size(); j++){
+//     h_case.at(j) = new hash_shelf(imsz1,imsz2, ppb,j);
+//   }
+//   // cout<<
+//   particle_base *p;
+//   for(unsigned int j = 0; j<mb.size(); j++){
+//     p = mb.get_particle(j);
+//     (h_case.at(p->get_value(wrapper::d_frame)))->push(p);
+//   }
+// }
 
-
-template<class particle>
+template <class particle>
 hash_case::hash_case(master_box_t<particle> & mb,vector<int> img_dims, 
+		     unsigned int ppb, int frames):inited(false){
+  init(mb,img_dims,ppb,frames);
+
+}
+  
+
+
+template<class particle>
+void hash_case::init(master_box_t<particle> & mb,vector<int> img_dims, 
 		     unsigned int ppb, int frames){
+
+  if(inited){
+    std::cout<<"can't re init"<<std::endl;
+    return;
+  }
+    
+
   mb.append_to_data_types(wrapper::d_next);
   mb.append_to_data_types(wrapper::d_prev);
   h_case.resize(frames);
@@ -174,6 +196,7 @@ hash_case::hash_case(master_box_t<particle> & mb,vector<int> img_dims,
   
   }
   //  cout<<endl;
+  inited = true;
 }
 
 }

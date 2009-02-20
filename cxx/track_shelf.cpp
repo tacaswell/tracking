@@ -45,6 +45,7 @@ track_shelf::~track_shelf(){
   for(map<int,track_box*>::iterator it = track_map.begin();
       it!=track_map.end(); it++)
     delete it->second;
+  std::cout<<"track dead"<<std::endl;
 }
 
 
