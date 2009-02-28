@@ -172,8 +172,8 @@ void mexFunction( int nlhs, mxArray *plhs[],
   
   Histogram hist3(100,0,1000);
   tracks.msd_hist(25,hist3);
-  vector<int> tmp465 = hist3.get_bin_values();
-  vector_to_mat(plhs, tmp465);
+//    vector<int> tmp465 = hist3.get_bin_values();
+//    vector_to_mat(plhs, tmp465);
   cout<<hist3.get_over_count()<<hist3.get_under_count()<<endl;
 
   return;

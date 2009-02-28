@@ -78,6 +78,7 @@ void wrapper_i_matlab::print(){
 wrapper_i_matlab::~wrapper_i_matlab(){
   //don't need to do anything here because everything is taken care of
   //by matlab, or so we hope.
+  first = NULL;
   
 }
 

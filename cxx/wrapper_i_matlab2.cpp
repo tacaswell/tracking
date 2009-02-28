@@ -78,6 +78,8 @@ void wrapper_i_matlab::print(){
 wrapper_i_matlab::~wrapper_i_matlab(){
   //don't need to do anything here because everything is taken care of
   //by matlab, or so we hope.
+  free(data_array);
+  data_array = NULL;
   
 }
 
@@ -88,7 +90,7 @@ wrapper_i_matlab::wrapper_i_matlab(params_matlab* param):
 {
   double * tmp = mxGetPr(*(param->data_in));
   data_array = malloc(rows * cols * sizeof(double));
-  
+
 
   //   //nonsense to get the map set up
   //   p_vals tmp[] = {d_index, d_xpos, d_ypos, d_I, d_r2, d_frame};

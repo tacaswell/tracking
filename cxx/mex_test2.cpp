@@ -210,8 +210,8 @@ void mexFunction( int nlhs, mxArray *plhs[],
     
     cout<<"total number of particles is: "<<master_box.size()<<endl;
     
-    //    hcase.init(master_box,dims,5,1462);
-    //    hcase.link(5,tracks);
+    hcase.init(master_box,dims,5,1462);
+    hcase.link(5,tracks);
     mexLock();
 
   }
