@@ -24,6 +24,12 @@
 //the resulting work.
 #include "particle.h"
 
+#include "touple.h"
+
+// namespace utilities{
+// class Touple;
+// }
+
 #ifndef PARTICLE_TRACK
 #define PARTICLE_TRACK
 namespace tracking{
@@ -58,7 +64,10 @@ protected:
   */
   std::list<pair<particle_track*, double> >* p_pos_link;
 
-
+  /**
+     The foward displacement vector
+   */
+  utilities::Touple forward_disp_;
 public:
   
   ///Friends with track_box to allow it to screw with the linked list

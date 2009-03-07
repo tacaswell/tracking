@@ -30,6 +30,8 @@
 
 #include "master_box_t.h"
 
+
+
 #ifndef HASH_SHELF
 #define HASH_SHELF
 namespace tracking{

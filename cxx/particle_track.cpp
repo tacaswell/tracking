@@ -27,6 +27,7 @@
 #include <typeinfo>
 #include <iostream>
 #include "exception.h"
+#include "touple.h"
 using namespace tracking;
 using std::set;
 using utilities::Ll_range_error;
@@ -73,6 +74,12 @@ void particle_track::set_next(particle_track* n_next){
   if(next!=NULL)
     throw "nuking the list";
   next = n_next;
+  forward_disp_[0] = (n_next -> get_value(wrapper::d_xpos))
+    - get_value(wrapper::d_xpos);
+  forward_disp_[1] = (n_next -> get_value(wrapper::d_ypos))
+    - get_value(wrapper::d_ypos);
+
+
 }
 
 

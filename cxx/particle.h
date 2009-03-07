@@ -59,9 +59,7 @@ protected:
   wrapper_o_base* wrapper_out;
   ///Vector of the types of data that
   ///remove this
-  std::set<wrapper::p_vals> data_types_old;
-  ///pointer to set in the master_box that determines what types of
-  ///data the particles contain
+
   std::set<wrapper::p_vals>* data_types;
   ///Identifier that comes from the wrapper
   int ind;
