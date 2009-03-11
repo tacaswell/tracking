@@ -5,6 +5,7 @@ SET(CMAKE_CXX_COMPILER "/usr/bin/g++-4.2")
 
 include(FindMatlab)
 
+include_directories(${TRACKING_SOURCE_DIR}/include)
 include_directories(${MATLAB_INCLUDE_DIR})
 
 set(MATLAB_MEXFILE_EXT mexa64)

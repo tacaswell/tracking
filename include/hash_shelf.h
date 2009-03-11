@@ -159,7 +159,7 @@ protected:
      v_i = x_{i +1} - x_i
      hence the 'forward' velocity
    */
-  Touple mean_forward_disp;
+  utilities::Touple mean_forward_disp;
   
 };
 
