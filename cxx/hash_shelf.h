@@ -30,10 +30,12 @@
 
 #include "master_box_t.h"
 
+#include "touple.h"
 
 
 #ifndef HASH_SHELF
 #define HASH_SHELF
+
 namespace tracking{
 /**
    Class to implemnt the hash table
@@ -139,14 +141,7 @@ protected:
   /// These should not be allowed to change once
   /// the hash table is instantiated 
   //@{ 
-  ///Number of pixel rows in initial image
-  //  unsigned int imagesz1;
-  ///Number of pixel columns in initial image
-  //  unsigned int imagesz2;
-  ///number of rows in the grid
-  //  unsigned int sz1;
-  ///number of colmns in the grid
-  //  unsigned int sz2;
+  
   ///Vector to store the dimensions of the grid
   vector<int> hash_dims;
   ///Vector to store the dimensions of input data
@@ -155,20 +150,16 @@ protected:
   ///number of pixels per side of the gridboxes
   unsigned int ppb;
   //@}
-  ///stores the plane number of the 
+  ///stores the plane number of the shelf
   int plane_number;
   
   /**
-     Stores the average x-displacement for this shelf
+     The mean displacement of the plane.  The
+     definition of velocity is
+     v_i = x_{i +1} - x_i
+     hence the 'forward' velocity
    */
-  double mean_x_disp;
-
-
-  /**
-     Stores the average y-displacement for this shelf
-   */
-  double mean_y_disp;
-
+  Touple mean_forward_disp;
   
 };
 
