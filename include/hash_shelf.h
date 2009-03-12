@@ -43,11 +43,11 @@ namespace tracking{
 
 class hash_shelf{
 public:
+  /**
+     add the particle_base to the hash_shelf
+     @param p pointer to the particle to add
+  */
   void push(particle_base * p);
-
-  ///Constructor for un-tempalted master box class, to be removed
- //  hash_shelf(master_box & mb,unsigned int imsz1, 
-// 	     unsigned int imsz2, unsigned int ppb);
 
   ///Templated constructor for dealing with templated master_box_t objects
   template <class particle>
@@ -115,12 +115,10 @@ public:
   
   /**
      Computes the mean displacement of a frame.  This is done to deal
-     with possible flows in the sample.  If a particle has no tracking
-     data it is ignored, if it has two then the mean of the forwrad
-     and backward dispacements are added, if the particle only has one
-     link then half of the displacement is added.
+     with possible flows in the sample.  Particles with out forward
+     tracking data are ignored.
   */
-  void compute_mean_(){};
+  void compute_mean_forward_disp();
 
 private:
   ///Initialization function
@@ -160,7 +158,7 @@ protected:
      v_i = x_{i +1} - x_i
      hence the 'forward' velocity
    */
-  utilities::Touple mean_forward_disp;
+  utilities::Touple mean_forward_disp_;
   
   /**
      computes area of image

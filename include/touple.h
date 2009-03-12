@@ -107,6 +107,11 @@ public:
      prints the data
    */
   void print();
+
+  /**
+     sets touple to (0,0)
+   */
+  void clear();
   /**
      empty constructor
    */
@@ -120,16 +125,16 @@ protected:
      The length of touple.  This should match the dimenion of the tracking.
      Exactly how this will all fit together will be seen.
   */
-  static int length_;
+  const static int length_ =2;
   /**
      pointer to data
    */
   double* data_;
 
-  /**
+  /*
      if length_ can be changed
    */
-  static bool allow_dim_change_;
+  //  static bool allow_dim_change_;
 private:
 };
 

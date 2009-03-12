@@ -130,51 +130,55 @@ void mexFunction( int nlhs, mxArray *plhs[],
     
   cout<<"total number of particles is: "<<bt.size()<<endl;;
   
-  hash_case s(bt,dims,5,1462);
+  hash_case s(bt,dims,5,10);
+  cout<<"case built"<<endl;
   s.link(5,tracks);
+  cout<<"linked"<<endl;
+  s.compute_mean_disp();
+  //  s.print();
   
-  bt.initialize_out();
-  tracks.set_shelf();
-  bt.finalize_out();
+//   bt.initialize_out();
+//   tracks.set_shelf();
+//   bt.finalize_out();
 
 
  
 
 
-  //  s.print();
+//   //  s.print();
 
 
   
   
-  Histogram hist1(25,0,100);
-  Histogram hist2(25,0,100);
+//   Histogram hist1(25,0,100);
+//   Histogram hist2(25,0,100);
   
-  tracks.track_length_histogram(hist1);
-  tracks.remove_short_tracks(10);
-  tracks.track_length_histogram(hist2);
-  hist1.print();
-  hist2.print();
+//   tracks.track_length_histogram(hist1);
+//   tracks.remove_short_tracks(10);
+//   tracks.track_length_histogram(hist2);
+//   hist1.print();
+//   hist2.print();
   
   
 
-  Svector<double> msd_vec;
-  Svector<int> msd_count_vec;
+//   Svector<double> msd_vec;
+//   Svector<int> msd_count_vec;
   
-//   msd_vec.data.resize(100);
-//   msd_count_vec.data.resize(100);
+// //   msd_vec.data.resize(100);
+// //   msd_count_vec.data.resize(100);
 
 
 
-//   tracks.msd(msd_vec, msd_count_vec);
+// //   tracks.msd(msd_vec, msd_count_vec);
 
   
-//  vector_to_mat(plhs+1, msd_count_vec.data);
+// //  vector_to_mat(plhs+1, msd_count_vec.data);
   
-  Histogram hist3(100,0,1000);
-  tracks.msd_hist(25,hist3);
-//    vector<int> tmp465 = hist3.get_bin_values();
-//    vector_to_mat(plhs, tmp465);
-  cout<<hist3.get_over_count()<<hist3.get_under_count()<<endl;
+//   Histogram hist3(100,0,1000);
+//   tracks.msd_hist(25,hist3);
+// //    vector<int> tmp465 = hist3.get_bin_values();
+// //    vector_to_mat(plhs, tmp465);
+//   cout<<hist3.get_over_count()<<hist3.get_under_count()<<endl;
 
   return;
 }

@@ -107,7 +107,12 @@ public:
      a track_shelf object passed in by reference.
   */
   void link(double max_range, track_shelf& tracks);
-  
+
+  /**
+     Compute mean forward displacement for each shelf
+   */
+  void compute_mean_disp();
+
   ///Destructor
   ~hash_case();
 protected:

@@ -41,7 +41,7 @@ namespace tracking{
 class hash_box{
 protected:
   ///Contents of the box
-  vector<particle_base*> contents;
+  std::vector<particle_base*> contents_;
 public:
   
   ///@name over all control
@@ -49,13 +49,13 @@ public:
   //@{ 
 
   ///Empty Constructor
- hash_box():contents(){
+ hash_box():contents_(){
 
   }
 
   ///Destructor.  Clears all the pointers to try and avoid stale pointers
   ~hash_box(){
-    contents.clear();
+    contents_.clear();
   }
   
 
@@ -63,7 +63,7 @@ public:
 
 
   ///clears all the pointers, but doesn't destroy the box.
-  void clear(){contents.clear();}
+  void clear(){contents_.clear();}
 
 
   
@@ -71,7 +71,7 @@ public:
 
   ///add next particle
   void push(particle_base* next){
-    contents.push_back(next);
+    contents_.push_back(next);
   };
 
 
@@ -88,7 +88,7 @@ public:
   ///@{
 
   ///Returns the size of the box, ie number of particles
-  int get_size(){return contents.size(); }
+  int get_size(){return contents_.size(); }
   
   /**
      Returns a vector of the data of p_vals type for the box.
@@ -101,8 +101,8 @@ public:
 
      figure out who uses this function is used and make private or kill
    */
-  vector<particle_base*>::iterator begin(){
-    return contents.begin();
+  std::vector<particle_base*>::iterator begin(){
+    return contents_.begin();
   }
   /**
      Returns an iterator to past the end of the contents vector,
@@ -110,8 +110,8 @@ public:
      
      figure out who uses this function is used and make private or kill
    */
-  vector<particle_base*>::iterator end(){
-    return contents.end();
+  std::vector<particle_base*>::iterator end(){
+    return contents_.end();
   }
 
   /**

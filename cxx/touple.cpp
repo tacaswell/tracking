@@ -6,8 +6,8 @@
 
 using namespace utilities;
 
-int Touple::length_ = 2;
-bool Touple::allow_dim_change_ = false;
+const int Touple::length_ ;
+//bool Touple::allow_dim_change_ = false;
 
 void Touple::operator= (const Touple& y){
   for(int j = 0;j<length_; ++j)
@@ -118,6 +118,11 @@ double Touple::magnitude_sqr(){
 
 double Touple::magnitude(){
   return sqrt(magnitude_sqr());
+}
+
+void Touple::clear(){
+  for(int j = 0;j<length_; ++j)
+    data_[j] =0 ;
 }
 
 Touple::Touple(){

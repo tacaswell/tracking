@@ -26,10 +26,11 @@
 #include "hash_shelf.h"
 #include <algorithm>
 #include "math.h"
+#include <list>
 
 
 using namespace tracking;
-
+using std::list;
 
 void vec_print(vector<double> in){
   for(unsigned int j = 0 ; j<in.size(); j++)
@@ -117,11 +118,11 @@ int hash_box::gofr(double max_d, int nbins, hash_box* points,
 
   vector<particle_base*>::iterator box_it, points_it;
 
-  for(box_it = contents.begin(); box_it!=contents.end(); box_it++)
+  for(box_it = contents_.begin(); box_it!=contents_.end(); box_it++)
     {
       
-      for(points_it = (points->contents).begin(); 
-	points_it !=(points->contents).end();points_it++ )
+      for(points_it = (points->contents_).begin(); 
+	points_it !=(points->contents_).end();points_it++ )
 	{
 	  tmp_dist = (*box_it)->distancesq(*points_it);
 	  if(tmp_dist < max_d_sqr && tmp_dist !=0)
@@ -129,7 +130,7 @@ int hash_box::gofr(double max_d, int nbins, hash_box* points,
 	  
 	}
     }
-  return contents.size(); 
+  return contents_.size(); 
 }
 // depreciated
 // int hash_box::gofr2D(double max_d, int nbins, hash_box* points,

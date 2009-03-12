@@ -34,22 +34,6 @@ using std::endl;
 
 int particle_base::running_total = 0;
 
-/*particle_base::particle_base(wrapper_i_base * i_data, 
-			     wrapper_o_base* o_out, int i_ind){
-    wrapper_in = i_data;
-    wrapper_out = o_out;
-    ind = i_ind;
-
-
-    //change this to extract the types of data supported by the wrapper_i
-    wrapper::p_vals tmp[] = {wrapper::d_index, wrapper::d_xpos, 
-			     wrapper::d_ypos, wrapper::d_I, 
-			     wrapper::d_r2, wrapper::d_e};
-    data_types_old =  set<wrapper::p_vals>(tmp, tmp+6);
-    unq_id = running_total++;
-  };
-*/
-
 particle_base::particle_base(wrapper_i_base * i_data, 
 			     wrapper_o_base* o_out,
 			     int i_ind,  set<wrapper::p_vals>* contents_in){
@@ -70,13 +54,6 @@ double particle_base::distancesq(particle_base* part_in){
   return X*X + Y*Y ;//+ Z*Z;
 }
 
-
-// void particle_base::set_particle_old(){
-//   int tmp_ind = wrapper_out->add_particle();
-//   for(set<wrapper::p_vals>::iterator it = data_types_old.begin();
-//       it!=data_types_old.end(); it++)
-//     wrapper_out->set_value(tmp_ind, *it, get_value(*it));
-// }
 
 
 void particle_base::set_particle(){

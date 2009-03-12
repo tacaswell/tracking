@@ -50,7 +50,7 @@ hash_case::~hash_case(){
 
 void hash_case::rehash(unsigned int ppb){
   for(vector<hash_shelf*>::iterator it = h_case.begin();
-      it<h_case.end(); it++)
+      it<h_case.end(); ++it)
     (*it)->rehash(ppb);
 }
 
@@ -182,7 +182,11 @@ void hash_case::fill_pos_link_next(list<particle_track*>* tlist,
   //  cout<<"finished loops"<<endl;
 }
 
-
+void hash_case:: compute_mean_disp(){
+  for(vector<hash_shelf*>::iterator it = h_case.begin();
+      it<h_case.end(); ++it)
+    (*it)->compute_mean_forward_disp();  
+}
 
 
 

@@ -124,6 +124,7 @@ public:
   particle_track* get_prev(){return prev;}
 
 
+  utilities::Touple* get_forward_disp(){return &forward_disp_;}
 
   /**
      returns the particle n from the current particle forward down the
