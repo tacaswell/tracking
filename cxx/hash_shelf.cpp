@@ -111,8 +111,9 @@ void hash_shelf::init2(){
   hash.clear();
   for(vector<int>::iterator it = img_dims.begin();
       it<img_dims.end(); it++)
-    hash_dims.push_back((*it)%ppb==0?(*it)/ppb:(1+(*it)/ppb)+1);
-			
+    hash_dims.push_back((*it)%ppb==0?(*it)/ppb:((*it)/ppb)+1);
+  // tac 2009-03-11
+  // hash_dims.push_back((*it)%ppb==0?(*it)/ppb:(1+(*it)/ppb)+1);
 
 
   int tmp_prod = 1;
@@ -234,4 +235,13 @@ list<particle_track*> * hash_shelf::shelf_to_list(){
     }
 
   return tmp;
+}
+
+int hash_shelf::img_area(){
+  int tmp = 1;
+  for(int j = 0; j<img_dims.size();++j)
+    tmp*=img_dims[j];
+  cout<<tmp<<endl;
+  return tmp;
+
 }

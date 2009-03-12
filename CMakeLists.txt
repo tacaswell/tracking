@@ -11,10 +11,23 @@ include_directories(${MATLAB_INCLUDE_DIR})
 set(MATLAB_MEXFILE_EXT mexa64)
 
 set(CMAKE_SHARED_LINKER_FLAGS  "-pthread  -Wl,--version-script,/usr/local/matlab/extern/lib/glnxa64/mexFunction.map -Wl,--no-undefined")
-
 SET(CMAKE_CXX_FLAGS "-ansi -D_GNU_SOURCE -fPIC -fno-omit-frame-pointer -pthread -DMATLAB_MEX_FILE")
-
 SET(CMAKE_C_FLAGS "-ansi -D_GNU_SOURCE -fexceptions -fPIC -fno-omit-frame-pointer -pthread -DMATLAB_MEX_FILE")
+
+
+set(CMAKE_SHARED_LINKER_FLAGS_PROFILE  " -pg")
+SET(CMAKE_CXX_FLAGS_PROFILE  " -pg")
+SET(CMAKE_C_FLAGS_PROFILE  " -pg")
+
+set(CMAKE_SHARED_LINKER_FLAGS_DEBUG   "-g")
+SET(CMAKE_CXX_FLAGS_DEBUG "-g")
+SET(CMAKE_C_FLAGS_DEBUG "-g")
+
+
+set(CMAKE_SHARED_LINKER_FLAGS_RELEASE  " -O3 -DNDEBUG")
+SET(CMAKE_CXX_FLAGS_RELEASE  "-O3  -DNDEBUG")
+SET(CMAKE_C_FLAGS_RELEASE   "-O3  -DNDEBUG")
+
 
 SET(MATLAB_DEFAULT_SRC /usr/local/matlab/extern/src/mexversion.c)
 

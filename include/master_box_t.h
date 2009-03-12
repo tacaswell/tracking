@@ -191,7 +191,7 @@ master_box_t<particle>::~master_box_t(){
   delete in_wrapper;
   delete out_wrapper;
   
-  std::cout<<"mb dead"<<std::endl;
+//   std::cout<<"mb dead"<<std::endl;
 }
 
 

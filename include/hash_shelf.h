@@ -146,6 +146,7 @@ protected:
   vector<int> hash_dims;
   ///Vector to store the dimensions of input data
   vector<int> img_dims;
+
   
   ///number of pixels per side of the gridboxes
   unsigned int ppb;
@@ -160,6 +161,11 @@ protected:
      hence the 'forward' velocity
    */
   utilities::Touple mean_forward_disp;
+  
+  /**
+     computes area of image
+   */
+  int img_area();
   
 };
 
