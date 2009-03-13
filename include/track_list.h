@@ -119,7 +119,7 @@ protected:
 
 
 inline bool track_list::part_lt(particle_track* a, particle_track* b){
-  return (a->unq_id)<(b->unq_id);
+  return (a->unq_id_)<(b->unq_id_);
 }
 }
 

@@ -32,7 +32,7 @@
 #include "wrapper.h"
 #include "wrapper_i.h"
 #include "wrapper_o.h"
-
+#include "touple.h"
 
 
 #ifndef PARTICLE_BASE
@@ -52,17 +52,24 @@ namespace tracking{
 class particle_base{
 protected:
   ///A running total of all particles created 
-  static int running_total;
+  static int running_total_;
   ///object that takes care of all the underling data structures.
-  wrapper_i_base* wrapper_in;
+  static wrapper_i_base* wrapper_in_;
   ///object that takes care of 
-  wrapper_o_base* wrapper_out;
+  static wrapper_o_base* wrapper_out_;
   ///Vector of the types of data that
   ///remove this
 
-  std::set<wrapper::p_vals>* data_types;
+  static std::set<wrapper::p_vals>* data_types_;
   ///Identifier that comes from the wrapper
-  int ind;
+  int ind_;
+
+  /**
+     New attempt at storing the position data, this has the 
+     problem of taking more memory, but it might help the time.
+     This will also make keeping track of the displacements.
+   */
+  utilities::Touple position_;
   
 public:
   ///A program generated global unique id, useful for tracking, comparing
@@ -70,7 +77,8 @@ public:
   ///properly parsing the data or the data being handed in behaving in
   ///any sort of nice way, but this does mean that the particle
   ///objects just got 32bits bigger
-  int unq_id;
+  int unq_id_;
+
   ///Pring out a rasonable representation of the partile
   virtual void print();
   
@@ -84,9 +92,8 @@ public:
      move to this being the primary constructor, get rid of the other
      one
    */
-  particle_base(wrapper_i_base * i_data, wrapper_o_base* o_out, 
-		int i_ind,  std::set<wrapper::p_vals>* contents_in);
-  
+  particle_base(int i_ind);
+
   ///default Destructor, made virtual
   virtual ~particle_base(){
     
@@ -103,6 +110,28 @@ public:
      Retruns the distance from this particle to part_in
    */
   virtual double distancesq(particle_base* part_in);
+
+  /**
+     returns a touple of the particle's position
+   */
+  utilities::Touple get_position(){
+    return position_;
+  };
+
+  /**
+     Intialize the static input wrapper for all particles
+   */
+  static void intialize_wrapper_in(wrapper_i_base* in);
+  /**
+     Intialize the static output wrapper for all particles
+   */
+  static void intialize_wrapper_out(wrapper_o_base* out);
+  /**
+     Intialize the static data types for all particles
+   */
+  static void intialize_data_types(std::set<wrapper::p_vals>*  data_types);
+private:
+  void fill_position();
 
 };
 }

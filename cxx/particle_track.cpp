@@ -42,11 +42,8 @@ particle_track::particle_track(wrapper_i_base * i_data,
 
 }
 */
-particle_track::particle_track(wrapper_i_base * i_data, 
-			       wrapper_o_base* o_data, 
-			       int i_ind,  
-			       set<wrapper::p_vals>* contents_in)
-  :particle_base(i_data,o_data,i_ind,contents_in),
+particle_track::particle_track(int i_ind)
+  :particle_base(i_ind),
    next(NULL),
    prev(NULL),
    track(NULL) ,

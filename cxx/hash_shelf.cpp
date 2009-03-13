@@ -35,7 +35,7 @@ using std::list;
 
 void hash_shelf::push(particle_base * p){
   try{
-    (hash.at(hash_function(p))).push(p);
+    (hash.at(hash_function(p)))->push(p);
   }
   catch (std::exception& e)    {
     cout << e.what() << endl;
@@ -98,7 +98,7 @@ void hash_shelf::init2(){
 
   hash.reserve(tmp_prod);
   for(int j = 0; j<tmp_prod;j++)
-    hash.push_back(hash_box());
+    hash.push_back(new hash_box());
 }
 
 
@@ -107,7 +107,7 @@ void hash_shelf::print(){
 
   for(int i=0; i<hash_dims[0];i++){
     for(int j=0; j<hash_dims[1];j++){
-      cout<<(hash.at(j*hash_dims[0] + i)).get_size() <<"\t";
+      cout<<(hash.at(j*hash_dims[0] + i))->get_size() <<"\t";
     }
     cout<<endl;
   }
@@ -147,7 +147,7 @@ void hash_shelf::get_region( int n, int m,
      for( int j = j_bot; j<=j_top;j++){
        for( int k = k_bot; k<=k_top;k++){
 
-	 box->append(&(hash.at(j+hash_dims[0]*k)));
+	 box->append((hash.at(j+hash_dims[0]*k)));
 	 //       cout<<j<<"\t"<<k<<endl;
 	 //       cout<<"appending box at: "<<j+hash_dims[0]*k<<endl;
 
@@ -198,13 +198,13 @@ void hash_shelf::rehash(unsigned int PPB){
 
 list<particle_track*> * hash_shelf::shelf_to_list(){
   list<particle_track*>* tmp = new list<particle_track*>;
-  for(vector<hash_box>::iterator it = hash.begin(); it<hash.end(); ++it)
+  for(vector<hash_box*>::iterator cur_box = hash.begin(); cur_box<hash.end(); ++cur_box)
     {
       
-      for(vector<particle_base*>::iterator it2 = (*it).begin();
-	  it2!=(*it).end(); ++it2)
+      for(vector<particle_base*>::iterator cur_part = (*cur_box)->begin();
+	  cur_part!=(*cur_box)->end(); ++cur_part)
 	{
-	  tmp->push_back(static_cast<particle_track*>(*it2));
+	  tmp->push_back(static_cast<particle_track*>(*cur_part));
 	}
     }
 
@@ -212,14 +212,31 @@ list<particle_track*> * hash_shelf::shelf_to_list(){
 }
 
 
+void hash_shelf::shelf_to_list(std::list<particle_track*> *tmp){
+  tmp->clear();
+  for(vector<hash_box*>::iterator cur_box = hash.begin(); cur_box<hash.end(); ++cur_box)
+    {
+      
+      for(vector<particle_base*>::iterator cur_part = (*cur_box)->begin();
+	  cur_part!=(*cur_box)->end(); ++cur_part)
+	{
+	  tmp->push_back(static_cast<particle_track*>(*cur_part));
+	}
+    }
+  
+  
+}
+
+
 void hash_shelf::compute_mean_forward_disp(){
   mean_forward_disp_ *= 0;
   int count = 0;
   particle_track* current_part = NULL;
-  for(vector<hash_box>::iterator it = hash.begin(); it<hash.end(); ++it)    {
-    for(vector<particle_base*>::iterator it2 = (*it).begin();
-	it2!=(*it).end(); ++it2) {
-      current_part = static_cast<particle_track*>(*it2);
+  for(vector<hash_box*>::iterator cur_box = hash.begin(); 
+      cur_box<hash.end(); ++cur_box){
+    for(vector<particle_base*>::iterator cur_part = (*cur_box)->begin();
+	cur_part!=(*cur_box)->end(); ++cur_part) {
+      current_part = static_cast<particle_track*>(*cur_part);
       if(current_part->get_next() != NULL){
 	mean_forward_disp_ += *(current_part->get_forward_disp());
 	++count;
@@ -239,4 +256,14 @@ int hash_shelf::img_area(){
   cout<<tmp<<endl;
   return tmp;
 
+}
+
+hash_shelf::~hash_shelf(){
+  for(vector<hash_box*>::iterator it = hash.begin(); it<hash.end(); ++it)
+    {
+      delete *it;
+      *it = NULL;
+      
+    }
+  
 }

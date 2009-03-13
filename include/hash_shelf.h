@@ -67,7 +67,7 @@ public:
   virtual unsigned int hash_function(particle_base* p);
 
   ///Destructor
-  virtual ~hash_shelf(){};
+  virtual ~hash_shelf();
 
   ///Print function
   virtual void print();
@@ -77,7 +77,7 @@ public:
 
   ///returns the box at (n,m)
   hash_box* get_box(int n, int m){
-    return &(hash.at(hash_dims[1]*n + m));
+    return (hash.at(hash_dims[1]*n + m));
   }
   
   ///Retruns the hash for the particle p
@@ -110,8 +110,15 @@ public:
      Generates and returns a pointer to all the particles in
      this shelf in a list form.  This makes new objects on the
      heap, be aware of this for memory leaks.
+
+     see the other version
    */
   std::list<particle_track*> * shelf_to_list();
+
+  /**
+     Converts the whole shelf to a list
+   */
+  void shelf_to_list(std::list<particle_track*> *tmp);
   
   /**
      Computes the mean displacement of a frame.  This is done to deal
@@ -133,7 +140,7 @@ protected:
   ///Main data structure.  This is an vector of
   ///hash boxes.  For simplicity the strcuture is stored as
   ///a 1-D array and the class takes care of the 1D<->2D conversion
-  vector<hash_box> hash;
+  vector<hash_box*> hash;
   
   ///@name grid properties.
   /// These should not be allowed to change once
@@ -153,10 +160,8 @@ protected:
   int plane_number;
   
   /**
-     The mean displacement of the plane.  The
-     definition of velocity is
-     v_i = x_{i +1} - x_i
-     hence the 'forward' velocity
+     The mean displacement of the plane.  The definition of velocity
+     is $v_i = x_{i +1} - x_i$ hence the 'forward' velocity
    */
   utilities::Touple mean_forward_disp_;
   
@@ -186,9 +191,14 @@ hash_shelf::hash_shelf(master_box_t<particle> & mb, int imsz1,
 }
 
 inline unsigned int hash_shelf::hash_function(particle_base* p){
-    return (unsigned int)
-      (((unsigned int)p->get_value(wrapper::d_ypos)/ppb)*hash_dims[0] +
-       p->get_value(wrapper::d_xpos)/ppb);
+  utilities::Touple cur_pos = p->get_position();
+  
+  return (unsigned int)
+    (((unsigned int)cur_pos[1]/ppb)*hash_dims[0] +
+       cur_pos[0]/ppb);
+//   return (unsigned int)
+//     (((unsigned int)p->get_value(wrapper::d_ypos)/ppb)*hash_dims[0] +
+//        p->get_value(wrapper::d_xpos)/ppb);
 }
 }
 #endif

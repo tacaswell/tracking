@@ -90,8 +90,7 @@ public:
   particle_track(wrapper_i_base * i_data, wrapper_o_base* o_out, 
 		 int i_ind, track_box* i_track = NULL);
 
-  particle_track(wrapper_i_base * i_data, wrapper_o_base* o_out, 
-		int i_ind,  std::set<wrapper::p_vals>* contents_in);
+  particle_track(int i_ind);
 
 
   ///Destructor

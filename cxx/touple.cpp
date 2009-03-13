@@ -29,6 +29,23 @@ Touple Touple::operator- (const Touple& y){
   return tmp;
 }
 
+
+Touple Touple::operator+ (const double y){
+  Touple tmp;
+  for(int j = 0;j<length_; ++j)
+    tmp.data_[j] = y + data_[j];
+  return tmp;
+}
+
+
+Touple Touple::operator- (const double y){
+  Touple tmp;
+  for(int j = 0;j<length_; ++j)
+    tmp.data_[j] = -y + data_[j];
+  return tmp;
+}
+
+
 Touple Touple::operator- (){
   Touple tmp;
   for(int j = 0;j<length_; ++j)
@@ -57,10 +74,11 @@ void Touple::operator+= (const Touple& y){
     data_[j] += y.data_[j] ;
 
 }
-
+ 
 void Touple::operator+= (const double y){
   for(int j = 0;j<length_; ++j)
     data_[j] += y ;
+
 }
 
 
@@ -126,16 +144,16 @@ void Touple::clear(){
 }
 
 Touple::Touple(){
-  data_= (double*) new double[length_];
+  //  data_= (double*) new double[length_];
   for(int j = 0;j<length_; ++j)
     data_[j] = 0;
-
+  //  std::cout<<"make"<< std::endl;
 
 }
 
 
 Touple::~Touple(){
   //  std::cout<<"died"<< std::endl;
-  delete[] data_;
-  data_ = NULL;
+  // delete[] data_;
+//   data_ = NULL;
 }

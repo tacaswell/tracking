@@ -167,23 +167,28 @@ void master_box_t<particle>::init(params* params_in, params* params_out){
   data_types = in_wrapper->get_data_types();
   data_types.insert(wrapper::d_unqid);
 
+  
+  particle_base::intialize_wrapper_in(in_wrapper);
+  particle_base::intialize_wrapper_out(out_wrapper);
+  particle_base::intialize_data_types(&data_types);
+
   particle_vec.reserve(in_wrapper->num_entries());
-  for(int j = 0; j<in_wrapper->num_entries(); j++){
-    particle_vec.push_back( new particle(in_wrapper, out_wrapper,j,&data_types));
+  for(int j = 0; j<in_wrapper->num_entries(); ++j){
+    particle_vec.push_back( new particle(j));
   }
   
 }
 
 template <class particle>
 void master_box_t<particle>::print(){
-  for(unsigned int j = 0; j<particle_vec.size();j++)
+  for(unsigned int j = 0; j<particle_vec.size();++j)
     particle_vec.at(j)->print();
 }
 
 template <class particle>
 master_box_t<particle>::~master_box_t(){
   //deletes the particles it made
-  for(unsigned int j = 0; j<particle_vec.size();j++)
+  for(unsigned int j = 0; j<particle_vec.size();++j)
     {
       delete particle_vec.at(j);
     }

@@ -47,6 +47,15 @@ public:
    */
   Touple operator- ( const Touple& y);
   /**
+     Over loads for constant addition
+   */
+  Touple operator+ (const double y);
+  /**
+     Over loads for constant subtraction
+   */
+  Touple operator- ( const double y);
+
+  /**
      Over loads for negation
    */
   Touple operator- ( );
@@ -129,7 +138,7 @@ protected:
   /**
      pointer to data
    */
-  double* data_;
+  double data_[length_];
 
   /*
      if length_ can be changed

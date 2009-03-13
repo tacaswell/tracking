@@ -130,7 +130,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
     
   cout<<"total number of particles is: "<<bt.size()<<endl;;
   
-  hash_case s(bt,dims,5,10);
+  hash_case s(bt,dims,5,1460);
   cout<<"case built"<<endl;
   s.link(5,tracks);
   cout<<"linked"<<endl;
