@@ -18,6 +18,12 @@ double& Touple::operator[] (int i){
     throw "error"; 		// place holder for proper error handeling
   return data_[i];
 }
+const double& Touple::operator[] (int i) const{
+  if(i<0 || i>= length_)
+    throw "error"; 		// place holder for proper error handeling
+  return data_[i];
+}
+
 Touple Touple::operator- (){
   Touple tmp;
   for(int j = 0;j<length_; ++j)

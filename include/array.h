@@ -42,7 +42,7 @@ public:
   /**
      Adds a touple to the end of the array
    */
-  void push(Touple touple_in);
+  void push(const Touple& touple_in);
   /**
      Sensible printing
    */

@@ -127,6 +127,13 @@ public:
   */
   void compute_mean_forward_disp(utilities::Touple & cum_disp);
 
+  const utilities::Touple& get_mean_forward_disp(){
+    return mean_forward_disp_;
+  }
+
+  const utilities::Touple&  get_cum_forward_disp(){
+    return cumulative_disp_;
+  }
 private:
   ///Initialization function
   //  void init(unsigned int X, unsigned int Y, unsigned int PPB);

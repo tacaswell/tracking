@@ -22,30 +22,34 @@
 //containing parts covered by the terms of MATLAB User License, the
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
-#ifndef DISPLACEMENT
-#define DISPLACEMENT
 
-#include <vector>
 
-namespace tracking{
-class Displacement{
+#ifndef GPARAM_MATLAB
+#define GPARAM_MATLAB
+
+#include "generic_parameters_base.h"
+
+#include "mex.h"
+
+namespace utilities{
+class Generic_wrapper_base;
+
+/**
+   Class for generic matlab wrapper parameters
+*/
+
+class Generic_parameters_matlab:public Generic_parameters_base{
 public:
-  Displacement();
+  int rows_;
+  int cols_;
+  mxArray ** mx_ptr_ptr_;
+  Generic_parameters_matlab(int a, int b,mxArray ** );
   
-
-  /**
-     
-   */
-  
-  
-protected:
-  vector<double> disp_;
-  
-  
+  Generic_wrapper_base* make_wrapper() ;
 };
 
+inline Generic_parameters_matlab::Generic_parameters_matlab(int a, int b,mxArray ** out)
+  :rows_(a),cols_(b),mx_ptr_ptr_(out){}
 
 }
-
-
 #endif

@@ -46,7 +46,7 @@ void Array::print(){
   }
 }
 
-void Array::push(Touple touple_in){
+void Array::push(const Touple&  touple_in){
   if((cur_index_) == rows_)
     throw "past end of array";
 

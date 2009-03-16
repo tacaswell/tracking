@@ -47,7 +47,10 @@ public:
      Overides random access
    */
   double& operator[] (int i);	
-
+  /**
+     Overides random access
+   */
+  const double& operator[] (int i) const;
 
   /**
      Over loads for element-wise addition

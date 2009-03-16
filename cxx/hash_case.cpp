@@ -24,9 +24,11 @@
 //the resulting work.
 #include "hash_case.h"
 #include <stdexcept> // out_of_range exception
+#include "touple.h"
+#include "array.h"
 using namespace tracking;
 using std::list;
-
+using utilities::Touple;
 void hash_case::print(){
   for(unsigned int j = 0; j<h_case.size();j++){
     h_case.at(j)->print();
@@ -183,9 +185,11 @@ void hash_case::fill_pos_link_next(list<particle_track*>* tlist,
 }
 
 void hash_case:: compute_mean_disp(){
+  Touple cum_disp;
   for(vector<hash_shelf*>::iterator it = h_case.begin();
-      it<h_case.end(); ++it)
-    (*it)->compute_mean_forward_disp();  
+      it<h_case.end(); ++it){
+    (*it)->compute_mean_forward_disp(cum_disp);  
+  }
 }
 
 
