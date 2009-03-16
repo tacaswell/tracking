@@ -23,24 +23,19 @@
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
 
-#ifndef GWRAPPER_BASE
-#define GWRAPPER_BASE
+#ifndef GWRAPPER_MATLAB
+#define GWRAPPER_MATLAB
+#include "generic_wrapper_base.h"
 
+#include "mex.h"
 namespace utilities{
+class Generic_parameters_matlab;
+
 /**
-   Base class for the generic wrapper family of functions.  These
-   exist because the other wrapper functions are very specific for
-   reading in and writing out particles.  These are intended to by used
-   for getting arbitrary data out.
-
-   The basic idea is to write to the under ling data structure in
-   atomic rows, ie ask for a new row, fill it with what ever, store to
-   the underling data structure.
-
-   This is an abstract base class
+   Class for handling output to matlab
 */
 
-class Generic_wrapper_base{
+class Generic_wrapper_matlab:public Generic_wrapper_base{
 public:
 
 
@@ -51,18 +46,18 @@ public:
   /**
      Opens a new row to add data to
    */
-  virtual void start_new_row() = 0;
+  virtual void start_new_row() ;
   /**
      Inputs data to be added to the wrapper.
 
      This may write directly in to the underlying data
      structure, or it may buffer the data until a finalize call
    */
-  virtual void append_to_row(double data_in) = 0;
+  virtual void append_to_row(double data_in);
   /**
      finishes the row and sets it to the underlying strucutre
    */
-  virtual void finish_row() = 0;
+  virtual void finish_row();
   //\@}
 
 
@@ -73,20 +68,24 @@ public:
   /**
      Tells the wrapper to setup to accept rows
    */
-  virtual void initialize_wrapper () = 0;
+  virtual void initialize_wrapper ();
   /**
      cleans up the wrapper
    */
-  virtual void finalize_wrapper () = 0;
+  virtual void finalize_wrapper () ;
   //\@}
-
-  Generic_wrapper_base(bool a,bool b):
-    wrapper_open_(a),row_open_(b){}
   
-  virtual ~Generic_wrapper_base(){};
-protected:
-  bool wrapper_open_;
-  bool row_open_;
+  
+  virtual ~Generic_wrapper_matlab(){};
+
+  Generic_wrapper_matlab(Generic_parameters_matlab* param);
+private:
+  double* data_ptr_;
+  int rows_;
+  int cols_;
+  int row_indx_;
+  int col_indx_;
+  mxArray** mx_ptr_ptr_;
 };
 }
 #endif

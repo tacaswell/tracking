@@ -13,39 +13,11 @@ void Touple::operator= (const Touple& y){
   for(int j = 0;j<length_; ++j)
     data_[j] = y.data_[j];
 }
-
-Touple Touple::operator+ (const Touple& y){
-  Touple tmp;
-  for(int j = 0;j<length_; ++j)
-    tmp.data_[j] = y.data_[j] + data_[j];
-  return tmp;
+double& Touple::operator[] (int i){
+  if(i<0 || i>= length_)
+    throw "error"; 		// place holder for proper error handeling
+  return data_[i];
 }
-
-
-Touple Touple::operator- (const Touple& y){
-  Touple tmp;
-  for(int j = 0;j<length_; ++j)
-    tmp.data_[j] = -y.data_[j] + data_[j];
-  return tmp;
-}
-
-
-Touple Touple::operator+ (const double y){
-  Touple tmp;
-  for(int j = 0;j<length_; ++j)
-    tmp.data_[j] = y + data_[j];
-  return tmp;
-}
-
-
-Touple Touple::operator- (const double y){
-  Touple tmp;
-  for(int j = 0;j<length_; ++j)
-    tmp.data_[j] = -y + data_[j];
-  return tmp;
-}
-
-
 Touple Touple::operator- (){
   Touple tmp;
   for(int j = 0;j<length_; ++j)
@@ -54,21 +26,18 @@ Touple Touple::operator- (){
 }
 
 
-Touple Touple::operator/ (const Touple& y){
+Touple Touple::operator+ (const Touple& y){
   Touple tmp;
   for(int j = 0;j<length_; ++j)
-    tmp.data_[j] = data_[j]/y.data_[j] ;
+    tmp.data_[j] = y.data_[j] + data_[j];
   return tmp;
 }
-
-
-double& Touple::operator[] (int i){
-  if(i<0 || i>= length_)
-    throw "error"; 		// place holder for proper error handeling
-  return data_[i];
+Touple Touple::operator+ (const double y){
+  Touple tmp;
+  for(int j = 0;j<length_; ++j)
+    tmp.data_[j] = y + data_[j];
+  return tmp;
 }
-
-
 void Touple::operator+= (const Touple& y){
   for(int j = 0;j<length_; ++j)
     data_[j] += y.data_[j] ;
@@ -82,39 +51,73 @@ void Touple::operator+= (const double y){
 }
 
 
-
+Touple Touple::operator- (const Touple& y){
+  Touple tmp;
+  for(int j = 0;j<length_; ++j)
+    tmp.data_[j] = -y.data_[j] + data_[j];
+  return tmp;
+}
+Touple Touple::operator- (const double y){
+  Touple tmp;
+  for(int j = 0;j<length_; ++j)
+    tmp.data_[j] = -y + data_[j];
+  return tmp;
+}
 void Touple::operator-= (const Touple& y){
   for(int j = 0;j<length_; ++j)
     data_[j] -= y.data_[j] ;
 
 }
-
 void Touple::operator-= (const double y){
   for(int j = 0;j<length_; ++j)
     data_[j] -= y ;
 }
+
+
+
+Touple Touple::operator* (const Touple& y){
+  Touple tmp;
+  for(int j = 0;j<length_; ++j){
+    tmp.data_[j] = data_[j]*y.data_[j] ;
+  }
+  return tmp;
+}
+Touple Touple::operator* (const double y){
+  Touple tmp;
+  for(int j = 0;j<length_; ++j){
+    tmp.data_[j] = data_[j] * y ;
+  }
+  return tmp;
+}
+void Touple::operator*= (const Touple& y){
+  for(int j = 0;j<length_; ++j)
+    data_[j] *= y.data_[j] ;
+}
+void Touple::operator*= (const double y){
+  for(int j = 0;j<length_; ++j)
+    data_[j] *= y ;
+}
+
+
+
 
 void Touple::operator/= (const Touple& y){
   for(int j = 0;j<length_; ++j)
     data_[j] /= y.data_[j] ;
 
 }
-
 void Touple::operator/= (const double y){
   for(int j = 0;j<length_; ++j)
     data_[j] /= y ;
 }
-
-void Touple::operator*= (const Touple& y){
+Touple Touple::operator/ (const Touple& y){
+  Touple tmp;
   for(int j = 0;j<length_; ++j)
-    data_[j] *= y.data_[j] ;
-
+    tmp.data_[j] = data_[j]/y.data_[j] ;
+  return tmp;
 }
 
-void Touple::operator*= (const double y){
-  for(int j = 0;j<length_; ++j)
-    data_[j] *= y ;
-}
+
 
 
 

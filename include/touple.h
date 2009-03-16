@@ -39,35 +39,24 @@ public:
    */
   void operator= (const Touple& y);
   /**
-     Over loads for element-wise addition
-   */
-  Touple operator+ (const Touple& y);
-  /**
-     Over loads for element-wise subtraction
-   */
-  Touple operator- ( const Touple& y);
-  /**
-     Over loads for constant addition
-   */
-  Touple operator+ (const double y);
-  /**
-     Over loads for constant subtraction
-   */
-  Touple operator- ( const double y);
-
-  /**
      Over loads for negation
    */
   Touple operator- ( );
-  /**
-     Over loads for element-wise division
-   */
-  Touple operator/ ( const Touple& y);
 
   /**
      Overides random access
    */
   double& operator[] (int i);	
+
+
+  /**
+     Over loads for element-wise addition
+   */
+  Touple operator+ (const Touple& y);
+  /**
+     Over loads for constant addition
+   */
+  Touple operator+ (const double y);
   /**
      adds Touple to the current Touple
    */
@@ -76,6 +65,17 @@ public:
      adds constant to the current Touple
    */
   void operator+= (const double y);
+
+
+
+  /**
+     Over loads for element-wise subtraction
+   */
+  Touple operator- ( const Touple& y);
+  /**
+     Over loads for constant subtraction
+   */
+  Touple operator- ( const double y);
   /**
      subtracts Touple to the current Touple
    */
@@ -84,14 +84,17 @@ public:
      subtracts constant to the current Touple
    */
   void operator-= (const double y);
+
+
+
   /**
-     element wise division of the current Touple
+     Over loads for constant multilplication
    */
-  void operator/= (const Touple& y);
+  Touple operator* (const double y);
   /**
-     devides current Touple by a constant
+     Over loads for elementwise mustiplication
    */
-  void operator/= (const double y);
+  Touple operator* (const Touple& y);
   /**
      element wise multilication of the current Touple
    */
@@ -101,16 +104,34 @@ public:
    */
   void operator*= (const double y);
 
+
+
+  /**
+     Over loads for element-wise division
+   */
+  Touple operator/ ( const Touple& y);
+  /**
+     element wise division of the current Touple
+   */
+  void operator/= (const Touple& y);
+  /**
+     devides current Touple by a constant
+   */
+  void operator/= (const double y);
+
+
+
   /**
      square of the magnitude of the Touple assuming euclidian space
    */
   double magnitude_sqr ();
 
-
   /**
      magnitude of the Touple assuming euclidian space
    */
   double magnitude ();
+
+
 
   /**
      prints the data
@@ -120,7 +141,9 @@ public:
   /**
      sets touple to (0,0)
    */
+
   void clear();
+
   /**
      empty constructor
    */
@@ -129,21 +152,19 @@ public:
      Destructor
    */
   ~Touple();
-protected:
+
   /**
      The length of touple.  This should match the dimenion of the tracking.
      Exactly how this will all fit together will be seen.
   */
   const static int length_ =2;
+  
+protected:
   /**
      pointer to data
    */
   double data_[length_];
 
-  /*
-     if length_ can be changed
-   */
-  //  static bool allow_dim_change_;
 private:
 };
 

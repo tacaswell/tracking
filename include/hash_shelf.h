@@ -125,7 +125,7 @@ public:
      with possible flows in the sample.  Particles with out forward
      tracking data are ignored.
   */
-  void compute_mean_forward_disp();
+  void compute_mean_forward_disp(utilities::Touple & cum_disp);
 
 private:
   ///Initialization function
@@ -164,6 +164,11 @@ protected:
      is $v_i = x_{i +1} - x_i$ hence the 'forward' velocity
    */
   utilities::Touple mean_forward_disp_;
+
+  /**
+     Cumlative displacement vector
+  */
+  utilities::Touple cumulative_disp_;
   
   /**
      computes area of image

@@ -228,7 +228,8 @@ void hash_shelf::shelf_to_list(std::list<particle_track*> *tmp){
 }
 
 
-void hash_shelf::compute_mean_forward_disp(){
+void hash_shelf::compute_mean_forward_disp(utilities::Touple & cum_disp_in){
+  cumlative_disp_ = cum_disp_in;
   mean_forward_disp_ *= 0;
   int count = 0;
   particle_track* current_part = NULL;
@@ -246,6 +247,8 @@ void hash_shelf::compute_mean_forward_disp(){
   }
   if(count > 0)
     mean_forward_disp_ /= count;
+  
+  cum_disp_in += mean_forward_disp_;
   
 }
 

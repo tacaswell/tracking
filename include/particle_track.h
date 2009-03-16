@@ -68,6 +68,8 @@ protected:
      The foward displacement vector
    */
   utilities::Touple forward_disp_;
+
+
 public:
   
   ///Friends with track_box to allow it to screw with the linked list
