@@ -58,13 +58,18 @@
 #include "histogram.h"
 #include "svector.h"
 
+#include "array.h"
+#include "generic_wrapper_matlab.h"
+#include "generic_parameters_matlab.h"
 
 using namespace tracking;
 using utilities::array_to_mat;
 using utilities::vector_to_mat;
 using utilities::Svector;
 using utilities::Histogram;
-
+using utilities::Array;
+using utilities::Generic_wrapper_base;
+using utilities::Generic_parameters_matlab;
 extern void _main();
 void mexFunction( int nlhs, mxArray *plhs[], 
 		  int nrhs, const mxArray* prhs[] ){
@@ -130,16 +135,28 @@ void mexFunction( int nlhs, mxArray *plhs[],
     
   cout<<"total number of particles is: "<<bt.size()<<endl;;
   
-  hash_case s(bt,dims,5,1460);
+  hash_case s(bt,dims,5,1462);
   cout<<"case built"<<endl;
   s.link(5,tracks);
+  
   cout<<"linked"<<endl;
   s.compute_mean_disp();
+  
+  Array test_a(1462);
+  s.get_mean_disp(test_a);
+
+  Generic_parameters_matlab arr_parm(1462,2,plhs+1);
+
+  Generic_wrapper_base * wrapper = arr_parm.make_wrapper();
+  
+  test_a.set_array(wrapper);
+
+  
   //  s.print();
   
-//   bt.initialize_out();
-//   tracks.set_shelf();
-//   bt.finalize_out();
+   bt.initialize_out();
+   tracks.set_shelf();
+   bt.finalize_out();
 
 
  

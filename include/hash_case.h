@@ -36,6 +36,10 @@
 #ifndef HASH_CASE
 #define HASH_CASE
 
+namespace utilities{
+class Array;
+}
+
 namespace tracking{
 /**
    Class to hold sets of hash_shelf.  This is used as a structure to organize
@@ -46,7 +50,7 @@ class hash_case{
 
 public:
   ///retrun a given shelf
-  hash_shelf * return_shelf(int n){
+  hash_shelf * return_shelf(int n) const{
     return h_case.at(n);
   }
 
@@ -84,7 +88,7 @@ public:
   
 
   ///Print out a sensible representation of the data
-  void print();
+  void print() const;
 
   /**
      Rehash all of the hash tables in this case to use the new
@@ -113,6 +117,16 @@ public:
    */
   void compute_mean_disp();
 
+  /**
+     Returns the mean displacement of as many planes as the array has rows
+     starting from the plane start
+   */
+  void get_mean_disp(utilities::Array & mean_disp_array, int start=0);
+  /**
+     Returns the cumlative diseplacement of as many planes as the
+     array has rows starting from the plane start
+   */
+  void get_cum_disp(utilities::Array & cum_disp_array, int start=0);
   ///Destructor
   ~hash_case();
 protected:

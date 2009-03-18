@@ -57,13 +57,15 @@ void particle_base::fill_position(){
 }
 
 
-double particle_base::distancesq(particle_base* part_in){
-  return (position_ + (part_in->get_position())).magnitude();
+double particle_base::distancesq(particle_base* part_in)const{
 
-//   double X =get_value(wrapper::d_xpos) - part_in->get_value(wrapper::d_xpos);
-//   double Y =get_value(wrapper::d_ypos) - part_in->get_value(wrapper::d_ypos);
-//   //  double Z =get_value(wrapper::d_zpos) - part_in->get_value(wrapper::d_zpos);
-//   return X*X + Y*Y ;//+ Z*Z;
+
+  return (position_ - (part_in->get_position())).magnitude_sqr();
+
+  //   double X =get_value(wrapper::d_xpos) - part_in->get_value(wrapper::d_xpos);
+  //   double Y =get_value(wrapper::d_ypos) - part_in->get_value(wrapper::d_ypos);
+  //   //  double Z =get_value(wrapper::d_zpos) - part_in->get_value(wrapper::d_zpos);
+  //   return X*X + Y*Y ;//+ Z*Z;
 }
 
 

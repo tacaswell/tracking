@@ -230,7 +230,7 @@ void hash_shelf::shelf_to_list(std::list<particle_track*> *tmp){
 
 void hash_shelf::compute_mean_forward_disp(utilities::Touple & cum_disp_in){
   cumulative_disp_ = cum_disp_in;
-  mean_forward_disp_ *= 0;
+  mean_forward_disp_.clear();
   int count = 0;
   particle_track* current_part = NULL;
   for(vector<hash_box*>::iterator cur_box = hash.begin(); 

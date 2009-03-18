@@ -38,7 +38,7 @@ public:
   /**
      Sets the whole array to the specified output wrapper
    */
-  void set_array(Generic_wrapper_base * out_wrapper);
+  void set_array(Generic_wrapper_base * out_wrapper) const;
   /**
      Adds a touple to the end of the array
    */
@@ -50,8 +50,17 @@ public:
   /**
      Constructor
    */
-  Array(
-	int rows);
+  Array(int rows);
+  /**
+     Returns the number of rows
+   */
+  int get_row_num()const{
+    return rows_;
+  }
+  /**
+     Clears the array
+   */
+  void clear();
 protected:
   /**
      Number of rows

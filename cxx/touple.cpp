@@ -32,13 +32,13 @@ Touple Touple::operator- (){
 }
 
 
-Touple Touple::operator+ (const Touple& y){
+Touple Touple::operator+ (const Touple& y) const{
   Touple tmp;
   for(int j = 0;j<length_; ++j)
     tmp.data_[j] = y.data_[j] + data_[j];
   return tmp;
 }
-Touple Touple::operator+ (const double y){
+Touple Touple::operator+ (const double y)const{
   Touple tmp;
   for(int j = 0;j<length_; ++j)
     tmp.data_[j] = y + data_[j];
@@ -57,13 +57,13 @@ void Touple::operator+= (const double y){
 }
 
 
-Touple Touple::operator- (const Touple& y){
+Touple Touple::operator- (const Touple& y) const{
   Touple tmp;
   for(int j = 0;j<length_; ++j)
     tmp.data_[j] = -y.data_[j] + data_[j];
   return tmp;
 }
-Touple Touple::operator- (const double y){
+Touple Touple::operator- (const double y) const{
   Touple tmp;
   for(int j = 0;j<length_; ++j)
     tmp.data_[j] = -y + data_[j];
@@ -81,14 +81,14 @@ void Touple::operator-= (const double y){
 
 
 
-Touple Touple::operator* (const Touple& y){
+Touple Touple::operator* (const Touple& y) const{
   Touple tmp;
   for(int j = 0;j<length_; ++j){
     tmp.data_[j] = data_[j]*y.data_[j] ;
   }
   return tmp;
 }
-Touple Touple::operator* (const double y){
+Touple Touple::operator* (const double y) const{
   Touple tmp;
   for(int j = 0;j<length_; ++j){
     tmp.data_[j] = data_[j] * y ;
@@ -116,7 +116,7 @@ void Touple::operator/= (const double y){
   for(int j = 0;j<length_; ++j)
     data_[j] /= y ;
 }
-Touple Touple::operator/ (const Touple& y){
+Touple Touple::operator/ (const Touple& y) const{
   Touple tmp;
   for(int j = 0;j<length_; ++j)
     tmp.data_[j] = data_[j]/y.data_[j] ;
@@ -127,7 +127,7 @@ Touple Touple::operator/ (const Touple& y){
 
 
 
-void Touple::print(){
+void Touple::print() const{
   using std::cout;
   using std::endl;
   for(int j = 0;j<length_; ++j)
@@ -136,14 +136,14 @@ void Touple::print(){
 }
 
 
-double Touple::magnitude_sqr(){
+double Touple::magnitude_sqr() const{
   double tmp = 0;
   for(int j = 0;j<length_; ++j)
     tmp += data_[j]*data_[j] ;
   return tmp;
 }
 
-double Touple::magnitude(){
+double Touple::magnitude() const{
   return sqrt(magnitude_sqr());
 }
 

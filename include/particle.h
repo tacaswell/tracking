@@ -109,12 +109,12 @@ public:
   /**
      Retruns the distance from this particle to part_in
    */
-  virtual double distancesq(particle_base* part_in);
+  virtual double distancesq(particle_base* part_in) const;
 
   /**
      returns a touple of the particle's position
    */
-  utilities::Touple get_position(){
+  const utilities::Touple & get_position() const{
     return position_;
   };
 

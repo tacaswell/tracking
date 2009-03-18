@@ -29,7 +29,8 @@
 using namespace tracking;
 using std::list;
 using utilities::Touple;
-void hash_case::print(){
+
+void hash_case::print() const{
   for(unsigned int j = 0; j<h_case.size();j++){
     h_case.at(j)->print();
     cout<<endl;
@@ -192,5 +193,24 @@ void hash_case:: compute_mean_disp(){
   }
 }
 
+void hash_case::get_mean_disp(utilities::Array & mean_disp_array, int start){
+  int tmp = start + mean_disp_array.get_row_num();
+  tmp = (tmp > h_case.size())? h_case.size():tmp;
+  cout<<tmp;
+  mean_disp_array.clear();
+  for(int j = start; j < tmp;++j){
+    mean_disp_array.push(h_case[j]->get_mean_forward_disp());
+  }
+}
+
+
+void hash_case::get_cum_disp(utilities::Array & cum_disp_array, int start){
+  int tmp = start + cum_disp_array.get_row_num();
+  tmp = (tmp > h_case.size())? h_case.size():tmp;
+  cum_disp_array.clear();
+  for(int j = start; j < tmp;++j){
+    cum_disp_array.push(h_case[j]->get_cum_forward_disp());
+  }
+}
 
 

@@ -55,11 +55,11 @@ public:
   /**
      Over loads for element-wise addition
    */
-  Touple operator+ (const Touple& y);
+  Touple operator+ (const Touple& y) const;
   /**
      Over loads for constant addition
    */
-  Touple operator+ (const double y);
+  Touple operator+ (const double y)const;
   /**
      adds Touple to the current Touple
    */
@@ -74,11 +74,11 @@ public:
   /**
      Over loads for element-wise subtraction
    */
-  Touple operator- ( const Touple& y);
+  Touple operator- ( const Touple& y)const;
   /**
      Over loads for constant subtraction
    */
-  Touple operator- ( const double y);
+  Touple operator- ( const double y)const;
   /**
      subtracts Touple to the current Touple
    */
@@ -93,11 +93,11 @@ public:
   /**
      Over loads for constant multilplication
    */
-  Touple operator* (const double y);
+  Touple operator* (const double y) const;
   /**
      Over loads for elementwise mustiplication
    */
-  Touple operator* (const Touple& y);
+  Touple operator* (const Touple& y) const;
   /**
      element wise multilication of the current Touple
    */
@@ -112,7 +112,7 @@ public:
   /**
      Over loads for element-wise division
    */
-  Touple operator/ ( const Touple& y);
+  Touple operator/ ( const Touple& y) const;
   /**
      element wise division of the current Touple
    */
@@ -127,19 +127,19 @@ public:
   /**
      square of the magnitude of the Touple assuming euclidian space
    */
-  double magnitude_sqr ();
+  double magnitude_sqr () const;
 
   /**
      magnitude of the Touple assuming euclidian space
    */
-  double magnitude ();
+  double magnitude () const;
 
 
 
   /**
      prints the data
    */
-  void print();
+  void print() const;
 
   /**
      sets touple to (0,0)
