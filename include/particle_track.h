@@ -34,7 +34,7 @@
 #define PARTICLE_TRACK
 namespace tracking{
 class track_box;
-
+class hash_shelf;
 /**
    Class for use in particles once they have been tracked.  This class carries
    additional information about which track the particle is in, where in
@@ -52,6 +52,13 @@ protected:
      particle is not in a track this is NULL
    */
   track_box * track;
+
+  /**
+     Pointer to the shelf that the particle lives in.  This is
+     redundent with the plane information, but this is more elegent
+     and makes looking up the planes cumlative displacemet easier
+   */
+  hash_shelf* shelf_;
   
   /**
      pointer to a list of particles to be used durring the tracking
@@ -69,7 +76,10 @@ protected:
    */
   utilities::Touple forward_disp_;
 
-
+  /**
+     Returns the displacement squared corrected for the net drift
+   */
+  double distancesq_corrected(const particle_track* part_in)const;
 public:
   
   ///Friends with track_box to allow it to screw with the linked list
@@ -101,45 +111,46 @@ public:
   /**
      calls base class print
    */
-  void print();
+  void print()const;
   /**
      recursive print function for printing out the sequence of a
      track.
      @param more
      how many more particles to decend
   */
-  void print_t(int more);
+  void print_t(int more)const;
 
   /**
     Returns a pointer to the next particle in the track.
     If this is the last particle in the track than NULL
     will be returned.
   */
-  particle_track* get_next(){return next;}
+  particle_track* get_next()const{return next;}
 
   /**
     Returns a pointer to the previous particle in the track.
     If this is the first particle in the track than NULL
     will be returned.
    */
-  particle_track* get_prev(){return prev;}
+  particle_track* get_prev()const{return prev;}
 
 
-  utilities::Touple* get_forward_disp(){return &forward_disp_;}
+  const utilities::Touple* get_forward_disp()const
+  {return &forward_disp_;}
 
   /**
      returns the particle n from the current particle forward down the
      list where n=0 is the current particle.  If the end of the track
      is reached   throws an error.
    */
-  particle_track* step_forwards(int n);
+  const particle_track* step_forwards(int n)const;
   
   /**
      returns the particle n from the current particle backwards up the
      list where n=0 is the current particle.  If the front of the
      track is reached throws an error
    */
-  particle_track* step_backwards(int n);
+  const particle_track* step_backwards(int n)const;
 
   
 
@@ -178,18 +189,25 @@ public:
      get what track the particle belongs to.  Each particle can only
      belong to one track.
    */
-  track_box* get_track();
+  track_box* get_track()const;
 
   /**
      Retruns the identifer of the track_box the particle is in
    */
-  int get_track_id();
+  int get_track_id()const;
   /**
-     Returns the value of type for this particle.x
+     Returns the value of type for this particle.
    */
   virtual double get_value(wrapper::p_vals type);
-  
 
+  /**
+     Returns pointer to the shelf the particle resides in
+   */
+  
+  const hash_shelf* get_shelf()const{
+    return shelf_;
+  }
+  
 };
 }
 #endif

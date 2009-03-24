@@ -2,10 +2,11 @@ SET(COMMON_TRACK_SRC gofr_free.cpp hash_box.cpp hash_case.cpp
 hash_shelf.cpp histogram.cpp master_box.cpp particle_base.cpp
 particle_track.cpp track_box.cpp track_list.cpp track_shelf.cpp
 wrapper_base.cpp wrapper_i.cpp wrapper_i_file.cpp wrapper_i_ning.cpp
-wrapper_i_ning_hd.cpp wrapper_o_file.cpp touple.cpp array.cpp)
+wrapper_i_ning_hd.cpp wrapper_o_file.cpp touple.cpp array.cpp cell.cpp
+)
 
 SET(MATLAB_UTIL_SRC wrapper_i_matlab.cpp wrapper_o_matlab.cpp matlab_utils.cpp
-  generic_wrapper_matlab.cpp generic_parameters_matlab.cpp)
+  generic_wrapper_matlab.cpp generic_parameters_matlab.cpp cell_matlab.cpp )
 
 
 

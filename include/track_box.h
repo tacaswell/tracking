@@ -23,11 +23,19 @@
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
 #include <vector>
-#include "particle_track.h"
+
 
 #ifndef TRACK_BOX
 #define TRACK_BOX
+namespace utilities{
+class Array;
+}
+
 namespace tracking{
+// forward declaration
+class particle_track;
+
+
 /**
    Box class for dealing with tracks.  Essentially roling my own
    linked list class
@@ -36,28 +44,42 @@ class track_box{
 public:
   ///retruns the nth particle of the track.
   ///returns null if n > length
-  particle_track * at(int n);
+  const particle_track * at(int n) const;
 
   /**
      Returns a pointer to the first particle in the track
    */
-  particle_track * get_first(){
-    return t_first;
+  particle_track * get_first() const{
+    return t_first_;
   }
 
   /**
      Returns a pointer to the last particle in the track
    */
-  particle_track * get_last(int n){
-    return t_last;
+  particle_track * get_last(int n) const{
+    return t_last_;
   }
 
 
   ///adds the particle next the end of the track
   void push(particle_track* next);
-  ///Extracts velocity vector from track, details of implementation
-  ///pending
-  void extract_velocity();
+  /**
+     Extracts the raw posistion along the track
+   */
+  void extract_raw_pos(utilities::Array & output) const;
+  /**
+     gets the posistion corrected for drift
+   */
+  void extract_corrected_pos(utilities::Array & output) const;
+    
+  /**
+     Extracts the raw frame to frame displanement along the track
+   */
+  void extract_raw_disp(utilities::Array & output) const;
+  /**
+     gets the displacement corrected for drift
+   */
+  void extract_corrected_disp(utilities::Array & output) const;
   
   ///Constructor
   track_box(particle_track * first);
@@ -67,7 +89,10 @@ public:
 
   void push_back(particle_track* next);
 
-  int get_id(){return id;}
+  int get_id() const
+  {
+    return id;
+  }
 
   virtual ~track_box(){};
   
@@ -81,14 +106,17 @@ public:
   /**
      Returns the length of the track
    */
-  int get_length(){return length;};
+  int get_length()const
+  {
+    return length_;
+  };
 protected:
   ///Pointer to first particle in track
-  particle_track * t_first;
+  particle_track * t_first_;
   //pointer to last particle in track
-  particle_track * t_last;
+  particle_track * t_last_;
   ///length of path
-  int length;
+  int length_;
   ///the number of tracks identified used for unique id's
   static int running_count;
   ///unique ID of the track

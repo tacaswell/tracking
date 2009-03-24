@@ -26,8 +26,11 @@
 #include "track_shelf.h"
 #include "histogram.h"
 #include "track_box.h"
-#include "particle.h"
+#include "particle_track.h"
 #include "svector.h"
+
+#include "array.h"
+#include "cell.h"
 
 #include "exception.h"
 
@@ -38,7 +41,8 @@ using namespace tracking;
 using utilities::Histogram;
 using utilities::Svector;
 using utilities::Ll_range_error;
-
+using utilities::Array;
+using utilities::Cell;
 typedef  map<int,track_box*> tr_map;
 
 track_shelf::~track_shelf(){
@@ -128,7 +132,7 @@ void track_shelf::track_length_histogram(Histogram & hist_in){
     hist_in.add_data_point(((*it).second)->get_length());
 }
 
-void track_shelf::msd(Svector<double> & msd_vec,Svector<int> & entry_count){
+void track_shelf::msd(Svector<double> & msd_vec,Svector<int> & entry_count)const{
   //this exception needs to get it's own class or something
   if(msd_vec.data.size()!=entry_count.data.size())
     throw "Vector size's don't match, change this exception";
@@ -139,14 +143,14 @@ void track_shelf::msd(Svector<double> & msd_vec,Svector<int> & entry_count){
   double disp_sq_sum;
   int tmp_count;
 
-  particle_track* current = NULL;
-  particle_track* next = NULL;
+  const particle_track* current = NULL;
+  const particle_track* next = NULL;
 
   bool not_past_end = false;
 
   
 
-  for(map<int,track_box*>::iterator working_track = track_map.begin();
+  for(map<int,track_box*>::const_iterator working_track = track_map.begin();
       working_track!=track_map.end(); working_track++)
     {
       
@@ -183,16 +187,16 @@ void track_shelf::msd(Svector<double> & msd_vec,Svector<int> & entry_count){
   
 }
 
-void track_shelf::msd_hist(int time_step ,utilities::Histogram & in){
+void track_shelf::msd_hist(int time_step ,utilities::Histogram & in) const{
 
-  particle_track* current = NULL;
-  particle_track* next = NULL;
+  const particle_track* current = NULL;
+  const particle_track* next = NULL;
 
   bool not_past_end = false;
 
   
 
-  for(map<int,track_box*>::iterator working_track = track_map.begin();
+  for(map<int,track_box*>::const_iterator working_track = track_map.begin();
       working_track!=track_map.end(); working_track++)
     {
       
@@ -215,4 +219,16 @@ void track_shelf::msd_hist(int time_step ,utilities::Histogram & in){
  
     }
     
+}
+
+
+void track_shelf::set_raw_disp_to_cell(Cell & output)const{
+  tr_map::const_iterator working_track = track_map.begin();
+  Array tmp(1);
+  for(int j = 0; j<output.get_length();j++)
+    {
+      ((*(working_track++)).second)->extract_raw_disp(tmp);
+      output.add_array(tmp);
+    }
+
 }

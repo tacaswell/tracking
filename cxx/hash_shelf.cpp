@@ -102,7 +102,7 @@ void hash_shelf::init2(){
 }
 
 
-void hash_shelf::print(){
+void hash_shelf::print() const{
   
 
   for(int i=0; i<hash_dims[0];i++){
@@ -122,7 +122,7 @@ void hash_shelf::print(){
   ///the volume returned.  Functions that use this need
   ///to keep track of this them selves
 void hash_shelf::get_region( int n, int m,
-			     hash_box* box,int range){
+			     hash_box* box,int range) const {
   
   if(n<0||m<0||range<0||box==NULL)
     return;
@@ -164,13 +164,13 @@ void hash_shelf::get_region( int n, int m,
 
 
 void hash_shelf::get_region( int n, 
-			     hash_box* box,int range){
+			     hash_box* box,int range) const{
   get_region(n%hash_dims[0], n/hash_dims[0], box, range);
 
 }
 
 void hash_shelf::get_region( particle_base* n,
-		   hash_box* box, int range){
+		   hash_box* box, int range) const{
 //   cout<<"+++++++++++++++"<<endl;
 //   n->print();
   get_region(hash_function(n),box,range);
@@ -196,9 +196,9 @@ void hash_shelf::rehash(unsigned int PPB){
 
 }
 
-list<particle_track*> * hash_shelf::shelf_to_list(){
+list<particle_track*> * hash_shelf::shelf_to_list() const{
   list<particle_track*>* tmp = new list<particle_track*>;
-  for(vector<hash_box*>::iterator cur_box = hash.begin(); cur_box<hash.end(); ++cur_box)
+  for( vector<hash_box* >::const_iterator cur_box = hash.begin(); cur_box<hash.end(); ++cur_box)
     {
       
       for(vector<particle_base*>::iterator cur_part = (*cur_box)->begin();
@@ -212,9 +212,9 @@ list<particle_track*> * hash_shelf::shelf_to_list(){
 }
 
 
-void hash_shelf::shelf_to_list(std::list<particle_track*> *tmp){
+void hash_shelf::shelf_to_list(std::list<particle_track*> *tmp) const{
   tmp->clear();
-  for(vector<hash_box*>::iterator cur_box = hash.begin(); cur_box<hash.end(); ++cur_box)
+  for(vector<hash_box*>::const_iterator cur_box = hash.begin(); cur_box<hash.end(); ++cur_box)
     {
       
       for(vector<particle_base*>::iterator cur_part = (*cur_box)->begin();

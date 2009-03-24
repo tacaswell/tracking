@@ -75,3 +75,17 @@ void Array::clear(){
   data_.clear();
   data_.resize(rows_*cols_);
 }
+
+
+void Array::clear(int rows){
+  cur_index_ = 0;
+  data_.clear();
+  data_.resize(rows*cols_);
+  rows_ = rows;
+}
+
+
+void Array::resize(int rows){
+  data_.resize(rows*cols_);
+  rows_ = rows;
+}

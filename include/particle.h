@@ -80,7 +80,7 @@ public:
   int unq_id_;
 
   ///Pring out a rasonable representation of the partile
-  virtual void print();
+  virtual void print() const;
   
   
   ///Default constructor
@@ -109,7 +109,7 @@ public:
   /**
      Retruns the distance from this particle to part_in
    */
-  virtual double distancesq(particle_base* part_in) const;
+  virtual double distancesq(const particle_base* part_in) const;
 
   /**
      returns a touple of the particle's position

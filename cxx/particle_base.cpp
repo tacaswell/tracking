@@ -57,10 +57,11 @@ void particle_base::fill_position(){
 }
 
 
-double particle_base::distancesq(particle_base* part_in)const{
+double particle_base::distancesq(const particle_base* part_in)const{
 
-
-  return (position_ - (part_in->get_position())).magnitude_sqr();
+  
+  //  return (position_ - (part_in->get_position())).magnitude_sqr();
+  return (position_ - (part_in->position_ )).magnitude_sqr();
 
   //   double X =get_value(wrapper::d_xpos) - part_in->get_value(wrapper::d_xpos);
   //   double Y =get_value(wrapper::d_ypos) - part_in->get_value(wrapper::d_ypos);
@@ -98,7 +99,7 @@ double particle_base::get_value(wrapper::p_vals type){
   return wrapper_in_->get_value(ind_, type);
 }
 
-void particle_base::print(){
+void particle_base::print()const{
   //    cout<<ind<<endl;
   cout<<unq_id_<<"\t";
   wrapper_in_->print(ind_);

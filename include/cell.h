@@ -22,79 +22,30 @@
 //containing parts covered by the terms of MATLAB User License, the
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
-#ifndef ARRAY_T
-#define ARRAY_T
 
-#include <vector>
+#ifndef CELL
+#define CELL
 
 namespace utilities{
-class Generic_wrapper_base;
-class Touple;
+class Array;
 /**
-   Class to accumulate touples into.
- */
-class Array{
+   A base class for collecting arrays in.  Largely inspired by the matlab cell objects
+*/
+
+class Cell {
 public:
-  /**
-     Sets the whole array to the specified output wrapper
-   */
-  void set_array(Generic_wrapper_base * out_wrapper) const;
-  /**
-     Adds a touple to the end of the array
-   */
-  void push(const Touple& touple_in);
-  /**
-     Sensible printing
-   */
-  void print();
-  /**
-     Constructor
-   */
-  Array(int rows);
-   /**
-     Returns the number of rows
-   */
-  int get_row_num()const{
-    return rows_;
+  virtual void add_array(const Array & in )=0 ;
+  int get_length() const{
+    return length_;
   }
-  /**
-     Returns the number of columns
-   */
-  int get_col_num()const{
-    return cols_;
-  }
-  /**
-     Clears the array
-   */
-  void clear();
-
-  /**
-     Clears and resizes the array
-   */
-  void clear(int rows);
-
-  /**
-     resizes the array
-   */
-  void resize(int rows);
+  Cell(int l);
 protected:
-  /**
-     Number of rows
-   */
-  int rows_;
-  /**
-     number of colmuns
-   */
-  int cols_;
-  /**
-     Vector to hold data
-   */
-  std::vector<double> data_;
-  /**
-     The current row, in [0,rows_-1]
-   */
-  int cur_index_;
-};
-}
+  int length_;
 
-#endif
+  
+};
+
+}
+#endif 
+
+

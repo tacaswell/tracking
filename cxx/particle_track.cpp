@@ -23,11 +23,13 @@
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
 #include "particle.h"
+#include "particle_track.h"
 #include "track_box.h"
 #include <typeinfo>
 #include <iostream>
 #include "exception.h"
 #include "touple.h"
+#include "hash_shelf.h"
 using namespace tracking;
 using std::set;
 using utilities::Ll_range_error;
@@ -54,14 +56,14 @@ particle_track::particle_track(int i_ind)
 
 
 
-void particle_track::print_t(int more){
+void particle_track::print_t(int more)const{
   particle_base::print();
   if(more-->0&&next!=NULL)
     next->print_t(more);
   
 }
 
-void particle_track::print(){
+void particle_track::print()const{
   particle_base::print();
 
 }
@@ -87,7 +89,7 @@ void particle_track::set_prev(particle_track* n_prev){
 }
 
 
-particle_track* particle_track::step_forwards(int n){
+const particle_track* particle_track::step_forwards(int n)const{
   if(n==0)
     return this;
 
@@ -99,7 +101,7 @@ particle_track* particle_track::step_forwards(int n){
   return next->step_forwards(--n);
 }
 
-particle_track* particle_track::step_backwards(int n){
+const particle_track* particle_track::step_backwards(int n)const{
   if(n==0)
     return this;
 
@@ -117,11 +119,12 @@ void particle_track::set_track(track_box* i_track){
 
 }
 
- track_box* particle_track::get_track(){
+ track_box* particle_track::get_track()const{
   return track;
 }
 
-int particle_track::get_track_id(){
+int particle_track::get_track_id()const{
+
   return track->get_id();
 }
 
@@ -153,4 +156,20 @@ double particle_track::get_value(wrapper::p_vals type){
       return track->get_id() ;
     }
   return particle_base::get_value(type);
+}
+
+
+double particle_track::distancesq_corrected(const particle_track* part_in)const{
+
+
+  return (
+	  (position_ - shelf_->get_cum_forward_disp()) 
+	  - (
+	     (part_in->position_ )  - ((part_in->shelf_)->get_cum_forward_disp()))
+	  ).magnitude_sqr();
+
+  //   double X =get_value(wrapper::d_xpos) - part_in->get_value(wrapper::d_xpos);
+  //   double Y =get_value(wrapper::d_ypos) - part_in->get_value(wrapper::d_ypos);
+  //   //  double Z =get_value(wrapper::d_zpos) - part_in->get_value(wrapper::d_zpos);
+  //   return X*X + Y*Y ;//+ Z*Z;
 }

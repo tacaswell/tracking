@@ -32,6 +32,7 @@ namespace utilities{
 class Histogram;
 template<class T>
 struct Svector;
+class Cell;
 }
 
 namespace tracking{
@@ -105,7 +106,7 @@ public:
   /**
      Generates the MSD plot for all the tarcks in this shelf.
    */
-  void msd(utilities::Svector<double> & msd_vec,utilities::Svector<int> & entry_count);
+  void msd(utilities::Svector<double> & msd_vec,utilities::Svector<int> & entry_count)const;
 
   /**
      Computes the average fourier transform of the tracks
@@ -117,8 +118,20 @@ public:
      @param time_step integer greater than zero less than maximum track length
      @param in histogram to be filled.  Is not cleared
    */
-  void msd_hist(int time_step ,utilities::Histogram & in);
+  void msd_hist(int time_step ,utilities::Histogram & in)const;
 
+  /**
+     sets the tracks into the cell that is passed in
+   */
+  void set_raw_disp_to_cell(utilities::Cell & output) const;
+
+  /**
+     returns the number of tracks in shelf
+   */
+  int get_track_count() const{
+    return (int)(track_map.size());
+  }
+  
   ///Constructor
   track_shelf(){};
   ///Destructor.  Destroys all of the tracks contained in the shelf

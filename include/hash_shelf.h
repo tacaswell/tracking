@@ -64,19 +64,19 @@ public:
   void rehash(unsigned int PPB);
   
   ///Generates the hash value based on a pointer to a particle object
-  virtual unsigned int hash_function(particle_base* p);
+  virtual unsigned int hash_function(particle_base* p) const;
 
   ///Destructor
   virtual ~hash_shelf();
 
   ///Print function
-  virtual void print();
+  virtual void print() const;
 
   ///@name Getter Functions
   ///@{
 
   ///returns the box at (n,m)
-  hash_box* get_box(int n, int m){
+  hash_box* get_box(int n, int m) const{
     return (hash.at(hash_dims[1]*n + m));
   }
   
@@ -84,12 +84,12 @@ public:
 
 
   void get_region( int n,  int m, 
-		  hash_box* box, int range=1);
+		  hash_box* box, int range=1) const;
 
   void get_region( int n,
-		   hash_box* box, int range=1);
+		   hash_box* box, int range=1) const;
   virtual void get_region( particle_base* n,
-		   hash_box* box, int range=1);
+		   hash_box* box, int range=1) const;
   ///@}
 
   ///@name g(r)
@@ -97,13 +97,13 @@ public:
 
   ///returns the fully normalized g(r)
   void gofr_norm(double max_d, int nbins,
-	    vector<double>& bin_count,vector<double>& bin_r);
+	    vector<double>& bin_count,vector<double>& bin_r) const;
   /**
      returns the total number of particles.  The bin_c is
      normalized by area and density, but not averaged
    */
   int gofr(double max_d, int nbins,
-	    vector<double>& bin_count,vector<double>& bin_r);
+	    vector<double>& bin_count,vector<double>& bin_r) const;
   ///@}
 
   /**
@@ -113,12 +113,12 @@ public:
 
      see the other version
    */
-  std::list<particle_track*> * shelf_to_list();
+  std::list<particle_track*> * shelf_to_list() const;
 
   /**
      Converts the whole shelf to a list
    */
-  void shelf_to_list(std::list<particle_track*> *tmp);
+  void shelf_to_list(std::list<particle_track*> *tmp) const;
   
   /**
      Computes the mean displacement of a frame.  This is done to deal
@@ -202,7 +202,7 @@ hash_shelf::hash_shelf(master_box_t<particle> & mb, int imsz1,
 
 }
 
-inline unsigned int hash_shelf::hash_function(particle_base* p){
+inline unsigned int hash_shelf::hash_function(particle_base* p) const{
   utilities::Touple cur_pos = p->get_position();
   
   return (unsigned int)

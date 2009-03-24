@@ -23,33 +23,34 @@
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
 #include "track_box.h"
-
+#include "particle_track.h"
+#include "array.h"
 using namespace tracking;
-
+using utilities::Array;
 int track_box::running_count = 0;
 
 track_box::track_box(particle_track * first){
-  t_first = first;
-  t_last = first;
+  t_first_ = first;
+  t_last_ = first;
 
   id = running_count++;
   if(first != NULL){
     first->set_track(this);
-    length = 1;
+    length_ = 1;
   }
 }
 
 void track_box::print(){
-  t_first->print_t(length);
+  t_first_->print_t(length_);
 }
 
-particle_track* track_box::at(int n){
-  if (n>length)
+const particle_track* track_box::at(int n)const{
+  if (n>length_)
     return NULL;
-  if(n<length/2)
-    return t_first->step_forwards(n);
+  if(n<length_/2)
+    return t_first_->step_forwards(n);
   else
-    return t_last->step_backwards(n);
+    return t_last_->step_backwards(n);
 
 }
 
@@ -61,24 +62,34 @@ void track_box::push_back(particle_track * next){
   //use the level of indrection so that we don't
   //have to reimplement the sanity checking
   //at this point
-  t_last->set_next(next);
-  next->set_prev(t_last);
+  t_last_->set_next(next);
+  next->set_prev(t_last_);
   next->set_track(this);
-  t_last = next;
+  t_last_ = next;
   //increment last incase something goes wrong
-  ++length;
+  ++length_;
 }
 
 
 //this needs some sanity checking/error handling
 void track_box::set_track(){
-  particle_track * current_particle = t_first;
+  particle_track * current_particle = t_first_;
   
   while(current_particle !=NULL){
     current_particle -> set_particle();
     current_particle = current_particle->get_next();
   }
 
-  
+    
+}
+
+void track_box::extract_raw_disp(Array & output) const{
+  output.clear(length_);
+  particle_track* working_part = t_first_;
+  for(int j = 0; j<length_;++j)
+    {
+      output.push(*(working_part->get_forward_disp()));
+      working_part = working_part->get_next();
+    }
   
 }

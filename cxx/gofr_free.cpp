@@ -213,7 +213,7 @@ int hash_box::gofr_norm_a(double max_d, unsigned int nbins, hash_box* points,
 }
 
 int hash_shelf::gofr(double max_d, int nbins, vector<double>& bin_count,
-		      vector<double>& bin_r){
+		      vector<double>& bin_r) const{
   //this needs some extra code to cope with edge cases between this
   // and making the hash table something better needs to be done about
   // how the size mismatch for the image and the hash table are handled
@@ -293,7 +293,7 @@ int hash_shelf::gofr(double max_d, int nbins, vector<double>& bin_count,
  
 }
 void hash_shelf::gofr_norm(double max_d, int nbins, vector<double>& bin_count,
-		      vector<double>& bin_r){
+		      vector<double>& bin_r) const{
   int count =   gofr(max_d, nbins,bin_count,bin_r);
 
   mymathobs.mydob.div = count ;
