@@ -232,3 +232,15 @@ void track_shelf::set_raw_disp_to_cell(Cell & output)const{
     }
 
 }
+
+
+void track_shelf::set_corrected_disp_to_cell(Cell & output)const{
+  tr_map::const_iterator working_track = track_map.begin();
+  Array tmp(1);
+  for(int j = 0; j<output.get_length();j++)
+    {
+      ((*(working_track++)).second)->extract_corrected_disp(tmp);
+      output.add_array(tmp);
+    }
+
+}

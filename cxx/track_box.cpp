@@ -88,7 +88,7 @@ void track_box::extract_raw_disp(Array & output) const{
   particle_track* working_part = t_first_;
   for(int j = 0; j<length_;++j)
     {
-      output.push(*(working_part->get_forward_disp()));
+      output.push((working_part->get_forward_disp()));
       working_part = working_part->get_next();
     }
   
