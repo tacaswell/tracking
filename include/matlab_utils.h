@@ -36,13 +36,13 @@ namespace utilities{
    secretly a 2D array, it may get transposed
 */
 template<class T>
-void vector_to_mat(mxArray** out, std::vector<T> &in){
+void vector_to_mat(mxArray** out, const std::vector<T> &in) {
   *out = mxCreateDoubleMatrix(1,in.size(), mxREAL);
-   double*data = mxGetPr(*out);
-   int j = 0;
-   typename std::vector< T >::iterator it;
-   for(it = in.begin(); it<in.end(); it++,j++)
-     data[j] = (double)(*it);
+  double*data = mxGetPr(*out);
+  int j = 0;
+  typename std::vector< T >::const_iterator it;
+  for(it = in.begin(); it<in.end(); ++it,++j)
+    data[j] = (double)(*it);
 };
 /**
    Converts an 2 dimension array using c-style indexing to

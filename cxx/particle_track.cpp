@@ -49,6 +49,7 @@ particle_track::particle_track(int i_ind)
    next(NULL),
    prev(NULL),
    track(NULL) ,
+   shelf_(NULL),
    n_pos_link(NULL),
    p_pos_link(NULL){
 
@@ -161,6 +162,11 @@ double particle_track::get_value(wrapper::p_vals type){
 
 double particle_track::distancesq_corrected(const particle_track* part_in)const{
 
+  if (shelf_ ==NULL)
+    {
+      throw "shelf not defined";
+      return 0;
+    }
 
   return (
 	  (position_ - shelf_->get_cum_forward_disp()) 
@@ -172,4 +178,14 @@ double particle_track::distancesq_corrected(const particle_track* part_in)const{
   //   double Y =get_value(wrapper::d_ypos) - part_in->get_value(wrapper::d_ypos);
   //   //  double Z =get_value(wrapper::d_zpos) - part_in->get_value(wrapper::d_zpos);
   //   return X*X + Y*Y ;//+ Z*Z;
+}
+
+const utilities::Touple particle_track::get_corrected_forward_disp()const
+{
+  if (shelf_ ==NULL)
+    {
+      throw "shelf not defined";
+      return utilities::Touple();
+    }
+  return forward_disp_ - shelf_->get_mean_forward_disp();
 }

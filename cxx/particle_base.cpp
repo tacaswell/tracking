@@ -71,7 +71,7 @@ double particle_base::distancesq(const particle_base* part_in)const{
 
 
 
-void particle_base::set_particle(){
+void particle_base::set_particle() const{
   if(wrapper_out_ ==NULL)
     throw "wrapper_out_ not initialized";
 
@@ -79,7 +79,7 @@ void particle_base::set_particle(){
   map<wrapper::p_vals,int> * map_tmp = wrapper_out_->get_map_ptr();
   wrapper_out_->start_new_particle();
     
-  for(map<wrapper::p_vals,int>::iterator it = map_tmp->begin();
+  for(map<wrapper::p_vals,int>::const_iterator it = map_tmp->begin();
       it!=map_tmp->end(); it++){
     tmp_type = (*it).first;
     wrapper_out_->set_new_value(tmp_type, get_value(tmp_type));
@@ -90,7 +90,7 @@ void particle_base::set_particle(){
 }
 
 
-double particle_base::get_value(wrapper::p_vals type){
+double particle_base::get_value(wrapper::p_vals type) const{
   //add check to make sure that the particle know about this
   //type
   if(type == wrapper::d_unqid)

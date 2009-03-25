@@ -101,7 +101,7 @@ public:
      wrapper they are pointing at.  This function needs to be
      renamed
    */
-  void set_track();
+  void set_track() const;
 
   /**
      Returns the length of the track

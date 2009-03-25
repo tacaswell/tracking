@@ -182,7 +182,74 @@ void track_shelf::msd(Svector<double> & msd_vec,Svector<int> & entry_count)const
   vector<double>::iterator it = msd_vec.data.begin();
   vector<int>::iterator it2 = entry_count.data.begin();
   for(;it<msd_vec.data.end();it++, it2++)
-    (*it) = (*it)/(double)(*(it2));
+    {
+      if(*it2 >0)
+	{
+	  (*it) = (*it)/(double)(*(it2));
+	}
+    }
+  
+}
+
+
+void track_shelf::msd_corrected(Svector<double> & msd_vec,Svector<int> & entry_count)const{
+  //this exception needs to get it's own class or something
+  if(msd_vec.data.size()!=entry_count.data.size())
+    throw "Vector size's don't match, change this exception";
+
+  int max_time_step = msd_vec.data.size();
+
+
+  double disp_sq_sum;
+  int tmp_count;
+
+  const particle_track* current = NULL;
+  const particle_track* next = NULL;
+
+  bool not_past_end = false;
+
+  
+
+  for(map<int,track_box*>::const_iterator working_track = track_map.begin();
+      working_track!=track_map.end(); working_track++)
+    {
+      
+      //      cout<<"Track legnth: "<<(*working_track).second->get_length()<<endl;
+      for(int j = 0; j<((*working_track).second->get_length()-1) && j < max_time_step;j++)
+	{
+	  tmp_count =0;
+	  disp_sq_sum = 0;
+	  
+	  not_past_end = true;
+	  
+	  current = (*working_track).second->get_first();
+	
+	while(not_past_end){
+	  try{
+	    next = current->step_forwards(j+1);
+	    disp_sq_sum += current->distancesq_corrected(next);
+	    ++tmp_count;
+	    current = next;
+	  }
+	  catch(Ll_range_error & e){
+	    not_past_end = false;
+	    msd_vec.data.at(j) += disp_sq_sum/tmp_count;
+	    ++(entry_count.data.at(j));
+	  }
+	}
+	}
+    }
+
+  vector<double>::iterator it = msd_vec.data.begin();
+  vector<int>::iterator it2 = entry_count.data.begin();
+  for(;it<msd_vec.data.end();it++, it2++)
+    {
+      if(*it2 >0)
+	{
+	  (*it) = (*it)/(double)(*(it2));
+	}
+    }
+
     
   
 }

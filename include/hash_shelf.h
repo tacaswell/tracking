@@ -49,6 +49,13 @@ public:
   */
   void push(particle_base * p);
 
+  /**
+     add the particle_track to the hash_shelf
+     @param p pointer to the particle to add
+  */
+  void push(particle_track * p);
+
+
   ///Templated constructor for dealing with templated master_box_t objects
   template <class particle>
   hash_shelf(master_box_t<particle> & mb, int imsz1, 

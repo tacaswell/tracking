@@ -50,10 +50,37 @@ void hash_shelf::push(particle_base * p){
 
     return;
   }    
+  
 //   cout<<"particle: "<<endl;
 //   p->print();
 //   cout<<"hash_box: "<<hash_function(p)<<endl;
 }
+
+
+void hash_shelf::push(particle_track * p){
+  try{
+    (hash.at(hash_function(p)))->push(p);
+  }
+  catch (std::exception& e)    {
+    cout << e.what() << endl;
+    std::cout<<hash_function(p)<<"\t"<<hash.size()<<std::endl;
+    std::cout<<p->get_value(wrapper::d_ypos)<<"\t"<<p->get_value(wrapper::d_xpos)<<std::endl;
+    p->print();
+    throw;
+
+  }
+  catch(...){
+    std::cout<<"the problem is here"<<std::endl;
+
+    return;
+  }    
+  
+  p->set_shelf(this);
+//   cout<<"particle: "<<endl;
+//   p->print();
+//   cout<<"hash_box: "<<hash_function(p)<<endl;
+}
+
 
 hash_shelf::hash_shelf(unsigned int imsz1, 
 		       unsigned int imsz2, unsigned int PPB,
@@ -239,7 +266,7 @@ void hash_shelf::compute_mean_forward_disp(utilities::Touple & cum_disp_in){
 	cur_part!=(*cur_box)->end(); ++cur_part) {
       current_part = static_cast<particle_track*>(*cur_part);
       if(current_part->get_next() != NULL){
-	mean_forward_disp_ += *(current_part->get_forward_disp());
+	mean_forward_disp_ += (current_part->get_raw_forward_disp());
 	++count;
       }
       

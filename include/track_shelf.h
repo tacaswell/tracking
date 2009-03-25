@@ -109,6 +109,11 @@ public:
   void msd(utilities::Svector<double> & msd_vec,utilities::Svector<int> & entry_count)const;
 
   /**
+     Generates the corrected MSD plot for all the tarcks in this shelf.
+   */
+  void msd_corrected(utilities::Svector<double> & msd_vec,utilities::Svector<int> & entry_count)const;
+
+  /**
      Computes the average fourier transform of the tracks
    */
   void track_fft();
@@ -124,6 +129,11 @@ public:
      sets the tracks into the cell that is passed in
    */
   void set_raw_disp_to_cell(utilities::Cell & output) const;
+
+  /**
+     sets the corrected tracks into the cell that is passed in
+   */
+  void set_corrected_disp_to_cell(utilities::Cell & output) const;
 
   /**
      returns the number of tracks in shelf

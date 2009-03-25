@@ -101,10 +101,10 @@ public:
 
   ///Returns the value of 'type' for the particle as specified
   ///by the in_wrapper
-  virtual double get_value(wrapper::p_vals type);
+  virtual double get_value(wrapper::p_vals type) const;
 
   ///Store this particle in the output wrapper structure
-  virtual void set_particle();
+  virtual void set_particle() const;
   //  virtual void set_particle_old();
   /**
      Retruns the distance from this particle to part_in

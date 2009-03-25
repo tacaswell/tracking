@@ -72,8 +72,8 @@ void track_box::push_back(particle_track * next){
 
 
 //this needs some sanity checking/error handling
-void track_box::set_track(){
-  particle_track * current_particle = t_first_;
+void track_box::set_track() const{
+  const particle_track * current_particle = t_first_;
   
   while(current_particle !=NULL){
     current_particle -> set_particle();
@@ -85,10 +85,22 @@ void track_box::set_track(){
 
 void track_box::extract_raw_disp(Array & output) const{
   output.clear(length_);
-  particle_track* working_part = t_first_;
+  const particle_track* working_part = t_first_;
   for(int j = 0; j<length_;++j)
     {
-      output.push((working_part->get_forward_disp()));
+      output.push((working_part->get_raw_forward_disp()));
+      working_part = working_part->get_next();
+    }
+  
+}
+
+
+void track_box::extract_corrected_disp(Array & output) const{
+  output.clear(length_);
+  const particle_track* working_part = t_first_;
+  for(int j = 0; j<length_;++j)
+    {
+      output.push((working_part->get_corrected_forward_disp()));
       working_part = working_part->get_next();
     }
   

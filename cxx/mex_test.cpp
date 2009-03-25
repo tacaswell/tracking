@@ -143,34 +143,53 @@ void mexFunction( int nlhs, mxArray *plhs[],
     
     cout<<"total number of particles is: "<<bt.size()<<endl;;
   
-    int frames = 1462;
-    //    hash_case s(bt,dims,5,1462);
+    int frames = 1462;		// 
     hash_case s(bt,dims,5,frames);
     cout<<"case built"<<endl;
     s.link(5,tracks);
   
     cout<<"linked"<<endl;
     s.compute_mean_disp();
-  
+    cout<<"mean disp"<<endl;
+    tracks.remove_short_tracks(15);
+    cout<<"trimed"<<endl;
+    // above here is the acctual tracking
+
     Array test_a(frames);
-    s.get_cum_disp(test_a);
+    s.get_mean_disp(test_a);
 
-    Generic_parameters_matlab arr_parm(frames,2,plhs+1);
-
+    Generic_parameters_matlab arr_parm(frames,2,plhs+2);
     Generic_wrapper_base * wrapper = arr_parm.make_wrapper();
-  
     test_a.set_array(wrapper);
 
-  
-    //  s.print();
-  
-    bt.initialize_out();
-    tracks.set_shelf();
-    bt.finalize_out();
-    
-    Cell_matlab test_cell(tracks.get_track_count(),plhs+2);
-    tracks.set_raw_disp_to_cell(test_cell);
-    
+//     // uncorrected msd
+     Svector<double> msd_vec;
+     Svector<int> msd_count_vec;
+//     msd_vec.data.resize(20);
+//     msd_count_vec.data.resize(20);
+//     cout<<"started uc msd"<<endl;
+//     tracks.msd(msd_vec, msd_count_vec);
+//     cout<<"ended uc msd"<<endl;
+//     vector_to_mat(plhs+1, msd_vec.data);
+
+    // corrected msd
+    msd_vec.data.clear();
+    msd_vec.data.resize(200);
+    msd_count_vec.data.clear();
+    msd_count_vec.data.resize(200);
+    tracks.msd_corrected(msd_vec, msd_count_vec);
+    vector_to_mat(plhs+1, msd_count_vec.data);
+    vector_to_mat(plhs, msd_vec.data);
+    cout<<"c msd"<<endl;
+
+//     // un corrected tracks
+//     Cell_matlab test_cell(tracks.get_track_count(),plhs+3);
+//     tracks.set_raw_disp_to_cell(test_cell);
+//     cout<<"uc tracks"<<endl;
+//     // corrected tracks
+//     Cell_matlab test_cell2(tracks.get_track_count(),plhs+4);
+//     tracks.set_corrected_disp_to_cell(test_cell2);
+//     cout<<"c tracks"<<endl;
 
   }
   catch(const char * err){
@@ -193,7 +212,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
   //   Histogram hist2(25,0,100);
   
   //   tracks.track_length_histogram(hist1);
-  //   tracks.remove_short_tracks(10);
+  //  
   //   tracks.track_length_histogram(hist2);
   //   hist1.print();
   //   hist2.print();

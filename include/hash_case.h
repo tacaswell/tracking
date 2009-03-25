@@ -201,7 +201,7 @@ void hash_case::init(master_box_t<particle> & mb,vector<int> img_dims,
     h_case.at(j) = new hash_shelf(img_dims, ppb,j);
   }
   // cout<<
-  particle_base *p;
+  particle *p;
   for(unsigned int j = 0; j<mb.size(); j++){
     p = mb.get_particle(j);
     try{//    cout<<(int)p->get_value(wrapper::d_frame)<<"-";

@@ -76,10 +76,6 @@ protected:
    */
   utilities::Touple forward_disp_;
 
-  /**
-     Returns the displacement squared corrected for the net drift
-   */
-  double distancesq_corrected(const particle_track* part_in)const;
 public:
   
   ///Friends with track_box to allow it to screw with the linked list
@@ -143,8 +139,8 @@ public:
   /**
      Returns the corrected forward displacement
    */
-  const utilities::Touple& get_corrected_forward_disp()const
-  {return forward_disp_ - shelf_->;}
+  const utilities::Touple get_corrected_forward_disp()const;
+
   
   /**
      returns the particle n from the current particle forward down the
@@ -214,6 +210,17 @@ public:
   
   const hash_shelf* get_shelf()const{
     return shelf_;
+  }
+
+  
+  /**
+     Returns the displacement squared corrected for the net drift
+   */
+  double distancesq_corrected(const particle_track* part_in)const;
+  
+  void set_shelf(hash_shelf* shelf)
+  {
+    shelf_ = shelf;
   }
   
 };
