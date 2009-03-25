@@ -125,19 +125,27 @@ public:
     If this is the last particle in the track than NULL
     will be returned.
   */
-  particle_track* get_next()const{return next;}
+  const particle_track* get_next()const{return next;}
 
   /**
     Returns a pointer to the previous particle in the track.
     If this is the first particle in the track than NULL
     will be returned.
    */
-  particle_track* get_prev()const{return prev;}
+  const particle_track* get_prev()const{return prev;}
 
+  /**
+     Returns the uncorrected forward displacement
+   */
+  const utilities::Touple& get_raw_forward_disp()const
+  {return forward_disp_;}
 
-  const utilities::Touple* get_forward_disp()const
-  {return &forward_disp_;}
-
+  /**
+     Returns the corrected forward displacement
+   */
+  const utilities::Touple& get_corrected_forward_disp()const
+  {return forward_disp_ - shelf_->;}
+  
   /**
      returns the particle n from the current particle forward down the
      list where n=0 is the current particle.  If the end of the track
