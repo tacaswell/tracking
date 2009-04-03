@@ -23,6 +23,7 @@
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
 #include "particle.h"
+#include <cmath>
 
 using namespace tracking;
  
@@ -32,6 +33,7 @@ using std::list;
 using std::cout;
 using std::endl;
 
+using utilities::Touple;
 int particle_base::running_total_ = 0;
 
 wrapper_o_base* particle_base::wrapper_out_ = NULL;
@@ -97,6 +99,15 @@ double particle_base::get_value(wrapper::p_vals type) const{
     return (double)unq_id_;
   
   return wrapper_in_->get_value(ind_, type);
+}
+
+double particle_base::get_r(const utilities::Touple & origin) const{
+  return (position_ - origin).magnitude();
+}
+
+double particle_base::get_theta(const utilities::Touple & origin) const{
+  Touple tmp =  (position_ - origin);
+  return atan2(tmp[2], tmp[1]);
 }
 
 void particle_base::print()const{

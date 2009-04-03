@@ -50,26 +50,6 @@ namespace tracking{
 
  */
 class particle_base{
-protected:
-  ///A running total of all particles created 
-  static int running_total_;
-  ///object that takes care of all the underling data structures.
-  static wrapper_i_base* wrapper_in_;
-  ///object that takes care of 
-  static wrapper_o_base* wrapper_out_;
-  ///Vector of the types of data that
-  ///remove this
-
-  static std::set<wrapper::p_vals>* data_types_;
-  ///Identifier that comes from the wrapper
-  int ind_;
-
-  /**
-     New attempt at storing the position data, this has the 
-     problem of taking more memory, but it might help the time.
-     This will also make keeping track of the displacements.
-   */
-  utilities::Touple position_;
   
 public:
   ///A program generated global unique id, useful for tracking, comparing
@@ -112,6 +92,18 @@ public:
   virtual double distancesq(const particle_base* part_in) const;
 
   /**
+     Returns the distance of the particle from the specified origin
+     @param origin the cordinates of the new origin
+   */
+  double get_r(const utilities::Touple & origin) const;
+
+  /**
+     Returns the angle in the plane from the Y-axis
+     @param origin the cordinates of the new origin
+   */
+  double get_theta(const utilities::Touple & origin) const;
+
+  /**
      returns a touple of the particle's position
    */
   const utilities::Touple & get_position() const{
@@ -130,6 +122,29 @@ public:
      Intialize the static data types for all particles
    */
   static void intialize_data_types(std::set<wrapper::p_vals>*  data_types);
+
+protected:
+  ///A running total of all particles created 
+  static int running_total_;
+  ///object that takes care of all the underling data structures.
+  static wrapper_i_base* wrapper_in_;
+  ///object that takes care of 
+  static wrapper_o_base* wrapper_out_;
+  ///Vector of the types of data that
+  ///remove this
+
+  static std::set<wrapper::p_vals>* data_types_;
+  ///Identifier that comes from the wrapper
+  int ind_;
+
+  /**
+     New attempt at storing the position data, this has the 
+     problem of taking more memory, but it might help the time.
+     This will also make keeping track of the displacements.
+   */
+  utilities::Touple position_;
+
+  
 private:
   void fill_position();
 

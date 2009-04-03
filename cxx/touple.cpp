@@ -147,6 +147,26 @@ double Touple::magnitude() const{
   return sqrt(magnitude_sqr());
 }
 
+double Touple::dot(const Touple & y) const{
+  double tmp = 0;
+  for(int j = 0;j<length_; ++j)
+    tmp += data_[j]*y.data_[j] ;
+  return tmp;
+}
+
+void Touple::make_unit(){
+  double tmp = magnitude();
+  for(int j = 0;j<length_; ++j)
+    data_[j] /= tmp ;
+}
+
+Touple Touple::direction() const{
+  Touple tmp = (*this);
+  tmp.make_unit();
+  return tmp;
+
+}
+
 void Touple::clear(){
   for(int j = 0;j<length_; ++j)
     data_[j] =0 ;

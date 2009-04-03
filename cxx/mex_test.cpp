@@ -151,7 +151,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
     cout<<"linked"<<endl;
     s.compute_mean_disp();
     cout<<"mean disp"<<endl;
-    tracks.remove_short_tracks(15);
+    tracks.remove_short_tracks(10);
     cout<<"trimed"<<endl;
     // above here is the acctual tracking
 
@@ -187,9 +187,9 @@ void mexFunction( int nlhs, mxArray *plhs[],
 //     tracks.set_raw_disp_to_cell(test_cell);
 //     cout<<"uc tracks"<<endl;
 //     // corrected tracks
-//     Cell_matlab test_cell2(tracks.get_track_count(),plhs+4);
-//     tracks.set_corrected_disp_to_cell(test_cell2);
-//     cout<<"c tracks"<<endl;
+    Cell_matlab test_cell2(tracks.get_track_count(),plhs+3);
+    tracks.set_corrected_disp_to_cell(test_cell2);
+    cout<<"c tracks"<<endl;
 
   }
   catch(const char * err){
@@ -202,6 +202,14 @@ void mexFunction( int nlhs, mxArray *plhs[],
   catch(...){
     cout<<"uncaught error"<<endl;
   }
+
+//   cout<<"sizeof(particle_base) "<<sizeof(particle_base)<<endl;
+//   cout<<"sizeof(particle_track) "<<sizeof(particle_track)<<endl;
+//   cout<<"sizeof(utilities::Touple) "<<sizeof(utilities::Touple)<<endl;
+//   cout<<"sizeof(double) "<<sizeof(double)<<endl;
+//   cout<<"sizeof(double*) "<<sizeof(double*)<<endl;
+//   cout<<"sizeof(std::list<pair<particle_track*, double> >*) "<<sizeof(std::list<pair<particle_track*, double> >*)<<endl;
+//   cout<<"sizeof(int) "<<sizeof(int)<<endl;
 
   //   //  s.print();
 

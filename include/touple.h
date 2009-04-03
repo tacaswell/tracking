@@ -134,7 +134,20 @@ public:
    */
   double magnitude () const;
 
+  /**
+     take the dot product between two touple
+   */
+  double dot(const Touple & y) const;
 
+  /**
+     makes a touple a unit vector
+   */
+  void make_unit();
+
+  /**
+     makes a touple a unit vector
+   */
+  Touple direction() const;
 
   /**
      prints the data
