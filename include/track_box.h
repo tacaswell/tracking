@@ -94,7 +94,7 @@ public:
     return id;
   }
 
-  virtual ~track_box(){};
+  virtual ~track_box();
   
   /**
      outputs the particles in the track to what ever output

@@ -76,6 +76,8 @@ protected:
    */
   utilities::Touple forward_disp_;
 
+
+
 public:
   
   ///Friends with track_box to allow it to screw with the linked list
@@ -104,10 +106,7 @@ public:
   ///Destructor
   ~particle_track();
 
-  /**
-     calls base class print
-   */
-  void print()const;
+
   /**
      recursive print function for printing out the sequence of a
      track.
@@ -122,6 +121,13 @@ public:
     will be returned.
   */
   const particle_track* get_next()const{return next;}
+
+  /**
+    Returns a pointer to the next particle in the track.
+    If this is the last particle in the track than NULL
+    will be returned that is not const protecte
+  */
+  particle_track* get_next(){return next;}
 
   /**
     Returns a pointer to the previous particle in the track.
@@ -202,7 +208,7 @@ public:
   /**
      Returns the value of type for this particle.
    */
-  virtual double get_value(wrapper::p_vals type);
+  virtual double get_value(wrapper::p_vals type) const;
 
   /**
      Returns pointer to the shelf the particle resides in
@@ -217,11 +223,21 @@ public:
      Returns the displacement squared corrected for the net drift
    */
   double distancesq_corrected(const particle_track* part_in)const;
-  
+
+  /**
+     Sets what shelf the particle is in
+    
+     This needs to have checks added
+   */
   void set_shelf(hash_shelf* shelf)
   {
     shelf_ = shelf;
-  }
+  } 
+
+  /**
+     Clears all of the data associated with the tracking
+   */
+  virtual void clear_track_data();
   
 };
 }

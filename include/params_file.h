@@ -42,21 +42,27 @@ public:
   ///name of file to read data from
   string fname;
 
-  ///constructor
+
+  /**
+     constructor
+     @param a number of particles
+     @param s filename
+     @param contents map of contents
+   */
   params_file(int a,  string  s, std::map<wrapper::p_vals,int> contents )
-    :params(contents)
+    :params(contents),rows(a),cols(contents.size()), fname(s)
   {
-    rows = a;
-    cols = contents.size();
-    fname = s;
   }
 
-  ///constructor with default file name
+ 
+
+  /**
+     constructor  with default file name
+     @param a number of particles
+     @param contents map of contents
+   */
   params_file(int a,  std::map<wrapper::p_vals,int> contents )
-    :params(contents){
-    rows = a;
-    cols = contents.size();
-    fname = string("dummy.txt");
+    :params(contents),rows(a),cols(contents.size()), fname("dummy.txt"){
   }
 
   wrapper_i_base* make_wrapper_in(){

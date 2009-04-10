@@ -143,16 +143,35 @@ double Touple::magnitude_sqr() const{
   return tmp;
 }
 
-double Touple::magnitude() const{
+double Touple::magnitude() const
+{
   return sqrt(magnitude_sqr());
 }
 
-double Touple::dot(const Touple & y) const{
+double Touple::dot(const Touple & y) const
+{
   double tmp = 0;
   for(int j = 0;j<length_; ++j)
     tmp += data_[j]*y.data_[j] ;
   return tmp;
 }
+
+
+double Touple::prod()const
+{
+  double tmp = 1;
+  for(int j = 0;j<length_; ++j)
+    tmp *= data_[j];
+  return tmp;
+  
+}
+double Touple::sum()const
+{
+  double tmp = 0;
+  for(int j = 0;j<length_; ++j)
+    tmp += data_[j];
+  return tmp;
+} 
 
 void Touple::make_unit(){
   double tmp = magnitude();

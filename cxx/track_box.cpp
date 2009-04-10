@@ -95,6 +95,7 @@ void track_box::extract_raw_disp(Array & output) const{
 }
 
 
+
 void track_box::extract_corrected_disp(Array & output) const{
   output.clear(length_);
   const particle_track* working_part = t_first_;
@@ -104,4 +105,15 @@ void track_box::extract_corrected_disp(Array & output) const{
       working_part = working_part->get_next();
     }
   
+}
+
+track_box::~track_box(){
+  particle_track* cur_part = t_first_;
+  particle_track* next_part = NULL;
+  while(cur_part != NULL)
+    {
+      next_part = cur_part->get_next();
+      cur_part-> clear_track_data();
+      cur_part = next_part;
+    }
 }

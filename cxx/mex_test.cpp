@@ -45,10 +45,11 @@
 
 #include "wrapper_i_matlab.h"
 #include "params_matlab.h"
-#include "hash_case3d.h"
+
 
 #include "wrapper_i_ning.h"
 #include "params_ning.h"
+#include "params_file.h"
 
 
 #include "mex.h"
@@ -117,9 +118,11 @@ void mexFunction( int nlhs, mxArray *plhs[],
     params_matlab p_in = params_matlab(prhs,contents);
     contents.insert(pair<wrapper::p_vals, int>(wrapper::d_trackid,3));
   
-    params_matlab p_out = params_matlab(plhs,contents,mxGetM(*prhs),
-					contents.size());
-  
+//     params_matlab p_out = params_matlab(plhs,contents,mxGetM(*prhs),
+// 					contents.size());
+
+    params_file p_out = params_file(mxGetM(*prhs),"new_output.txt",contents);
+
 
     // params_ning p_in = params_ning(3,100*1000,contents);
 
@@ -132,64 +135,75 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
     master_box_t<particle_track>bt(&p_in,&p_out);
   
-    vector<int> dims;	
+    utilities::Touple dims;	
     //  for(int t = 0; t<3;t++)	
     //    dims.push_back(80);    
-    dims.push_back(520);
-    dims.push_back(1400);
+    dims[0] = (520);
+    dims[1] = (1390);
 
     //  dims.push_back(50);
     track_shelf tracks;
     
     cout<<"total number of particles is: "<<bt.size()<<endl;;
   
-    int frames = 1462;		// 
+    int frames = 5;//1462;		// 
     hash_case s(bt,dims,5,frames);
     cout<<"case built"<<endl;
     s.link(5,tracks);
   
     cout<<"linked"<<endl;
-    s.compute_mean_disp();
-    cout<<"mean disp"<<endl;
-    tracks.remove_short_tracks(10);
-    cout<<"trimed"<<endl;
-    // above here is the acctual tracking
 
-    Array test_a(frames);
-    s.get_mean_disp(test_a);
+    bt.initialize_out();
+    for(int j = 0; j<bt.size();++j)
+      {
+	if(bt.get_particle(j) ==NULL)
+	  cout<<"NULL"<<endl;
+	(bt.get_particle(j))->set_particle () ;
+	
+      }
+    bt.finalize_out ();
+    
+  //   s.compute_mean_disp();
+//     cout<<"mean disp"<<endl;
+//     tracks.remove_short_tracks(10);
+//     cout<<"trimed"<<endl;
+//     // above here is the acctual tracking
 
-    Generic_parameters_matlab arr_parm(frames,2,plhs+2);
-    Generic_wrapper_base * wrapper = arr_parm.make_wrapper();
-    test_a.set_array(wrapper);
+//     Array test_a(frames);
+//     s.get_mean_disp(test_a);
 
-//     // uncorrected msd
-     Svector<double> msd_vec;
-     Svector<int> msd_count_vec;
-//     msd_vec.data.resize(20);
-//     msd_count_vec.data.resize(20);
-//     cout<<"started uc msd"<<endl;
-//     tracks.msd(msd_vec, msd_count_vec);
-//     cout<<"ended uc msd"<<endl;
-//     vector_to_mat(plhs+1, msd_vec.data);
+//     Generic_parameters_matlab arr_parm(frames,2,plhs+2);
+//     Generic_wrapper_base * wrapper = arr_parm.make_wrapper();
+//     test_a.set_array(wrapper);
 
-    // corrected msd
-    msd_vec.data.clear();
-    msd_vec.data.resize(200);
-    msd_count_vec.data.clear();
-    msd_count_vec.data.resize(200);
-    tracks.msd_corrected(msd_vec, msd_count_vec);
-    vector_to_mat(plhs+1, msd_count_vec.data);
-    vector_to_mat(plhs, msd_vec.data);
-    cout<<"c msd"<<endl;
+// //     // uncorrected msd
+//      Svector<double> msd_vec;
+//      Svector<int> msd_count_vec;
+// //     msd_vec.data.resize(20);
+// //     msd_count_vec.data.resize(20);
+// //     cout<<"started uc msd"<<endl;
+// //     tracks.msd(msd_vec, msd_count_vec);
+// //     cout<<"ended uc msd"<<endl;
+// //     vector_to_mat(plhs+1, msd_vec.data);
 
-//     // un corrected tracks
-//     Cell_matlab test_cell(tracks.get_track_count(),plhs+3);
-//     tracks.set_raw_disp_to_cell(test_cell);
-//     cout<<"uc tracks"<<endl;
-//     // corrected tracks
-    Cell_matlab test_cell2(tracks.get_track_count(),plhs+3);
-    tracks.set_corrected_disp_to_cell(test_cell2);
-    cout<<"c tracks"<<endl;
+//     // corrected msd
+//     msd_vec.data.clear();
+//     msd_vec.data.resize(200);
+//     msd_count_vec.data.clear();
+//     msd_count_vec.data.resize(200);
+//     tracks.msd_corrected(msd_vec, msd_count_vec);
+//     vector_to_mat(plhs+1, msd_count_vec.data);
+//     vector_to_mat(plhs, msd_vec.data);
+//     cout<<"c msd"<<endl;
+
+// //     // un corrected tracks
+// //     Cell_matlab test_cell(tracks.get_track_count(),plhs+3);
+// //     tracks.set_raw_disp_to_cell(test_cell);
+// //     cout<<"uc tracks"<<endl;
+// //     // corrected tracks
+//     Cell_matlab test_cell2(tracks.get_track_count(),plhs+3);
+//     tracks.set_corrected_disp_to_cell(test_cell2);
+//    cout<<"c tracks"<<endl;
 
   }
   catch(const char * err){

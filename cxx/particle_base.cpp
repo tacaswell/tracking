@@ -80,13 +80,15 @@ void particle_base::set_particle() const{
   wrapper::p_vals tmp_type;
   map<wrapper::p_vals,int> * map_tmp = wrapper_out_->get_map_ptr();
   wrapper_out_->start_new_particle();
-    
-  for(map<wrapper::p_vals,int>::const_iterator it = map_tmp->begin();
-      it!=map_tmp->end(); it++){
-    tmp_type = (*it).first;
-    wrapper_out_->set_new_value(tmp_type, get_value(tmp_type));
-  }
-  
+
+
+   for(map<wrapper::p_vals,int>::const_iterator it = map_tmp->begin();
+       it!=map_tmp->end(); it++){
+     tmp_type = (*it).first;
+     
+     
+     wrapper_out_->set_new_value(tmp_type, get_value(tmp_type));
+   }
   wrapper_out_->end_new_particle();
   
 }

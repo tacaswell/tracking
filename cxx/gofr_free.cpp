@@ -238,8 +238,8 @@ int hash_shelf::gofr(double max_d, int nbins, vector<double>& bin_count,
       /nbins;
 
   // the hack to have asymteric buffers is here
-  for(unsigned int j = buffer; j<(hash_dims[0]-buffer-1);j++){
-    for(unsigned int k = buffer; k<(hash_dims[1]-buffer-1);k++){
+  for(unsigned int j = buffer; j<(hash_dims_[0]-buffer-1);j++){
+    for(unsigned int k = buffer; k<(hash_dims_[1]-buffer-1);k++){
       working_box = get_box(j,k);
       get_region(j,k,&working_region,buffer);
 
@@ -271,7 +271,7 @@ int hash_shelf::gofr(double max_d, int nbins, vector<double>& bin_count,
   //  mydob.div = count;
   // hack consequences here too
   mymathobs.mydob.div = count * 1 /  
-    (double)(ppb*ppb*(hash_dims[0]-2*buffer -1)*(hash_dims[1]-2*buffer-1));
+    (double)(ppb*ppb*(hash_dims_[0]-2*buffer -1)*(hash_dims_[1]-2*buffer-1));
 
   cout<<"count: "<<count<<endl;
 //   cout<<"buffer: "<<buffer<<endl;

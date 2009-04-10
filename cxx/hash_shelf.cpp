@@ -28,18 +28,20 @@
 
 #include<iostream>
 
+#include "coarse_grain_array.h"
+
 using namespace tracking;
 using std::list;
-
-
+using utilities::Coarse_grain_array;
+using utilities::Touple;
 
 void hash_shelf::push(particle_base * p){
   try{
-    (hash.at(hash_function(p)))->push(p);
+    (hash_.at(hash_function(p)))->push(p);
   }
   catch (std::exception& e)    {
     cout << e.what() << endl;
-    std::cout<<hash_function(p)<<"\t"<<hash.size()<<std::endl;
+    std::cout<<hash_function(p)<<"\t"<<hash_.size()<<std::endl;
     std::cout<<p->get_value(wrapper::d_ypos)<<"\t"<<p->get_value(wrapper::d_xpos)<<std::endl;
     p->print();
     throw;
@@ -59,11 +61,11 @@ void hash_shelf::push(particle_base * p){
 
 void hash_shelf::push(particle_track * p){
   try{
-    (hash.at(hash_function(p)))->push(p);
+    (hash_.at(hash_function(p)))->push(p);
   }
   catch (std::exception& e)    {
     cout << e.what() << endl;
-    std::cout<<hash_function(p)<<"\t"<<hash.size()<<std::endl;
+    std::cout<<hash_function(p)<<"\t"<<hash_.size()<<std::endl;
     std::cout<<p->get_value(wrapper::d_ypos)<<"\t"<<p->get_value(wrapper::d_xpos)<<std::endl;
     p->print();
     throw;
@@ -86,13 +88,13 @@ hash_shelf::hash_shelf(unsigned int imsz1,
 		       unsigned int imsz2, unsigned int PPB,
 		       int i_frame):  ppb(PPB), plane_number(i_frame)
 {
-  img_dims.push_back(imsz1);
-  img_dims.push_back(imsz2);
+  img_dims_[0] = (imsz1);
+  img_dims_[1] = (imsz2);
   init2();
 }
 
-hash_shelf::hash_shelf(vector<int> imgsz, unsigned int ippb, int i_frame):
-  img_dims(imgsz),  ppb(ippb),  plane_number(i_frame)
+hash_shelf::hash_shelf(utilities::Touple imgsz, unsigned int ippb, int i_frame):
+  img_dims_(imgsz),  ppb(ippb),  plane_number(i_frame)
 {  
   init2();
 }
@@ -107,34 +109,33 @@ hash_shelf::hash_shelf(vector<int> imgsz, unsigned int ippb, int i_frame):
 // }
 
 void hash_shelf::init2(){
-  hash_dims.clear();
-  hash.clear();
-  for(vector<int>::iterator it = img_dims.begin();
-      it<img_dims.end(); it++)
-    hash_dims.push_back((*it)%ppb==0?(*it)/ppb:((*it)/ppb)+1);
+  int k = Touple::length_;
+  hash_dims_.clear();
+  hash_.clear();
+
+  for(int j = 0; j<k;++j)
+    {
+      hash_dims_[j] = (((int)(img_dims_[j]))%ppb==0?((int)img_dims_[j])/ppb:(((int)img_dims_[j])/ppb)+1);
+    }
   // tac 2009-03-11
   // hash_dims.push_back((*it)%ppb==0?(*it)/ppb:(1+(*it)/ppb)+1);
 
 
-  int tmp_prod = 1;
-  for(vector<int>::iterator it = hash_dims.begin();
-      it<hash_dims.end(); it++)
-    tmp_prod*=(*it);
-  
+  int tmp_prod = (int) hash_dims_.prod();
 
 
-  hash.reserve(tmp_prod);
+  hash_.reserve(tmp_prod);
   for(int j = 0; j<tmp_prod;j++)
-    hash.push_back(new hash_box());
+    hash_.push_back(new hash_box());
 }
 
 
 void hash_shelf::print() const{
   
 
-  for(int i=0; i<hash_dims[0];i++){
-    for(int j=0; j<hash_dims[1];j++){
-      cout<<(hash.at(j*hash_dims[0] + i))->get_size() <<"\t";
+  for(int i=0; i<hash_dims_[0];i++){
+    for(int j=0; j<hash_dims_[1];j++){
+      cout<<(hash_.at(j*(int)hash_dims_[0] + i))->get_size() <<"\t";
     }
     cout<<endl;
   }
@@ -156,11 +157,11 @@ void hash_shelf::get_region( int n, int m,
 
 
    int j_bot = (((n-range)>=0)?(n-range):0);
-   int j_top = ((n+range)<((int)hash_dims[0]-1)
+   int j_top = ((n+range)<((int)hash_dims_[0]-1)
 		?(n+range+1):
-		(hash_dims[0]-1));
+		((int)hash_dims_[0]-1));
    int k_bot = ((m-range)>0?(m-range):0);
-   int k_top = ((m+range)<((int)hash_dims[1]-1)?(m+range+1):(hash_dims[1]-1));
+   int k_top = ((m+range)<((int)hash_dims_[1]-1)?(m+range+1):((int)hash_dims_[1]-1));
 	    
 //     cout<<"n: "<<n<<"\t"
 //         <<"m: "<<m<<"\t"
@@ -174,7 +175,7 @@ void hash_shelf::get_region( int n, int m,
      for( int j = j_bot; j<=j_top;j++){
        for( int k = k_bot; k<=k_top;k++){
 
-	 box->append((hash.at(j+hash_dims[0]*k)));
+	 box->append((hash_.at(j+int(hash_dims_[0])*k)));
 	 //       cout<<j<<"\t"<<k<<endl;
 	 //       cout<<"appending box at: "<<j+hash_dims[0]*k<<endl;
 
@@ -192,7 +193,7 @@ void hash_shelf::get_region( int n, int m,
 
 void hash_shelf::get_region( int n, 
 			     hash_box* box,int range) const{
-  get_region(n%hash_dims[0], n/hash_dims[0], box, range);
+  get_region(n%int(hash_dims_[0]), n/int(hash_dims_[0]), box, range);
 
 }
 
@@ -225,7 +226,7 @@ void hash_shelf::rehash(unsigned int PPB){
 
 list<particle_track*> * hash_shelf::shelf_to_list() const{
   list<particle_track*>* tmp = new list<particle_track*>;
-  for( vector<hash_box* >::const_iterator cur_box = hash.begin(); cur_box<hash.end(); ++cur_box)
+  for( vector<hash_box* >::const_iterator cur_box = hash_.begin(); cur_box<hash_.end(); ++cur_box)
     {
       
       for(vector<particle_base*>::iterator cur_part = (*cur_box)->begin();
@@ -241,7 +242,7 @@ list<particle_track*> * hash_shelf::shelf_to_list() const{
 
 void hash_shelf::shelf_to_list(std::list<particle_track*> *tmp) const{
   tmp->clear();
-  for(vector<hash_box*>::const_iterator cur_box = hash.begin(); cur_box<hash.end(); ++cur_box)
+  for(vector<hash_box*>::const_iterator cur_box = hash_.begin(); cur_box<hash_.end(); ++cur_box)
     {
       
       for(vector<particle_base*>::iterator cur_part = (*cur_box)->begin();
@@ -259,9 +260,9 @@ void hash_shelf::compute_mean_forward_disp(utilities::Touple & cum_disp_in){
   cumulative_disp_ = cum_disp_in;
   mean_forward_disp_.clear();
   int count = 0;
-  particle_track* current_part = NULL;
-  for(vector<hash_box*>::iterator cur_box = hash.begin(); 
-      cur_box<hash.end(); ++cur_box){
+  const particle_track* current_part = NULL;
+  for(vector<hash_box*>::iterator cur_box = hash_.begin(); 
+      cur_box<hash_.end(); ++cur_box){
     for(vector<particle_base*>::iterator cur_part = (*cur_box)->begin();
 	cur_part!=(*cur_box)->end(); ++cur_part) {
       current_part = static_cast<particle_track*>(*cur_part);
@@ -279,21 +280,24 @@ void hash_shelf::compute_mean_forward_disp(utilities::Touple & cum_disp_in){
   
 }
 
-int hash_shelf::img_area(){
-  int tmp = 1;
-  for(int j = 0; j<img_dims.size();++j)
-    tmp*=img_dims[j];
-  cout<<tmp<<endl;
-  return tmp;
+int hash_shelf::img_area() const{
+  return int(img_dims_.prod());
 
 }
 
 hash_shelf::~hash_shelf(){
-  for(vector<hash_box*>::iterator it = hash.begin(); it<hash.end(); ++it)
+  for(vector<hash_box*>::iterator it = hash_.begin(); it<hash_.end(); ++it)
     {
       delete *it;
       *it = NULL;
       
     }
   
+}
+
+void hash_shelf::D_rr(utilities::Coarse_grain_array D, 
+		      utilities::Coarse_grain_array count)const{
+
+  //  for
+
 }

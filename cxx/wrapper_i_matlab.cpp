@@ -53,7 +53,12 @@ double wrapper_i_matlab::get_value(int ind,  wrapper::p_vals type){
   //blasted coloum major
 
 
-
+  std::map<p_vals,int>::const_iterator it = data_types.find(type);
+  if(it == data_types.end())
+    {
+      throw "type not in wrapper";
+    }
+  
   int data_posistion = data_layout[type];
   if(data_posistion >=0)
     return *(first + ind  + rows * data_posistion);

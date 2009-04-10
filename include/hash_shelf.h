@@ -35,6 +35,9 @@
 
 #ifndef HASH_SHELF
 #define HASH_SHELF
+namespace utilities{
+class Coarse_grain_array;
+}
 
 namespace tracking{
 /**
@@ -65,7 +68,8 @@ public:
   hash_shelf(unsigned int imsz1, unsigned int imsz2, 
 	     unsigned int ppb,int i_frame);
   ///Constructor that makes an empty hash_shelf
-  hash_shelf(vector<int>imgsz, unsigned int ppb, int i_frame);
+  hash_shelf(utilities::Touple imgsz, unsigned int ippb, int i_frame);
+
 
   ///Changed the pixels per box and re-hashes the shelf
   void rehash(unsigned int PPB);
@@ -84,7 +88,7 @@ public:
 
   ///returns the box at (n,m)
   hash_box* get_box(int n, int m) const{
-    return (hash.at(hash_dims[1]*n + m));
+    return (hash_.at(((int)hash_dims_[1])*n + m));
   }
   
   ///Retruns the hash for the particle p
@@ -141,10 +145,18 @@ public:
   const utilities::Touple&  get_cum_forward_disp() const{
     return cumulative_disp_;
   }
-private:
-  ///Initialization function
-  //  void init(unsigned int X, unsigned int Y, unsigned int PPB);
-  void init2();
+
+  
+  /**
+     Computes D_rr, theu two point microrhelogy correlation.
+     See 
+     Title: Two-Point Microrheology of Inhomogeneous Soft  Materials
+     Authors: Crocker, John C. and Valentine, M. T. and Weeks, Eric
+     R. and Gisler, T.  and Kaplan, P. D. and Yodh, A. G. and Weitz,
+     D. A.
+     prl 85,8,888
+   */
+  void D_rr(utilities::Coarse_grain_array D, utilities::Coarse_grain_array count)const;
 
 protected:
   //change all of this to be pointers to hash_boxes, to keep
@@ -154,7 +166,7 @@ protected:
   ///Main data structure.  This is an vector of
   ///hash boxes.  For simplicity the strcuture is stored as
   ///a 1-D array and the class takes care of the 1D<->2D conversion
-  vector<hash_box*> hash;
+  vector<hash_box*> hash_;
   
   ///@name grid properties.
   /// These should not be allowed to change once
@@ -162,9 +174,11 @@ protected:
   //@{ 
   
   ///Vector to store the dimensions of the grid
-  vector<int> hash_dims;
+  //vector<int> hash_dims;
+  utilities::Touple hash_dims_;
   ///Vector to store the dimensions of input data
-  vector<int> img_dims;
+  //  vector<int> img_dims;
+  utilities::Touple img_dims_;
 
   
   ///number of pixels per side of the gridboxes
@@ -187,17 +201,24 @@ protected:
   /**
      computes area of image
    */
-  int img_area();
-  
+  int img_area()const;
+
+
+private:
+  ///Initialization function
+  //  void init(unsigned int X, unsigned int Y, unsigned int PPB);
+  void init2();
+
+
 };
 
 template <class particle>
 hash_shelf::hash_shelf(master_box_t<particle> & mb, int imsz1, 
 		       int imsz2, unsigned int PPB): ppb(PPB){
-  img_dims.push_back(imsz1);
-  img_dims.push_back(imsz2);
-  cout<<img_dims[0]<<endl
-      <<img_dims[1]<<endl;
+  img_dims_[0] = imsz1;
+  img_dims_[1] = imsz2;
+  cout<<img_dims_[0]<<endl
+      <<img_dims_[1]<<endl;
   init2();
   for(unsigned int j = 0; j<mb.size();j++)
     {
@@ -213,7 +234,7 @@ inline unsigned int hash_shelf::hash_function(particle_base* p) const{
   utilities::Touple cur_pos = p->get_position();
   
   return (unsigned int)
-    (((unsigned int)cur_pos[1]/ppb)*hash_dims[0] +
+    (((unsigned int)cur_pos[1]/ppb)*hash_dims_[0] +
        cur_pos[0]/ppb);
 //   return (unsigned int)
 //     (((unsigned int)p->get_value(wrapper::d_ypos)/ppb)*hash_dims[0] +

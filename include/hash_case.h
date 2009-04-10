@@ -33,6 +33,8 @@
 
 #include "wrapper.h"
 
+#include "touple.h"
+
 #ifndef HASH_CASE
 #define HASH_CASE
 
@@ -77,11 +79,11 @@ public:
 
   */
   template <class particle>
-  hash_case(master_box_t<particle> & mb,vector<int> img_dims, 
+  hash_case(master_box_t<particle> & mb,const utilities::Touple & img_dims, 
 	    unsigned int ppb, int frames);
   
   template <class particle>
-  void  init(master_box_t<particle> & mb,vector<int> img_dims, 
+  void  init(master_box_t<particle> & mb,const utilities::Touple & img_dims, 
 	    unsigned int ppb, int frames);
   
   hash_case();
@@ -176,7 +178,7 @@ protected:
 // }
 
 template <class particle>
-hash_case::hash_case(master_box_t<particle> & mb,vector<int> img_dims, 
+hash_case::hash_case(master_box_t<particle> & mb,const utilities::Touple & img_dims, 
 		     unsigned int ppb, int frames):inited(false){
   init(mb,img_dims,ppb,frames);
 
@@ -185,7 +187,7 @@ hash_case::hash_case(master_box_t<particle> & mb,vector<int> img_dims,
 
 
 template<class particle>
-void hash_case::init(master_box_t<particle> & mb,vector<int> img_dims, 
+void hash_case::init(master_box_t<particle> & mb,const utilities::Touple & img_dims, 
 		     unsigned int ppb, int frames){
 
   if(inited){

@@ -64,10 +64,12 @@ void particle_track::print_t(int more)const{
   
 }
 
-void particle_track::print()const{
-  particle_base::print();
+// void particle_track::print()const{
+//   cout<<"'";
+//   particle_base::print();
 
-}
+
+// }
 
 
 void particle_track::set_next(particle_track* n_next){
@@ -138,7 +140,7 @@ particle_track::~particle_track(){
 }
 
 
-double particle_track::get_value(wrapper::p_vals type){
+double particle_track::get_value(wrapper::p_vals type) const{
   if(type == wrapper::d_next){
     if(next==NULL)
       return -1;
@@ -148,14 +150,19 @@ double particle_track::get_value(wrapper::p_vals type){
   if(type == wrapper::d_prev){
     if(prev==NULL)
       return -1;
-    return prev->get_value(wrapper::d_unqid);
+    // tac 2009-04-10
+    // changed to match the other one
+    return prev->get_value(wrapper::d_index);
   }
   if(type ==wrapper::d_trackid)
     {
+
       if(track==NULL)
 	return -1;
       return track->get_id() ;
+      
     }
+
   return particle_base::get_value(type);
 }
 
@@ -188,4 +195,10 @@ const utilities::Touple particle_track::get_corrected_forward_disp()const
       return utilities::Touple();
     }
   return forward_disp_ - shelf_->get_mean_forward_disp();
+}
+
+void particle_track::clear_track_data(){
+  next = NULL;
+  prev = NULL;
+  track = NULL;
 }

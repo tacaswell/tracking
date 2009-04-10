@@ -138,6 +138,17 @@ public:
      take the dot product between two touple
    */
   double dot(const Touple & y) const;
+   
+  /**
+     Ruturns the product of the elements
+   */
+  double prod()const;
+  
+  /**
+     Ruturns the sum of the elements
+   */
+  double sum()const;
+  
 
   /**
      makes a touple a unit vector
