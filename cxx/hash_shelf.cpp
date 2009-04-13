@@ -294,10 +294,3 @@ hash_shelf::~hash_shelf(){
     }
   
 }
-
-void hash_shelf::D_rr(utilities::Coarse_grain_array D, 
-		      utilities::Coarse_grain_array count)const{
-
-  //  for
-
-}

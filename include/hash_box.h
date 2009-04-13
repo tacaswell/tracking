@@ -153,11 +153,6 @@ public:
   int gofr(double max_d, int nbins, hash_box* points,
 	   vector<double>& bin_count,vector<double>& bin_r);
 
-  /*
-    not sure why this function exists
-   */
-  //   int gofr2D(double max_d, int nbins, hash_box* points,
-  // 	     vector<double>& bin_count);
 
   ///Same as gofr, but assumes that bin_count is properly initialized
   int gofr(double max_d, int nbins, hash_box* points,

@@ -31,8 +31,8 @@ using std::list;
 using utilities::Touple;
 
 void hash_case::print() const{
-  for(unsigned int j = 0; j<h_case.size();j++){
-    h_case.at(j)->print();
+  for(unsigned int j = 0; j<h_case_.size();j++){
+    h_case_.at(j)->print();
     cout<<endl;
   }
 }
@@ -45,15 +45,15 @@ hash_case::hash_case()
 
 
 hash_case::~hash_case(){
-  for(unsigned int j = 0; j<h_case.size(); j++){
-    delete h_case.at(j);
+  for(unsigned int j = 0; j<h_case_.size(); j++){
+    delete h_case_.at(j);
   }
   std::cout<<"hc dead"<<std::endl;
 }
 
 void hash_case::rehash(unsigned int ppb){
-  for(vector<hash_shelf*>::iterator it = h_case.begin();
-      it<h_case.end(); ++it)
+  for(vector<hash_shelf*>::iterator it = h_case_.begin();
+      it<h_case_.end(); ++it)
     (*it)->rehash(ppb);
 }
 
@@ -65,7 +65,7 @@ void hash_case::link(double max_range, track_shelf& tracks){
 
   //  cout<<"rehashed"<<endl;
 
-  vector<hash_shelf*>::iterator it = h_case.begin();
+  vector<hash_shelf*>::iterator it = h_case_.begin();
 
   //generate first list
   list<particle_track*>* t_list = (*it)->shelf_to_list();
@@ -89,7 +89,7 @@ void hash_case::link(double max_range, track_shelf& tracks){
   int stupid_counter = 0;
   //cout<<"here"<<endl;
   //loop over shelves
-  while( it<(h_case.end()-1))
+  while( it<(h_case_.end()-1))
   {
     ++stupid_counter;
     if(stupid_counter%50==0)
@@ -187,29 +187,28 @@ void hash_case::fill_pos_link_next(list<particle_track*>* tlist,
 
 void hash_case:: compute_mean_disp(){
   Touple cum_disp;
-  for(vector<hash_shelf*>::iterator it = h_case.begin();
-      it<h_case.end(); ++it){
+  for(vector<hash_shelf*>::iterator it = h_case_.begin();
+      it<h_case_.end(); ++it){
     (*it)->compute_mean_forward_disp(cum_disp);  
   }
 }
 
 void hash_case::get_mean_disp(utilities::Array & mean_disp_array, int start){
   int tmp = start + mean_disp_array.get_row_num();
-  tmp = (tmp > h_case.size())? h_case.size():tmp;
+  tmp = (tmp > h_case_.size())? h_case_.size():tmp;
   mean_disp_array.clear();
   for(int j = start; j < tmp;++j){
-    mean_disp_array.push(h_case[j]->get_mean_forward_disp());
+    mean_disp_array.push(h_case_[j]->get_mean_forward_disp());
   }
 }
 
 
 void hash_case::get_cum_disp(utilities::Array & cum_disp_array, int start){
   int tmp = start + cum_disp_array.get_row_num();
-  tmp = (tmp > h_case.size())? h_case.size():tmp;
+  tmp = (tmp > h_case_.size())? h_case_.size():tmp;
   cum_disp_array.clear();
   for(int j = start; j < tmp;++j){
-    cum_disp_array.push(h_case[j]->get_cum_forward_disp());
+    cum_disp_array.push(h_case_[j]->get_cum_forward_disp());
   }
 }
-
 

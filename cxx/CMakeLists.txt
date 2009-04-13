@@ -28,3 +28,11 @@ set_target_properties(test2 PROPERTIES
     PREFIX ""
     SUFFIX  ".${MATLAB_MEXFILE_EXT}"
 )
+
+
+add_library(basic SHARED msd_gofr.cpp ${COMMON_TRACK_SRC} ${MATLAB_UTIL_SRC})
+target_link_libraries(basic ${MATLAB_LIBRARIES})
+set_target_properties(basic PROPERTIES
+    PREFIX ""
+    SUFFIX  ".${MATLAB_MEXFILE_EXT}"
+)

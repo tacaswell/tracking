@@ -73,6 +73,10 @@ public:
      Averages by the count array
    */
   void average_data();
+  /**
+     returns the maximum radius supported
+   */
+  double get_r_max()const{return r_max_;}
 protected:
   /**
      Hash function

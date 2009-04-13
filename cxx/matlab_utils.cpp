@@ -26,7 +26,7 @@
 
 using namespace utilities;
 
-void array_to_mat(mxArray** out, double * in, int rows, int cols){
+void array_to_mat(mxArray** out, double * in, int rows, int cols) {
   *out = mxCreateDoubleMatrix(rows,cols, mxREAL);
   double*data = mxGetPr(*out);
   for(int j = 0; j<rows;j++)

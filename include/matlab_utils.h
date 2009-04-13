@@ -48,7 +48,7 @@ void vector_to_mat(mxArray** out, const std::vector<T> &in) {
    Converts an 2 dimension array using c-style indexing to
    an mexArray.
 */
-void array_to_mat(mxArray** out, double * in, int rows, int cols);
+void array_to_mat(mxArray** out, double * in, int rows, int cols) ;
 
 }
 

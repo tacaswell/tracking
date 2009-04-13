@@ -115,8 +115,21 @@ public:
    */
   int gofr(double max_d, int nbins,
 	    vector<double>& bin_count,vector<double>& bin_r) const;
+
+  /**
+     returns the total number of particles.  The bin_c is
+     normalized by area and density, but not averaged.  Does
+     not reinitialize the data arrays
+   */
+
+  double gofr(double max_d, int nbins, vector<double>& bin_count,vector<double>& bin_r,int & count) const;
   ///@}
 
+
+  /**
+     G(r) filling in a more sensible object
+  */
+  void gofr(utilities::Coarse_grain_array G,int& particle_count) const;
   /**
      Generates and returns a pointer to all the particles in
      this shelf in a list form.  This makes new objects on the
@@ -156,7 +169,7 @@ public:
      D. A.
      prl 85,8,888
    */
-  void D_rr(utilities::Coarse_grain_array D, utilities::Coarse_grain_array count)const;
+  void D_rr(utilities::Coarse_grain_array D)const;
 
 protected:
   //change all of this to be pointers to hash_boxes, to keep
