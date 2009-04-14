@@ -121,13 +121,13 @@ void mexFunction( int nlhs, mxArray *plhs[],
     // Compute G(r)
     vector<double> gofr_bin_count;
     vector<double> gofr_bin_edges;
-    s.gofr_norm(80,100,gofr_bin_count,gofr_bin_edges);
+    s.gofr_norm(100,500,gofr_bin_count,gofr_bin_edges);
     vector_to_mat(plhs,gofr_bin_count);
     vector_to_mat(plhs +1,gofr_bin_edges);
     cout<<"gofr computed"<<endl;
 
 //     //link tracks
-//     s.link(10,tracks);
+//      s.link(2,tracks);
 //     cout<<"linked"<<endl;
     
 //     //compute the mean displacements from frame to frame
@@ -136,7 +136,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
     
 //     Array mean_frame_disp(frames);
 //     s.get_mean_disp(mean_frame_disp);
-//     Generic_parameters_matlab arr_parm(frames,2,plhs+3);
+//     Generic_parameters_matlab arr_parm(frames,2,plhs+2);
 //     Generic_wrapper_base * wrapper = arr_parm.make_wrapper();
 //     mean_frame_disp.set_array(wrapper);
 
@@ -156,13 +156,13 @@ void mexFunction( int nlhs, mxArray *plhs[],
 //     msd_count_vec.data.clear();
 //     msd_count_vec.data.resize(200);
 //     tracks.msd_corrected(msd_vec, msd_count_vec);
-//     vector_to_mat(plhs+4, msd_vec.data);
-//     vector_to_mat(plhs+5, msd_count_vec.data);
+//     vector_to_mat(plhs+3, msd_vec.data);
+//     vector_to_mat(plhs+4, msd_count_vec.data);
 //     cout<<"c msd"<<endl;
 
 
 //     // output tracks
-//     Cell_matlab test_cell2(tracks.get_track_count(),plhs+6);
+//     Cell_matlab test_cell2(tracks.get_track_count(),plhs+5);
 //     tracks.set_corrected_disp_to_cell(test_cell2);
 //     cout<<"c tracks"<<endl;
 

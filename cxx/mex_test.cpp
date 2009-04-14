@@ -82,7 +82,7 @@ extern void _main();
 void mexFunction( int nlhs, mxArray *plhs[], 
 		  int nrhs, const mxArray* prhs[] ){
 
-  if(nlhs!=2 && nrhs!=1){
+  if(nlhs!=1 || nrhs!=1){
     cout<<"Error, wrong number of arguments"<<endl;
     return;
   }
@@ -117,11 +117,11 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
     params_matlab p_in = params_matlab(prhs,contents);
     contents.insert(pair<wrapper::p_vals, int>(wrapper::d_trackid,3));
-  
-//     params_matlab p_out = params_matlab(plhs,contents,mxGetM(*prhs),
-// 					contents.size());
-
-    params_file p_out = params_file(mxGetM(*prhs),"new_output.txt",contents);
+    
+    params_matlab p_out = params_matlab(plhs,contents,mxGetM(*prhs),
+ 					contents.size());
+     
+    //    params_file p_out = params_file(mxGetM(*prhs),"new_output.txt",contents);
 
 
     // params_ning p_in = params_ning(3,100*1000,contents);
@@ -153,15 +153,16 @@ void mexFunction( int nlhs, mxArray *plhs[],
   
     cout<<"linked"<<endl;
 
-    bt.initialize_out();
-    for(int j = 0; j<bt.size();++j)
-      {
-	if(bt.get_particle(j) ==NULL)
-	  cout<<"NULL"<<endl;
-	(bt.get_particle(j))->set_particle () ;
+    tracks.set_shelf();
+//     bt.initialize_out();
+//     for(int j = 0; j<bt.size();++j)
+//       {
+// 	if(bt.get_particle(j) ==NULL)
+// 	  cout<<"NULL"<<endl;
+// 	(bt.get_particle(j))->set_particle () ;
 	
-      }
-    bt.finalize_out ();
+//       }
+//     bt.finalize_out ();
     
   //   s.compute_mean_disp();
 //     cout<<"mean disp"<<endl;

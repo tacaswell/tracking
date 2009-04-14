@@ -98,68 +98,139 @@ struct mymath{
 }mymathobs;
 }
 //}
-int hash_box::gofr(double max_d, int nbins, hash_box* points,
-		   vector<double>& bin_count,vector<double>& bin_r){
+// int hash_box::gofr(double max_d, int nbins, hash_box* points,
+// 		   vector<double>& bin_count,vector<double>& bin_r){
+//   bin_count.clear();
+//   bin_count.resize(nbins);
+//   bin_r.clear();
+//   bin_r.resize(nbins);
+//   for(int j = 0; j<(int)bin_r.size();j++)
+//     bin_r.at(j) = j*max_d/nbins;
+
+//   cout<<"shouldn't be using this one"<<endl;
+//   return gofr( max_d,  nbins,  points, bin_count);
+
+// }
+
+// int hash_box::gofr_norm_a(double max_d, unsigned int nbins, hash_box* points,
+// 			  vector<double>& bin_count,vector<double>& bin_r){
+//   cout<<"shouldn't be using this one"<<endl;
+//   int count = gofr(max_d, nbins, points, bin_count, bin_r);
+//   vector<double>area;
+//   area.resize(bin_r.size());
+
+//   //vec_print(bin_r);
+//   bin_r.push_back(max_d);
+//   //vec_print(bin_r);
+//   transform(bin_r.begin(),bin_r.end()-1,bin_r.begin()+1,area.begin(),mymathobs.myaob);
+//   //vec_print(bin_r);
+  
+  
+//   transform(bin_count.begin(), bin_count.end(), area.begin(),
+// 	    bin_count.begin(),mymathobs.mydob);
+//   //vec_print(bin_r);
+//   bin_r.pop_back();
+//   //vec_print(bin_r);
+//   return count;
+  
+// }
+
+// int hash_shelf::gofr(double max_d, int nbins, vector<double>& bin_count,
+// 		      vector<double>& bin_r) const{
+//   cout<<"shouldn't be using this one"<<endl;
+//   int count = 0;
+
+//   bin_count.clear();
+//   bin_count.resize(nbins);
+
+//   bin_r.clear();
+//   bin_r.resize(nbins);
+
+  
+
+//   for(int j = 0; j<(int)bin_r.size();j++)
+//     bin_r.at(j) = j*max_d
+//       /nbins;
+
+//   gofr(max_d, nbins, bin_count, bin_r,count);
+//   return count;
+  
+// }
+
+
+// void hash_shelf::gofr_norm(double max_d, int nbins, vector<double>& bin_count,
+// 		      vector<double>& bin_r) const{
+//   cout<<"shouldn't be using this one"<<endl;
+//   int count =   gofr(max_d, nbins,bin_count,bin_r);
+
+//   mymathobs.mydob.div = count ;
+				      
+//   //average over number of particles
+//   transform(bin_count.begin(), bin_count.end(), bin_count.begin(),mymathobs.mydob);
+
+// }
+
+
+
+
+void hash_case::gofr_norm(double max_d, int nbins,
+			  vector<double>& bin_count,vector<double>& bin_r) const{
+  
+  int count = 0;
+  double dens = 0;
   bin_count.clear();
   bin_count.resize(nbins);
+
   bin_r.clear();
   bin_r.resize(nbins);
   for(int j = 0; j<(int)bin_r.size();j++)
-    bin_r.at(j) = j*max_d/nbins;
-  return gofr( max_d,  nbins,  points, bin_count);
-
-}
-
-int hash_box::gofr(double max_d, int nbins, hash_box* points,
-		   vector<double>& bin_count){
-
-  // this change is going to break stuff
-  double max_d_sqr = max_d * max_d;
-  double tmp_dist = 0;
-
-  vector<particle_base*>::iterator box_it, points_it;
-
-  for(box_it = contents_.begin(); box_it!=contents_.end(); ++box_it)
-    {
-      
-      for(points_it = (points->contents_).begin(); 
-	points_it !=(points->contents_).end();++points_it )
-	{
-	  tmp_dist = (*box_it)->distancesq(*points_it);
-	  if(tmp_dist < max_d_sqr && tmp_dist !=0)
-	    bin_count.at((int)(((sqrt(tmp_dist))/max_d)*nbins))++;
-	  
-	}
-    }
-  return contents_.size(); 
-}
-
-int hash_box::gofr_norm_a(double max_d, unsigned int nbins, hash_box* points,
-			  vector<double>& bin_count,vector<double>& bin_r){
+    bin_r.at(j) = j*max_d /nbins;
+  for(int j = 0; j<(int)bin_r.size();j++)
+    bin_count.at(j) = 0;
   
-  int count = gofr(max_d, nbins, points, bin_count, bin_r);
-  vector<double>area;
-  area.resize(bin_r.size());
-
-  //vec_print(bin_r);
+  //compute the area of each ring, this requires a point at
+  //max_d which is added and removed
+  vector<double>area(bin_r.size());
   bin_r.push_back(max_d);
-  //vec_print(bin_r);
-  transform(bin_r.begin(),bin_r.end()-1,bin_r.begin()+1,area.begin(),mymathobs.myaob);
-  //vec_print(bin_r);
-  
-  
-  transform(bin_count.begin(), bin_count.end(), area.begin(),
-	    bin_count.begin(),mymathobs.mydob);
-  //vec_print(bin_r);
+  transform(bin_r.begin(),bin_r.end()-1,
+	    bin_r.begin()+1,
+	    area.begin(),
+	    mymathobs.myaob);
   bin_r.pop_back();
-  //vec_print(bin_r);
-  return count;
+  
+
+  
+  for(vector<hash_shelf*>::const_iterator it = h_case_.begin();
+      it != h_case_.end(); ++it)
+    {
+      dens += ((*it)->gofr(max_d, nbins, bin_count,count));
+     
+    }
+
+  
+				      
+
+  cout<<"total count "<<count<<endl;
+  cout<<"average density "<<dens/h_case_.size()<<endl;
+
+    transform(bin_count.begin(), bin_count.end(), 
+   	    area.begin(),
+    	    bin_count.begin(),
+   	    mymathobs.mydob);
+  
+    //average over number of particles
+    mymathobs.mydob.div = count ;
+    transform(bin_count.begin(), bin_count.end(), bin_count.begin(),mymathobs.mydob);
+    // //normalize by density
+    mymathobs.mydob.div = dens/h_case_.size() ;
+    transform(bin_count.begin(), bin_count.end(), bin_count.begin(),mymathobs.mydob);
   
 }
+
 
 double hash_shelf::gofr(double max_d, int nbins, vector<double>& bin_count,
-		      vector<double>& bin_r,int & count) const{
-//this needs some extra code to cope with edge cases between this
+			int & count) const{
+  //this needs some extra code to cope with edge cases between this
   // and making the hash table something better needs to be done about
   // how the size mismatch for the image and the hash table are handled
   unsigned int buffer = (unsigned int)((int)max_d%(int)ppb==0?max_d/ppb:(1+max_d/ppb));
@@ -174,10 +245,10 @@ double hash_shelf::gofr(double max_d, int nbins, vector<double>& bin_count,
   
 
   // the hack to have asymmetric buffers is here
-  for(unsigned int j = buffer; j<(hash_dims_[0]-buffer-1);j++){
-    for(unsigned int k = buffer; k<(hash_dims_[1]-buffer-1);k++){
-      working_box = get_box(j,k);
-      get_region(j,k,&working_region,buffer);
+  for(unsigned int x = buffer; x<(hash_dims_[0]-buffer-1);++x){
+    for(unsigned int y = buffer; y<(hash_dims_[1]-buffer-1);++y){
+      working_box = get_box(x,y);
+      get_region(x,y,&working_region,buffer);
 
       local_count += working_box->gofr(max_d,nbins,&working_region,bin_count);
       working_region.clear();
@@ -201,89 +272,42 @@ double hash_shelf::gofr(double max_d, int nbins, vector<double>& bin_count,
 
 
 }
-int hash_shelf::gofr(double max_d, int nbins, vector<double>& bin_count,
-		      vector<double>& bin_r) const{
-  int count = 0;
-
-  bin_count.clear();
-  bin_count.resize(nbins);
-
-  bin_r.clear();
-  bin_r.resize(nbins);
-
-  
-
-  for(int j = 0; j<(int)bin_r.size();j++)
-    bin_r.at(j) = j*max_d
-      /nbins;
-
-  gofr(max_d, nbins, bin_count, bin_r,count);
-  return count;
-    
-}
 
 
-void hash_shelf::gofr_norm(double max_d, int nbins, vector<double>& bin_count,
-		      vector<double>& bin_r) const{
-  int count =   gofr(max_d, nbins,bin_count,bin_r);
-
-  mymathobs.mydob.div = count ;
-				      
-  //average over number of particles
-  transform(bin_count.begin(), bin_count.end(), bin_count.begin(),mymathobs.mydob);
-
-}
+int hash_box::gofr(double max_d, int nbins, hash_box* points,
+		   vector<double>& bin_count){
 
 
-void hash_case::gofr_norm(double max_d, int nbins,
-			  vector<double>& bin_count,vector<double>& bin_r) const{
-  
-  int count = 0;
-  double dens = 0;
-  bin_count.clear();
-  bin_count.resize(nbins);
 
-  bin_r.clear();
-  bin_r.resize(nbins);
-  for(int j = 0; j<(int)bin_r.size();j++)
-    bin_r.at(j) = j*max_d /nbins;
+  double max_d_sqr = max_d * max_d;
+  double tmp_dist = 0;
 
+  vector<particle_base*>::iterator box_it, points_it;
 
-  
-  //compute the area of each ring, this requires a point at
-  //max_d which is added and removed
-  vector<double>area(bin_r.size());
-  bin_r.push_back(max_d);
-  transform(bin_r.begin(),bin_r.end()-1,
-	    bin_r.begin()+1,
-	    area.begin(),
-	    mymathobs.myaob);
-  bin_r.pop_back();
-  
-
-  
-  for(vector<hash_shelf*>::const_iterator it = h_case_.begin();
-      it != h_case_.end(); ++it)
+  for(box_it = contents_.begin(); box_it!=contents_.end(); ++box_it)
     {
-      dens += ((*it)->gofr(max_d, nbins, bin_count, bin_r,count));
+      
+      for(points_it = (points->contents_).begin(); 
+	points_it !=(points->contents_).end();++points_it )
+	{
+   	  tmp_dist = (*box_it)->distancesq(*points_it);
+//   	  (*box_it)->print();
+//   	  (*points_it)->print();
+//   	  cout<<"distance sqr: "<<tmp_dist<<endl;
+// 	  cout<<"max distance sqr: "<<max_d_sqr<<endl;
+	  if((tmp_dist < max_d_sqr) && (tmp_dist !=0))
+	    {
+	      bin_count.at((int)(((sqrt(tmp_dist))/max_d)*nbins))++;
+	
+	    }
+	  else
+	    {
+
+	    }
+	}
+
     }
 
-  
-				      
-
-  cout<<"total count "<<count<<endl;
-  cout<<"average density "<<dens/h_case_.size()<<endl;
-
-  transform(bin_count.begin(), bin_count.end(), 
- 	    area.begin(),
-  	    bin_count.begin(),
- 	    mymathobs.mydob);
-  
-  //average over number of particles
-  mymathobs.mydob.div = count ;
-  transform(bin_count.begin(), bin_count.end(), bin_count.begin(),mymathobs.mydob);
-  // //normalize by density
-  mymathobs.mydob.div = dens/h_case_.size() ;
-  transform(bin_count.begin(), bin_count.end(), bin_count.begin(),mymathobs.mydob);
-
+  return contents_.size(); 
 }
+	     

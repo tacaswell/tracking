@@ -87,13 +87,19 @@ public:
   ///@{
 
   ///returns the box at (n,m)
-  hash_box* get_box(int n, int m) const{
-    return (hash_.at(((int)hash_dims_[1])*n + m));
+  hash_box* get_box(int x, int y) const{
+    return (hash_.at(((int)hash_dims_[0])*y + x));
   }
   
   ///Retruns the hash for the particle p
 
-
+  
+  /**
+     appends the region of (2*range +1) on a side from the hash table
+     centered on the box (n,m) deals with boxes with in range of the
+     edges by truncating the volume returned.  Functions that use this
+     need to keep track of this them selves
+  */
   void get_region( int n,  int m, 
 		  hash_box* box, int range=1) const;
 
@@ -122,7 +128,7 @@ public:
      not reinitialize the data arrays
    */
 
-  double gofr(double max_d, int nbins, vector<double>& bin_count,vector<double>& bin_r,int & count) const;
+  double gofr(double max_d, int nbins, vector<double>& bin_count,int & count) const;
   ///@}
 
 
@@ -247,8 +253,7 @@ inline unsigned int hash_shelf::hash_function(particle_base* p) const{
   utilities::Touple cur_pos = p->get_position();
   
   return (unsigned int)
-    (((unsigned int)cur_pos[1]/ppb)*hash_dims_[0] +
-       cur_pos[0]/ppb);
+    (((unsigned int)cur_pos[1]/ppb)*hash_dims_[0] + cur_pos[0]/ppb);
 //   return (unsigned int)
 //     (((unsigned int)p->get_value(wrapper::d_ypos)/ppb)*hash_dims[0] +
 //        p->get_value(wrapper::d_xpos)/ppb);

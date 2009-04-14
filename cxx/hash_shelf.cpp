@@ -143,12 +143,6 @@ void hash_shelf::print() const{
 
 }
 
-
-  ///appends the region of (2*range +1) on a side from
-  ///the hash table centered on the box (n,m)  deals
-  ///with boxes with in range of the edges by truncating
-  ///the volume returned.  Functions that use this need
-  ///to keep track of this them selves
 void hash_shelf::get_region( int n, int m,
 			     hash_box* box,int range) const {
   
@@ -156,33 +150,34 @@ void hash_shelf::get_region( int n, int m,
     return;
 
 
-   int j_bot = (((n-range)>=0)?(n-range):0);
-   int j_top = ((n+range)<((int)hash_dims_[0]-1)
-		?(n+range+1):
+   int x_bot = (((n-range)>=0)?(n-range):0);
+   int x_top = ((n+range)<((int)hash_dims_[0]-1)
+		?(n+range):
 		((int)hash_dims_[0]-1));
-   int k_bot = ((m-range)>0?(m-range):0);
-   int k_top = ((m+range)<((int)hash_dims_[1]-1)?(m+range+1):((int)hash_dims_[1]-1));
-	    
-//     cout<<"n: "<<n<<"\t"
-//         <<"m: "<<m<<"\t"
-//         <<j_bot<<"\t"
-//         <<j_top<<"\t"
-//         <<k_bot<<"\t"
-//         <<k_top<<"\t"<<endl;
+   int y_bot = ((m-range)>0?(m-range):0);
+   int y_top = ((m+range)<((int)hash_dims_[1]-1)?(m+range):((int)hash_dims_[1]-1));
+    
+//      cout<<"x: "<<n<<"\t"
+//          <<"y: "<<m<<"\t"
+//          <<x_bot<<"\t"
+//          <<x_top<<"\t"
+//          <<y_bot<<"\t"
+//          <<y_top<<"\t"<<endl;
 
 
 
-     for( int j = j_bot; j<=j_top;j++){
-       for( int k = k_bot; k<=k_top;k++){
+     for( int x = x_bot; x<=x_top;++x){
+       for( int y = y_bot; y<=y_top;++y){
 
-	 box->append((hash_.at(j+int(hash_dims_[0])*k)));
-	 //       cout<<j<<"\t"<<k<<endl;
-	 //       cout<<"appending box at: "<<j+hash_dims[0]*k<<endl;
+	 box->append((hash_.at(x+int(hash_dims_[0])*y)));
+	 //	 box->append((hash_.at(j+int(hash_dims_[0])*k)));
+// 	 cout<<j<<"\t"<<k<<endl;
+// 	 cout<<"appending box at: "<<j+hash_dims_[0]*k<<endl;
 
        }
      }
      
-     //   cout<<"+++++++++++++++"<<endl;
+     //     cout<<"+++++++++++++++"<<endl;
    
 
 
@@ -192,18 +187,18 @@ void hash_shelf::get_region( int n, int m,
 
 
 void hash_shelf::get_region( int n, 
-			     hash_box* box,int range) const{
+			     hash_box* box,int range) const
+{
   get_region(n%int(hash_dims_[0]), n/int(hash_dims_[0]), box, range);
 
 }
 
 void hash_shelf::get_region( particle_base* n,
-		   hash_box* box, int range) const{
-//   cout<<"+++++++++++++++"<<endl;
-//   n->print();
+			     hash_box* box, int range) const
+{
   get_region(hash_function(n),box,range);
-
-  }
+  
+}
 
   /**
      Remakes the hash table using the same particles using  new
