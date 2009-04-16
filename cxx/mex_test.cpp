@@ -146,14 +146,15 @@ void mexFunction( int nlhs, mxArray *plhs[],
     
     cout<<"total number of particles is: "<<bt.size()<<endl;;
   
-    int frames = 5;//1462;		// 
+    int frames = 1200;		// 
     hash_case s(bt,dims,5,frames);
     cout<<"case built"<<endl;
     s.link(5,tracks);
   
     cout<<"linked"<<endl;
-
+    bt.initialize_out();
     tracks.set_shelf();
+    bt.finalize_out ();
 //     bt.initialize_out();
 //     for(int j = 0; j<bt.size();++j)
 //       {
@@ -163,6 +164,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 	
 //       }
 //     bt.finalize_out ();
+
     
   //   s.compute_mean_disp();
 //     cout<<"mean disp"<<endl;

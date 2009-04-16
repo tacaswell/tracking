@@ -73,6 +73,15 @@ public:
      Default constructor
    */
   Histogram(int num_bins, double bottom , double top);
+
+  /**
+    Out puts the values of the histogram to a (bins +2)x2 array.  the
+    first column is the values of the bins, the second the bottom edge
+    of the bins.  The extra entry at the end are the number of entries
+    outside of the 
+  */
+  Generic_wrapper * wrapper_out_;
+
   
   ~Histogram(){};
 
@@ -114,10 +123,6 @@ protected:
      Width of each bin
    */
   double bin_width_;
-  /**
-     Generic wrapper pointer for output to extrenal interfaces
-   */
-  Generic_wrapper * wrapper_out_;
 private:
 
 

@@ -275,17 +275,68 @@ void hash_shelf::compute_mean_forward_disp(utilities::Touple & cum_disp_in){
   
 }
 
-int hash_shelf::img_area() const{
+int hash_shelf::img_area() const
+{
   return int(img_dims_.prod());
 
 }
 
-hash_shelf::~hash_shelf(){
+hash_shelf::~hash_shelf()
+{
   for(vector<hash_box*>::iterator it = hash_.begin(); it<hash_.end(); ++it)
+  {
+    delete *it;
+    *it = NULL;
+    
+  }
+  
+}
+
+
+void D_rr(utilities::Coarse_grain_array D)const
+{
+
+  // loop over boxes
+  
+//   for(vector<int>::const_iterator current_box = hash_.begin;
+//       current_box != hash_.end(); ++current_box)
+
+  list<particle_track*> current_box;
+  list<particle_track*> current_region;
+  for(int j = 0; j<(int)hash_.size(); ++j)
+  {
+    hash_[j]->get_region(j,current_region);
+    hash_[j]->box_to_list(current_box);
+    for(list<particle_track*>::const_iterator it = current_region.begin();
+	it != current_region.end();)
     {
-      delete *it;
-      *it = NULL;
-      
+      try
+      {
+	*it->get_track();
+	++it;
+      }
+      catch
+      {
+	erase(it++);
+      }
     }
+    for(list<particle_track*>::const_iterator it = current_box.begin();
+	it != current_box.end();)
+    {
+      try
+      {
+	*it->get_track();
+	++it;
+      }
+      catch
+      {
+	erase(it++);
+      }
+    }
+
+    
+
+
+  } // loop over boxes
   
 }
