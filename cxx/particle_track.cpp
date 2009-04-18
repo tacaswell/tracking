@@ -33,6 +33,7 @@
 using namespace tracking;
 using std::set;
 using utilities::Ll_range_error;
+using utilities::Null_field;
 /*
 particle_track::particle_track(wrapper_i_base * i_data, 
 			       wrapper_o_base* o_out, int i_ind, 
@@ -122,12 +123,20 @@ void particle_track::set_track(track_box* i_track){
 
 }
 
- track_box* particle_track::get_track()const{
+track_box* particle_track::get_track()const{
+  if(track ==NULL)
+  {
+    throw Null_field("Particle does not have a track");   
+  }
   return track;
 }
 
-int particle_track::get_track_id()const{
 
+int particle_track::get_track_id()const{
+  if (track ==NULL)
+  {
+    throw Null_field("Particle does not have a track");   
+  }
   return track->get_id();
 }
 
@@ -202,3 +211,13 @@ void particle_track::clear_track_data(){
   prev = NULL;
   track = NULL;
 }
+
+bool particle_track::has_track()const
+{
+  if(track == NULL)
+  {
+    return false;
+  }
+  return true;
+}
+  

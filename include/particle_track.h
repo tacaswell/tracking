@@ -42,41 +42,6 @@ class hash_shelf;
    information should be set to -1
  */
 class particle_track :public particle_base{
-protected:
-  ///next particle in track
-  particle_track* next;
-  ///prev particle in track
-  particle_track* prev;
-  /**
-     Pointer to which track the particle is in. If the
-     particle is not in a track this is NULL
-   */
-  track_box * track;
-
-  /**
-     Pointer to the shelf that the particle lives in.  This is
-     redundent with the plane information, but this is more elegent
-     and makes looking up the planes cumlative displacemet easier
-   */
-  hash_shelf* shelf_;
-  
-  /**
-     pointer to a list of particles to be used durring the tracking
-     process
-   */
-  std::list<pair<particle_track*, double> >* n_pos_link;
-  /**h
-     pointer to a list of particles to be used durring the tracking
-     process
-  */
-  std::list<pair<particle_track*, double> >* p_pos_link;
-
-  /**
-     The foward displacement vector
-   */
-  utilities::Touple forward_disp_;
-
-
 
 public:
   
@@ -238,6 +203,50 @@ public:
      Clears all of the data associated with the tracking
    */
   virtual void clear_track_data();
+  
+  /**
+     returns if the track is set
+   */
+  bool has_track()const;
+  
+  
+
+protected:
+  ///next particle in track
+  particle_track* next;
+  ///prev particle in track
+  particle_track* prev;
+  /**
+     Pointer to which track the particle is in. If the
+     particle is not in a track this is NULL
+   */
+  track_box * track;
+
+  /**
+     Pointer to the shelf that the particle lives in.  This is
+     redundent with the plane information, but this is more elegent
+     and makes looking up the planes cumlative displacemet easier
+   */
+  hash_shelf* shelf_;
+  
+  /**
+     pointer to a list of particles to be used durring the tracking
+     process
+   */
+  std::list<pair<particle_track*, double> >* n_pos_link;
+  /**h
+     pointer to a list of particles to be used durring the tracking
+     process
+  */
+  std::list<pair<particle_track*, double> >* p_pos_link;
+
+  /**
+     The foward displacement vector
+   */
+  utilities::Touple forward_disp_;
+
+
+
   
 };
 }

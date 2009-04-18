@@ -31,10 +31,18 @@ namespace utilities{
    range
 */
 class Ll_range_error:public std::range_error{
-
-
 public:
   explicit Ll_range_error(const std::string & _arg):
+    std::range_error(_arg){};
+};
+/**
+   Exception to report when a function that should return 
+   valid pointer from an object, but the field is NULL in the
+   object.
+ */
+class Null_field:public std::range_error{
+public:
+  explicit Null_field(const std::string & _arg):
     std::range_error(_arg){};
 };
 

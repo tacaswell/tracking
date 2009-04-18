@@ -67,6 +67,8 @@
 
 #include "cell_matlab.h"
 
+#include "coarse_grain_array.h"
+
 using namespace tracking;
 using std::exception;
 
@@ -78,11 +80,14 @@ using utilities::Array;
 using utilities::Cell_matlab;
 using utilities::Generic_wrapper_base;
 using utilities::Generic_parameters_matlab;
+using utilities::Coarse_grain_array;
+
+
 extern void _main();
 void mexFunction( int nlhs, mxArray *plhs[], 
 		  int nrhs, const mxArray* prhs[] ){
 
-  if(nlhs!=1 || nrhs!=1){
+  if(nlhs!=2|| nrhs!=1){
     cout<<"Error, wrong number of arguments"<<endl;
     return;
   }
@@ -146,67 +151,34 @@ void mexFunction( int nlhs, mxArray *plhs[],
     
     cout<<"total number of particles is: "<<bt.size()<<endl;;
   
-    int frames = 1200;		// 
+    int frames = 20;		// 
     hash_case s(bt,dims,5,frames);
     cout<<"case built"<<endl;
     s.link(5,tracks);
-  
     cout<<"linked"<<endl;
-    bt.initialize_out();
-    tracks.set_shelf();
-    bt.finalize_out ();
-//     bt.initialize_out();
-//     for(int j = 0; j<bt.size();++j)
-//       {
-// 	if(bt.get_particle(j) ==NULL)
-// 	  cout<<"NULL"<<endl;
-// 	(bt.get_particle(j))->set_particle () ;
-	
-//       }
-//     bt.finalize_out ();
-
+    s.compute_mean_disp();
+    cout<<"computed mean frame displacement"<<endl;
     
-  //   s.compute_mean_disp();
-//     cout<<"mean disp"<<endl;
-//     tracks.remove_short_tracks(10);
-//     cout<<"trimed"<<endl;
-//     // above here is the acctual tracking
+    tracks.remove_short_tracks(5);
+    cout<<"trimmed"<<endl;
+    
 
-//     Array test_a(frames);
-//     s.get_mean_disp(test_a);
-
-//     Generic_parameters_matlab arr_parm(frames,2,plhs+2);
-//     Generic_wrapper_base * wrapper = arr_parm.make_wrapper();
-//     test_a.set_array(wrapper);
-
-// //     // uncorrected msd
-//      Svector<double> msd_vec;
-//      Svector<int> msd_count_vec;
-// //     msd_vec.data.resize(20);
-// //     msd_count_vec.data.resize(20);
-// //     cout<<"started uc msd"<<endl;
-// //     tracks.msd(msd_vec, msd_count_vec);
-// //     cout<<"ended uc msd"<<endl;
-// //     vector_to_mat(plhs+1, msd_vec.data);
-
-//     // corrected msd
-//     msd_vec.data.clear();
-//     msd_vec.data.resize(200);
-//     msd_count_vec.data.clear();
-//     msd_count_vec.data.resize(200);
-//     tracks.msd_corrected(msd_vec, msd_count_vec);
-//     vector_to_mat(plhs+1, msd_count_vec.data);
-//     vector_to_mat(plhs, msd_vec.data);
-//     cout<<"c msd"<<endl;
-
-// //     // un corrected tracks
-// //     Cell_matlab test_cell(tracks.get_track_count(),plhs+3);
-// //     tracks.set_raw_disp_to_cell(test_cell);
-// //     cout<<"uc tracks"<<endl;
-// //     // corrected tracks
-//     Cell_matlab test_cell2(tracks.get_track_count(),plhs+3);
-//     tracks.set_corrected_disp_to_cell(test_cell2);
-//    cout<<"c tracks"<<endl;
+    Generic_parameters_matlab arr_parm(100,frames,plhs);
+    Generic_wrapper_base * wrapper = arr_parm.make_wrapper();
+    arr_parm.change_mxArray(plhs+1);
+    Generic_wrapper_base * wrapper2 = arr_parm.make_wrapper();
+    Coarse_grain_array test_arr(0,50,100,20);
+    
+    s.D_rr(test_arr);
+    cout<<"2 point computed"<<endl;
+    
+    test_arr.output_to_wrapper(wrapper,wrapper2);
+    delete wrapper;
+    delete wrapper2;
+    wrapper2 = NULL;
+    wrapper  = NULL;
+    
+    
 
   }
   catch(const char * err){
@@ -219,7 +191,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
   catch(...){
     cout<<"uncaught error"<<endl;
   }
-
+ 
 //   cout<<"sizeof(particle_base) "<<sizeof(particle_base)<<endl;
 //   cout<<"sizeof(particle_track) "<<sizeof(particle_track)<<endl;
 //   cout<<"sizeof(utilities::Touple) "<<sizeof(utilities::Touple)<<endl;
@@ -262,6 +234,24 @@ void mexFunction( int nlhs, mxArray *plhs[],
   // //    vector<int> tmp465 = hist3.get_bin_values();
   // //    vector_to_mat(plhs, tmp465);
   //   cout<<hist3.get_over_count()<<hist3.get_under_count()<<endl;
+
+  
+//     cout<<"linked"<<endl;
+//     bt.initialize_out();
+//     tracks.set_shelf();
+//     bt.finalize_out ();
+
+//     bt.initialize_out();
+//     for(int j = 0; j<bt.size();++j)
+//       {
+// 	if(bt.get_particle(j) ==NULL)
+// 	  cout<<"NULL"<<endl;
+// 	(bt.get_particle(j))->set_particle () ;
+	
+//       }
+//     bt.finalize_out ();
+
+
 
   return;
 }

@@ -35,12 +35,13 @@ class Generic_wrapper_base;
    grained and a discrete axis.  This is for things like
    looking at aging in g(r,t) and D_ab(r,t).  Also keeps a
    count of how many times something is added to each element
-   for averaging and statistics.
+   for averaging and statistics.  The discrete axis (nominally time)
+   is assumed the start from 0 and go in increments of 1.
  */
 class Coarse_grain_array{
 public:
   /**
-     Construtor
+     Constructor
    */
   Coarse_grain_array(double r_min,double r_max, int n_r_bins, int n_d_bins);
   /**
@@ -59,7 +60,8 @@ public:
   void output_to_wrapper(Generic_wrapper_base * out_wrapper) const;
 
   /**
-     Output to what ever is pointed to by the wrappers
+     Output to what ever is pointed to by the wrappers.
+     The output format is for the columns to be constant time
    */
   void output_to_wrapper(Generic_wrapper_base * data_out_wrapper,
 			 Generic_wrapper_base * count_out_wrapper) const;
@@ -77,6 +79,15 @@ public:
      returns the maximum radius supported
    */
   double get_r_max()const{return r_max_;}
+  /**
+     returns the minimum radius supported
+   */
+  double get_r_min()const{return r_min_;}
+  /**
+     Returns the number of discrete bins
+   */
+  int get_d_bins()const{return d_bins_;}
+  
 protected:
   /**
      Hash function

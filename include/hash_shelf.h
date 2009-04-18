@@ -107,6 +107,8 @@ public:
 		   hash_box* box, int range=1) const;
   virtual void get_region( particle_base* n,
 		   hash_box* box, int range=1) const;
+  void get_region( int n,
+		   std::list<particle_track*>& in_list, int range=1) const;
   ///@}
 
   ///@name g(r)
@@ -156,11 +158,17 @@ public:
      tracking data are ignored.
   */
   void compute_mean_forward_disp(utilities::Touple & cum_disp);
-
+  /**
+     Getter function for mean forward displacement from the
+     previous shelf in a case.
+   */
   const utilities::Touple& get_mean_forward_disp() const{
     return mean_forward_disp_;
   }
-
+  /**
+     Getter function for mean forward displacement from the
+     first shelf in a case.
+  */
   const utilities::Touple&  get_cum_forward_disp() const{
     return cumulative_disp_;
   }
@@ -175,7 +183,7 @@ public:
      D. A.
      prl 85,8,888
    */
-  void D_rr(utilities::Coarse_grain_array D)const;
+  void D_rr(utilities::Coarse_grain_array & D)const;
 
 protected:
   //change all of this to be pointers to hash_boxes, to keep

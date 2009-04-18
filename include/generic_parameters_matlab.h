@@ -44,12 +44,23 @@ public:
   int cols_;
   mxArray ** mx_ptr_ptr_;
   Generic_parameters_matlab(int a, int b,mxArray ** );
-  
+  /**
+     allocate a new wrapper
+   */
   Generic_wrapper_base* make_wrapper() ;
+  /**
+     Allows the mex target to be changed
+  */
+  void change_mxArray(mxArray ** new_ptr_ptr)
+  {
+    mx_ptr_ptr_ = new_ptr_ptr;
+  }
+  
+  
 };
 
-inline Generic_parameters_matlab::Generic_parameters_matlab(int a, int b,mxArray ** out)
-  :rows_(a),cols_(b),mx_ptr_ptr_(out){}
+inline Generic_parameters_matlab::Generic_parameters_matlab(int rows, int cols,mxArray ** out)
+  :rows_(rows),cols_(cols),mx_ptr_ptr_(out){}
 
 }
 #endif

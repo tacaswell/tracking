@@ -139,6 +139,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 //     Generic_parameters_matlab arr_parm(frames,2,plhs+2);
 //     Generic_wrapper_base * wrapper = arr_parm.make_wrapper();
 //     mean_frame_disp.set_array(wrapper);
+    // delete wrapper;
 
 //     cout<<"mean disp"<<endl;
     

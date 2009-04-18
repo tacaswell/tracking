@@ -40,6 +40,7 @@
 
 namespace utilities{
 class Array;
+class Coarse_grain_array;
 }
 
 namespace tracking{
@@ -135,12 +136,26 @@ public:
    */
   void gofr_norm(double max_d, int nbins,
 		 vector<double>& bin_count,vector<double>& bin_r) const;
+
+  /**
+     Computes D_rr, theu two point microrhelogy correlation.
+     See 
+     Title: Two-Point Microrheology of Inhomogeneous Soft  Materials
+     Authors: Crocker, John C. and Valentine, M. T. and Weeks, Eric
+     R. and Gisler, T.  and Kaplan, P. D. and Yodh, A. G. and Weitz,
+     D. A.
+     prl 85,8,888
+   */
+  void D_rr(utilities::Coarse_grain_array& D)const;
+
   ///Destructor
   ~hash_case();
 protected:
-  ///vector of pointers to shelves
+  /**
+     vector of pointers to shelves
+   */
   vector<hash_shelf*> h_case_;
-  //  bool lt_pair_tac(const pair<particle_track*, double> &  lh, const pair<particle_track*, double> & rh);
+
 
   
    

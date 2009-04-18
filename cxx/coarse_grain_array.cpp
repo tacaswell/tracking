@@ -24,7 +24,9 @@
 //the resulting work.
 
 #include "coarse_grain_array.h"
+#include "generic_wrapper_base.h"
 using utilities::Coarse_grain_array;
+using std::vector;
 
 Coarse_grain_array::Coarse_grain_array(double r_min,double r_max, 
 				       int n_r_bins, int n_d_bins):
@@ -38,23 +40,45 @@ void  Coarse_grain_array::add_to_element(double r,int t, double val){
   data_array_[tmp] += val;
   ++count_array_[tmp];
 }
-  
 
-void Coarse_grain_array::output_to_wrapper(Generic_wrapper_base * out_wrapper) const{
-  throw "not implemented yet";
-}
 
 void Coarse_grain_array::output_to_wrapper(Generic_wrapper_base * data_out_wrapper,
 			 Generic_wrapper_base * count_out_wrapper) const{
-  throw "not implemented yet";
-}
-void Coarse_grain_array::print()const
-{
-  throw "not implemented yet";
+  data_out_wrapper->initialize_wrapper();
+  for(int j =0; j<r_bins_;++j)
+  {
+    data_out_wrapper->start_new_row();
+    for(int k = 0;k<d_bins_;++k)
+    {
+      data_out_wrapper->append_to_row(data_array_[j + r_bins_*k]);
+    }
+    data_out_wrapper->finish_row();
+  }
+  data_out_wrapper->finalize_wrapper();
+  
+  count_out_wrapper->initialize_wrapper();
+  for(int j =0; j<r_bins_;++j)
+  {
+    count_out_wrapper->start_new_row();
+    for(int k = 0;k<d_bins_;++k)
+    {
+      count_out_wrapper->append_to_row(count_array_[j + r_bins_*k]);
+    }
+    count_out_wrapper->finish_row();
+  }
+  count_out_wrapper->finalize_wrapper();
 }
 
 
 void Coarse_grain_array::average_data(){
+  vector<double>::iterator data_it = data_array_.begin();
+  vector<int>::iterator count_it = count_array_.begin();
+  while(data_it!= data_array_.end() && count_it!= count_array_.end())
+  {
+    (*data_it) /=(*count_it);
+    ++data_it;
+    ++count_it;
+  }
   
 }
 

@@ -48,6 +48,7 @@ public:
      @name row operations
    */
   //\@{
+
   /**
      Opens a new row to add data to
    */
@@ -70,6 +71,7 @@ public:
      @name wrapper operations
    */
   //\@{
+  
   /**
      Tells the wrapper to setup to accept rows
    */
@@ -78,11 +80,17 @@ public:
      cleans up the wrapper
    */
   virtual void finalize_wrapper () = 0;
-  //\@}
 
+  //\@}
+  
+  /**
+     Constructor
+   */
   Generic_wrapper_base(bool a,bool b):
     wrapper_open_(a),row_open_(b){}
-  
+  /**
+     Destructor 
+   */
   virtual ~Generic_wrapper_base(){};
 protected:
   bool wrapper_open_;

@@ -121,7 +121,12 @@ public:
      is returned.  This function allocates heap that needs to be cleaned
      up!
    */
-  std::list<particle_track*>* box_to_list();
+  std::list<particle_track*>* box_to_list() const;
+
+  /**
+     A safer version of converting a hash_box to a list
+   */
+  void  box_to_list(std::list<particle_track*>& p_list) const;
   
   //lots more of these along different components, likely reason to extend
   //these critters, however I haven't decided the most effective method of

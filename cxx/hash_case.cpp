@@ -110,7 +110,7 @@ void hash_case::link(double max_range, track_shelf& tracks){
   //make last list
   t_list = (*it)->shelf_to_list();
   tracking.link_next(t_list);
-  cout<<"here"<<endl;
+  //  cout<<"here"<<endl;
 }
 
 bool lt_pair_tac(const pair<particle_track*, double> &  lh, const pair<particle_track*, double> & rh){
@@ -212,3 +212,11 @@ void hash_case::get_cum_disp(utilities::Array & cum_disp_array, int start){
   }
 }
 
+void hash_case::D_rr(utilities::Coarse_grain_array& D)const
+{
+  for(vector<hash_shelf*>::const_iterator shelf_it = h_case_.begin();
+      shelf_it!= h_case_.end();++shelf_it)
+  {
+    (*shelf_it)->D_rr(D);
+  }
+}
