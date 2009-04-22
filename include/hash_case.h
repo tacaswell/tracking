@@ -148,6 +148,12 @@ public:
    */
   void D_rr(utilities::Coarse_grain_array& D)const;
 
+    void D_lots(utilities::Coarse_grain_array & Drr,
+	      utilities::Coarse_grain_array & Drr2,
+	      utilities::Coarse_grain_array & Dxx,
+	      utilities::Coarse_grain_array & Dtt,
+	      utilities::Coarse_grain_array & Dyy)const;
+
   ///Destructor
   ~hash_case();
 protected:

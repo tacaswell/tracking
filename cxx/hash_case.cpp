@@ -220,3 +220,16 @@ void hash_case::D_rr(utilities::Coarse_grain_array& D)const
     (*shelf_it)->D_rr(D);
   }
 }
+void hash_case::D_lots(utilities::Coarse_grain_array & Drr,
+		       utilities::Coarse_grain_array & Drr2,
+		       utilities::Coarse_grain_array & Dxx,
+		       utilities::Coarse_grain_array & Dtt,
+		       utilities::Coarse_grain_array & Dyy)const
+{
+  for(vector<hash_shelf*>::const_iterator shelf_it = h_case_.begin();
+      shelf_it!= h_case_.end();++shelf_it)
+  {
+    (*shelf_it)->D_lots(Drr,Drr2,Dxx,Dtt,Dyy);
+  }
+
+}

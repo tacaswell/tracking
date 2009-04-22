@@ -87,7 +87,7 @@ extern void _main();
 void mexFunction( int nlhs, mxArray *plhs[], 
 		  int nrhs, const mxArray* prhs[] ){
 
-  if(nlhs!=2|| nrhs!=1){
+  if(nlhs!=10|| nrhs!=1){
     cout<<"Error, wrong number of arguments"<<endl;
     return;
   }
@@ -151,7 +151,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
     
     cout<<"total number of particles is: "<<bt.size()<<endl;;
   
-    int frames = 20;		// 
+    int frames = 1200;		// 
     hash_case s(bt,dims,5,frames);
     cout<<"case built"<<endl;
     s.link(5,tracks);
@@ -163,20 +163,55 @@ void mexFunction( int nlhs, mxArray *plhs[],
     cout<<"trimmed"<<endl;
     
 
-    Generic_parameters_matlab arr_parm(100,frames,plhs);
-    Generic_wrapper_base * wrapper = arr_parm.make_wrapper();
+    Generic_parameters_matlab arr_parm(100,20,plhs);
+    Generic_wrapper_base * wrapper0 = arr_parm.make_wrapper();
     arr_parm.change_mxArray(plhs+1);
+    Generic_wrapper_base * wrapper1 = arr_parm.make_wrapper();
+    arr_parm.change_mxArray(plhs+2);
     Generic_wrapper_base * wrapper2 = arr_parm.make_wrapper();
-    Coarse_grain_array test_arr(0,50,100,20);
+    arr_parm.change_mxArray(plhs+3);
+    Generic_wrapper_base * wrapper3 = arr_parm.make_wrapper();
+    arr_parm.change_mxArray(plhs+4);
+    Generic_wrapper_base * wrapper4 = arr_parm.make_wrapper();
+    arr_parm.change_mxArray(plhs+5);
+    Generic_wrapper_base * wrapper5 = arr_parm.make_wrapper();
+    arr_parm.change_mxArray(plhs+6);
+    Generic_wrapper_base * wrapper6 = arr_parm.make_wrapper();
+    arr_parm.change_mxArray(plhs+7);
+    Generic_wrapper_base * wrapper7 = arr_parm.make_wrapper();
+    arr_parm.change_mxArray(plhs+8);
+    Generic_wrapper_base * wrapper8 = arr_parm.make_wrapper();
+    arr_parm.change_mxArray(plhs+9);
+    Generic_wrapper_base * wrapper9 = arr_parm.make_wrapper();
+
+
+
+    Coarse_grain_array Drr (5,80,100,20);
+    Coarse_grain_array Drr2(5,80,100,20);
+    Coarse_grain_array Dtt (5,80,100,20);
+    Coarse_grain_array Dyy (5,80,100,20);
+    Coarse_grain_array Dxx (5,80,100,20);
     
-    s.D_rr(test_arr);
+    s.D_lots(Drr,Drr2,Dxx,Dtt,Dyy);
     cout<<"2 point computed"<<endl;
     
-    test_arr.output_to_wrapper(wrapper,wrapper2);
-    delete wrapper;
+    Drr.output_to_wrapper(wrapper0,wrapper1);
+    Drr2.output_to_wrapper(wrapper2,wrapper3);
+    Dxx.output_to_wrapper(wrapper4,wrapper5);
+    Dtt.output_to_wrapper(wrapper6,wrapper7);
+    Dyy.output_to_wrapper(wrapper8,wrapper9);
+
+    delete wrapper0;
+    delete wrapper1;
     delete wrapper2;
-    wrapper2 = NULL;
-    wrapper  = NULL;
+    delete wrapper3;
+    delete wrapper4;
+    delete wrapper5;
+    delete wrapper6;
+    delete wrapper7;
+    delete wrapper8;
+    delete wrapper9;
+
     
     
 

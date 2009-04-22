@@ -88,6 +88,6 @@ int Coarse_grain_array::hash_function(double r, int t)const{
       throw "out of range";
     }
   
-  return  static_cast<int>(r_bins_ * ((r-r_min_)/r_max_)) + t*r_bins_ ;
+  return  static_cast<int>(r_bins_ * ((r-r_min_)/(r_max_- r_min_))) + t*r_bins_ ;
   
 }

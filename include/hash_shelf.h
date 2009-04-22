@@ -184,6 +184,16 @@ public:
      prl 85,8,888
    */
   void D_rr(utilities::Coarse_grain_array & D)const;
+  
+  /**
+     Computes a collection of correlation functions
+   */
+  void D_lots(utilities::Coarse_grain_array & Drr,
+	      utilities::Coarse_grain_array & Drr2,
+	      utilities::Coarse_grain_array & Dxx,
+	      utilities::Coarse_grain_array & Dtt,
+	      utilities::Coarse_grain_array & Dyy)const;
+  
 
 protected:
   //change all of this to be pointers to hash_boxes, to keep
