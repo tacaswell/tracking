@@ -28,7 +28,7 @@
 #include <typeinfo>
 #include <iostream>
 #include "exception.h"
-#include "touple.h"
+#include "tuple.h"
 #include "hash_shelf.h"
 using namespace tracking;
 using std::set;
@@ -196,12 +196,12 @@ double particle_track::distancesq_corrected(const particle_track* part_in)const{
   //   return X*X + Y*Y ;//+ Z*Z;
 }
 
-const utilities::Touple particle_track::get_corrected_forward_disp()const
+const utilities::Tuple particle_track::get_corrected_forward_disp()const
 {
   if (shelf_ ==NULL)
     {
       throw "shelf not defined";
-      return utilities::Touple();
+      return utilities::Tuple();
     }
   return forward_disp_ - shelf_->get_mean_forward_disp();
 }

@@ -30,7 +30,7 @@
 
 #include "master_box_t.h"
 
-#include "touple.h"
+#include "tuple.h"
 
 
 #ifndef HASH_SHELF
@@ -68,7 +68,7 @@ public:
   hash_shelf(unsigned int imsz1, unsigned int imsz2, 
 	     unsigned int ppb,int i_frame);
   ///Constructor that makes an empty hash_shelf
-  hash_shelf(utilities::Touple imgsz, unsigned int ippb, int i_frame);
+  hash_shelf(utilities::Tuple imgsz, unsigned int ippb, int i_frame);
 
 
   ///Changed the pixels per box and re-hashes the shelf
@@ -157,19 +157,19 @@ public:
      with possible flows in the sample.  Particles with out forward
      tracking data are ignored.
   */
-  void compute_mean_forward_disp(utilities::Touple & cum_disp);
+  void compute_mean_forward_disp(utilities::Tuple & cum_disp);
   /**
      Getter function for mean forward displacement from the
      previous shelf in a case.
    */
-  const utilities::Touple& get_mean_forward_disp() const{
+  const utilities::Tuple& get_mean_forward_disp() const{
     return mean_forward_disp_;
   }
   /**
      Getter function for mean forward displacement from the
      first shelf in a case.
   */
-  const utilities::Touple&  get_cum_forward_disp() const{
+  const utilities::Tuple&  get_cum_forward_disp() const{
     return cumulative_disp_;
   }
 
@@ -212,10 +212,10 @@ protected:
   
   ///Vector to store the dimensions of the grid
   //vector<int> hash_dims;
-  utilities::Touple hash_dims_;
+  utilities::Tuple hash_dims_;
   ///Vector to store the dimensions of input data
   //  vector<int> img_dims;
-  utilities::Touple img_dims_;
+  utilities::Tuple img_dims_;
 
   
   ///number of pixels per side of the gridboxes
@@ -228,12 +228,12 @@ protected:
      The mean displacement of the plane.  The definition of velocity
      is $v_i = x_{i +1} - x_i$ hence the 'forward' velocity
    */
-  utilities::Touple mean_forward_disp_;
+  utilities::Tuple mean_forward_disp_;
 
   /**
      Cumlative displacement vector
   */
-  utilities::Touple cumulative_disp_;
+  utilities::Tuple cumulative_disp_;
   
   /**
      computes area of image
@@ -268,7 +268,7 @@ hash_shelf::hash_shelf(master_box_t<particle> & mb, int imsz1,
 }
 
 inline unsigned int hash_shelf::hash_function(particle_base* p) const{
-  utilities::Touple cur_pos = p->get_position();
+  utilities::Tuple cur_pos = p->get_position();
   
   return (unsigned int)
     (((unsigned int)cur_pos[1]/ppb)*hash_dims_[0] + cur_pos[0]/ppb);

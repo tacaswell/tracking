@@ -24,10 +24,10 @@
 //the resulting work.
 #include "particle.h"
 
-#include "touple.h"
+#include "tuple.h"
 
 // namespace utilities{
-// class Touple;
+// class Tuple;
 // }
 
 #ifndef PARTICLE_TRACK
@@ -104,13 +104,13 @@ public:
   /**
      Returns the uncorrected forward displacement
    */
-  const utilities::Touple& get_raw_forward_disp()const
+  const utilities::Tuple& get_raw_forward_disp()const
   {return forward_disp_;}
 
   /**
      Returns the corrected forward displacement
    */
-  const utilities::Touple get_corrected_forward_disp()const;
+  const utilities::Tuple get_corrected_forward_disp()const;
 
   
   /**
@@ -243,7 +243,7 @@ protected:
   /**
      The foward displacement vector
    */
-  utilities::Touple forward_disp_;
+  utilities::Tuple forward_disp_;
 
 
 

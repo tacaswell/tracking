@@ -29,9 +29,9 @@
 
 namespace utilities{
 class Generic_wrapper_base;
-class Touple;
+class Tuple;
 /**
-   Class to accumulate touples into.
+   Class to accumulate tuples into.
  */
 class Array{
 public:
@@ -40,9 +40,9 @@ public:
    */
   void set_array(Generic_wrapper_base * out_wrapper) const;
   /**
-     Adds a touple to the end of the array
+     Adds a tuple to the end of the array
    */
-  void push(const Touple& touple_in);
+  void push(const Tuple& tuple_in);
   /**
      Sensible printing
    */

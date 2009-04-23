@@ -32,7 +32,7 @@
 #include "wrapper.h"
 #include "wrapper_i.h"
 #include "wrapper_o.h"
-#include "touple.h"
+#include "tuple.h"
 
 
 #ifndef PARTICLE_BASE
@@ -95,18 +95,18 @@ public:
      Returns the distance of the particle from the specified origin
      @param origin the cordinates of the new origin
    */
-  double get_r(const utilities::Touple & origin) const;
+  double get_r(const utilities::Tuple & origin) const;
 
   /**
      Returns the angle in the plane from the Y-axis
      @param origin the cordinates of the new origin
    */
-  double get_theta(const utilities::Touple & origin) const;
+  double get_theta(const utilities::Tuple & origin) const;
 
   /**
-     returns a touple of the particle's position
+     returns a tuple of the particle's position
    */
-  const utilities::Touple & get_position() const{
+  const utilities::Tuple & get_position() const{
     return position_;
   };
 
@@ -142,7 +142,7 @@ protected:
      problem of taking more memory, but it might help the time.
      This will also make keeping track of the displacements.
    */
-  utilities::Touple position_;
+  utilities::Tuple position_;
 
   
 private:

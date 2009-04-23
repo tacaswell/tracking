@@ -87,7 +87,7 @@ extern void _main();
 void mexFunction( int nlhs, mxArray *plhs[], 
 		  int nrhs, const mxArray* prhs[] ){
 
-  if(nlhs!=10|| nrhs!=1){
+  if(nlhs!=2|| nrhs!=1){
     cout<<"Error, wrong number of arguments"<<endl;
     return;
   }
@@ -140,7 +140,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
     master_box_t<particle_track>bt(&p_in,&p_out);
   
-    utilities::Touple dims;	
+    utilities::Tuple dims;	
     //  for(int t = 0; t<3;t++)	
     //    dims.push_back(80);    
     dims[0] = (520);
@@ -151,66 +151,85 @@ void mexFunction( int nlhs, mxArray *plhs[],
     
     cout<<"total number of particles is: "<<bt.size()<<endl;;
   
-    int frames = 1200;		// 
+    int frames = 100;		// 
     hash_case s(bt,dims,5,frames);
     cout<<"case built"<<endl;
     s.link(5,tracks);
     cout<<"linked"<<endl;
-    s.compute_mean_disp();
-    cout<<"computed mean frame displacement"<<endl;
+//     s.compute_mean_disp();
+//     cout<<"computed mean frame displacement"<<endl;
+
+  
+    // Compute msd
+
+    Svector<double> msd_vec;
+    Svector<int> msd_count_vec;
     
-    tracks.remove_short_tracks(5);
-    cout<<"trimmed"<<endl;
+    msd_vec.data.clear();
+    msd_vec.data.resize(20);
+    msd_count_vec.data.clear();
+    msd_count_vec.data.resize(20);
+    tracks.msd(msd_vec, msd_count_vec);
+    vector_to_mat(plhs+0, msd_vec.data);
+    vector_to_mat(plhs+1, msd_count_vec.data);
+    cout<<"c msd"<<endl;
+
+    
+//     tracks.remove_short_tracks(5);
+//     cout<<"trimmed"<<endl;
+
+    
     
 
-    Generic_parameters_matlab arr_parm(100,20,plhs);
-    Generic_wrapper_base * wrapper0 = arr_parm.make_wrapper();
-    arr_parm.change_mxArray(plhs+1);
-    Generic_wrapper_base * wrapper1 = arr_parm.make_wrapper();
-    arr_parm.change_mxArray(plhs+2);
-    Generic_wrapper_base * wrapper2 = arr_parm.make_wrapper();
-    arr_parm.change_mxArray(plhs+3);
-    Generic_wrapper_base * wrapper3 = arr_parm.make_wrapper();
-    arr_parm.change_mxArray(plhs+4);
-    Generic_wrapper_base * wrapper4 = arr_parm.make_wrapper();
-    arr_parm.change_mxArray(plhs+5);
-    Generic_wrapper_base * wrapper5 = arr_parm.make_wrapper();
-    arr_parm.change_mxArray(plhs+6);
-    Generic_wrapper_base * wrapper6 = arr_parm.make_wrapper();
-    arr_parm.change_mxArray(plhs+7);
-    Generic_wrapper_base * wrapper7 = arr_parm.make_wrapper();
-    arr_parm.change_mxArray(plhs+8);
-    Generic_wrapper_base * wrapper8 = arr_parm.make_wrapper();
-    arr_parm.change_mxArray(plhs+9);
-    Generic_wrapper_base * wrapper9 = arr_parm.make_wrapper();
+//     Generic_parameters_matlab arr_parm(200,20,plhs);
+//     Generic_wrapper_base * wrapper0 = arr_parm.make_wrapper();
+//     arr_parm.change_mxArray(plhs+1);
+//     Generic_wrapper_base * wrapper1 = arr_parm.make_wrapper();
+//     arr_parm.change_mxArray(plhs+2);
+//     Generic_wrapper_base * wrapper2 = arr_parm.make_wrapper();
+//     arr_parm.change_mxArray(plhs+3);
+//     Generic_wrapper_base * wrapper3 = arr_parm.make_wrapper();
+//     arr_parm.change_mxArray(plhs+4);
+//     Generic_wrapper_base * wrapper4 = arr_parm.make_wrapper();
+//     arr_parm.change_mxArray(plhs+5);
+//     Generic_wrapper_base * wrapper5 = arr_parm.make_wrapper();
+//     arr_parm.change_mxArray(plhs+6);
+//     Generic_wrapper_base * wrapper6 = arr_parm.make_wrapper();
+//     arr_parm.change_mxArray(plhs+7);
+//     Generic_wrapper_base * wrapper7 = arr_parm.make_wrapper();
+//     arr_parm.change_mxArray(plhs+8);
+//     Generic_wrapper_base * wrapper8 = arr_parm.make_wrapper();
+//     arr_parm.change_mxArray(plhs+9);
+//     Generic_wrapper_base * wrapper9 = arr_parm.make_wrapper();
 
 
 
-    Coarse_grain_array Drr (5,80,100,20);
-    Coarse_grain_array Drr2(5,80,100,20);
-    Coarse_grain_array Dtt (5,80,100,20);
-    Coarse_grain_array Dyy (5,80,100,20);
-    Coarse_grain_array Dxx (5,80,100,20);
+//     Coarse_grain_array Drr (5,80,200,20);
+//     Coarse_grain_array Drr2(5,80,200,20);
+//     Coarse_grain_array Dtt (5,80,200,20);
+//     Coarse_grain_array Dyy (5,80,200,20);
+//     Coarse_grain_array Dxx (5,80,200,20);
     
-    s.D_lots(Drr,Drr2,Dxx,Dtt,Dyy);
-    cout<<"2 point computed"<<endl;
+//     cout<<"trying 2 point "<<endl;
+//     s.D_lots(Drr,Drr2,Dxx,Dtt,Dyy);
+//     cout<<"2 point computed"<<endl;
     
-    Drr.output_to_wrapper(wrapper0,wrapper1);
-    Drr2.output_to_wrapper(wrapper2,wrapper3);
-    Dxx.output_to_wrapper(wrapper4,wrapper5);
-    Dtt.output_to_wrapper(wrapper6,wrapper7);
-    Dyy.output_to_wrapper(wrapper8,wrapper9);
+//     Drr.output_to_wrapper(wrapper0,wrapper1);
+//     Drr2.output_to_wrapper(wrapper2,wrapper3);
+//     Dxx.output_to_wrapper(wrapper4,wrapper5);
+//     Dtt.output_to_wrapper(wrapper6,wrapper7);
+//     Dyy.output_to_wrapper(wrapper8,wrapper9);
 
-    delete wrapper0;
-    delete wrapper1;
-    delete wrapper2;
-    delete wrapper3;
-    delete wrapper4;
-    delete wrapper5;
-    delete wrapper6;
-    delete wrapper7;
-    delete wrapper8;
-    delete wrapper9;
+//     delete wrapper0;
+//     delete wrapper1;
+//     delete wrapper2;
+//     delete wrapper3;
+//     delete wrapper4;
+//     delete wrapper5;
+//     delete wrapper6;
+//     delete wrapper7;
+//     delete wrapper8;
+//     delete wrapper9;
 
     
     
@@ -229,7 +248,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
  
 //   cout<<"sizeof(particle_base) "<<sizeof(particle_base)<<endl;
 //   cout<<"sizeof(particle_track) "<<sizeof(particle_track)<<endl;
-//   cout<<"sizeof(utilities::Touple) "<<sizeof(utilities::Touple)<<endl;
+//   cout<<"sizeof(utilities::Tuple) "<<sizeof(utilities::Tuple)<<endl;
 //   cout<<"sizeof(double) "<<sizeof(double)<<endl;
 //   cout<<"sizeof(double*) "<<sizeof(double*)<<endl;
 //   cout<<"sizeof(std::list<pair<particle_track*, double> >*) "<<sizeof(std::list<pair<particle_track*, double> >*)<<endl;

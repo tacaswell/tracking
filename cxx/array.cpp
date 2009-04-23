@@ -25,14 +25,14 @@
 #include <iostream>
 
 #include "array.h"
-#include "touple.h"
+#include "tuple.h"
 #include "generic_wrapper_base.h"
 
 using namespace utilities;
 using std::cout;
 using std::endl;
 Array::Array(int rows)
-  :rows_(rows),cols_(Touple::length_),data_(rows_*cols_),cur_index_(0){
+  :rows_(rows),cols_(Tuple::length_),data_(rows_*cols_),cur_index_(0){
   if(rows_<1)
     throw "you are being stupid, too few rows";
 }
@@ -46,12 +46,12 @@ void Array::print(){
   }
 }
 
-void Array::push(const Touple&  touple_in){
+void Array::push(const Tuple&  tuple_in){
   if((cur_index_) == rows_)
     throw "past end of array";
 
   for(int j = 0; j<cols_;++j)
-    data_.at(cur_index_*cols_ + j) = touple_in[j];
+    data_.at(cur_index_*cols_ + j) = tuple_in[j];
   
   ++cur_index_;
 

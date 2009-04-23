@@ -32,16 +32,16 @@ namespace utilities{
    will be millions of these objects.  Also to make some specfic
    matlab like functions simpler to implement
  */
-class Touple{
+class Tuple{
 public:
  /**
      Over loads for copying
    */
-  void operator= (const Touple& y);
+  void operator= (const Tuple& y);
   /**
      Over loads for negation
    */
-  Touple operator- ( );
+  Tuple operator- ( );
 
   /**
      Overides random access
@@ -55,17 +55,17 @@ public:
   /**
      Over loads for element-wise addition
    */
-  Touple operator+ (const Touple& y) const;
+  Tuple operator+ (const Tuple& y) const;
   /**
      Over loads for constant addition
    */
-  Touple operator+ (const double y)const;
+  Tuple operator+ (const double y)const;
   /**
-     adds Touple to the current Touple
+     adds Tuple to the current Tuple
    */
-  void operator+= (const Touple& y);
+  void operator+= (const Tuple& y);
   /**
-     adds constant to the current Touple
+     adds constant to the current Tuple
    */
   void operator+= (const double y);
 
@@ -74,17 +74,17 @@ public:
   /**
      Over loads for element-wise subtraction
    */
-  Touple operator- ( const Touple& y)const;
+  Tuple operator- ( const Tuple& y)const;
   /**
      Over loads for constant subtraction
    */
-  Touple operator- ( const double y)const;
+  Tuple operator- ( const double y)const;
   /**
-     subtracts Touple to the current Touple
+     subtracts Tuple to the current Tuple
    */
-  void operator-= (const Touple& y);
+  void operator-= (const Tuple& y);
   /**
-     subtracts constant to the current Touple
+     subtracts constant to the current Tuple
    */
   void operator-= (const double y);
 
@@ -93,17 +93,17 @@ public:
   /**
      Over loads for constant multilplication
    */
-  Touple operator* (const double y) const;
+  Tuple operator* (const double y) const;
   /**
      Over loads for elementwise mustiplication
    */
-  Touple operator* (const Touple& y) const;
+  Tuple operator* (const Tuple& y) const;
   /**
-     element wise multilication of the current Touple
+     element wise multilication of the current Tuple
    */
-  void operator*= (const Touple& y);
+  void operator*= (const Tuple& y);
   /**
-     multiplies current Touple by a constant
+     multiplies current Tuple by a constant
    */
   void operator*= (const double y);
 
@@ -112,32 +112,32 @@ public:
   /**
      Over loads for element-wise division
    */
-  Touple operator/ ( const Touple& y) const;
+  Tuple operator/ ( const Tuple& y) const;
   /**
-     element wise division of the current Touple
+     element wise division of the current Tuple
    */
-  void operator/= (const Touple& y);
+  void operator/= (const Tuple& y);
   /**
-     devides current Touple by a constant
+     devides current Tuple by a constant
    */
   void operator/= (const double y);
 
 
 
   /**
-     square of the magnitude of the Touple assuming euclidian space
+     square of the magnitude of the Tuple assuming euclidian space
    */
   double magnitude_sqr () const;
 
   /**
-     magnitude of the Touple assuming euclidian space
+     magnitude of the Tuple assuming euclidian space
    */
   double magnitude () const;
 
   /**
-     take the dot product between two touple
+     take the dot product between two tuple
    */
-  double dot(const Touple & y) const;
+  double dot(const Tuple & y) const;
    
   /**
      Ruturns the product of the elements
@@ -151,14 +151,14 @@ public:
   
 
   /**
-     makes a touple a unit vector
+     makes a tuple a unit vector
    */
   void make_unit();
 
   /**
-     makes a touple a unit vector
+     makes a tuple a unit vector
    */
-  Touple direction() const;
+  Tuple direction() const;
 
   /**
      prints the data
@@ -166,7 +166,7 @@ public:
   void print() const;
 
   /**
-     sets touple to (0,0)
+     sets tuple to (0,0)
    */
 
   void clear();
@@ -174,14 +174,14 @@ public:
   /**
      empty constructor
    */
-  Touple();
+  Tuple();
   /**
      Destructor
    */
-  ~Touple();
+  ~Tuple();
 
   /**
-     The length of touple.  This should match the dimenion of the tracking.
+     The length of tuple.  This should match the dimenion of the tracking.
      Exactly how this will all fit together will be seen.
   */
   const static int length_ =2;

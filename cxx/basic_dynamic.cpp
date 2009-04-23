@@ -105,7 +105,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
     master_box_t<particle_track>bt(&p_in,&p_out);
   
-    utilities::Touple dims;	
+    utilities::Tuple dims;	
     dims[0] = (520);
     dims[1] = (1390);
 

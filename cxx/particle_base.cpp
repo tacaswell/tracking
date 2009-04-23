@@ -33,7 +33,7 @@ using std::list;
 using std::cout;
 using std::endl;
 
-using utilities::Touple;
+using utilities::Tuple;
 int particle_base::running_total_ = 0;
 
 wrapper_o_base* particle_base::wrapper_out_ = NULL;
@@ -103,13 +103,13 @@ double particle_base::get_value(wrapper::p_vals type) const{
   return wrapper_in_->get_value(ind_, type);
 }
 
-double particle_base::get_r(const utilities::Touple & origin) const{
+double particle_base::get_r(const utilities::Tuple & origin) const{
   return (position_ - origin).magnitude();
 }
 
-double particle_base::get_theta(const utilities::Touple & origin) const{
-  Touple tmp =  (position_ - origin);
-  return atan2(tmp[2], tmp[1]);
+double particle_base::get_theta(const utilities::Tuple & origin) const{
+  Tuple tmp =  (position_ - origin);
+  return atan2(tmp[1], tmp[0]);
 }
 
 void particle_base::print()const{

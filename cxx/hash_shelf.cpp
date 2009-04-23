@@ -35,7 +35,7 @@
 using namespace tracking;
 using std::list;
 using utilities::Coarse_grain_array;
-using utilities::Touple;
+using utilities::Tuple;
 using utilities::Null_field;
 using utilities::Ll_range_error;
 
@@ -99,7 +99,7 @@ hash_shelf::hash_shelf(unsigned int imsz1,
   init2();
 }
 
-hash_shelf::hash_shelf(utilities::Touple imgsz, unsigned int ippb, int i_frame):
+hash_shelf::hash_shelf(utilities::Tuple imgsz, unsigned int ippb, int i_frame):
   img_dims_(imgsz),  ppb(ippb),  plane_number(i_frame)
 {  
   init2();
@@ -115,7 +115,7 @@ hash_shelf::hash_shelf(utilities::Touple imgsz, unsigned int ippb, int i_frame):
 // }
 
 void hash_shelf::init2(){
-  int k = Touple::length_;
+  int k = Tuple::length_;
   hash_dims_.clear();
   hash_.clear();
 
@@ -253,7 +253,7 @@ void hash_shelf::shelf_to_list(std::list<particle_track*> *tmp) const{
 }
 
 
-void hash_shelf::compute_mean_forward_disp(utilities::Touple & cum_disp_in){
+void hash_shelf::compute_mean_forward_disp(utilities::Tuple & cum_disp_in){
   cumulative_disp_ = cum_disp_in;
   mean_forward_disp_.clear();
   int count = 0;
@@ -299,7 +299,7 @@ void hash_shelf::D_rr(utilities::Coarse_grain_array & Drr)const
 {
   list<particle_track*> current_box;
   list<particle_track*> current_region;
-  Touple center;
+  Tuple center;
   int max_r_int = (int) ceil(Drr.get_r_max());
   int buffer = (max_r_int%ppb == 0)?(max_r_int/ppb):(max_r_int/ppb + 1);
   int max_tau = Drr.get_d_bins();
@@ -401,7 +401,7 @@ void hash_shelf::D_rr(utilities::Coarse_grain_array & Drr)const
 	    {
 	      tmp_region_part = tmp_region_part->step_forwards(tau);
 	      tmp_box_part    = tmp_box_part   ->step_forwards(tau);
-	      const Touple displacement_correction = 
+	      const Tuple displacement_correction = 
 		(tmp_box_part->get_shelf())->get_cum_forward_disp();
 	      double box_r_tau = (tmp_box_part)->
 		get_r(center + (displacement_correction - cumulative_disp_));
@@ -428,9 +428,10 @@ void hash_shelf::D_lots(utilities::Coarse_grain_array & Drr,
 			utilities::Coarse_grain_array & Dtt,
 			utilities::Coarse_grain_array & Dyy)const
 {
+    
   list<particle_track*> current_box;
   list<particle_track*> current_region;
-  Touple center;
+  Tuple center;
   int max_r_int = (int) ceil(Drr.get_r_max());
   int buffer = (max_r_int%ppb == 0)?(max_r_int/ppb):(max_r_int/ppb + 1);
   int max_tau = Drr.get_d_bins();
@@ -441,8 +442,11 @@ void hash_shelf::D_lots(utilities::Coarse_grain_array & Drr,
 
   for(int j = 0; j<(int)hash_.size(); ++j)
   {
+
     get_region(j,current_region,buffer);
     hash_[j]->box_to_list(current_box);
+    
+
 
     // remove particles with out tracks as they are
     // useless for this
@@ -479,7 +483,8 @@ void hash_shelf::D_lots(utilities::Coarse_grain_array & Drr,
 	current_region.erase(it++);
       }
     }
-    
+
+
     for(list<particle_track*>::const_iterator box_part = current_box.begin();
 	box_part != current_box.end();++box_part)
     {
@@ -489,6 +494,8 @@ void hash_shelf::D_lots(utilities::Coarse_grain_array & Drr,
 	
 	const particle_track* box_part_ptr = *box_part;
 	const particle_track* region_part_ptr = *region_part;
+	double sep_r;
+	
 
 	// only compute the correlations once for each pair that
 	// starts in this frame
@@ -497,13 +504,15 @@ void hash_shelf::D_lots(utilities::Coarse_grain_array & Drr,
 	{
 	  continue;
 	}
+
+	
 	// ignore self
 	if((region_part_ptr)== (box_part_ptr) )
 	{
 	  continue;
 	}
 	
-	double sep_r = sqrt(box_part_ptr->distancesq(region_part_ptr));
+	 sep_r = sqrt(box_part_ptr->distancesq(region_part_ptr));
 	if((sep_r>max_sep) || (sep_r<min_sep))
 	{
 	  continue;
@@ -511,15 +520,16 @@ void hash_shelf::D_lots(utilities::Coarse_grain_array & Drr,
 	center = ((box_part_ptr)->get_position ()  + (region_part_ptr)->get_position ());
 	center/=2;
 	
-	
+
+
 	double box_r_i = (box_part_ptr)->get_r(center);
 	double region_r_i = (region_part_ptr)->get_r(center);
 
 	double box_theta_i = (box_part_ptr)->get_theta(center);
 	double region_theta_i = (region_part_ptr)->get_theta(center);
 
-	Touple box_pos_i = (box_part_ptr)->get_position();
- 	Touple region_pos_i = (region_part_ptr)->get_position();
+	Tuple box_pos_i    = (box_part_ptr)->get_position();
+ 	Tuple region_pos_i = (region_part_ptr)->get_position();
 
 
 	int box_part_trk_len = ((box_part_ptr)->get_track())->get_length();
@@ -537,26 +547,26 @@ void hash_shelf::D_lots(utilities::Coarse_grain_array & Drr,
 	  {
 	    try
 	    {
+	     
 	      tmp_region_part = tmp_region_part->step_forwards(tau);
 	      tmp_box_part    = tmp_box_part   ->step_forwards(tau);
-	      const Touple displacement_correction = 
+	      const Tuple displacement_correction = 
 		(tmp_box_part->get_shelf())->get_cum_forward_disp();
 	      double box_r_tau = (tmp_box_part)->
 		get_r(center + (displacement_correction - cumulative_disp_));
 	      double region_r_tau = (tmp_region_part)->
 		get_r(center + (displacement_correction - cumulative_disp_));
-
+	      
 	      double box_theta_tau = (box_part_ptr)->
 		get_theta(center + (displacement_correction - cumulative_disp_));
 	      double region_theta_tau = (region_part_ptr)->
 		get_theta(center + (displacement_correction - cumulative_disp_));
 	      
-	      Touple box_pos_tau = ((box_part_ptr)->get_position()) 
+	      Tuple box_pos_tau = ((tmp_box_part)->get_position()) 
 		+(displacement_correction - cumulative_disp_);
-	      Touple region_pos_tau = ((region_part_ptr)->get_position()) 
+	      Tuple region_pos_tau = ((tmp_region_part)->get_position()) 
 		+(displacement_correction - cumulative_disp_);
 	      
-
 
 
 	      Drr.add_to_element(sep_r,tau-1,
@@ -574,16 +584,21 @@ void hash_shelf::D_lots(utilities::Coarse_grain_array & Drr,
 	      Dyy.add_to_element(sep_r,tau-1,
 				 (box_pos_tau[1] - box_pos_i[1]) *
 				 (region_pos_tau[1] - region_pos_i[1]) );
-	      
-	      
 	    }
 	    catch(Ll_range_error& e)
 	    {
 	      break;
 	    }
+	    
 	  }
+	  
 	}
+
       }
     }
+    
   } // loop over boxes
+    
+
 }
+
