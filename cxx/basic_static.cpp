@@ -75,7 +75,7 @@ extern void _main();
 void mexFunction( int nlhs, mxArray *plhs[], 
 		  int nrhs, const mxArray* prhs[] ){
 
-  if(nlhs!=2 || nrhs!=0){
+  if(nlhs!=2 || nrhs!=1){
     cout<<"Error, wrong number of arguments"<<endl;
     return;
   }
@@ -86,7 +86,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
     wrapper::p_vals tmp[] = {wrapper::d_xpos,
 			     wrapper::d_ypos, 
 			     wrapper::d_frame};
-    int tmp2[] = {0, 1, 2,3 ,4};
+    int tmp2[] = {0, 1, 2};
       vector<wrapper::p_vals > tmp3(tmp, tmp+3);
     vector<wrapper::p_vals>::iterator it1 = tmp3.begin();
     vector<int> tmp4(tmp2, tmp2+3);
@@ -114,8 +114,8 @@ void mexFunction( int nlhs, mxArray *plhs[],
     utilities::Tuple dims;	
     // dims[0] = (520);
     //     dims[1] = (1390);
-    dims[0] = (60);
-    dims[1] = (60);
+    dims[0] = (323);
+    dims[1] = (323);
     
     
     track_shelf tracks;
@@ -132,7 +132,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
     int frames = 100;		
 
     //build hash case
-    hash_case s(bt,dims,2,frames);
+    hash_case s(bt,dims,10,frames);
     cout<<"case built"<<endl;
 
     
@@ -140,7 +140,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
     // Compute G(r)
     vector<double> gofr_bin_count;
     vector<double> gofr_bin_edges;
-    s.gofr_norm(18,120,gofr_bin_count,gofr_bin_edges);
+    s.gofr_norm(45,120,gofr_bin_count,gofr_bin_edges);
     vector_to_mat(plhs,gofr_bin_count);
     vector_to_mat(plhs +1,gofr_bin_edges);
     cout<<"gofr computed"<<endl;
