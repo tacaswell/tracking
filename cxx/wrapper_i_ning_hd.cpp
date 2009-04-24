@@ -64,17 +64,21 @@ void wrapper_i_ning_hd::fill_data(std::string file_name, int row, int col){
   for(int j = 0 ; j<rows; j++){
     indatafile >> tmp;
     *(first + j*cols) = tmp;
+
     for(int n = 0; n<3; n++){
       indatafile >> tmp;
       //move the origin to the corner, not the center (to deal with
       //the fact that all the code is written with the assumption
       //that all of the posistions are postive and scale up to make
       //the box look bigger (purely for my brain to be happier)
-      *(first  + j*cols+n+1) = (tmp+.7)*50;
+      *(first  + j*cols+n+1) = (tmp+.57)*50;
       assert((tmp+.7)>0);
+
+      
     }
     indatafile >> tmp;
     *(first  + j*cols+4) = tmp;
+    
   }
 
  

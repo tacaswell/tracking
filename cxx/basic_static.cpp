@@ -56,6 +56,8 @@
 #include "generic_wrapper_matlab.h"
 #include "generic_parameters_matlab.h"
 
+#include "params_ning_hd.h"
+
 #include "cell_matlab.h"
 
 using namespace tracking;
@@ -73,17 +75,18 @@ extern void _main();
 void mexFunction( int nlhs, mxArray *plhs[], 
 		  int nrhs, const mxArray* prhs[] ){
 
-  if(nlhs!=2 || nrhs!=1){
+  if(nlhs!=2 || nrhs!=0){
     cout<<"Error, wrong number of arguments"<<endl;
     return;
   }
   try{
     //nonsense to get the map set up
     map<wrapper::p_vals, int> contents;
+
     wrapper::p_vals tmp[] = {wrapper::d_xpos,
 			     wrapper::d_ypos, 
 			     wrapper::d_frame};
-    int tmp2[] = {0, 1, 2 };
+    int tmp2[] = {0, 1, 2,3 ,4};
       vector<wrapper::p_vals > tmp3(tmp, tmp+3);
     vector<wrapper::p_vals>::iterator it1 = tmp3.begin();
     vector<int> tmp4(tmp2, tmp2+3);
@@ -98,7 +101,10 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
 
     params_matlab p_in = params_matlab(prhs,contents);
-    contents.insert(pair<wrapper::p_vals, int>(wrapper::d_trackid,3));
+    //    params_ning_hd p_in = params_ning_hd(20464,contents);
+
+
+    contents.insert(pair<wrapper::p_vals, int>(wrapper::d_trackid,5));
     params_matlab p_out = params_matlab(plhs,contents,mxGetM(*prhs),
 					 contents.size());
 
@@ -106,22 +112,35 @@ void mexFunction( int nlhs, mxArray *plhs[],
     master_box_t<particle_track>bt(&p_in,&p_out);
   
     utilities::Tuple dims;	
-    dims[0] = (520);
-    dims[1] = (1390);
-
+    // dims[0] = (520);
+    //     dims[1] = (1390);
+    dims[0] = (60);
+    dims[1] = (60);
+    
+    
     track_shelf tracks;
-    cout<<"total number of particles is: "<<bt.size()<<endl;;
+    cout<<"total number of particles is: "<<bt.size()<<endl;
+
+    for(int k = 0;k<15;++k)
+    {
+      (bt.get_particle(k))->print();
+      cout<<      (bt.get_particle(k))->get_value(wrapper::d_frame)<<endl;
+    }
+    
+    
   
-    int frames = 1200;		
+    int frames = 100;		
 
     //build hash case
-    hash_case s(bt,dims,10,frames);
+    hash_case s(bt,dims,2,frames);
     cout<<"case built"<<endl;
+
+    
 
     // Compute G(r)
     vector<double> gofr_bin_count;
     vector<double> gofr_bin_edges;
-    s.gofr_norm(100,500,gofr_bin_count,gofr_bin_edges);
+    s.gofr_norm(18,120,gofr_bin_count,gofr_bin_edges);
     vector_to_mat(plhs,gofr_bin_count);
     vector_to_mat(plhs +1,gofr_bin_edges);
     cout<<"gofr computed"<<endl;
