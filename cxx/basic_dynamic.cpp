@@ -1,4 +1,4 @@
-m//Copyright 2008,2009 Thomas A Caswell
+//Copyright 2008,2009 Thomas A Caswell
 //tcaswell@uchicago.edu
 //http://jfi.uchicago.edu/~tcaswell
 //
@@ -34,7 +34,7 @@ m//Copyright 2008,2009 Thomas A Caswell
 //standard includes
 #include<iostream>
 #include<fstream>
-#include <exception>
+#include<exception>
 
 //my includes
 
@@ -73,7 +73,7 @@ extern void _main();
 void mexFunction( int nlhs, mxArray *plhs[], 
 		  int nrhs, const mxArray* prhs[] ){
 
-  if(nlhs!=2 || nrhs!=1){
+  if(nlhs!=4 || nrhs!=1){
     cout<<"Error, wrong number of arguments"<<endl;
     return;
   }
@@ -135,7 +135,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
     
     Array mean_frame_disp(frames);
     s.get_mean_disp(mean_frame_disp);
-    Generic_parameters_matlab arr_parm(frames,2,plhs+2);
+    Generic_parameters_matlab arr_parm(frames,2,plhs);
     Generic_wrapper_base * wrapper = arr_parm.make_wrapper();
     mean_frame_disp.set_array(wrapper);
 
@@ -155,13 +155,13 @@ void mexFunction( int nlhs, mxArray *plhs[],
     msd_count_vec.data.clear();
     msd_count_vec.data.resize(200);
     tracks.msd_corrected(msd_vec, msd_count_vec);
-    vector_to_mat(plhs+3, msd_vec.data);
-    vector_to_mat(plhs+4, msd_count_vec.data);
+    vector_to_mat(plhs+1, msd_vec.data);
+    vector_to_mat(plhs+2, msd_count_vec.data);
     cout<<"c msd"<<endl;
 
 
     // output tracks
-    Cell_matlab test_cell2(tracks.get_track_count(),plhs+5);
+    Cell_matlab test_cell2(tracks.get_track_count(),plhs+3);
     tracks.set_corrected_disp_to_cell(test_cell2);
     cout<<"c tracks"<<endl;
 

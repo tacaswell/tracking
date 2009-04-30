@@ -112,24 +112,24 @@ void mexFunction( int nlhs, mxArray *plhs[],
     master_box_t<particle_track>bt(&p_in,&p_out);
   
     utilities::Tuple dims;	
-    // dims[0] = (520);
-    //     dims[1] = (1390);
-    dims[0] = (323);
-    dims[1] = (323);
+    dims[0] = (520);
+    dims[1] = (1390);
+    // dims[0] = (2000);
+//     dims[1] = (3000);
     
     
     track_shelf tracks;
     cout<<"total number of particles is: "<<bt.size()<<endl;
 
-    for(int k = 0;k<15;++k)
-    {
-      (bt.get_particle(k))->print();
-      cout<<      (bt.get_particle(k))->get_value(wrapper::d_frame)<<endl;
-    }
+//     for(int k = 0;k<15;++k)
+//     {
+//       (bt.get_particle(k))->print();
+//       cout<<      (bt.get_particle(k))->get_value(wrapper::d_frame)<<endl;
+//     }
     
-    
+     
   
-    int frames = 100;		
+    int frames = 20;		
 
     //build hash case
     hash_case s(bt,dims,10,frames);
@@ -140,7 +140,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
     // Compute G(r)
     vector<double> gofr_bin_count;
     vector<double> gofr_bin_edges;
-    s.gofr_norm(45,120,gofr_bin_count,gofr_bin_edges);
+    s.gofr_norm(100,5000,gofr_bin_count,gofr_bin_edges);
     vector_to_mat(plhs,gofr_bin_count);
     vector_to_mat(plhs +1,gofr_bin_edges);
     cout<<"gofr computed"<<endl;
