@@ -76,7 +76,7 @@ public:
      recursive print function for printing out the sequence of a
      track.
      @param more
-     how many more particles to decend
+     how many more particles to descend
   */
   void print_t(int more)const;
 
@@ -85,21 +85,21 @@ public:
     If this is the last particle in the track than NULL
     will be returned.
   */
-  const particle_track* get_next()const{return next;}
+  const particle_track* get_next()const{return next_;}
 
   /**
     Returns a pointer to the next particle in the track.
     If this is the last particle in the track than NULL
-    will be returned that is not const protecte
+    will be returned that is not const protected
   */
-  particle_track* get_next(){return next;}
+  particle_track* get_next(){return next_;}
 
   /**
     Returns a pointer to the previous particle in the track.
     If this is the first particle in the track than NULL
     will be returned.
    */
-  const particle_track* get_prev()const{return prev;}
+  const particle_track* get_prev()const{return prev_;}
 
   /**
      Returns the uncorrected forward displacement
@@ -126,6 +126,22 @@ public:
      track is reached throws an error
    */
   const particle_track* step_backwards(int n)const;
+
+  
+  /**
+    Returns true if there is a particle n steps forward and
+    passes a pointer to it out as a reference, if there is
+    not a particle, returns false.
+   */
+   bool step_forwards(int n,const particle_track* & next)const;
+  
+  /**
+    Returns true if there is a particle n steps backwards and
+    passes a pointer to it out as a reference, if there is
+    not a particle, returns false.
+   */
+   bool step_backwards(int n,const particle_track* & next)const;
+  
 
   
 
@@ -213,9 +229,9 @@ public:
 
 protected:
   ///next particle in track
-  particle_track* next;
+  particle_track* next_;
   ///prev particle in track
-  particle_track* prev;
+  particle_track* prev_;
   /**
      Pointer to which track the particle is in. If the
      particle is not in a track this is NULL

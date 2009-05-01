@@ -33,6 +33,8 @@ class Histogram;
 template<class T>
 struct Svector;
 class Cell;
+class Counted_vector;
+
 }
 
 namespace tracking{
@@ -110,8 +112,16 @@ public:
 
   /**
      Generates the corrected MSD plot for all the tarcks in this shelf.
+     DEPRECIATED
    */
   void msd_corrected(utilities::Svector<double> & msd_vec,utilities::Svector<int> & entry_count)const;
+
+  
+  /**
+     Generates the corrected MSD plot for all the tarcks in this shelf.
+   */
+  void msd_corrected(utilities::Counted_vector & msd)const;
+
 
   /**
      Computes the average fourier transform of the tracks

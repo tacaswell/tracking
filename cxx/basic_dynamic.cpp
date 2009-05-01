@@ -52,6 +52,8 @@
 
 #include "histogram.h"
 #include "svector.h"
+#include "counted_vector.h"
+#include "coarse_grain_array.h"
 
 #include "generic_wrapper_matlab.h"
 #include "generic_parameters_matlab.h"
@@ -69,15 +71,28 @@ using utilities::Array;
 using utilities::Cell_matlab;
 using utilities::Generic_wrapper_base;
 using utilities::Generic_parameters_matlab;
+using utilities::Counted_vector;
+using utilities::Coarse_grain_array;
 extern void _main();
 void mexFunction( int nlhs, mxArray *plhs[], 
 		  int nrhs, const mxArray* prhs[] ){
 
-  if(nlhs!=4 || nrhs!=1){
+  if(nlhs!=15 || nrhs!=5){
     cout<<"Error, wrong number of arguments"<<endl;
     return;
   }
   try{
+
+    utilities::Tuple dims;	
+    dims[0] = (int)mxGetScalar(prhs[1]);
+    dims[1] = (int)mxGetScalar(prhs[2]);
+    int frames = (int)mxGetScalar(prhs[3]);
+
+    double max_r = mxGetScalar(prhs[4]);
+
+
+
+
     //nonsense to get the map set up
     map<wrapper::p_vals, int> contents;
     wrapper::p_vals tmp[] = {wrapper::d_xpos,
@@ -104,66 +119,151 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
 
     master_box_t<particle_track>bt(&p_in,&p_out);
-  
-    utilities::Tuple dims;	
-    dims[0] = (520);
-    dims[1] = (1390);
 
     track_shelf tracks;
     cout<<"total number of particles is: "<<bt.size()<<endl;;
-  
-    int frames = 1200;		
-
     //build hash case
-    hash_case s(bt,dims,10,frames);
+    hash_case s(bt,dims,(int)max_r,frames);
     cout<<"case built"<<endl;
 
     //link tracks
-    s.link(2,tracks);
+    s.link(max_r,tracks);
     cout<<"linked"<<endl;
     
     
     
-    Histogram hist1(frames,0,frames);
-    tracks.track_length_histogram(hist1);
+//     Histogram hist1(frames,0,frames);
+//     tracks.track_length_histogram(hist1);
 
 
 
     //compute the mean displacements from frame to frame
     s.compute_mean_disp();
     
+
     
     Array mean_frame_disp(frames);
     s.get_mean_disp(mean_frame_disp);
     Generic_parameters_matlab arr_parm(frames,2,plhs);
     Generic_wrapper_base * wrapper = arr_parm.make_wrapper();
     mean_frame_disp.set_array(wrapper);
-
+    delete wrapper;
+    wrapper = NULL;
+    
     cout<<"mean disp"<<endl;
     
     //trim out short tracks
-    tracks.remove_short_tracks(10);
+    tracks.remove_short_tracks(100);
     cout<<"trimed"<<endl;
   
     // Compute msd
 
+    //  
+    //  
+  
+    time_t start,end;
+    double dif;
+    
+    int steps = 50;
+    
+
+    time (&start); 
     Svector<double> msd_vec;
     Svector<int> msd_count_vec;
     
-    msd_vec.data.clear();
-    msd_vec.data.resize(200);
-    msd_count_vec.data.clear();
-    msd_count_vec.data.resize(200);
-    tracks.msd_corrected(msd_vec, msd_count_vec);
-    vector_to_mat(plhs+1, msd_vec.data);
-    vector_to_mat(plhs+2, msd_count_vec.data);
-    cout<<"c msd"<<endl;
+    time (&start); 
+    Counted_vector msd(steps);
+    tracks.msd_corrected(msd);
+    Generic_parameters_matlab arr_parm2(1,steps,plhs+1);
+    Generic_wrapper_base * wrapper1 = arr_parm2.make_wrapper();
+    arr_parm2.change_mxArray(plhs+2);
+    Generic_wrapper_base * wrapper2 = arr_parm2.make_wrapper();
+    msd.output_to_wrapper(wrapper1,wrapper2);
+    time (&end); 
+    dif = difftime (end,start);
+    cout<<"c msd: "<<dif<<endl;
+
+    delete wrapper1;
+    delete wrapper2;
+    wrapper1= NULL;
+    wrapper2 = NULL;
 
 
-    // output tracks
-    Cell_matlab test_cell2(tracks.get_track_count(),plhs+3);
-    tracks.set_corrected_disp_to_cell(test_cell2);
-    cout<<"c tracks"<<endl;
+
+    Generic_parameters_matlab arr_parm3(200,20,plhs+3);
+    Generic_wrapper_base * wrapper3 = arr_parm3.make_wrapper();
+    arr_parm3.change_mxArray(plhs+4);
+    Generic_wrapper_base * wrapper4 = arr_parm3.make_wrapper();
+    arr_parm3.change_mxArray(plhs+5);
+
+    Generic_wrapper_base * wrapper5 = arr_parm3.make_wrapper();
+    arr_parm3.change_mxArray(plhs+6);
+    Generic_wrapper_base * wrapper6 = arr_parm3.make_wrapper();
+    arr_parm3.change_mxArray(plhs+7);
+
+    Generic_wrapper_base * wrapper7 = arr_parm3.make_wrapper();
+    arr_parm3.change_mxArray(plhs+8);
+    Generic_wrapper_base * wrapper8 = arr_parm3.make_wrapper();
+    arr_parm3.change_mxArray(plhs+9);
+
+    Generic_wrapper_base * wrapper9 = arr_parm3.make_wrapper();
+    arr_parm3.change_mxArray(plhs+10);
+    Generic_wrapper_base * wrapper10 =arr_parm3.make_wrapper();
+
+    arr_parm3.change_mxArray(plhs+11);
+    Generic_wrapper_base * wrapper11 =arr_parm3.make_wrapper();
+    arr_parm3.change_mxArray(plhs+12);
+    Generic_wrapper_base * wrapper12 =arr_parm3.make_wrapper();
+
+    
+    arr_parm3.change_mxArray(plhs+13);
+    Generic_wrapper_base * wrapper13 =arr_parm3.make_wrapper();
+    arr_parm3.change_mxArray(plhs+14);
+    Generic_wrapper_base * wrapper14 =arr_parm3.make_wrapper();
+
+    
+
+    Coarse_grain_array Drr (5,80,200,20);
+    Coarse_grain_array Dtt (5,80,200,20);
+    Coarse_grain_array Ddrdr(5,80,200,20);
+    Coarse_grain_array Dyy (5,80,200,20);
+    Coarse_grain_array Dxx (5,80,200,20);
+    Coarse_grain_array Duu (5,80,200,20);
+    
+    cout<<"trying 2 point "<<endl;
+    s.D_lots(Drr,Dtt,Ddrdr,Dxx,Dyy,Duu);
+    cout<<"2 point computed"<<endl;
+    
+    Drr.output_to_wrapper(wrapper3,wrapper4);
+    Dtt.output_to_wrapper(wrapper5,wrapper6);
+    Ddrdr.output_to_wrapper(wrapper7,wrapper8);
+    Dxx.output_to_wrapper(wrapper9,wrapper10);
+    Dyy.output_to_wrapper(wrapper11,wrapper12);
+    Duu.output_to_wrapper(wrapper13,wrapper14);
+
+
+    delete wrapper3;
+    delete wrapper4;
+    delete wrapper5;
+    delete wrapper6;
+    delete wrapper7;
+    delete wrapper8;
+    delete wrapper9;
+    delete wrapper10;
+    delete wrapper11;
+    delete wrapper12;
+    delete wrapper13;
+    delete wrapper14;
+    
+    
+    
+
+
+
+//     // output tracks
+//     Cell_matlab test_cell2(tracks.get_track_count(),plhs+3);
+//     tracks.set_corrected_disp_to_cell(test_cell2);
+//     cout<<"c tracks"<<endl;
 
     
     

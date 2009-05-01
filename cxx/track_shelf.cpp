@@ -28,6 +28,7 @@
 #include "track_box.h"
 #include "particle_track.h"
 #include "svector.h"
+#include "counted_vector.h"
 
 #include "array.h"
 #include "cell.h"
@@ -216,13 +217,13 @@ void track_shelf::msd_corrected(Svector<double> & msd_vec,Svector<int> & entry_c
       
       //      cout<<"Track legnth: "<<(*working_track).second->get_length()<<endl;
       for(int j = 0; j<((*working_track).second->get_length()-1) && j < max_time_step;j++)
-	{
-	  tmp_count =0;
-	  disp_sq_sum = 0;
-	  
-	  not_past_end = true;
-	  
-	  current = (*working_track).second->get_first();
+      {
+	tmp_count =0;
+	disp_sq_sum = 0;
+	
+	not_past_end = true;
+	
+	current = (*working_track).second->get_first();
 	
 	while(not_past_end){
 	  try{
@@ -232,13 +233,16 @@ void track_shelf::msd_corrected(Svector<double> & msd_vec,Svector<int> & entry_c
 	    current = next;
 	  }
 	  catch(Ll_range_error & e){
-	    not_past_end = false;
-	    msd_vec.data.at(j) += disp_sq_sum/tmp_count;
-	    ++(entry_count.data.at(j));
+	      not_past_end = false;
+	      msd_vec.data.at(j) += disp_sq_sum;
+	      (entry_count.data.at(j))+=tmp_count;
+// 	      msd_vec.data.at(j) += disp_sq_sum/tmp_count;
+// 	      ++(entry_count.data.at(j));
 	  }
 	}
-	}
+      }
     }
+  
 
   vector<double>::iterator it = msd_vec.data.begin();
   vector<int>::iterator it2 = entry_count.data.begin();
@@ -249,10 +253,52 @@ void track_shelf::msd_corrected(Svector<double> & msd_vec,Svector<int> & entry_c
 	  (*it) = (*it)/(double)(*(it2));
 	}
     }
-
-    
-  
 }
+
+
+
+void track_shelf::msd_corrected(utilities::Counted_vector & msd)const
+{
+  //this exception needs to get it's own class or something
+
+  int max_time_step = msd.get_length();
+  const particle_track* current = NULL;
+  const particle_track* next = NULL;
+
+  
+
+  bool not_past_end = false;
+  for(map<int,track_box*>::const_iterator working_track = track_map.begin();
+      working_track!=track_map.end(); working_track++)
+  {
+      
+    //      cout<<"Track legnth: "<<(*working_track).second->get_length()<<endl;
+    int track_length = ((*working_track).second->get_length()-1);
+    
+    for(int j = 0; j< track_length && j < max_time_step;j++)
+    {
+      int tmp_count=0;
+      double tmp_dist_sq_sum=0;
+
+      not_past_end = true;
+      current = (*working_track).second->get_first();
+      not_past_end = current->step_forwards(j+1,next);
+      while(not_past_end)
+      {
+
+	tmp_dist_sq_sum += current->distancesq_corrected(next);
+	++tmp_count;
+	current = next;
+	not_past_end = current->step_forwards(j+1,next);
+
+      }
+      msd.batch_add_to_element(j, tmp_dist_sq_sum,tmp_count);
+      //msd.add_to_element(j, tmp_dist_sq_sum/tmp_count);
+    }
+  }
+}
+
+
 
 void track_shelf::msd_hist(int time_step ,utilities::Histogram & in) const{
 

@@ -423,10 +423,12 @@ void hash_shelf::D_rr(utilities::Coarse_grain_array & Drr)const
 
 
 void hash_shelf::D_lots(utilities::Coarse_grain_array & Drr,
-			utilities::Coarse_grain_array & Drr2,
-			utilities::Coarse_grain_array & Dxx,
 			utilities::Coarse_grain_array & Dtt,
-			utilities::Coarse_grain_array & Dyy)const
+			utilities::Coarse_grain_array & Ddrdr,
+			utilities::Coarse_grain_array & Dxx,
+			utilities::Coarse_grain_array & Dyy,
+			utilities::Coarse_grain_array & Duu
+			)const
 {
     
   list<particle_track*> current_box;
@@ -543,13 +545,18 @@ void hash_shelf::D_lots(utilities::Coarse_grain_array & Drr,
 	{
 	  const particle_track * tmp_box_part = *box_part;
 	  const particle_track * tmp_region_part = *region_part;
-	  while (true)
-	  {
-	    try
-	    {
+
+	  bool more_box_track = tmp_region_part->step_forwards(tau,tmp_region_part);
+	  bool more_region_track = tmp_box_part->step_forwards(tau,tmp_box_part);
+	  
+	  
+// 	  while (true)
+	  while (more_region_track && more_box_track)
+ 	  {
+// 	    try
+// 	    {
 	     
-	      tmp_region_part = tmp_region_part->step_forwards(tau);
-	      tmp_box_part    = tmp_box_part   ->step_forwards(tau);
+	  
 	      const Tuple displacement_correction = 
 		(tmp_box_part->get_shelf())->get_cum_forward_disp();
 	      double box_r_tau = (tmp_box_part)->
@@ -568,29 +575,48 @@ void hash_shelf::D_lots(utilities::Coarse_grain_array & Drr,
 		+(displacement_correction - cumulative_disp_);
 	      
 
-
+	      // adds to Drr, the correlation in the radial direction
 	      Drr.add_to_element(sep_r,tau-1,
-				 (box_r_tau - box_r_i) * (region_r_tau - region_r_i));
+				 (box_r_tau - box_r_i) * (region_r_tau - region_r_i)
+				 );
+	      // adds to Drr, the correlation in the \theta direction
 	      Dtt.add_to_element(sep_r,tau-1,
 				 (box_theta_tau - box_theta_i) *
-				 (region_theta_tau - region_theta_i));
-	      Drr2.add_to_element(sep_r,tau-1,
+				 (region_theta_tau - region_theta_i)
+				 );
+	      // mobility correlation
+	      Ddrdr.add_to_element(sep_r,tau-1,
 				  (box_pos_tau - box_pos_i).magnitude() *
-				  (region_pos_tau - region_pos_i).magnitude() );
+				  (region_pos_tau - region_pos_i).magnitude()
+				  );
 	      
+	      // correlation in motion in the x and y direction
 	      Dxx.add_to_element(sep_r,tau-1,
 				 (box_pos_tau[0] - box_pos_i[0]) *
-				 (region_pos_tau[0] - region_pos_i[0]) );
+				 (region_pos_tau[0] - region_pos_i[0]) 
+				 );
 	      Dyy.add_to_element(sep_r,tau-1,
 				 (box_pos_tau[1] - box_pos_i[1]) *
-				 (region_pos_tau[1] - region_pos_i[1]) );
-	    }
-	    catch(Ll_range_error& e)
-	    {
-	      break;
-	    }
+				 (region_pos_tau[1] - region_pos_i[1]) 
+				 );
+	      
+	      Duu.add_to_element(sep_r,tau-1,
+				 (box_pos_tau - box_pos_i).dot((region_pos_tau - region_pos_i))
+				 );
+
+	      
+	      
+	      more_box_track = tmp_region_part->step_forwards(tau,tmp_region_part);
+	      more_region_track = tmp_box_part->step_forwards(tau,tmp_box_part);
+	      
+	    // }
+// 	    catch(Ll_range_error& e)
+// 	    {
+// 	      break;
+// 	    }
 	    
 	  }
+	  
 	  
 	}
 

@@ -47,8 +47,8 @@ particle_track::particle_track(wrapper_i_base * i_data,
 */
 particle_track::particle_track(int i_ind)
   :particle_base(i_ind),
-   next(NULL),
-   prev(NULL),
+   next_(NULL),
+   prev_(NULL),
    track(NULL) ,
    shelf_(NULL),
    n_pos_link(NULL),
@@ -60,8 +60,8 @@ particle_track::particle_track(int i_ind)
 
 void particle_track::print_t(int more)const{
   particle_base::print();
-  if(more-->0&&next!=NULL)
-    next->print_t(more);
+  if(more-->0&&next_!=NULL)
+    next_->print_t(more);
   
 }
 
@@ -74,9 +74,9 @@ void particle_track::print_t(int more)const{
 
 
 void particle_track::set_next(particle_track* n_next){
-  if(next!=NULL)
+  if(next_!=NULL)
     throw "nuking the list";
-  next = n_next;
+  next_ = n_next;
   forward_disp_[0] = (n_next -> get_value(wrapper::d_xpos))
     - get_value(wrapper::d_xpos);
   forward_disp_[1] = (n_next -> get_value(wrapper::d_ypos))
@@ -87,9 +87,9 @@ void particle_track::set_next(particle_track* n_next){
 
 
 void particle_track::set_prev(particle_track* n_prev){
-  if(prev!=NULL)
+  if(prev_!=NULL)
     throw "nuking the list";
-  prev = n_prev;
+  prev_ = n_prev;
 }
 
 
@@ -97,24 +97,74 @@ const particle_track* particle_track::step_forwards(int n)const{
   if(n==0)
     return this;
 
-  if (next == NULL)
+  if (next_ == NULL)
     throw Ll_range_error("past front");
 
     
   //check for obo bugs
-  return next->step_forwards(--n);
+  return next_->step_forwards(--n);
 }
 
 const particle_track* particle_track::step_backwards(int n)const{
   if(n==0)
     return this;
 
-  if (prev == NULL)
+  if (prev_ == NULL)
     throw Ll_range_error("past back");
   
   //check for obo bugs
-  return prev->step_backwards(--n);
+  return prev_->step_backwards(--n);
 }
+
+bool particle_track::step_forwards(int n, const particle_track* & dest)const{
+
+  if (next_ == NULL)
+  {
+    dest = NULL;
+    return false;
+  }
+
+  if(n==1)
+  {
+    dest = next_;
+    return true;
+  }
+  if(n<1)
+  {
+    dest = this;
+    return true;
+  }
+  
+  
+//check for obo bugs
+  return next_->step_forwards(--n,dest);
+}
+
+
+bool particle_track::step_backwards(int n, const particle_track* & dest)const{
+
+  if (next_ == NULL)
+  {
+    dest = NULL;
+    return false;
+  }
+
+  if(n==1)
+  {
+    dest = next_;
+    return true;
+  }
+  if(n<1)
+  {
+    dest = this;
+    return true;
+  }
+    
+  
+  //check for obo bugs
+  return next_->step_backwards(--n,dest);
+}
+
 
 void particle_track::set_track(track_box* i_track){
   if(track!=NULL)
@@ -151,17 +201,17 @@ particle_track::~particle_track(){
 
 double particle_track::get_value(wrapper::p_vals type) const{
   if(type == wrapper::d_next){
-    if(next==NULL)
+    if(next_==NULL)
       return -1;
     //    return next->get_value(wrapper::d_unqid);
-    return next->get_value(wrapper::d_index);
+    return next_->get_value(wrapper::d_index);
   }
   if(type == wrapper::d_prev){
-    if(prev==NULL)
+    if(prev_==NULL)
       return -1;
     // tac 2009-04-10
     // changed to match the other one
-    return prev->get_value(wrapper::d_index);
+    return prev_->get_value(wrapper::d_index);
   }
   if(type ==wrapper::d_trackid)
     {
@@ -207,8 +257,8 @@ const utilities::Tuple particle_track::get_corrected_forward_disp()const
 }
 
 void particle_track::clear_track_data(){
-  next = NULL;
-  prev = NULL;
+  next_ = NULL;
+  prev_ = NULL;
   track = NULL;
 }
 

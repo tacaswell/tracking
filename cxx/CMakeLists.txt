@@ -3,7 +3,7 @@ hash_shelf.cpp histogram.cpp master_box.cpp particle_base.cpp
 particle_track.cpp track_box.cpp track_list.cpp track_shelf.cpp
 wrapper_base.cpp wrapper_i.cpp wrapper_i_file.cpp wrapper_i_ning.cpp
 wrapper_i_ning_hd.cpp wrapper_o_file.cpp tuple.cpp array.cpp cell.cpp
-coarse_grain_array.cpp
+coarse_grain_array.cpp counted_vector.cpp
 )
 
 SET(MATLAB_UTIL_SRC wrapper_i_matlab.cpp wrapper_o_matlab.cpp matlab_utils.cpp

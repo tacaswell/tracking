@@ -75,11 +75,29 @@ extern void _main();
 void mexFunction( int nlhs, mxArray *plhs[], 
 		  int nrhs, const mxArray* prhs[] ){
 
-  if(nlhs!=2 || nrhs!=1){
+  if(nlhs!=2 || nrhs!=6){
     cout<<"Error, wrong number of arguments"<<endl;
     return;
   }
   try{
+
+  
+//     utilities::Tuple dims;	
+//     dims[0] = (520);
+//     dims[1] = (1390);
+    /**
+       \todo add checks on input types
+    */
+    utilities::Tuple dims;	
+    dims[0] = (int)mxGetScalar(prhs[1]);
+    dims[1] = (int)mxGetScalar(prhs[2]);
+    int frames = (int)mxGetScalar(prhs[3]);
+
+    double max_r = mxGetScalar(prhs[4]);
+    int bins = (int)mxGetScalar(prhs[5]);
+
+
+
     //nonsense to get the map set up
     map<wrapper::p_vals, int> contents;
 
@@ -97,8 +115,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
     //end nonsense
     //there has to be a better way to do this
 
-  
-
+    
 
     params_matlab p_in = params_matlab(prhs,contents);
     //    params_ning_hd p_in = params_ning_hd(20464,contents);
@@ -110,10 +127,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
 
     master_box_t<particle_track>bt(&p_in,&p_out);
-  
-    utilities::Tuple dims;	
-    dims[0] = (520);
-    dims[1] = (1390);
+
     // dims[0] = (2000);
 //     dims[1] = (3000);
     
@@ -129,10 +143,8 @@ void mexFunction( int nlhs, mxArray *plhs[],
     
      
   
-    int frames = 20;		
-
     //build hash case
-    hash_case s(bt,dims,10,frames);
+    hash_case s(bt,dims,(int)max_r,frames);
     cout<<"case built"<<endl;
 
     
@@ -140,7 +152,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
     // Compute G(r)
     vector<double> gofr_bin_count;
     vector<double> gofr_bin_edges;
-    s.gofr_norm(100,5000,gofr_bin_count,gofr_bin_edges);
+    s.gofr_norm(max_r,bins,gofr_bin_count,gofr_bin_edges);
     vector_to_mat(plhs,gofr_bin_count);
     vector_to_mat(plhs +1,gofr_bin_edges);
     cout<<"gofr computed"<<endl;

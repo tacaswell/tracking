@@ -1,7 +1,7 @@
 cmake_minimum_required (VERSION 2.6) 
 project(TRACKING)
 
-SET(CMAKE_CXX_COMPILER "/usr/bin/g++-4.1")
+SET(CMAKE_CXX_COMPILER "/usr/bin/g++-4.1") 
 
 include(FindMatlab)
 
