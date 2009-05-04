@@ -30,11 +30,16 @@ using utilities::Counted_vector;
 using std::vector;
 
 Counted_vector::Counted_vector( int n_elements):
-  data_array_(n_elements),count_array_(n_elements)
+  data_array_(n_elements),count_array_(n_elements),averaged_(false)
 {
 }
 
 void  Counted_vector::add_to_element(int t, double val){
+  if(averaged_)
+  {
+    throw "can not add to averaged vector";
+  }
+
   // let it do the error checking the first time
   data_array_.at(t) += val;
   // if it doesn't throw an error on the first one, then this is safe
@@ -44,6 +49,11 @@ void  Counted_vector::add_to_element(int t, double val){
 
 
 void  Counted_vector::batch_add_to_element(int t, double val,int count){
+  if(averaged_)
+  {
+    throw "can not add to averaged vector";
+  }
+
   // let it do the error checking the first time
   data_array_.at(t) += val;
   // if it doesn't throw an error on the first one, then this is safe
@@ -75,13 +85,36 @@ void Counted_vector::output_to_wrapper(Generic_wrapper_base * data_out_wrapper,
 
 
 void Counted_vector::average_data(){
-  vector<double>::iterator data_it = data_array_.begin();
-  vector<int>::iterator count_it = count_array_.begin();
-  while(data_it!= data_array_.end() && count_it!= count_array_.end())
+  if(!averaged_)
   {
-    (*data_it) /=(*count_it);
-    ++data_it;
-    ++count_it;
+    vector<double>::iterator data_it = data_array_.begin();
+    vector<int>::iterator count_it = count_array_.begin();
+    while(data_it!= data_array_.end() && count_it!= count_array_.end())
+    {
+      (*data_it) /=(*count_it);
+      ++data_it;
+      ++count_it;
+    }
+    averaged_ = true;
   }
   
+    
+}
+
+
+void Counted_vector::unaverage_data(){
+  if(averaged_)
+  {
+    vector<double>::iterator data_it = data_array_.begin();
+    vector<int>::iterator count_it = count_array_.begin();
+    while(data_it!= data_array_.end() && count_it!= count_array_.end())
+    {
+      (*data_it) *=(*count_it);
+      ++data_it;
+      ++count_it;
+    }
+    averaged_ = false;
+  }
+  
+    
 }

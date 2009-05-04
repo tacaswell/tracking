@@ -122,6 +122,9 @@ public:
    */
   void msd_corrected(utilities::Counted_vector & msd)const;
 
+  void msd_corrected(utilities::Counted_vector & msd,
+		     utilities::Counted_vector & msd_sq)const;
+  
 
   /**
      Computes the average fourier transform of the tracks

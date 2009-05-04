@@ -53,18 +53,6 @@ public:
   friend class track_list;
   friend class hash_case;
 
-  /**
-     Constructor based on the particle_base constructor, needs to be finished
-     to do something clever with data teh comes in pre-tracked
-     @param i_data
-     @param o_data
-     @param i_ind
-     @param i_track
-  */
-  //nuke this eventually
-  particle_track(wrapper_i_base * i_data, wrapper_o_base* o_out, 
-		 int i_ind, track_box* i_track = NULL);
-
   particle_track(int i_ind);
 
 

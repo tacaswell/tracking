@@ -31,7 +31,7 @@
 
 #include "track_box.h"
 #include "coarse_grain_array.h"
-
+#include "counted_vector.h"
 using namespace tracking;
 using std::list;
 using utilities::Coarse_grain_array;
@@ -427,9 +427,16 @@ void hash_shelf::D_lots(utilities::Coarse_grain_array & Drr,
 			utilities::Coarse_grain_array & Ddrdr,
 			utilities::Coarse_grain_array & Dxx,
 			utilities::Coarse_grain_array & Dyy,
-			utilities::Coarse_grain_array & Duu
+			utilities::Coarse_grain_array & Duu,
+			utilities::Coarse_grain_array & Ddudu,
+			utilities::Counted_vector const& msd 
 			)const
 {
+
+  if(!(msd.averaged()))
+  {
+    throw "need an averaged msd";
+  }
     
   list<particle_track*> current_box;
   list<particle_track*> current_region;
@@ -541,7 +548,7 @@ void hash_shelf::D_lots(utilities::Coarse_grain_array & Drr,
 	max_step = (max_step<max_tau)?max_step:max_tau;
 	
 
-	for(int tau = 1; tau<max_step;++tau)
+	for(int tau = 1; tau<=max_step;++tau)
 	{
 	  const particle_track * tmp_box_part = *box_part;
 	  const particle_track * tmp_region_part = *region_part;
@@ -570,9 +577,9 @@ void hash_shelf::D_lots(utilities::Coarse_grain_array & Drr,
 		get_theta(center + (displacement_correction - cumulative_disp_));
 	      
 	      Tuple box_pos_tau = ((tmp_box_part)->get_position()) 
-		+(displacement_correction - cumulative_disp_);
+		-(displacement_correction - cumulative_disp_);
 	      Tuple region_pos_tau = ((tmp_region_part)->get_position()) 
-		+(displacement_correction - cumulative_disp_);
+		-(displacement_correction - cumulative_disp_);
 	      
 
 	      // adds to Drr, the correlation in the radial direction
@@ -604,6 +611,12 @@ void hash_shelf::D_lots(utilities::Coarse_grain_array & Drr,
 				 (box_pos_tau - box_pos_i).dot((region_pos_tau - region_pos_i))
 				 );
 
+	      double u_bar = msd.get_val(tau-1);
+	      
+	      Ddudu.add_to_element(sep_r,tau-1,
+				   ((box_pos_tau - box_pos_i).magnitude() - u_bar)  *
+				   ((region_pos_tau - region_pos_i).magnitude() - u_bar)
+				  );
 	      
 	      
 	      more_box_track = tmp_region_part->step_forwards(tau,tmp_region_part);

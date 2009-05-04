@@ -77,7 +77,7 @@ extern void _main();
 void mexFunction( int nlhs, mxArray *plhs[], 
 		  int nrhs, const mxArray* prhs[] ){
 
-  if(nlhs!=15 || nrhs!=5){
+  if(nlhs!=19 || nrhs!=5){
     cout<<"Error, wrong number of arguments"<<endl;
     return;
   }
@@ -153,7 +153,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
     cout<<"mean disp"<<endl;
     
     //trim out short tracks
-    tracks.remove_short_tracks(100);
+    tracks.remove_short_tracks(15);
     cout<<"trimed"<<endl;
   
     // Compute msd
@@ -164,7 +164,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
     time_t start,end;
     double dif;
     
-    int steps = 50;
+    int steps = 25;
     
 
     time (&start); 
@@ -173,12 +173,19 @@ void mexFunction( int nlhs, mxArray *plhs[],
     
     time (&start); 
     Counted_vector msd(steps);
-    tracks.msd_corrected(msd);
+    Counted_vector msd_sq(steps);
+    tracks.msd_corrected(msd,msd_sq);
     Generic_parameters_matlab arr_parm2(1,steps,plhs+1);
     Generic_wrapper_base * wrapper1 = arr_parm2.make_wrapper();
     arr_parm2.change_mxArray(plhs+2);
     Generic_wrapper_base * wrapper2 = arr_parm2.make_wrapper();
     msd.output_to_wrapper(wrapper1,wrapper2);
+    
+    arr_parm2.change_mxArray(plhs+17);
+    Generic_wrapper_base * wrapper17 = arr_parm2.make_wrapper();
+    arr_parm2.change_mxArray(plhs+18);
+    Generic_wrapper_base * wrapper18 = arr_parm2.make_wrapper();
+    msd_sq.output_to_wrapper(wrapper1,wrapper2);
     time (&end); 
     dif = difftime (end,start);
     cout<<"c msd: "<<dif<<endl;
@@ -187,10 +194,14 @@ void mexFunction( int nlhs, mxArray *plhs[],
     delete wrapper2;
     wrapper1= NULL;
     wrapper2 = NULL;
+    delete wrapper17;
+    delete wrapper18;
+    wrapper17= NULL;
+    wrapper18= NULL;
 
 
 
-    Generic_parameters_matlab arr_parm3(200,20,plhs+3);
+    Generic_parameters_matlab arr_parm3(2500,10,plhs+3);
     Generic_wrapper_base * wrapper3 = arr_parm3.make_wrapper();
     arr_parm3.change_mxArray(plhs+4);
     Generic_wrapper_base * wrapper4 = arr_parm3.make_wrapper();
@@ -221,17 +232,29 @@ void mexFunction( int nlhs, mxArray *plhs[],
     arr_parm3.change_mxArray(plhs+14);
     Generic_wrapper_base * wrapper14 =arr_parm3.make_wrapper();
 
+    arr_parm3.change_mxArray(plhs+15);
+    Generic_wrapper_base * wrapper15 =arr_parm3.make_wrapper();
+    arr_parm3.change_mxArray(plhs+16);
+    Generic_wrapper_base * wrapper16 =arr_parm3.make_wrapper();
+
     
 
-    Coarse_grain_array Drr (5,80,200,20);
-    Coarse_grain_array Dtt (5,80,200,20);
-    Coarse_grain_array Ddrdr(5,80,200,20);
-    Coarse_grain_array Dyy (5,80,200,20);
-    Coarse_grain_array Dxx (5,80,200,20);
-    Coarse_grain_array Duu (5,80,200,20);
+    Coarse_grain_array Drr  (5,100,2500,10);
+    Coarse_grain_array Dtt  (5,100,2500,10);
+    Coarse_grain_array Ddrdr(5,100,2500,10);
+    Coarse_grain_array Dyy  (5,100,2500,10);
+    Coarse_grain_array Dxx  (5,100,2500,10);
+    Coarse_grain_array Duu  (5,100,2500,10);
+    Coarse_grain_array Ddudu(5,100,2500,10);
+    cout<<"rehash"<<endl;
+    s.rehash(100);
+    cout<<"rehashed"<<endl;
     
+    msd.average_data();
+    
+
     cout<<"trying 2 point "<<endl;
-    s.D_lots(Drr,Dtt,Ddrdr,Dxx,Dyy,Duu);
+    s.D_lots(Drr,Dtt,Ddrdr,Dxx,Dyy,Duu,Ddudu,msd);
     cout<<"2 point computed"<<endl;
     
     Drr.output_to_wrapper(wrapper3,wrapper4);
@@ -240,6 +263,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
     Dxx.output_to_wrapper(wrapper9,wrapper10);
     Dyy.output_to_wrapper(wrapper11,wrapper12);
     Duu.output_to_wrapper(wrapper13,wrapper14);
+    Ddudu.output_to_wrapper(wrapper15,wrapper16);
 
 
     delete wrapper3;
@@ -254,6 +278,8 @@ void mexFunction( int nlhs, mxArray *plhs[],
     delete wrapper12;
     delete wrapper13;
     delete wrapper14;
+    delete wrapper15;
+    delete wrapper16;
     
     
     

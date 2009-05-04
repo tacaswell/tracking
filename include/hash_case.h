@@ -149,12 +149,14 @@ public:
   void D_rr(utilities::Coarse_grain_array& D)const;
 
   void D_lots(utilities::Coarse_grain_array & Drr,
-			utilities::Coarse_grain_array & Dtt,
-			utilities::Coarse_grain_array & Ddrdr,
-			utilities::Coarse_grain_array & Dxx,
-			utilities::Coarse_grain_array & Dyy,
-			utilities::Coarse_grain_array & Duu
-			 )const;
+	      utilities::Coarse_grain_array & Dtt,
+	      utilities::Coarse_grain_array & Ddrdr,
+	      utilities::Coarse_grain_array & Dxx,
+	      utilities::Coarse_grain_array & Dyy,
+	      utilities::Coarse_grain_array & Duu,
+	      utilities::Coarse_grain_array & Ddudu,
+	      utilities::Counted_vector const& msd 
+	      )const;
   
 
   ///Destructor

@@ -118,7 +118,7 @@ protected:
      exact type of wrapper that is made will be determined by the
      parameter object.
   */
-  wrapper_i_base * in_wrapper;
+   wrapper_i_base * in_wrapper;
   /**
      Pointer to wrapper to take care of particle location
      data output.  This class is responcible for creating

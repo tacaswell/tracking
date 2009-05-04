@@ -44,7 +44,7 @@
 
 #include "wrapper_i_ning.h"
 #include "params_ning.h"
-#include "hash_case3d.h"
+// #include "hash_case3d.h"	
 
 #include "histogram.h"
 #include "svector.h"
@@ -54,7 +54,7 @@ using std::cout;
 using std::ifstream;
 using std::endl;
 using std::ios;
-
+using std::vector;
 using utilities::Histogram;
 using utilities::Svector;
 
@@ -110,57 +110,132 @@ int main(){
 
   int num_particles = 1000000;
   
-    params_file p_in = params_file(num_particles,"rawdata_from_matlab.txt",contents);
+  params_file p_in = params_file(num_particles,"rawdata_from_matlab.txt",contents);
   //  params_file p_in = params_file(num_particles,"new_dummy.txt",contents);
 
   contents.insert(pair<wrapper::p_vals, int>(wrapper::d_trackid,3));
   
   params_file p_out = params_file(num_particles,"new_out.txt",contents);
 
-
-  master_box_t<particle_track>bt(&p_in,&p_out);
-  cout<<"total number of particles is: "<<bt.size()<<endl;;
-  
-   int x_dim = 1385;
-   int y_dim = 512;
-//  int x_dim = 150;
-//  int y_dim = 150;
-  
-  vector<int> dims;
-  dims.push_back(y_dim);
-  dims.push_back(x_dim);
-
-
-
-  int frames;
-  frames = (int)bt.get_particle(bt.size() -1)->get_value(wrapper::d_frame);
-
-  
-  hash_case s(bt,dims,5,frames+1);
+  wrapper_i_base * in_wrapper = p_in.make_wrapper_in();
   
 
+  particle_base::intialize_wrapper_in(in_wrapper);
+  std::set<wrapper::p_vals> data_types = in_wrapper->get_data_types();
+  data_types.insert(wrapper::d_unqid);
+
+
+
+  particle_base::intialize_data_types(&data_types);
   
-  track_shelf tracks;
+  vector<particle_track*> working_vec(100,NULL);
+  
+  for(vector<particle_track*>::iterator vec_it = working_vec.begin();
+      vec_it != working_vec.end(); ++vec_it)
+  {
+    (*vec_it) = new particle_track(0);
+  }
+  
+  for(vector<particle_track*>::iterator vec_it = (working_vec.begin() +1);
+      vec_it != (working_vec.end()-1); ++vec_it)
+  {
+    (*vec_it)->set_next(*(vec_it+1));
+    (*vec_it)->set_prev(*(vec_it-1));
+  }
+  working_vec[0]->set_next(working_vec[1]);
+  working_vec[99]->set_prev(working_vec[98]);
+
+  // for(vector<particle_track*>::iterator vec_it = working_vec.begin();
+//       vec_it != working_vec.end(); ++vec_it)
+//   {
+//     const particle_track* tmp;
+//     const particle_track* working;
+//     working = *vec_it;
+//     cout<<working->get_value(wrapper::d_unqid)<<"\t";
+//     tmp = working->get_prev();
+//     if(tmp!=NULL)
+//     {
+//       cout<<tmp->get_value(wrapper::d_unqid)<<"\t";
+//     }
+//     else
+//     {
+//       cout<<"null\t";
+//     }
+//     tmp = working->get_next();
+//     if(tmp!=NULL)
+//     {
+//       cout<<tmp->get_value(wrapper::d_unqid)<<"\t";
+//     }
+//     else
+//     {
+//       cout<<"null\t";
+//     }
+//     cout<<endl;
+//   }
+  
+  bool more = true;
+  const particle_track* tmp_t;
+  tmp_t= working_vec[0];
+  
+  while(more)
+  {
+    if(tmp_t!=NULL)
+    {
+      cout<<tmp_t->get_value(wrapper::d_unqid)<<"\t";
+    }
+    else
+    {
+      cout<<"null\t";
+    }
+    cout<<endl;
+    more = tmp_t->step_forwards(6,tmp_t);
+  }
+  
+  
+
+//   master_box_t<particle_track>bt(&p_in,&p_out);
+//   cout<<"total number of particles is: "<<bt.size()<<endl;;
+  
+//    int x_dim = 1385;
+//    int y_dim = 512;
+// //  int x_dim = 150;
+// //  int y_dim = 150;
+  
+//   vector<int> dims;
+//   dims.push_back(y_dim);
+//   dims.push_back(x_dim);
+
+
+
+//   int frames;
+//   frames = (int)bt.get_particle(bt.size() -1)->get_value(wrapper::d_frame);
+
+  
+//   hash_case s(bt,dims,5,frames+1);
+  
+
+  
+//   track_shelf tracks;
   
 
 
-  s.link(5,tracks);
+//   s.link(5,tracks);
 
 
 
-  Svector<double> msd_vec;
-  Svector<int> msd_count_vec;
+//   Svector<double> msd_vec;
+//   Svector<int> msd_count_vec;
   
-  msd_vec.data.resize(500);
-  msd_count_vec.data.resize(500);
+//   msd_vec.data.resize(500);
+//   msd_count_vec.data.resize(500);
 
 
-  tracks.remove_short_tracks(200);
+//   tracks.remove_short_tracks(200);
 
-  tracks.msd(msd_vec, msd_count_vec);
+//   tracks.msd(msd_vec, msd_count_vec);
   
-  msd_vec.print();
-  msd_count_vec.print();
+//   msd_vec.print();
+//   msd_count_vec.print();
   
 
 //   Histogram hist1(25,0,frames);

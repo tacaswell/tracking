@@ -74,6 +74,11 @@ public:
   void average_data();
 
   /**
+     Un-averages by the count array
+   */
+  void unaverage_data();
+
+  /**
      Returns the number of elements
    */
   int get_length()const{return data_array_.size();}
@@ -92,7 +97,13 @@ public:
   {
     return count_array_.at(j);
   }
-  
+  /**
+     Return if the array is averaged
+   */
+  bool averaged() const
+  {
+    return averaged_;
+  }
   
 protected:
 
@@ -105,6 +116,9 @@ protected:
      added to
    */
   std::vector<int> count_array_;
+  
+  bool averaged_;
+  
   
 };
 

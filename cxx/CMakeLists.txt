@@ -11,7 +11,7 @@ SET(MATLAB_UTIL_SRC wrapper_i_matlab.cpp wrapper_o_matlab.cpp matlab_utils.cpp
 
 
 
-# add_executable (tracking_cmd ${COMMON_TRACK_SRC} test.cpp)
+add_executable (tracking_cmd ${COMMON_TRACK_SRC} test.cpp)
 
 add_executable(fast_gofr fast_gofr.cpp ${COMMON_TRACK_SRC})
 
