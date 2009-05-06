@@ -31,7 +31,7 @@
 
 namespace utilities{
 //forward declare
-class Generic_wrapper;
+class Generic_wrapper_base;
 /**
    Base class for historgram objects.
    Implements a linearly spaced histogram.
@@ -80,7 +80,8 @@ public:
     of the bins.  The extra entry at the end are the number of entries
     outside of the 
   */
-  Generic_wrapper * wrapper_out_;
+  void output_to_wrapper(Generic_wrapper_base * wrapper_out);
+  
 
   
   ~Histogram(){};

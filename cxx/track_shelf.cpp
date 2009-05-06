@@ -36,6 +36,7 @@
 #include "exception.h"
 
 #include <iostream>
+#include <cmath>
 using std::map;
 
 using namespace tracking;
@@ -298,7 +299,8 @@ void track_shelf::msd_corrected(utilities::Counted_vector & msd)const
   }
 }
 
-void track_shelf::msd_corrected(utilities::Counted_vector & msd,
+void track_shelf::msd_corrected(utilities::Counted_vector & md,
+				utilities::Counted_vector & msd,
 				utilities::Counted_vector & msd_sq)const
 {
 
@@ -320,6 +322,7 @@ void track_shelf::msd_corrected(utilities::Counted_vector & msd,
     for(int j = 0; j< track_length && j < max_time_step;j++)
     {
       int tmp_count=0;
+      double tmp_dist_sum=0;
       double tmp_dist_sq_sum=0;
       double tmp_dist_sq_sq_sum=0;
 
@@ -330,6 +333,7 @@ void track_shelf::msd_corrected(utilities::Counted_vector & msd,
       {
 
 	double tmp_dist_sq = current->distancesq_corrected(next);
+	tmp_dist_sum += sqrt(tmp_dist_sq);
 	tmp_dist_sq_sum += tmp_dist_sq;
 	tmp_dist_sq_sq_sum += (tmp_dist_sq*tmp_dist_sq);
 	++tmp_count;
@@ -337,6 +341,7 @@ void track_shelf::msd_corrected(utilities::Counted_vector & msd,
 	not_past_end = current->step_forwards(j+1,next);
 
       }
+      md.batch_add_to_element(j, tmp_dist_sum,tmp_count);
       msd.batch_add_to_element(j, tmp_dist_sq_sum,tmp_count);
       msd_sq.batch_add_to_element(j, tmp_dist_sq_sq_sum,tmp_count);
 
@@ -346,38 +351,26 @@ void track_shelf::msd_corrected(utilities::Counted_vector & msd,
 
 
 
-void track_shelf::msd_hist(int time_step ,utilities::Histogram & in) const{
-
+void track_shelf::msd_hist(int time_step ,utilities::Histogram & in) const
+{
   const particle_track* current = NULL;
   const particle_track* next = NULL;
-
-  bool not_past_end = false;
-
+  if(time_step<1)
+  {
+    throw "nonsense input";
+  }
   
-
   for(map<int,track_box*>::const_iterator working_track = track_map.begin();
       working_track!=track_map.end(); working_track++)
+  {
+    current = (*working_track).second->get_first();
+    bool more_track = current->has_next();
+    while(more_track)
     {
-      
-      //      cout<<"Track legnth: "<<(*working_track).second->get_length()<<endl;
-	
-      not_past_end = true;
-
-      current = (*working_track).second->get_first();
-	
-      while(not_past_end){
-	try{
-	  next = current->step_forwards(time_step+1);
-	  in.add_data_point( current->distancesq(next));
-	  current = next;
-	}
-	catch(Ll_range_error & e){
-	  not_past_end = false;
-	}
-      }
- 
-    }
-    
+      in.add_data_point((current->get_corrected_forward_disp()).magnitude_sqr());
+      more_track = current->step_forwards(time_step,current);
+    }	 
+  }
 }
 
 

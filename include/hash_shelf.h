@@ -193,14 +193,27 @@ public:
   void D_lots(utilities::Coarse_grain_array & Drr,
 	      utilities::Coarse_grain_array & Dtt,
 	      utilities::Coarse_grain_array & Ddrdr,
-	      utilities::Coarse_grain_array & Dxx,
-	      utilities::Coarse_grain_array & Dyy,
+// 	      utilities::Coarse_grain_array & Dxx,
+// 	      utilities::Coarse_grain_array & Dyy,
 	      utilities::Coarse_grain_array & Duu,
 	      utilities::Coarse_grain_array & Ddudu,
 	      utilities::Counted_vector const & msd 
 	      )const;
   
+  /**
+     Sets the pointer to the next shelf in a case
+   */  
+  void set_next_shelf(hash_shelf* next);
   
+
+
+  
+  /**
+    Returns true if there is a shelf n steps forward and
+    passes a pointer to it out as a reference, if there is
+    not a shelf, returns false.
+   */
+   bool step_forwards(int n,const hash_shelf* & next)const;
 
 protected:
   //change all of this to be pointers to hash_boxes, to keep
@@ -247,6 +260,11 @@ protected:
    */
   int img_area()const;
 
+  /**
+     Pointer to the next shelf in the case
+   */
+  hash_shelf * next_;
+  
 
 private:
   ///Initialization function

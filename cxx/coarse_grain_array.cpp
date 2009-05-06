@@ -39,6 +39,7 @@ void  Coarse_grain_array::add_to_element(double r,int t, double val){
   int tmp = hash_function(r,t);
   data_array_[tmp] += val;
   ++count_array_[tmp];
+
 }
 
 

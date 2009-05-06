@@ -148,14 +148,14 @@ public:
    */
   void D_rr(utilities::Coarse_grain_array& D)const;
 
-  void D_lots(utilities::Coarse_grain_array & Drr,
-	      utilities::Coarse_grain_array & Dtt,
+  void D_lots(utilities::Coarse_grain_array & Duu,
+	      utilities::Coarse_grain_array & DuuL,
+	      utilities::Coarse_grain_array & DuuT,
 	      utilities::Coarse_grain_array & Ddrdr,
-	      utilities::Coarse_grain_array & Dxx,
-	      utilities::Coarse_grain_array & Dyy,
-	      utilities::Coarse_grain_array & Duu,
+	      // utilities::Coarse_grain_array & Dxx,
+// 	      utilities::Coarse_grain_array & Dyy,
 	      utilities::Coarse_grain_array & Ddudu,
-	      utilities::Counted_vector const& msd 
+	      utilities::Counted_vector const& md 
 	      )const;
   
 
@@ -213,8 +213,11 @@ void hash_case::init(master_box_t<particle> & mb,const utilities::Tuple & img_di
   mb.append_to_data_types(wrapper::d_next);
   mb.append_to_data_types(wrapper::d_prev);
   h_case_.resize(frames);
-  for(unsigned int j = 0; j<h_case_.size(); j++){
-    h_case_.at(j) = new hash_shelf(img_dims, ppb,j);
+  h_case_.at(0) = new hash_shelf(img_dims, ppb,0);
+  for(unsigned int j = 1; j<h_case_.size(); ++j){
+    h_case_[j] = new hash_shelf(img_dims, ppb,j);
+    h_case_[j-1]->set_next_shelf(h_case_[j]);
+    
   }
   // cout<<
   particle *p;

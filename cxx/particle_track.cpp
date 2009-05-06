@@ -270,4 +270,13 @@ bool particle_track::has_track()const
   }
   return true;
 }
+
+bool particle_track::has_next()const
+{
+  if(next_ == NULL)
+  {
+    return false;
+  }
+  return true;
+}
   

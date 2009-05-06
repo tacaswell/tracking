@@ -43,7 +43,7 @@ public:
   int rows_;
   int cols_;
   mxArray ** mx_ptr_ptr_;
-  Generic_parameters_matlab(int a, int b,mxArray ** );
+  Generic_parameters_matlab(int rows, int cols,mxArray ** );
   /**
      allocate a new wrapper
    */

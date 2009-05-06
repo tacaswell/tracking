@@ -122,7 +122,8 @@ public:
    */
   void msd_corrected(utilities::Counted_vector & msd)const;
 
-  void msd_corrected(utilities::Counted_vector & msd,
+  void msd_corrected(utilities::Counted_vector & md,
+		     utilities::Counted_vector & msd,
 		     utilities::Counted_vector & msd_sq)const;
   
 

@@ -213,6 +213,10 @@ public:
    */
   bool has_track()const;
   
+  /**
+     returns if a particle has a next
+   */
+  bool has_next()const;
   
 
 protected:

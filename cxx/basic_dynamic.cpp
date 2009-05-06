@@ -62,6 +62,7 @@
 
 using namespace tracking;
 using std::exception;
+using std::cerr;
 
 using utilities::array_to_mat;
 using utilities::vector_to_mat;
@@ -73,12 +74,13 @@ using utilities::Generic_wrapper_base;
 using utilities::Generic_parameters_matlab;
 using utilities::Counted_vector;
 using utilities::Coarse_grain_array;
+
 extern void _main();
 void mexFunction( int nlhs, mxArray *plhs[], 
 		  int nrhs, const mxArray* prhs[] ){
 
-  if(nlhs!=19 || nrhs!=5){
-    cout<<"Error, wrong number of arguments"<<endl;
+  if(nlhs!=18 || nrhs!=5){
+    std::cerr<<"Error, wrong number of arguments:"<<nlhs<<" "<<nrhs<<endl;
     return;
   }
   try{
@@ -109,8 +111,28 @@ void mexFunction( int nlhs, mxArray *plhs[],
     //end nonsense
     //there has to be a better way to do this
 
-  
+    int msd_steps = 25;
+    int corr_steps = 5;
 
+    // set up the wrappers
+    vector<Generic_wrapper_base *> wrapper_vec(18);
+    
+    Generic_parameters_matlab arr_parm(frames,2,plhs);
+    wrapper_vec[0] = arr_parm.make_wrapper();
+    Generic_parameters_matlab arr_parm2(1,msd_steps,plhs+1);
+    for(int j = 0;j<6; ++j)
+    {
+      arr_parm2.change_mxArray(plhs+j+1);
+      wrapper_vec[1+j] = arr_parm2.make_wrapper();
+    }
+    Generic_parameters_matlab arr_parm3(2500,corr_steps,plhs+3);
+    for(int j = 0;j<10; ++j)
+    {
+      arr_parm3.change_mxArray(plhs+j+7);
+      wrapper_vec[7+j] = arr_parm3.make_wrapper();
+    }
+    Generic_parameters_matlab arr_parm4(502,2,plhs+17);
+    wrapper_vec[17] = arr_parm4.make_wrapper();
 
     params_matlab p_in = params_matlab(prhs,contents);
     contents.insert(pair<wrapper::p_vals, int>(wrapper::d_trackid,3));
@@ -118,6 +140,8 @@ void mexFunction( int nlhs, mxArray *plhs[],
 					 contents.size());
 
 
+
+    // start actual computation
     master_box_t<particle_track>bt(&p_in,&p_out);
 
     track_shelf tracks;
@@ -132,9 +156,10 @@ void mexFunction( int nlhs, mxArray *plhs[],
     
     
     
-//     Histogram hist1(frames,0,frames);
-//     tracks.track_length_histogram(hist1);
-
+     Histogram hist1(500,0,40);
+     tracks.msd_hist(1,hist1);
+     hist1.output_to_wrapper(wrapper_vec[17]);
+     
 
 
     //compute the mean displacements from frame to frame
@@ -144,18 +169,17 @@ void mexFunction( int nlhs, mxArray *plhs[],
     
     Array mean_frame_disp(frames);
     s.get_mean_disp(mean_frame_disp);
-    Generic_parameters_matlab arr_parm(frames,2,plhs);
-    Generic_wrapper_base * wrapper = arr_parm.make_wrapper();
-    mean_frame_disp.set_array(wrapper);
-    delete wrapper;
-    wrapper = NULL;
+
+    mean_frame_disp.set_array(wrapper_vec[0]);
+    
     
     cout<<"mean disp"<<endl;
     
     //trim out short tracks
     tracks.remove_short_tracks(15);
-    cout<<"trimed"<<endl;
+    cout<<"trimmed"<<endl;
   
+    
     // Compute msd
 
     //  
@@ -164,7 +188,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
     time_t start,end;
     double dif;
     
-    int steps = 25;
+    
     
 
     time (&start); 
@@ -172,116 +196,55 @@ void mexFunction( int nlhs, mxArray *plhs[],
     Svector<int> msd_count_vec;
     
     time (&start); 
-    Counted_vector msd(steps);
-    Counted_vector msd_sq(steps);
-    tracks.msd_corrected(msd,msd_sq);
-    Generic_parameters_matlab arr_parm2(1,steps,plhs+1);
-    Generic_wrapper_base * wrapper1 = arr_parm2.make_wrapper();
-    arr_parm2.change_mxArray(plhs+2);
-    Generic_wrapper_base * wrapper2 = arr_parm2.make_wrapper();
-    msd.output_to_wrapper(wrapper1,wrapper2);
-    
-    arr_parm2.change_mxArray(plhs+17);
-    Generic_wrapper_base * wrapper17 = arr_parm2.make_wrapper();
-    arr_parm2.change_mxArray(plhs+18);
-    Generic_wrapper_base * wrapper18 = arr_parm2.make_wrapper();
-    msd_sq.output_to_wrapper(wrapper1,wrapper2);
+    Counted_vector md(msd_steps);
+    Counted_vector msd(msd_steps);
+    Counted_vector msd_sq(msd_steps);
+    tracks.msd_corrected(md,msd,msd_sq);
+    md.output_to_wrapper(wrapper_vec[1],wrapper_vec[2]);
+    msd.output_to_wrapper(wrapper_vec[3],wrapper_vec[4]);
+    msd_sq.output_to_wrapper(wrapper_vec[5],wrapper_vec[6]);
+
     time (&end); 
     dif = difftime (end,start);
     cout<<"c msd: "<<dif<<endl;
-
-    delete wrapper1;
-    delete wrapper2;
-    wrapper1= NULL;
-    wrapper2 = NULL;
-    delete wrapper17;
-    delete wrapper18;
-    wrapper17= NULL;
-    wrapper18= NULL;
-
-
-
-    Generic_parameters_matlab arr_parm3(2500,10,plhs+3);
-    Generic_wrapper_base * wrapper3 = arr_parm3.make_wrapper();
-    arr_parm3.change_mxArray(plhs+4);
-    Generic_wrapper_base * wrapper4 = arr_parm3.make_wrapper();
-    arr_parm3.change_mxArray(plhs+5);
-
-    Generic_wrapper_base * wrapper5 = arr_parm3.make_wrapper();
-    arr_parm3.change_mxArray(plhs+6);
-    Generic_wrapper_base * wrapper6 = arr_parm3.make_wrapper();
-    arr_parm3.change_mxArray(plhs+7);
-
-    Generic_wrapper_base * wrapper7 = arr_parm3.make_wrapper();
-    arr_parm3.change_mxArray(plhs+8);
-    Generic_wrapper_base * wrapper8 = arr_parm3.make_wrapper();
-    arr_parm3.change_mxArray(plhs+9);
-
-    Generic_wrapper_base * wrapper9 = arr_parm3.make_wrapper();
-    arr_parm3.change_mxArray(plhs+10);
-    Generic_wrapper_base * wrapper10 =arr_parm3.make_wrapper();
-
-    arr_parm3.change_mxArray(plhs+11);
-    Generic_wrapper_base * wrapper11 =arr_parm3.make_wrapper();
-    arr_parm3.change_mxArray(plhs+12);
-    Generic_wrapper_base * wrapper12 =arr_parm3.make_wrapper();
-
     
-    arr_parm3.change_mxArray(plhs+13);
-    Generic_wrapper_base * wrapper13 =arr_parm3.make_wrapper();
-    arr_parm3.change_mxArray(plhs+14);
-    Generic_wrapper_base * wrapper14 =arr_parm3.make_wrapper();
+    
 
-    arr_parm3.change_mxArray(plhs+15);
-    Generic_wrapper_base * wrapper15 =arr_parm3.make_wrapper();
-    arr_parm3.change_mxArray(plhs+16);
-    Generic_wrapper_base * wrapper16 =arr_parm3.make_wrapper();
 
     
 
-    Coarse_grain_array Drr  (5,100,2500,10);
-    Coarse_grain_array Dtt  (5,100,2500,10);
-    Coarse_grain_array Ddrdr(5,100,2500,10);
-    Coarse_grain_array Dyy  (5,100,2500,10);
-    Coarse_grain_array Dxx  (5,100,2500,10);
-    Coarse_grain_array Duu  (5,100,2500,10);
-    Coarse_grain_array Ddudu(5,100,2500,10);
+    
+    Coarse_grain_array Duu  (5,100,2500,corr_steps);
+    Coarse_grain_array DuuT (5,100,2500,corr_steps);
+    Coarse_grain_array DuuL (5,100,2500,corr_steps);
+    Coarse_grain_array Ddrdr(5,100,2500,corr_steps);
+//     Coarse_grain_array Dyy  (5,100,2500,corr_steps);
+//     Coarse_grain_array Dxx  (5,100,2500,corr_steps);
+    Coarse_grain_array Ddudu(5,100,2500,corr_steps);
     cout<<"rehash"<<endl;
     s.rehash(100);
     cout<<"rehashed"<<endl;
     
-    msd.average_data();
+    md.average_data();
     
 
     cout<<"trying 2 point "<<endl;
-    s.D_lots(Drr,Dtt,Ddrdr,Dxx,Dyy,Duu,Ddudu,msd);
+    s.D_lots(Duu,DuuT,DuuL,Ddrdr,Ddudu,md);
     cout<<"2 point computed"<<endl;
     
-    Drr.output_to_wrapper(wrapper3,wrapper4);
-    Dtt.output_to_wrapper(wrapper5,wrapper6);
-    Ddrdr.output_to_wrapper(wrapper7,wrapper8);
-    Dxx.output_to_wrapper(wrapper9,wrapper10);
-    Dyy.output_to_wrapper(wrapper11,wrapper12);
-    Duu.output_to_wrapper(wrapper13,wrapper14);
-    Ddudu.output_to_wrapper(wrapper15,wrapper16);
+    Duu.output_to_wrapper   (wrapper_vec[7] ,wrapper_vec[8]);
+    DuuT.output_to_wrapper   (wrapper_vec[9] ,wrapper_vec[10]);
+    DuuL.output_to_wrapper(wrapper_vec[11],wrapper_vec[12]);
+    Ddrdr.output_to_wrapper (wrapper_vec[13],wrapper_vec[14]);
+    Ddudu.output_to_wrapper (wrapper_vec[15],wrapper_vec[16]);
 
 
-    delete wrapper3;
-    delete wrapper4;
-    delete wrapper5;
-    delete wrapper6;
-    delete wrapper7;
-    delete wrapper8;
-    delete wrapper9;
-    delete wrapper10;
-    delete wrapper11;
-    delete wrapper12;
-    delete wrapper13;
-    delete wrapper14;
-    delete wrapper15;
-    delete wrapper16;
-    
-    
+    for(int j = 0;j<wrapper_vec.size(); ++j)
+    {
+      delete wrapper_vec[j];
+      wrapper_vec[j] = NULL;
+    }
+
     
 
 
@@ -296,14 +259,14 @@ void mexFunction( int nlhs, mxArray *plhs[],
     
   }
   catch(const char * err){
-    cout<<err<<endl;
+    cerr<<err<<endl;
   } 
   catch(exception & e)
     {
-      cout<<e.what()<<endl;
+      cerr<<e.what()<<endl;
     }
   catch(...){
-    cout<<"uncaught error"<<endl;
+    cerr<<"uncaught error"<<endl;
   }
 
   return;
