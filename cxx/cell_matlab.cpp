@@ -38,7 +38,7 @@ Cell_matlab::Cell_matlab(int length, mxArray** ptr_in)
   *ptr_in = cell_;
 
 }
-
+ 
 void Cell_matlab::add_array(const Array & in){
   mxArray * tmp;
   
@@ -48,10 +48,12 @@ void Cell_matlab::add_array(const Array & in){
   in.set_array(wrapper);
   
   if(!(cur_index_<length_))
-    {
-      throw "out of cell range";
-    }
-  
+  {
+    throw "out of cell range";
+  }
+  // attempt to kill memory leak, doubt this is it
+  mxArray * tmp_cell = mxGetCell(cell_,cur_index_);
+  mxDestroyArray(tmp_cell);
   mxSetCell(cell_,cur_index_++,tmp);
 
 

@@ -68,6 +68,7 @@
 #include "cell_matlab.h"
 
 #include "coarse_grain_array.h"
+#include "counted_vector.h"
 
 using namespace tracking;
 using std::exception;
@@ -81,17 +82,33 @@ using utilities::Cell_matlab;
 using utilities::Generic_wrapper_base;
 using utilities::Generic_parameters_matlab;
 using utilities::Coarse_grain_array;
+using utilities::Counted_vector;
+
 
 
 extern void _main();
 void mexFunction( int nlhs, mxArray *plhs[], 
 		  int nrhs, const mxArray* prhs[] ){
 
-  if(nlhs!=2|| nrhs!=1){
+  if(nlhs!=2|| nrhs!=7){
     cout<<"Error, wrong number of arguments"<<endl;
     return;
   }
   try{
+
+    
+    utilities::Tuple dims;	
+    dims[0] = (int)mxGetScalar(prhs[1]);
+    dims[1] = (int)mxGetScalar(prhs[2]);
+    int frames = (int)mxGetScalar(prhs[3]);
+
+    double max_r = mxGetScalar(prhs[4]);
+
+    int min_track = (int) mxGetScalar(prhs[5]);
+    int correct_drift = (int) mxGetScalar(prhs[6]);
+
+    int msd_steps = 50;
+    
     //nonsense to get the map set up
     map<wrapper::p_vals, int> contents;
     //   wrapper::p_vals tmp[] = {wrapper::d_index,wrapper::d_xpos,
@@ -116,6 +133,28 @@ void mexFunction( int nlhs, mxArray *plhs[],
       contents.insert(it3,pair<wrapper::p_vals, int>(*it1, *it2));
     //end nonsense
     //there has to be a better way to do this
+    
+
+    // set up the wrappers
+    vector<Generic_wrapper_base *> wrapper_vec(1);
+    
+    //     Generic_parameters_matlab arr_parm(frames,2,plhs);
+    //     wrapper_vec[0] = arr_parm.make_wrapper();
+    //     Generic_parameters_matlab arr_parm2(1,msd_steps,plhs+1);
+    //     for(int j = 0;j<6; ++j)
+    //     {
+    //       arr_parm2.change_mxArray(plhs+j+1);
+    //       wrapper_vec[1+j] = arr_parm2.make_wrapper();
+    //     }
+    //     //     Generic_parameters_matlab arr_parm3(2500,corr_steps,plhs+3);
+    //     //     for(int j = 0;j<10; ++j)
+    //     //     {
+    //     //       arr_parm3.change_mxArray(plhs+j+7);
+    //     //       wrapper_vec[7+j] = arr_parm3.make_wrapper();
+    //     //     }
+    //     //     Generic_parameters_matlab arr_parm4(502,2,plhs+17);
+    //     //     wrapper_vec[17] = arr_parm4.make_wrapper();
+
 
   
 
@@ -139,97 +178,73 @@ void mexFunction( int nlhs, mxArray *plhs[],
     //  master_box b = master_box(&p,&p,6);
 
     master_box_t<particle_track>bt(&p_in,&p_out);
-  
-    utilities::Tuple dims;	
-    //  for(int t = 0; t<3;t++)	
-    //    dims.push_back(80);    
-    dims[0] = (520);
-    dims[1] = (1390);
-
-    //  dims.push_back(50);
     track_shelf tracks;
     
     cout<<"total number of particles is: "<<bt.size()<<endl;;
   
-    int frames = 100;		// 
-    hash_case s(bt,dims,5,frames);
+    hash_case s(bt,dims,(int) max_r+1,frames);
     cout<<"case built"<<endl;
-    s.link(5,tracks);
-    cout<<"linked"<<endl;
-//     s.compute_mean_disp();
-//     cout<<"computed mean frame displacement"<<endl;
-
+    s.link(max_r,tracks);
+    //     int yar = tracks.get_track_count();
+    
+    cout<<"linked: "<<endl;
+    
+    
+    if(correct_drift == 1)
+    {
+      s.compute_mean_disp();
+      cout<<"computed mean frame displacement"<<endl;
+    }
+    
+    //     Array mean_frame_disp(frames);
+    //     s.get_mean_disp(mean_frame_disp);
+    //     mean_frame_disp.set_array(wrapper_vec[0]);
   
     // Compute msd
 
-    Svector<double> msd_vec;
-    Svector<int> msd_count_vec;
+
+    // output tracks
+    Cell_matlab test_cell2(tracks.get_track_count(),plhs+1);
+    tracks.set_corrected_disp_to_cell(test_cell2);
+    cout<<"c tracks"<<tracks.get_track_count()<<endl;
+
+
+    Histogram hist1(frames,0,frames);
+    tracks.track_length_histogram(hist1);
     
-    msd_vec.data.clear();
-    msd_vec.data.resize(20);
-    msd_count_vec.data.clear();
-    msd_count_vec.data.resize(20);
-    tracks.msd(msd_vec, msd_count_vec);
-    vector_to_mat(plhs+0, msd_vec.data);
-    vector_to_mat(plhs+1, msd_count_vec.data);
-    cout<<"c msd"<<endl;
+    Generic_parameters_matlab arr_parm4(frames + 2,2,plhs);
+    wrapper_vec.at(0) = arr_parm4.make_wrapper();
+    
+    hist1.output_to_wrapper(wrapper_vec.at(0));
+	
+
+     
+    Counted_vector md(msd_steps);
+    Counted_vector msd(msd_steps);
+    Counted_vector msd_sq(msd_steps);
+    tracks.msd_corrected(md,msd,msd_sq);
+    md.output_to_wrapper(wrapper_vec[1],wrapper_vec[2]);
+    msd.output_to_wrapper(wrapper_vec[3],wrapper_vec[4]);
+    msd_sq.output_to_wrapper(wrapper_vec[5],wrapper_vec[6]);
 
     
-//     tracks.remove_short_tracks(5);
-//     cout<<"trimmed"<<endl;
+    cout<<"c msd: "<<endl;
+    
+
+
+    
+
+    //     cout<<"trimmed"<<endl;
 
     
     
 
-//     Generic_parameters_matlab arr_parm(200,20,plhs);
-//     Generic_wrapper_base * wrapper0 = arr_parm.make_wrapper();
-//     arr_parm.change_mxArray(plhs+1);
-//     Generic_wrapper_base * wrapper1 = arr_parm.make_wrapper();
-//     arr_parm.change_mxArray(plhs+2);
-//     Generic_wrapper_base * wrapper2 = arr_parm.make_wrapper();
-//     arr_parm.change_mxArray(plhs+3);
-//     Generic_wrapper_base * wrapper3 = arr_parm.make_wrapper();
-//     arr_parm.change_mxArray(plhs+4);
-//     Generic_wrapper_base * wrapper4 = arr_parm.make_wrapper();
-//     arr_parm.change_mxArray(plhs+5);
-//     Generic_wrapper_base * wrapper5 = arr_parm.make_wrapper();
-//     arr_parm.change_mxArray(plhs+6);
-//     Generic_wrapper_base * wrapper6 = arr_parm.make_wrapper();
-//     arr_parm.change_mxArray(plhs+7);
-//     Generic_wrapper_base * wrapper7 = arr_parm.make_wrapper();
-//     arr_parm.change_mxArray(plhs+8);
-//     Generic_wrapper_base * wrapper8 = arr_parm.make_wrapper();
-//     arr_parm.change_mxArray(plhs+9);
-//     Generic_wrapper_base * wrapper9 = arr_parm.make_wrapper();
 
-
-
-//     Coarse_grain_array Drr (5,80,200,20);
-//     Coarse_grain_array Drr2(5,80,200,20);
-//     Coarse_grain_array Dtt (5,80,200,20);
-//     Coarse_grain_array Dyy (5,80,200,20);
-//     Coarse_grain_array Dxx (5,80,200,20);
-    
-//     cout<<"trying 2 point "<<endl;
-//     s.D_lots(Drr,Drr2,Dxx,Dtt,Dyy);
-//     cout<<"2 point computed"<<endl;
-    
-//     Drr.output_to_wrapper(wrapper0,wrapper1);
-//     Drr2.output_to_wrapper(wrapper2,wrapper3);
-//     Dxx.output_to_wrapper(wrapper4,wrapper5);
-//     Dtt.output_to_wrapper(wrapper6,wrapper7);
-//     Dyy.output_to_wrapper(wrapper8,wrapper9);
-
-//     delete wrapper0;
-//     delete wrapper1;
-//     delete wrapper2;
-//     delete wrapper3;
-//     delete wrapper4;
-//     delete wrapper5;
-//     delete wrapper6;
-//     delete wrapper7;
-//     delete wrapper8;
-//     delete wrapper9;
+    for(int j = 0;j<wrapper_vec.size(); ++j)
+    {
+      delete wrapper_vec.at(j);
+      wrapper_vec.at(j) = NULL;
+    }
 
     
     
@@ -239,71 +254,12 @@ void mexFunction( int nlhs, mxArray *plhs[],
     cout<<err<<endl;
   } 
   catch(exception & e)
-    {
-      cout<<e.what()<<endl;
-    }
+  {
+    cout<<e.what()<<endl;
+  }
   catch(...){
     cout<<"uncaught error"<<endl;
   }
- 
-//   cout<<"sizeof(particle_base) "<<sizeof(particle_base)<<endl;
-//   cout<<"sizeof(particle_track) "<<sizeof(particle_track)<<endl;
-//   cout<<"sizeof(utilities::Tuple) "<<sizeof(utilities::Tuple)<<endl;
-//   cout<<"sizeof(double) "<<sizeof(double)<<endl;
-//   cout<<"sizeof(double*) "<<sizeof(double*)<<endl;
-//   cout<<"sizeof(std::list<pair<particle_track*, double> >*) "<<sizeof(std::list<pair<particle_track*, double> >*)<<endl;
-//   cout<<"sizeof(int) "<<sizeof(int)<<endl;
-
-  //   //  s.print();
-
-
-  
-  
-  //   Histogram hist1(25,0,100);
-  //   Histogram hist2(25,0,100);
-  
-  //   tracks.track_length_histogram(hist1);
-  //  
-  //   tracks.track_length_histogram(hist2);
-  //   hist1.print();
-  //   hist2.print();
-  
-  
-
-  //   Svector<double> msd_vec;
-  //   Svector<int> msd_count_vec;
-  
-  // //   msd_vec.data.resize(100);
-  // //   msd_count_vec.data.resize(100);
-
-
-
-  // //   tracks.msd(msd_vec, msd_count_vec);
-
-  
-  // //  vector_to_mat(plhs+1, msd_count_vec.data);
-  
-  //   Histogram hist3(100,0,1000);
-  //   tracks.msd_hist(25,hist3);
-  // //    vector<int> tmp465 = hist3.get_bin_values();
-  // //    vector_to_mat(plhs, tmp465);
-  //   cout<<hist3.get_over_count()<<hist3.get_under_count()<<endl;
-
-  
-//     cout<<"linked"<<endl;
-//     bt.initialize_out();
-//     tracks.set_shelf();
-//     bt.finalize_out ();
-
-//     bt.initialize_out();
-//     for(int j = 0; j<bt.size();++j)
-//       {
-// 	if(bt.get_particle(j) ==NULL)
-// 	  cout<<"NULL"<<endl;
-// 	(bt.get_particle(j))->set_particle () ;
-	
-//       }
-//     bt.finalize_out ();
 
 
 

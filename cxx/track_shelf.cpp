@@ -29,6 +29,7 @@
 #include "particle_track.h"
 #include "svector.h"
 #include "counted_vector.h"
+#include "generic_wrapper_base.h"
 
 #include "array.h"
 #include "cell.h"
@@ -339,12 +340,24 @@ void track_shelf::msd_corrected(utilities::Counted_vector & md,
 	++tmp_count;
 	current = next;
 	not_past_end = current->step_forwards(j+1,next);
-
+	// // version 3
+// 	not_past_end = false;
+	
       }
+//       // version 3
+//       md.add_to_element(j, tmp_dist_sum);
+//       msd.add_to_element(j, tmp_dist_sq_sum);
+//       msd_sq.add_to_element(j, tmp_dist_sq_sq_sum);
+      
+//       // version 2
+//       md.add_to_element(j, tmp_dist_sum/tmp_count);
+//       msd.add_to_element(j, tmp_dist_sq_sum/tmp_count);
+//       msd_sq.add_to_element(j, tmp_dist_sq_sq_sum/tmp_count);
+      // version 1
       md.batch_add_to_element(j, tmp_dist_sum,tmp_count);
       msd.batch_add_to_element(j, tmp_dist_sq_sum,tmp_count);
       msd_sq.batch_add_to_element(j, tmp_dist_sq_sq_sum,tmp_count);
-
+      
     }
   }
 }
@@ -395,4 +408,30 @@ void track_shelf::set_corrected_disp_to_cell(Cell & output)const{
       output.add_array(tmp);
     }
 
+}
+
+
+void track_shelf::initial_corrected_pos_to_wrapper(utilities::Generic_wrapper_base * data_out_wrapper)const{
+  tr_map::const_iterator working_track = track_map.begin();
+  const particle_track *  working_track_ptr;
+  Array tmp(1);
+  data_out_wrapper->initialize_wrapper();
+  while(working_track != track_map.end())
+  {
+    data_out_wrapper->start_new_row();
+    // note trickiness
+    working_track_ptr = ((*(working_track++)).second)->get_first();
+    const utilities::Tuple i_pos = working_track_ptr->get_corrected_pos();
+    
+    data_out_wrapper->append_to_row(i_pos[0]);
+    data_out_wrapper->append_to_row(i_pos[1]);
+    data_out_wrapper->append_to_row(working_track_ptr->get_value(wrapper::d_frame));
+    
+    data_out_wrapper->finish_row();
+  }
+  
+  data_out_wrapper->finalize_wrapper();
+
+
+  
 }

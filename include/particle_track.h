@@ -217,6 +217,10 @@ public:
      returns if a particle has a next
    */
   bool has_next()const;
+  /**
+     returns the position with the cumulative distribution subtracted off
+   */
+  const utilities::Tuple get_corrected_pos()const;
   
 
 protected:

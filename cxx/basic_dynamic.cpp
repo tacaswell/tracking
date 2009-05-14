@@ -79,7 +79,7 @@ extern void _main();
 void mexFunction( int nlhs, mxArray *plhs[], 
 		  int nrhs, const mxArray* prhs[] ){
 
-  if(nlhs!=18 || nrhs!=5){
+  if(nlhs!=9 || nrhs!=5){
     std::cerr<<"Error, wrong number of arguments:"<<nlhs<<" "<<nrhs<<endl;
     return;
   }
@@ -111,11 +111,11 @@ void mexFunction( int nlhs, mxArray *plhs[],
     //end nonsense
     //there has to be a better way to do this
 
-    int msd_steps = 25;
+    int msd_steps = 250;
     int corr_steps = 5;
 
     // set up the wrappers
-    vector<Generic_wrapper_base *> wrapper_vec(18);
+    vector<Generic_wrapper_base *> wrapper_vec(8);
     
     Generic_parameters_matlab arr_parm(frames,2,plhs);
     wrapper_vec[0] = arr_parm.make_wrapper();
@@ -125,14 +125,18 @@ void mexFunction( int nlhs, mxArray *plhs[],
       arr_parm2.change_mxArray(plhs+j+1);
       wrapper_vec[1+j] = arr_parm2.make_wrapper();
     }
-    Generic_parameters_matlab arr_parm3(2500,corr_steps,plhs+3);
-    for(int j = 0;j<10; ++j)
-    {
-      arr_parm3.change_mxArray(plhs+j+7);
-      wrapper_vec[7+j] = arr_parm3.make_wrapper();
-    }
-    Generic_parameters_matlab arr_parm4(502,2,plhs+17);
-    wrapper_vec[17] = arr_parm4.make_wrapper();
+
+//     Generic_parameters_matlab arr_parm3(2500,corr_steps,plhs+3);
+//     for(int j = 0;j<10; ++j)
+//     {
+//       arr_parm3.change_mxArray(plhs+j+7);
+//       wrapper_vec[7+j] = arr_parm3.make_wrapper();
+//     }
+
+//     Generic_parameters_matlab arr_parm4(502,2,plhs+17);
+//     wrapper_vec[17] = arr_parm4.make_wrapper();
+
+
 
     params_matlab p_in = params_matlab(prhs,contents);
     contents.insert(pair<wrapper::p_vals, int>(wrapper::d_trackid,3));
@@ -156,10 +160,10 @@ void mexFunction( int nlhs, mxArray *plhs[],
     
     
     
-     Histogram hist1(500,0,40);
-     tracks.msd_hist(1,hist1);
-     hist1.output_to_wrapper(wrapper_vec[17]);
-     
+//     Histogram hist1(500,0,40);
+//     tracks.msd_hist(1,hist1);
+//     hist1.output_to_wrapper(wrapper_vec[17]);
+    
 
 
     //compute the mean displacements from frame to frame
@@ -192,10 +196,6 @@ void mexFunction( int nlhs, mxArray *plhs[],
     
 
     time (&start); 
-    Svector<double> msd_vec;
-    Svector<int> msd_count_vec;
-    
-    time (&start); 
     Counted_vector md(msd_steps);
     Counted_vector msd(msd_steps);
     Counted_vector msd_sq(msd_steps);
@@ -214,29 +214,41 @@ void mexFunction( int nlhs, mxArray *plhs[],
     
 
     
-    Coarse_grain_array Duu  (5,100,2500,corr_steps);
-    Coarse_grain_array DuuT (5,100,2500,corr_steps);
-    Coarse_grain_array DuuL (5,100,2500,corr_steps);
-    Coarse_grain_array Ddrdr(5,100,2500,corr_steps);
-//     Coarse_grain_array Dyy  (5,100,2500,corr_steps);
-//     Coarse_grain_array Dxx  (5,100,2500,corr_steps);
-    Coarse_grain_array Ddudu(5,100,2500,corr_steps);
-    cout<<"rehash"<<endl;
-    s.rehash(100);
-    cout<<"rehashed"<<endl;
+//     Coarse_grain_array Duu  (5,100,2500,corr_steps);
+//     Coarse_grain_array DuuT (5,100,2500,corr_steps);
+//     Coarse_grain_array DuuL (5,100,2500,corr_steps);
+//     Coarse_grain_array Ddrdr(5,100,2500,corr_steps);
+// //     Coarse_grain_array Dyy  (5,100,2500,corr_steps);
+// //     Coarse_grain_array Dxx  (5,100,2500,corr_steps);
+//     Coarse_grain_array Ddudu(5,100,2500,corr_steps);
+//     cout<<"rehash"<<endl;
+//     s.rehash(100);
+//     cout<<"rehashed"<<endl;
     
-    md.average_data();
+//     md.average_data();
     
 
-    cout<<"trying 2 point "<<endl;
-    s.D_lots(Duu,DuuT,DuuL,Ddrdr,Ddudu,md);
-    cout<<"2 point computed"<<endl;
+//     cout<<"trying 2 point "<<endl;
+//     s.D_lots(Duu,DuuT,DuuL,Ddrdr,Ddudu,md);
+//     cout<<"2 point computed"<<endl;
     
-    Duu.output_to_wrapper   (wrapper_vec[7] ,wrapper_vec[8]);
-    DuuT.output_to_wrapper   (wrapper_vec[9] ,wrapper_vec[10]);
-    DuuL.output_to_wrapper(wrapper_vec[11],wrapper_vec[12]);
-    Ddrdr.output_to_wrapper (wrapper_vec[13],wrapper_vec[14]);
-    Ddudu.output_to_wrapper (wrapper_vec[15],wrapper_vec[16]);
+//     Duu.output_to_wrapper   (wrapper_vec[7] ,wrapper_vec[8]);
+//     DuuT.output_to_wrapper   (wrapper_vec[9] ,wrapper_vec[10]);
+//     DuuL.output_to_wrapper(wrapper_vec[11],wrapper_vec[12]);
+//     Ddrdr.output_to_wrapper (wrapper_vec[13],wrapper_vec[14]);
+//     Ddudu.output_to_wrapper (wrapper_vec[15],wrapper_vec[16]);
+
+    Generic_parameters_matlab arr_parm3(tracks.get_track_count(),3,plhs+7);
+    wrapper_vec[7] = arr_parm3.make_wrapper();
+
+
+
+    // output tracks
+    Cell_matlab test_cell2(tracks.get_track_count(),plhs+8);
+    tracks.set_corrected_disp_to_cell(test_cell2);
+    cout<<"c tracks"<<endl;
+    tracks.initial_corrected_pos_to_wrapper(wrapper_vec[7]);
+    
 
 
     for(int j = 0;j<wrapper_vec.size(); ++j)
@@ -246,15 +258,8 @@ void mexFunction( int nlhs, mxArray *plhs[],
     }
 
     
-
-
-
-//     // output tracks
-//     Cell_matlab test_cell2(tracks.get_track_count(),plhs+3);
-//     tracks.set_corrected_disp_to_cell(test_cell2);
-//     cout<<"c tracks"<<endl;
-
     
+
     
     
   }

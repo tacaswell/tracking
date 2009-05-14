@@ -26,7 +26,7 @@
 #define HIST
 
 #include <vector>
-
+#include <exception>
 #include <iostream>
 
 namespace utilities{
@@ -138,15 +138,26 @@ void Histogram::add_data_point(T in){
     ++under_count_;
     return;
   }
-  if(tmp_in> top_edge_){
+  if(tmp_in>= top_edge_){
     ++over_count_;
     return;
   }
   
   //  ++(*(hist_array_ptr_ + ((int)((tmp_in - bottom_edge_)/bin_width_))));
   //  cout<<in<<"\t"<<((int)((tmp_in - bottom_edge_)/bin_width_))<<endl;
-  ++hist_array_[((int)((tmp_in - bottom_edge_)/bin_width_))];
-  
+  try
+  {
+    
+    ++hist_array_.at(((int)((tmp_in - bottom_edge_)/bin_width_)));
+  }
+  catch(std::exception & e)
+  {
+    cout<<e.what()<<endl;
+    cout<<tmp_in<<"\t"
+	<<bottom_edge_<<"\t"
+	<<bin_width_<<"\t"<<endl;
+    
+  }
 }
 
 

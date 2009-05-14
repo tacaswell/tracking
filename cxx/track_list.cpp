@@ -46,14 +46,15 @@ void track_list::link_next(list<particle_track*>* new_next){
 
   while(n_list->size()>0 && p_list->size()>0){
     set_up_sub_ntwrk();
-
+    
+    
     //have this function delete pos_link for the particles that get
     //dropped
     link_sub_ntwrk();
 
     clean_lists();
   }
-
+  //   cout<<endl;
 
 
   delete p_list;
@@ -506,47 +507,77 @@ void track_list::set_up_sub_ntwrk(){
   list<particle_track*> tmp_p;
   list<particle_track*> tmp_n;
   pair<set<particle_track*>::iterator, bool> tmp_return;
-  list<pair<particle_track*,double> >::iterator it, it2;
+  list<pair<particle_track*,double> >::iterator it, it2,it_end;
   p_sub_net.clear();
   n_sub_net.clear();
 
 
   tmp_particle = p_list->front();
   p_sub_net.insert(tmp_particle);
+  it_end = (tmp_particle->n_pos_link)->end();
+  
   for(it =  (tmp_particle->n_pos_link)->begin();
-      it!= (tmp_particle->n_pos_link)->end(); it++)
-    {
-      tmp_n.push_back((*it).first);
-    }
+      it!=it_end ; it++)
+  {
+    tmp_n.push_back((*it).first);
+  }
 
-  while((tmp_p.size()!=0) ||(tmp_n.size()!=0)){
+  while((tmp_p.size()!=0) ||(tmp_n.size()!=0))
+  {
+    // sanity check
+    if(n_sub_net.size() >75 ||p_sub_net.size() >75)
+    {
+      throw "subnetwork too big, barfing";
+    }
+    
     //loop over tmp_p
     while(tmp_p.size()!=0)
+    {
+      tmp_particle = tmp_p.front();
+      tmp_return = p_sub_net.insert(tmp_particle);
+      if((tmp_return.second))
       {
-	tmp_particle = tmp_p.front();
-	tmp_return = p_sub_net.insert(tmp_particle);
-	if((tmp_return.second))
-	  {
-	    for(it =  (tmp_particle->n_pos_link)->begin();
-		it!= (tmp_particle->n_pos_link)->end(); it++)
-	      tmp_n.push_back((*it).first);
-	  }
-	tmp_p.pop_front();
+	it_end =(tmp_particle->n_pos_link)->end();
+	for(it =  (tmp_particle->n_pos_link)->begin();
+	    it!= it_end; it++)
+	  tmp_n.push_back((*it).first);
       }
+      tmp_p.pop_front();
+    }
 
     while(tmp_n.size()!=0)
+    {
+      tmp_particle = tmp_n.front();
+      tmp_return = n_sub_net.insert(tmp_particle);
+      if((tmp_return.second))
       {
-	tmp_particle = tmp_n.front();
-	tmp_return = n_sub_net.insert(tmp_particle);
-	if((tmp_return.second))
-	  {
-	    for(it =  (tmp_particle->p_pos_link)->begin();
-		it!= (tmp_particle->p_pos_link)->end(); it++)
-	      tmp_p.push_back((*it).first);
-	  }
-	tmp_n.pop_front();
+	it_end = (tmp_particle->p_pos_link)->end();
+	for(it =  (tmp_particle->p_pos_link)->begin();
+	    it!= it_end; it++)
+	  tmp_p.push_back((*it).first);
       }
+      tmp_n.pop_front();
+    }
   }
+//   if(n_sub_net.size() >50 ||p_sub_net.size() >50)
+//   {
+//     cout<<'=';
+//     return;
+//   }
+ 
+//   if(n_sub_net.size() >25 ||p_sub_net.size() >25)
+//   {
+//     cout<<'-';
+//     return;
+//   }
+
+//   if(n_sub_net.size() >10 ||p_sub_net.size() >10)
+//   {
+//     cout<<'+';
+//     return;
+    
+//   }
+  
 }
 
 

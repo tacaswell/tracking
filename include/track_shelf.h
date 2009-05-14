@@ -34,7 +34,7 @@ template<class T>
 struct Svector;
 class Cell;
 class Counted_vector;
-
+class Generic_wrapper_base;
 }
 
 namespace tracking{
@@ -155,7 +155,12 @@ public:
   int get_track_count() const{
     return (int)(track_map.size());
   }
+  /**
+     outputs the initial location and plane of the tracks
+   */
+  void initial_corrected_pos_to_wrapper(utilities::Generic_wrapper_base * data_out_wrapper)const;
   
+
   ///Constructor
   track_shelf(){};
   ///Destructor.  Destroys all of the tracks contained in the shelf

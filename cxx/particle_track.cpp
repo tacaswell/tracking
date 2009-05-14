@@ -246,7 +246,7 @@ double particle_track::distancesq_corrected(const particle_track* part_in)const{
   //   return X*X + Y*Y ;//+ Z*Z;
 }
 
-const utilities::Tuple particle_track::get_corrected_forward_disp()const
+ const utilities::Tuple particle_track::get_corrected_forward_disp()const
 {
   if (shelf_ ==NULL)
     {
@@ -280,3 +280,12 @@ bool particle_track::has_next()const
   return true;
 }
   
+const utilities::Tuple particle_track::get_corrected_pos()const
+{
+  if (shelf_ ==NULL)
+    {
+      throw "shelf not defined";
+      return utilities::Tuple();
+    }
+  return position_ - shelf_->get_cum_forward_disp();
+}
