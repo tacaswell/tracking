@@ -76,6 +76,49 @@ MATLAB
 </TR>
 
 
+<TR>
+<TD>
+Maria Kilfoil
+</TD>
+<TD>
+<a herf="http://www.physics.mcgill.ca/~kilfoil/downloads.html">
+http://www.physics.mcgill.ca/~kilfoil/downloads.html
+</a>
+</TD>
+<TD>
+MATLAB
+</TD>
+</TR>
+
+
+<TR>
+<TD>
+Grahm Milne
+</TD>
+<TD>
+<a herf="http://faculty.washington.edu/gmilne/tracker.htm">
+http://faculty.washington.edu/gmilne/tracker.htm
+</a>
+</TD>
+<TD>
+LabVIEW
+</TD>
+</TR>
+
+<TR>
+<TD>
+Ryan Smith
+</TD>
+<TD>
+<a herf="http://titan.iwu.edu/~gspaldin/rytrack.html">
+http://titan.iwu.edu/~gspaldin/rytrack.html
+</a>
+</TD>
+<TD>
+stand alone/IDL GUI
+</TD>
+</TR>
+
 
 </TABLE>
 
@@ -88,8 +131,8 @@ spatial and temporal neighborhood to be quickly extracted.
 
 The code is very flexible and can be readily adapted to N-dimensions,
 but currently only 2 and 3 dimensions have been implemented.  The
-format of the input and output data is extremely flexible.  There is a
-wrapper class that can be quickly subclasses to allow the program to
+format of the input and output data is extremely flexible.  There are
+wrapper classes that can be quickly subclassed to allow the program to
 take input/give output to basically anything.  Currently there are
 implementations for input/output from/to text files and MATLAB.
 
