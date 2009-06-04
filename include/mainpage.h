@@ -205,3 +205,10 @@ namespace identification{}
    Namespace for utilities and helper functions
 */
 namespace utilities{}
+
+
+
+/**
+   Namespace for tracking and identifying filaments
+*/
+namespace filament{}
