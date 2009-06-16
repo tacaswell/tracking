@@ -38,6 +38,7 @@
 namespace utilities{
 class Coarse_grain_array;
 class Counted_vector;
+class Array;
 
 }
 
@@ -111,6 +112,8 @@ public:
 		   hash_box* box, int range=1) const;
   void get_region( int n,
 		   std::list<particle_track*>& in_list, int range=1) const;
+  void get_region( int n,
+		   std::list<particle_base*>& in_list, int range=1) const;
   ///@}
 
   ///@name g(r)
@@ -213,8 +216,13 @@ public:
     passes a pointer to it out as a reference, if there is
     not a shelf, returns false.
    */
-   bool step_forwards(int n,const hash_shelf* & next)const;
-
+  bool step_forwards(int n,const hash_shelf* & next)const;
+  /**
+     Returns an array of the vectors that point to the nearest
+     neighbors.
+   */
+  void nearest_neighbor_array(utilities::Array & nn_array, double range)const;
+  
 protected:
   //change all of this to be pointers to hash_boxes, to keep
   //consistent with everythign else
@@ -264,6 +272,12 @@ protected:
      Pointer to the next shelf in the case
    */
   hash_shelf * next_;
+
+  /**
+     number of particles in shelf.
+     Minor memory hit, but useful to know
+   */
+  unsigned int particle_count_;
   
 
 private:

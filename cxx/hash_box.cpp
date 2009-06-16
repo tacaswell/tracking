@@ -74,3 +74,14 @@ void  hash_box::box_to_list(std::list<particle_track*>& p_list) const
     p_list.push_back(static_cast<particle_track*>(*it));
   }
 }
+
+void  hash_box::box_to_list(std::list<particle_base*>& p_list) const
+{
+  p_list.clear();
+  
+  for(vector<particle_base*>::const_iterator it = contents_.begin();
+      it!=contents_.end(); ++it)
+  {
+    p_list.push_back(*it);
+  }
+}

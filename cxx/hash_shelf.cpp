@@ -32,6 +32,7 @@
 #include "track_box.h"
 #include "coarse_grain_array.h"
 #include "counted_vector.h"
+#include "array.h"
 using namespace tracking;
 using std::list;
 using utilities::Coarse_grain_array;
@@ -59,6 +60,7 @@ void hash_shelf::push(particle_base * p){
     return;
   }    
   
+  ++particle_count_;
 //   cout<<"particle: "<<endl;
 //   p->print();
 //   cout<<"hash_box: "<<hash_function(p)<<endl;
@@ -185,6 +187,15 @@ void hash_shelf::get_region( particle_base* n,
 
 void hash_shelf::get_region( int n,
 			     std::list<particle_track*>& in_list, 
+			     int range) const
+{
+  hash_box tmp;
+  get_region(n,&tmp,range);
+  tmp.box_to_list(in_list);
+}
+
+void hash_shelf::get_region( int n,
+			     std::list<particle_base*>& in_list, 
 			     int range) const
 {
   hash_box tmp;
@@ -655,6 +666,53 @@ bool hash_shelf::step_forwards(int n, const hash_shelf* & dest)const{
     return true;
   }
 }
+
+void hash_shelf::nearest_neighbor_array(utilities::Array & nn_array, double range)const
+{
+  nn_array.resize(particle_count_);
+
+  
+    
+  list<particle_base*> current_box;
+  list<particle_base*> current_region;
+  
+  for(int j = 0; j<(int)hash_.size(); ++j)
+  {
+    int buffer = 1;
+    hash_[j]->box_to_list(current_box);
+    get_region(j,current_region,buffer);
+    while(current_region.empty())
+    {
+      ++buffer;
+      get_region(j,current_region,buffer);
+    }
+    
+    for(list<particle_base*>::const_iterator box_part = current_box.begin();
+	box_part != current_box.end();++box_part)
+    {
+      const particle_base* box_part_ptr = *box_part;
+      const particle_base* nn_prtcle = current_region.front();
+      double min_r= box_part_ptr->distancesq(nn_prtcle);
+      
+      for(list<particle_base*>::const_iterator region_part = ++(current_region.begin());
+	  region_part!= current_region.end();++region_part)
+      {
+	const particle_base* region_part_ptr = *region_part;
+	double sep_r = box_part_ptr->distancesq(region_part_ptr);
+	if (sep_r<min_r)
+	{
+	  min_r = sep_r;
+	  nn_prtcle = region_part_ptr;
+	}
+      }
+      nn_array.push(nn_prtcle->get_position() - box_part_ptr->get_position());
+      
+    }
+  }
+}
+
+
+
 
 
 // void hash_shelf::D_lots2(utilities::Coarse_grain_array & Duu,
