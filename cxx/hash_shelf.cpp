@@ -84,6 +84,8 @@ void hash_shelf::push(particle_track * p){
 
     return;
   }    
+  ++particle_count_;
+
   
   p->set_shelf(this);
 //   cout<<"particle: "<<endl;
@@ -92,22 +94,30 @@ void hash_shelf::push(particle_track * p){
 }
 
 
+
+
+
 hash_shelf::hash_shelf(unsigned int imsz1, 
 		       unsigned int imsz2, unsigned int PPB,
-		       int i_frame):  ppb(PPB), plane_number(i_frame),next_(NULL)
+		       int i_frame):  ppb(PPB), plane_number(i_frame),
+				      next_(NULL),particle_count_(0)
 {
   img_dims_[0] = (imsz1);
   img_dims_[1] = (imsz2);
   init2();
 }
 
-hash_shelf::hash_shelf(utilities::Tuple imgsz, unsigned int ippb, int i_frame):
-  img_dims_(imgsz),  ppb(ippb),  plane_number(i_frame), next_(NULL)
+hash_shelf::hash_shelf(utilities::Tuple imgsz, 
+		       unsigned int ippb, 
+		       int i_frame):img_dims_(imgsz),  ppb(ippb),  
+				    plane_number(i_frame), 
+				    next_(NULL),particle_count_(0)
 {  
   init2();
 }
 
 void hash_shelf::init2(){
+
   int k = Tuple::length_;
   hash_dims_.clear();
   hash_.clear();
@@ -667,9 +677,13 @@ bool hash_shelf::step_forwards(int n, const hash_shelf* & dest)const{
   }
 }
 
-void hash_shelf::nearest_neighbor_array(utilities::Array & nn_array, double range)const
+void hash_shelf::nearest_neighbor_array(utilities::Array & pos_array,
+					utilities::Array & nn_array, double range)const
 {
+//   cout<<"particle_count_"<<particle_count_<<endl;
+  
   nn_array.resize(particle_count_);
+  pos_array.resize(particle_count_);
 
   
     
@@ -698,6 +712,11 @@ void hash_shelf::nearest_neighbor_array(utilities::Array & nn_array, double rang
 	  region_part!= current_region.end();++region_part)
       {
 	const particle_base* region_part_ptr = *region_part;
+	if(region_part_ptr == box_part_ptr)
+	{
+	  continue;
+	}
+	
 	double sep_r = box_part_ptr->distancesq(region_part_ptr);
 	if (sep_r<min_r)
 	{
@@ -706,7 +725,7 @@ void hash_shelf::nearest_neighbor_array(utilities::Array & nn_array, double rang
 	}
       }
       nn_array.push(nn_prtcle->get_position() - box_part_ptr->get_position());
-      
+      pos_array.push(box_part_ptr->get_position());
     }
   }
 }

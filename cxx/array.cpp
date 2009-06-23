@@ -48,8 +48,12 @@ void Array::print(){
 
 void Array::push(const Tuple&  tuple_in){
   if((cur_index_) == rows_)
+  {
+    cout<<cur_index_<<" "<<rows_<<endl;
+    
     throw "past end of array";
-
+  }
+  
   for(int j = 0; j<cols_;++j)
     data_.at(cur_index_*cols_ + j) = tuple_in[j];
   

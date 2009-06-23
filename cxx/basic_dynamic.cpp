@@ -167,7 +167,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
 
     //compute the mean displacements from frame to frame
-    s.compute_mean_disp();
+    //    s.compute_mean_disp();
     
 
     

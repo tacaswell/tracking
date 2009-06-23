@@ -90,7 +90,7 @@ extern void _main();
 void mexFunction( int nlhs, mxArray *plhs[], 
 		  int nrhs, const mxArray* prhs[] ){
 
-  if(nlhs!=2|| nrhs!=7){
+  if(nlhs!=2|| nrhs!=5){
     cout<<"Error, wrong number of arguments"<<endl;
     return;
   }
@@ -101,13 +101,8 @@ void mexFunction( int nlhs, mxArray *plhs[],
     dims[0] = (int)mxGetScalar(prhs[1]);
     dims[1] = (int)mxGetScalar(prhs[2]);
     int frames = (int)mxGetScalar(prhs[3]);
-
-    double max_r = mxGetScalar(prhs[4]);
-
-    int min_track = (int) mxGetScalar(prhs[5]);
-    int correct_drift = (int) mxGetScalar(prhs[6]);
-
-    int msd_steps = 50;
+    int max_r =  (int)mxGetScalar(prhs[4]);;
+    
     
     //nonsense to get the map set up
     map<wrapper::p_vals, int> contents;
@@ -136,7 +131,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
     
 
     // set up the wrappers
-    vector<Generic_wrapper_base *> wrapper_vec(1);
+    //     vector<Generic_wrapper_base *> wrapper_vec(1);
     
     //     Generic_parameters_matlab arr_parm(frames,2,plhs);
     //     wrapper_vec[0] = arr_parm.make_wrapper();
@@ -182,69 +177,78 @@ void mexFunction( int nlhs, mxArray *plhs[],
     
     cout<<"total number of particles is: "<<bt.size()<<endl;;
   
-    hash_case s(bt,dims,(int) max_r+1,frames);
+    hash_case s(bt,dims,max_r,frames);
     cout<<"case built"<<endl;
-    s.link(max_r,tracks);
-    //     int yar = tracks.get_track_count();
+//      s.link(max_r,tracks);
+//     //     int yar = tracks.get_track_count();
     
-    cout<<"linked: "<<endl;
+//     cout<<"linked: "<<endl;
     
     
-    if(correct_drift == 1)
-    {
-      s.compute_mean_disp();
-      cout<<"computed mean frame displacement"<<endl;
-    }
+// //     if(correct_drift == 1)
+// //     {
+// //       s.compute_mean_disp();
+// //       cout<<"computed mean frame displacement"<<endl;
+// //     }
+
+    // Output NN vectors
+    Cell_matlab nn_cell(frames,plhs+1);
+    Cell_matlab pos_cell(frames,plhs);
+    s.nearest_neighbor_array(pos_cell,nn_cell,max_r);
+    
+    
+
+
     
     //     Array mean_frame_disp(frames);
     //     s.get_mean_disp(mean_frame_disp);
     //     mean_frame_disp.set_array(wrapper_vec[0]);
-  
+    
     // Compute msd
 
 
-    // output tracks
-    Cell_matlab test_cell2(tracks.get_track_count(),plhs+1);
-    tracks.set_corrected_disp_to_cell(test_cell2);
-    cout<<"c tracks"<<tracks.get_track_count()<<endl;
+//     // output tracks
+//     Cell_matlab test_cell2(tracks.get_track_count(),plhs+1);
+//     tracks.set_corrected_disp_to_cell(test_cell2);
+//     cout<<"c tracks"<<tracks.get_track_count()<<endl;
 
 
-    Histogram hist1(frames,0,frames);
-    tracks.track_length_histogram(hist1);
+//     Histogram hist1(frames,0,frames);
+//     tracks.track_length_histogram(hist1);
     
-    Generic_parameters_matlab arr_parm4(frames + 2,2,plhs);
-    wrapper_vec.at(0) = arr_parm4.make_wrapper();
+//     Generic_parameters_matlab arr_parm4(frames + 2,2,plhs);
+//     wrapper_vec.at(0) = arr_parm4.make_wrapper();
     
-    hist1.output_to_wrapper(wrapper_vec.at(0));
+//     hist1.output_to_wrapper(wrapper_vec.at(0));
 	
 
      
-    Counted_vector md(msd_steps);
-    Counted_vector msd(msd_steps);
-    Counted_vector msd_sq(msd_steps);
-    tracks.msd_corrected(md,msd,msd_sq);
-    md.output_to_wrapper(wrapper_vec[1],wrapper_vec[2]);
-    msd.output_to_wrapper(wrapper_vec[3],wrapper_vec[4]);
-    msd_sq.output_to_wrapper(wrapper_vec[5],wrapper_vec[6]);
+//     Counted_vector md(msd_steps);
+//     Counted_vector msd(msd_steps);
+//     Counted_vector msd_sq(msd_steps);
+//     tracks.msd_corrected(md,msd,msd_sq);
+//     md.output_to_wrapper(wrapper_vec[1],wrapper_vec[2]);
+//     msd.output_to_wrapper(wrapper_vec[3],wrapper_vec[4]);
+//     msd_sq.output_to_wrapper(wrapper_vec[5],wrapper_vec[6]);
 
     
-    cout<<"c msd: "<<endl;
-    
-
-
-    
-
-    //     cout<<"trimmed"<<endl;
-
-    
+//     cout<<"c msd: "<<endl;
     
 
 
-    for(int j = 0;j<wrapper_vec.size(); ++j)
-    {
-      delete wrapper_vec.at(j);
-      wrapper_vec.at(j) = NULL;
-    }
+    
+
+//     //     cout<<"trimmed"<<endl;
+    
+    
+    
+
+
+//     for(int j = 0;j<wrapper_vec.size(); ++j)
+//     {
+//       delete wrapper_vec.at(j);
+//       wrapper_vec.at(j) = NULL;
+//     }
 
     
     

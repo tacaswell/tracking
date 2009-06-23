@@ -221,7 +221,8 @@ public:
      Returns an array of the vectors that point to the nearest
      neighbors.
    */
-  void nearest_neighbor_array(utilities::Array & nn_array, double range)const;
+  void nearest_neighbor_array(utilities::Array & pos_array,
+			      utilities::Array & nn_array, double range)const;
   
 protected:
   //change all of this to be pointers to hash_boxes, to keep

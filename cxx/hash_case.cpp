@@ -26,6 +26,7 @@
 #include <stdexcept> // out_of_range exception
 #include "tuple.h"
 #include "array.h"
+#include "cell.h"
 using namespace tracking;
 using std::list;
 using utilities::Tuple;
@@ -236,5 +237,25 @@ void hash_case::D_lots(utilities::Coarse_grain_array & Duu,
 //     (*shelf_it)->D_lots(Duu,DuuL,DuuT,Ddrdr,Dxx,Dyy,Ddudu,md);
     (*shelf_it)->D_lots(Duu,DuuL,DuuT,Ddrdr,Ddudu,md);
   }
+
+}
+
+
+void hash_case::nearest_neighbor_array(utilities::Cell & pos_cell,
+				       utilities::Cell & nn_cell, double range)const
+{
+  for(vector<hash_shelf*>::const_iterator shelf_it = h_case_.begin();
+      shelf_it!= h_case_.end();++shelf_it)
+  {
+//     cout<<"here!! "<<h_case_.size()<<endl;
+    
+    utilities::Array nn_array(1);
+    utilities::Array pos_array(1);
+    (*shelf_it)->nearest_neighbor_array(pos_array,nn_array,range);
+    nn_cell.add_array(nn_array);
+    pos_cell.add_array(pos_array);
+    
+  }
+  
 
 }
