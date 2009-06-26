@@ -112,7 +112,12 @@ void mexFunction( int nlhs, mxArray *plhs[],
     //there has to be a better way to do this
 
     int msd_steps = 250;
-    int corr_steps = 5;
+    int corr_steps = 5;    
+    
+    int corr_range_max = 100;
+    int corr_range_min = 5;
+    int corr_range_bins = 950/2;
+
 
     // set up the wrappers
     vector<Generic_wrapper_base *> wrapper_vec(16);
@@ -121,14 +126,16 @@ void mexFunction( int nlhs, mxArray *plhs[],
     Generic_parameters_matlab arr_parm2(1,msd_steps,plhs+1);
     for(int j = 0;j<6; ++j)
     {
-      arr_parm2.change_mxArray(plhs+j+1);
+
+      arr_parm2.change_mxArray(plhs+j);
       wrapper_vec[j] = arr_parm2.make_wrapper();
     }
 
-    Generic_parameters_matlab arr_parm3(2500,corr_steps,plhs+3);
+    Generic_parameters_matlab arr_parm3(corr_range_bins,corr_steps,plhs+3);
     for(int j = 0;j<10; ++j)
     {
-      arr_parm3.change_mxArray(plhs+j+7);
+
+      arr_parm3.change_mxArray(plhs+j+6);
       wrapper_vec[6+j] = arr_parm3.make_wrapper();
     }
 
@@ -184,11 +191,6 @@ void mexFunction( int nlhs, mxArray *plhs[],
     
     
 
-
-    int corr_range_max = 100;
-    int corr_range_min = 5;
-    int corr_range_bins = 2500;
-    
 
     
     Coarse_grain_array Duu  (corr_range_min,corr_range_max,corr_range_bins,corr_steps);
