@@ -583,16 +583,8 @@ void hash_shelf::D_lots(utilities::Coarse_grain_array & Duu,
 	    // get the amount of drift in the frame we have stepped to
 	    const Tuple displacement_correction= ((tmp_box_part->get_shelf())->get_cum_forward_disp());
 	    //  // and find the center of the pair in this frame
-	    // 	    Tuple center_tau = center + displacement_correction;
+
 	    
-	    
-						   
-	      
-	    // 	    double r_box_tau    = (tmp_box_part)->   get_r(center_tau);
-	    // 	    double r_region_tau = (tmp_region_part)->get_r(center_tau);
-	      
-	    // 	    double theta_box_tau    = (tmp_box_part)->   get_theta(center_tau);
-	    // 	    double theta_region_tau = (tmp_region_part)->get_theta(center_tau);
 	    
 	    Tuple pos_box_tau    = ((tmp_box_part)->get_position())   -displacement_correction;
 	    Tuple pos_region_tau = ((tmp_region_part)->get_position())-displacement_correction;
@@ -601,29 +593,16 @@ void hash_shelf::D_lots(utilities::Coarse_grain_array & Duu,
 	    Tuple u_region_tau = (pos_region_tau - pos_region_i);
 	    
 	      
-
-	    // 	    // adds to Drr, the correlation in the radial direction
-	    // 	    Drr.add_to_element(sep_r,tau-1,
-	    // 			       (r_box_tau - r_box_i) * (r_region_tau - r_region_i)
-	    // 			       );
-	    // 	    // adds to Drr, the correlation in the \theta direction
-	    // 	    Dtt.add_to_element(sep_r,tau-1,
-	    // 			       (theta_box_tau - theta_box_i) *
-	    // 			       (theta_region_tau - theta_region_i)
-	    // 			       );
 	
-	    
-	    Duu.add_to_element(sep_r,tau-1,u_box_tau.dot(u_region_tau));
+	    // tac 2009-06-25
+	    // changed to be the cos of the angle, not
+	    // the dot product, ie normalize it.
+	    Duu.add_to_element(sep_r,tau-1,(u_box_tau.dot(u_region_tau))/(u_box_tau.magnitude()*u_region_tau.magnitude()));
 	    double u_box_T= (u_box_tau.dot(Rij));
 	    double u_region_T = (u_region_tau.dot(Rij));
+
 	    DuuT.add_to_element(sep_r,tau-1, (u_box_T) * (u_region_T));
-	    DuuL.add_to_element(sep_r,tau-1, (u_box_tau-(Rij*u_box_T)).dot((u_region_tau
-							       -(Rij*u_region_T))));
-	    
-	    
-// 	    Dxx.add_to_element(sep_r,tau-1,u_box_tau[0]*u_region_tau[0]);
-// 	    Dyy.add_to_element(sep_r,tau-1,u_box_tau[1]*u_region_tau[1]);
-	    
+	    DuuL.add_to_element(sep_r,tau-1, (u_box_tau-(Rij*u_box_T)).dot((u_region_tau-(Rij*u_region_T))));
 
 	    // mobility correlation
 	    Ddrdr.add_to_element(sep_r,tau-1,(u_box_tau.magnitude())*(u_region_tau.magnitude()));

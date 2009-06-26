@@ -30,16 +30,33 @@ set_target_properties(test2 PROPERTIES
 )
 
 
-add_library(basic_static SHARED basic_static.cpp ${COMMON_TRACK_SRC} ${MATLAB_UTIL_SRC})
+add_library(basic_static SHARED apps/basic_static.cpp ${COMMON_TRACK_SRC} ${MATLAB_UTIL_SRC})
 target_link_libraries(basic_static ${MATLAB_LIBRARIES})
 set_target_properties(basic_static PROPERTIES
     PREFIX ""
     SUFFIX  ".${MATLAB_MEXFILE_EXT}"
 )
 
-add_library(basic_dynamic SHARED basic_dynamic.cpp ${COMMON_TRACK_SRC} ${MATLAB_UTIL_SRC})
+add_library(basic_dynamic SHARED apps/basic_dynamic.cpp ${COMMON_TRACK_SRC} ${MATLAB_UTIL_SRC})
 target_link_libraries(basic_dynamic ${MATLAB_LIBRARIES})
 set_target_properties(basic_dynamic PROPERTIES
+    PREFIX ""
+    SUFFIX  ".${MATLAB_MEXFILE_EXT}"
+)
+
+
+add_library(nn_vectors SHARED apps/nn_vectors.cpp ${COMMON_TRACK_SRC} ${MATLAB_UTIL_SRC})
+target_link_libraries(nn_vectors ${MATLAB_LIBRARIES})
+set_target_properties(nn_vectors PROPERTIES
+    PREFIX ""
+    SUFFIX  ".${MATLAB_MEXFILE_EXT}"
+)
+
+
+
+add_library(corr_test SHARED apps/corr_test.cpp ${COMMON_TRACK_SRC} ${MATLAB_UTIL_SRC})
+target_link_libraries(corr_test ${MATLAB_LIBRARIES})
+set_target_properties(corr_test PROPERTIES
     PREFIX ""
     SUFFIX  ".${MATLAB_MEXFILE_EXT}"
 )
