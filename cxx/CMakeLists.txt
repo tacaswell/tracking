@@ -11,7 +11,7 @@ SET(MATLAB_UTIL_SRC wrapper_i_matlab.cpp wrapper_o_matlab.cpp matlab_utils.cpp
 
 
 
-add_executable (tracking_cmd ${COMMON_TRACK_SRC} test.cpp)
+#add_executable (tracking_cmd ${COMMON_TRACK_SRC} test.cpp)
 
 add_executable(fast_gofr fast_gofr.cpp ${COMMON_TRACK_SRC})
 
@@ -28,6 +28,16 @@ set_target_properties(test2 PROPERTIES
     PREFIX ""
     SUFFIX  ".${MATLAB_MEXFILE_EXT}"
 )
+
+
+
+add_library(quick_test SHARED quick_mex_test.cpp ${COMMON_TRACK_SRC} ${MATLAB_UTIL_SRC})
+target_link_libraries(quick_test ${MATLAB_LIBRARIES})
+set_target_properties(quick_test PROPERTIES
+    PREFIX ""
+    SUFFIX  ".${MATLAB_MEXFILE_EXT}"
+)
+
 
 
 add_library(basic_static SHARED apps/basic_static.cpp ${COMMON_TRACK_SRC} ${MATLAB_UTIL_SRC})

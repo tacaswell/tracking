@@ -594,10 +594,11 @@ void hash_shelf::D_lots(utilities::Coarse_grain_array & Duu,
 	    
 	      
 	
-	    // tac 2009-06-25
-	    // changed to be the cos of the angle, not
-	    // the dot product, ie normalize it.
-	    Duu.add_to_element(sep_r,tau-1,(u_box_tau.dot(u_region_tau))/(u_box_tau.magnitude()*u_region_tau.magnitude()));
+
+// 	    Duu.add_to_element(sep_r,tau-1,(u_box_tau.dot(u_region_tau))/(u_box_tau.magnitude()*u_region_tau.magnitude()));
+	    // tac 2009-06-29
+	    // removed the normalization
+	    Duu.add_to_element(sep_r,tau-1,(u_box_tau.dot(u_region_tau)));
 	    double u_box_T= (u_box_tau.dot(Rij));
 	    double u_region_T = (u_region_tau.dot(Rij));
 

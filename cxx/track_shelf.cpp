@@ -341,22 +341,27 @@ void track_shelf::msd_corrected(utilities::Counted_vector & md,
 	current = next;
 	not_past_end = current->step_forwards(j+1,next);
 	// // version 3
-// 	not_past_end = false;
+	// 	not_past_end = false;
 	
       }
-//       // version 3
-//       md.add_to_element(j, tmp_dist_sum);
-//       msd.add_to_element(j, tmp_dist_sq_sum);
-//       msd_sq.add_to_element(j, tmp_dist_sq_sq_sum);
+      if(tmp_count>0)
+      {
+	
+	//       // version 3
+	//       md.add_to_element(j, tmp_dist_sum);
+	//       msd.add_to_element(j, tmp_dist_sq_sum);
+	//       msd_sq.add_to_element(j, tmp_dist_sq_sq_sum);
       
-//       // version 2
-//       md.add_to_element(j, tmp_dist_sum/tmp_count);
-//       msd.add_to_element(j, tmp_dist_sq_sum/tmp_count);
-//       msd_sq.add_to_element(j, tmp_dist_sq_sq_sum/tmp_count);
-      // version 1
-      md.batch_add_to_element(j, tmp_dist_sum,tmp_count);
-      msd.batch_add_to_element(j, tmp_dist_sq_sum,tmp_count);
-      msd_sq.batch_add_to_element(j, tmp_dist_sq_sq_sum,tmp_count);
+	//       // version 2
+	//       md.add_to_element(j, tmp_dist_sum/tmp_count);
+	//       msd.add_to_element(j, tmp_dist_sq_sum/tmp_count);
+	//       msd_sq.add_to_element(j, tmp_dist_sq_sq_sum/tmp_count);
+	// version 1
+
+	md.batch_add_to_element(j, tmp_dist_sum,tmp_count);
+	msd.batch_add_to_element(j, tmp_dist_sq_sum,tmp_count);
+	msd_sq.batch_add_to_element(j, tmp_dist_sq_sq_sum,tmp_count);
+      }
       
     }
   }

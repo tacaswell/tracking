@@ -77,11 +77,12 @@ void particle_track::set_next(particle_track* n_next){
   if(next_!=NULL)
     throw "nuking the list";
   next_ = n_next;
-  forward_disp_[0] = (n_next -> get_value(wrapper::d_xpos))
-    - get_value(wrapper::d_xpos);
-  forward_disp_[1] = (n_next -> get_value(wrapper::d_ypos))
-    - get_value(wrapper::d_ypos);
-
+//   forward_disp_[0] = (n_next -> get_value(wrapper::d_xpos))
+//     - get_value(wrapper::d_xpos);
+//   forward_disp_[1] = (n_next -> get_value(wrapper::d_ypos))
+//     - get_value(wrapper::d_ypos);
+  forward_disp_ = (n_next -> get_position()) - position_;
+  
 
 }
 

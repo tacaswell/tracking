@@ -26,6 +26,8 @@
 
 #include "counted_vector.h"
 #include "generic_wrapper_base.h"
+#include <iostream>
+
 using utilities::Counted_vector;
 using std::vector;
 
@@ -117,4 +119,20 @@ void Counted_vector::unaverage_data(){
   }
   
     
+}
+
+void Counted_vector::print() const{
+  vector<double>::const_iterator data_it = data_array_.begin();
+  vector<int>::const_iterator count_it = count_array_.begin();
+  std::cout<<"d\tc"<<std::endl;
+  while(data_it!= data_array_.end() && count_it!= count_array_.end())
+  {
+    std::cout<<(*data_it)<<"\t"<<(*count_it) <<std::endl;
+    ++data_it;
+    ++count_it;
+  }
+  std::cout<<"---"<<std::endl;
+  
+  
+
 }
