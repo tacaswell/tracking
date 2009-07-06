@@ -419,7 +419,7 @@ void track_shelf::set_corrected_disp_to_cell(Cell & output)const{
 void track_shelf::initial_corrected_pos_to_wrapper(utilities::Generic_wrapper_base * data_out_wrapper)const{
   tr_map::const_iterator working_track = track_map.begin();
   const particle_track *  working_track_ptr;
-  Array tmp(1);
+
   data_out_wrapper->initialize_wrapper();
   while(working_track != track_map.end())
   {
@@ -439,4 +439,38 @@ void track_shelf::initial_corrected_pos_to_wrapper(utilities::Generic_wrapper_ba
 
 
   
+}
+
+void track_shelf::corrected_tracks_out(Cell & output, utilities::Generic_wrapper_base * data_out_wrapper)const{
+  tr_map::const_iterator working_track = track_map.begin();
+  const particle_track *  working_track_ptr;
+  Array tmp(1);
+  data_out_wrapper->initialize_wrapper();
+  
+  while(working_track != track_map.end())
+  {
+    // Deal with the initial position data 
+    data_out_wrapper->start_new_row();
+
+    working_track_ptr = ((*(working_track)).second)->get_first();
+    const utilities::Tuple i_pos = working_track_ptr->get_corrected_pos();
+    
+    data_out_wrapper->append_to_row(i_pos[0]);
+    data_out_wrapper->append_to_row(i_pos[1]);
+    data_out_wrapper->append_to_row(working_track_ptr->get_value(wrapper::d_frame));
+    
+    data_out_wrapper->finish_row();
+    
+    // Deal with the displacements
+    ((*(working_track)).second)->extract_raw_disp(tmp);
+    output.add_array(tmp);
+
+    // increment the iterator 
+    ++working_track;
+    
+  }
+  
+  data_out_wrapper->finalize_wrapper();
+
+
 }

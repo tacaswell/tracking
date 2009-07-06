@@ -159,15 +159,10 @@ void mexFunction( int nlhs, mxArray *plhs[],
     cout<<"linked"<<endl;
     
     
-    
-//     Histogram hist1(500,0,40);
-//     tracks.msd_hist(1,hist1);
-//     hist1.output_to_wrapper(wrapper_vec[17]);
-    
 
 
     //compute the mean displacements from frame to frame
-    //    s.compute_mean_disp();
+    s.compute_mean_disp();
     
 
     
@@ -209,35 +204,6 @@ void mexFunction( int nlhs, mxArray *plhs[],
     cout<<"c msd: "<<dif<<endl;
     
     
-
-
-    
-
-    
-//     Coarse_grain_array Duu  (5,100,2500,corr_steps);
-//     Coarse_grain_array DuuT (5,100,2500,corr_steps);
-//     Coarse_grain_array DuuL (5,100,2500,corr_steps);
-//     Coarse_grain_array Ddrdr(5,100,2500,corr_steps);
-// //     Coarse_grain_array Dyy  (5,100,2500,corr_steps);
-// //     Coarse_grain_array Dxx  (5,100,2500,corr_steps);
-//     Coarse_grain_array Ddudu(5,100,2500,corr_steps);
-//     cout<<"rehash"<<endl;
-//     s.rehash(100);
-//     cout<<"rehashed"<<endl;
-    
-//     md.average_data();
-    
-
-//     cout<<"trying 2 point "<<endl;
-//     s.D_lots(Duu,DuuT,DuuL,Ddrdr,Ddudu,md);
-//     cout<<"2 point computed"<<endl;
-    
-//     Duu.output_to_wrapper   (wrapper_vec[7] ,wrapper_vec[8]);
-//     DuuT.output_to_wrapper   (wrapper_vec[9] ,wrapper_vec[10]);
-//     DuuL.output_to_wrapper(wrapper_vec[11],wrapper_vec[12]);
-//     Ddrdr.output_to_wrapper (wrapper_vec[13],wrapper_vec[14]);
-//     Ddudu.output_to_wrapper (wrapper_vec[15],wrapper_vec[16]);
-
     Generic_parameters_matlab arr_parm3(tracks.get_track_count(),3,plhs+7);
     wrapper_vec[7] = arr_parm3.make_wrapper();
 
@@ -245,10 +211,11 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
     // output tracks
     Cell_matlab test_cell2(tracks.get_track_count(),plhs+8);
-    tracks.set_corrected_disp_to_cell(test_cell2);
-    cout<<"c tracks"<<endl;
-    tracks.initial_corrected_pos_to_wrapper(wrapper_vec[7]);
+    // tracks.set_corrected_disp_to_cell(test_cell2);
+//     tracks.initial_corrected_pos_to_wrapper(wrapper_vec[7]);
+    tracks.corrected_tracks_out(test_cell2,wrapper_vec[7]);
     
+    cout<<"c tracks"<<endl;
 
 
     for(int j = 0;j<wrapper_vec.size(); ++j)
@@ -257,11 +224,6 @@ void mexFunction( int nlhs, mxArray *plhs[],
       wrapper_vec[j] = NULL;
     }
 
-    
-    
-
-    
-    
   }
   catch(const char * err){
     cerr<<err<<endl;

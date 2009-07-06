@@ -160,6 +160,11 @@ public:
    */
   void initial_corrected_pos_to_wrapper(utilities::Generic_wrapper_base * data_out_wrapper)const;
   
+  /**
+     Outputs both the corrected initial position and the corrected displacements
+   */
+  void corrected_tracks_out(utilities::Cell & output, utilities::Generic_wrapper_base * data_out_wrapper)const;
+  
 
   ///Constructor
   track_shelf(){};
