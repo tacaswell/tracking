@@ -124,8 +124,8 @@ stand alone/IDL GUI
 
 The primary advantage of this implementation is that it is
 significantly faster than implantation in IDL or MATLAB simply because
-they are interpreted languages (~8x against the Blair code but I think
-that can be improved) .  However, this implementation also provides
+they are interpreted languages (~20x against the Blair code but I think
+that can be improved).  However, this implementation also provides
 structural advantages and allows information about the particle's
 spatial and temporal neighborhood to be quickly extracted.
 
