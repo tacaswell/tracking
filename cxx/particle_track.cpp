@@ -56,6 +56,17 @@ particle_track::particle_track(int i_ind)
 
 }
 
+particle_track::particle_track(int i_ind,utilities::Tuple pos,unsigned int frame)
+  :particle_base(i_ind,pos),
+   next_(NULL),
+   prev_(NULL),
+   track(NULL) ,
+   shelf_(NULL),
+   n_pos_link(NULL),
+   p_pos_link(NULL)
+{
+}
+
 
 
 void particle_track::print_t(int more)const{
@@ -222,8 +233,26 @@ double particle_track::get_value(wrapper::p_vals type) const{
       return track->get_id() ;
       
     }
-
-  return particle_base::get_value(type);
+  
+  // tac 2009-07-17
+  // added special cases to avoid call to wrappers
+  if(type ==wrapper::d_xpos)
+  {
+    return position_[0];
+  }
+  if(type == wrapper::d_ypos)
+  {
+    return position_[1];
+  }
+  if(type == wrapper::d_frame)
+  {
+    return frame_;
+  }
+  else
+  {
+    return particle_base::get_value(type);
+  }
+  
 }
 
 

@@ -53,7 +53,15 @@ public:
   friend class track_list;
   friend class hash_case;
 
+
+  
   particle_track(int i_ind);
+
+  /**
+     constructor that does not require any calls to the wrapper to get
+     set up.
+   */
+  particle_track(int i_ind,utilities::Tuple pos,unsigned int frame);
 
 
   ///Destructor
@@ -256,7 +264,6 @@ protected:
      The foward displacement vector
    */
   utilities::Tuple forward_disp_;
-
 
 
   

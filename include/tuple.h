@@ -175,6 +175,12 @@ public:
      empty constructor
    */
   Tuple();
+
+  /**
+     Copy constructor
+   */
+  Tuple(const Tuple & y);
+  
   /**
      Destructor
    */

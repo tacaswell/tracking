@@ -2,8 +2,10 @@ cmake_minimum_required (VERSION 2.6)
 project(TRACKING)
 
 SET(CMAKE_CXX_COMPILER "/usr/bin/g++-4.1") 
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules/")
 
 include(FindMatlab)
+include(FindHDF5)
 
 include_directories(${TRACKING_SOURCE_DIR}/include)
 include_directories(${MATLAB_INCLUDE_DIR})

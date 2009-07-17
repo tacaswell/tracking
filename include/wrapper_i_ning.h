@@ -27,6 +27,7 @@
 #ifndef WRAPPER_NING
 #define WRAPPER_NING
 namespace tracking{
+class params_file;
 /**
    Wrapper class for dealing with data from a text file.  This
    is mainly for testing purposes.  The assumption is that the 

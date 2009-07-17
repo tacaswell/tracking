@@ -22,53 +22,44 @@
 //containing parts covered by the terms of MATLAB User License, the
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
-#include <iostream>
-#include <map>
 
-#include "wrapper.h"
+#include "H5Cpp.h"
+#include <vector>
+#include "wrapper_i.h"
+#ifndef WRAPPER_I_MATLAB
+#define WRAPPER_I_MATLAB
 
-
-
-
-#ifndef WRAPPER_BASE
-#define WRAPPER_BASE
 
 namespace tracking{
-//forward declarations
-template <class particle> class master_box_t;
-class particle_track;
 
-using std::map;
-using std::string;
+class Params_hdf5;
+
 /**
-   Abstract base class for input wrappers.  Defines the basic
-   functionality that a input wrapper needs to have.  This moatly
-   exists to make the polymorphism in/out wrappers type safe.
+   Wrapper class for eating data from hdf files
  */
-class wrapper_i_base: public wrapper{
-
+class Wrapper_i_hdf5:public wrapper_i_base{
 private:
-
-protected:
-  
-
-public:
-  virtual double get_value(int ind, wrapper::p_vals type)=0;
-  virtual void print(int ind);
-  //  virtual int num_entries()=0;
-  wrapper_i_base(std::map<p_vals,int>map_in):wrapper(map_in){};
-  
-  virtual ~wrapper_i_base(){};
-  
   /**
-     function to fill a master_box_t from the input wrapper
+     name for the data file
    */
-  virtual void fill_master_box(master_box_t<particle_track> test);
+  H5std_string file_name_;
   
+protected:
+  std::vector<int> frame_offsets_;
+  void init();
+public:
+  int num_entries() const;
+  
+  
+  void print();
+  double get_value(int ind, wrapper::p_vals type);
+  
+  virtual ~Wrapper_i_hdf5();
+  Wrapper_i_hdf5(Params_hdf5* param);
+  Wrapper_i_hdf5();
   
 };
 
 }
 
 #endif
-

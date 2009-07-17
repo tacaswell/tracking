@@ -65,192 +65,200 @@ using utilities::Svector;
 
 
 int main(){
-  //  mtrace();
-  //  params_file p = params_file(50*50,6);
-  //  params_ning_hd p = params_ning_hd(20464,6);
+
+
+
+  return 0;
+}
+
+// tac 2009-07-17
+// moved every thing to this comment block as I have no recollection of
+// what I was doing here
+
+
+//   //  mtrace();
+//   //  params_file p = params_file(50*50,6);
+//   //  params_ning_hd p = params_ning_hd(20464,6);
+// //   map<wrapper::p_vals, int> contents;
+// //   wrapper::p_vals tmp[] = {wrapper::d_index,wrapper::d_xpos,
+// // 			   wrapper::d_ypos, wrapper::d_zpos, 
+// // 			   wrapper::d_frame};
+// //   int tmp2[] = {0, 1, 2 ,3,4};
+  
+// //   vector<wrapper::p_vals > tmp3(tmp, tmp+5);
+// //   vector<wrapper::p_vals>::iterator it1 = tmp3.begin();
+  
+// //   vector<int> tmp4(tmp2, tmp2+5);
+// //   vector<int>::iterator it2 = tmp4.begin();
+  
+// //   map<wrapper::p_vals, int>::iterator it3 = contents.begin();
+  
+// //   for( ;it2<tmp4.end() && it1<tmp3.end() ; it1++, it2++, it3++)
+// //     contents.insert(it3,pair<wrapper::p_vals, int>(*it1, *it2));
+//   //nonsense to get the map set up
 //   map<wrapper::p_vals, int> contents;
-//   wrapper::p_vals tmp[] = {wrapper::d_index,wrapper::d_xpos,
-// 			   wrapper::d_ypos, wrapper::d_zpos, 
+// //   wrapper::p_vals tmp[] = {wrapper::d_index,wrapper::d_xpos,
+// // 			   wrapper::d_ypos, wrapper::d_zpos, 
+// // 			   wrapper::d_frame};
+// //   int tmp2[] = {0, 1, 2 ,3,4};
+//   wrapper::p_vals tmp[] = {wrapper::d_xpos,
+// 			   wrapper::d_ypos, 
 // 			   wrapper::d_frame};
-//   int tmp2[] = {0, 1, 2 ,3,4};
-  
-//   vector<wrapper::p_vals > tmp3(tmp, tmp+5);
+//   int tmp2[] = {0, 1, 2 };
+
+//   vector<wrapper::p_vals > tmp3(tmp, tmp+3);
 //   vector<wrapper::p_vals>::iterator it1 = tmp3.begin();
-  
-//   vector<int> tmp4(tmp2, tmp2+5);
+
+//   vector<int> tmp4(tmp2, tmp2+3);
 //   vector<int>::iterator it2 = tmp4.begin();
-  
+
 //   map<wrapper::p_vals, int>::iterator it3 = contents.begin();
-  
+
 //   for( ;it2<tmp4.end() && it1<tmp3.end() ; it1++, it2++, it3++)
 //     contents.insert(it3,pair<wrapper::p_vals, int>(*it1, *it2));
-  //nonsense to get the map set up
-  map<wrapper::p_vals, int> contents;
-//   wrapper::p_vals tmp[] = {wrapper::d_index,wrapper::d_xpos,
-// 			   wrapper::d_ypos, wrapper::d_zpos, 
-// 			   wrapper::d_frame};
-//   int tmp2[] = {0, 1, 2 ,3,4};
-  wrapper::p_vals tmp[] = {wrapper::d_xpos,
-			   wrapper::d_ypos, 
-			   wrapper::d_frame};
-  int tmp2[] = {0, 1, 2 };
+//   //end nonsense
+//   //there has to be a better way to do this
 
-  vector<wrapper::p_vals > tmp3(tmp, tmp+3);
-  vector<wrapper::p_vals>::iterator it1 = tmp3.begin();
-
-  vector<int> tmp4(tmp2, tmp2+3);
-  vector<int>::iterator it2 = tmp4.begin();
-
-  map<wrapper::p_vals, int>::iterator it3 = contents.begin();
-
-  for( ;it2<tmp4.end() && it1<tmp3.end() ; it1++, it2++, it3++)
-    contents.insert(it3,pair<wrapper::p_vals, int>(*it1, *it2));
-  //end nonsense
-  //there has to be a better way to do this
-
-  int num_particles = 1000000;
+//   int num_particles = 1000000;
   
-  params_file p_in = params_file(num_particles,"rawdata_from_matlab.txt",contents);
-  //  params_file p_in = params_file(num_particles,"new_dummy.txt",contents);
+//   params_file p_in = params_file(num_particles,"rawdata_from_matlab.txt",contents);
+//   //  params_file p_in = params_file(num_particles,"new_dummy.txt",contents);
 
-  contents.insert(pair<wrapper::p_vals, int>(wrapper::d_trackid,3));
+//   contents.insert(pair<wrapper::p_vals, int>(wrapper::d_trackid,3));
   
-  params_file p_out = params_file(num_particles,"new_out.txt",contents);
+//   params_file p_out = params_file(num_particles,"new_out.txt",contents);
 
-  wrapper_i_base * in_wrapper = p_in.make_wrapper_in();
+//   wrapper_i_base * in_wrapper = p_in.make_wrapper_in();
   
 
-  particle_base::intialize_wrapper_in(in_wrapper);
-  std::set<wrapper::p_vals> data_types = in_wrapper->get_data_types();
-  data_types.insert(wrapper::d_unqid);
+//   particle_base::intialize_wrapper_in(in_wrapper);
+//   std::set<wrapper::p_vals> data_types = in_wrapper->get_data_types();
+//   data_types.insert(wrapper::d_unqid);
 
 
 
-  particle_base::intialize_data_types(&data_types);
+//   particle_base::intialize_data_types(&data_types);
   
-  vector<particle_track*> working_vec(100,NULL);
+//   vector<particle_track*> working_vec(100,NULL);
   
-  for(vector<particle_track*>::iterator vec_it = working_vec.begin();
-      vec_it != working_vec.end(); ++vec_it)
-  {
-    (*vec_it) = new particle_track(0);
-  }
-  
-  for(vector<particle_track*>::iterator vec_it = (working_vec.begin() +1);
-      vec_it != (working_vec.end()-1); ++vec_it)
-  {
-    (*vec_it)->set_next(*(vec_it+1));
-    (*vec_it)->set_prev(*(vec_it-1));
-  }
-  working_vec[0]->set_next(working_vec[1]);
-  working_vec[99]->set_prev(working_vec[98]);
-
-  // for(vector<particle_track*>::iterator vec_it = working_vec.begin();
+//   for(vector<particle_track*>::iterator vec_it = working_vec.begin();
 //       vec_it != working_vec.end(); ++vec_it)
 //   {
-//     const particle_track* tmp;
-//     const particle_track* working;
-//     working = *vec_it;
-//     cout<<working->get_value(wrapper::d_unqid)<<"\t";
-//     tmp = working->get_prev();
-//     if(tmp!=NULL)
+//     (*vec_it) = new particle_track(0);
+//   }
+  
+//   for(vector<particle_track*>::iterator vec_it = (working_vec.begin() +1);
+//       vec_it != (working_vec.end()-1); ++vec_it)
+//   {
+//     (*vec_it)->set_next(*(vec_it+1));
+//     (*vec_it)->set_prev(*(vec_it-1));
+//   }
+//   working_vec[0]->set_next(working_vec[1]);
+//   working_vec[99]->set_prev(working_vec[98]);
+
+//   // for(vector<particle_track*>::iterator vec_it = working_vec.begin();
+// //       vec_it != working_vec.end(); ++vec_it)
+// //   {
+// //     const particle_track* tmp;
+// //     const particle_track* working;
+// //     working = *vec_it;
+// //     cout<<working->get_value(wrapper::d_unqid)<<"\t";
+// //     tmp = working->get_prev();
+// //     if(tmp!=NULL)
+// //     {
+// //       cout<<tmp->get_value(wrapper::d_unqid)<<"\t";
+// //     }
+// //     else
+// //     {
+// //       cout<<"null\t";
+// //     }
+// //     tmp = working->get_next();
+// //     if(tmp!=NULL)
+// //     {
+// //       cout<<tmp->get_value(wrapper::d_unqid)<<"\t";
+// //     }
+// //     else
+// //     {
+// //       cout<<"null\t";
+// //     }
+// //     cout<<endl;
+// //   }
+  
+//   bool more = true;
+//   const particle_track* tmp_t;
+//   tmp_t= working_vec[0];
+  
+//   while(more)
+//   {
+//     if(tmp_t!=NULL)
 //     {
-//       cout<<tmp->get_value(wrapper::d_unqid)<<"\t";
-//     }
-//     else
-//     {
-//       cout<<"null\t";
-//     }
-//     tmp = working->get_next();
-//     if(tmp!=NULL)
-//     {
-//       cout<<tmp->get_value(wrapper::d_unqid)<<"\t";
+//       cout<<tmp_t->get_value(wrapper::d_unqid)<<"\t";
 //     }
 //     else
 //     {
 //       cout<<"null\t";
 //     }
 //     cout<<endl;
+//     more = tmp_t->step_forwards(6,tmp_t);
 //   }
   
-  bool more = true;
-  const particle_track* tmp_t;
-  tmp_t= working_vec[0];
-  
-  while(more)
-  {
-    if(tmp_t!=NULL)
-    {
-      cout<<tmp_t->get_value(wrapper::d_unqid)<<"\t";
-    }
-    else
-    {
-      cout<<"null\t";
-    }
-    cout<<endl;
-    more = tmp_t->step_forwards(6,tmp_t);
-  }
-  
   
 
-//   master_box_t<particle_track>bt(&p_in,&p_out);
-//   cout<<"total number of particles is: "<<bt.size()<<endl;;
+// //   master_box_t<particle_track>bt(&p_in,&p_out);
+// //   cout<<"total number of particles is: "<<bt.size()<<endl;;
   
-//    int x_dim = 1385;
-//    int y_dim = 512;
-// //  int x_dim = 150;
-// //  int y_dim = 150;
+// //    int x_dim = 1385;
+// //    int y_dim = 512;
+// // //  int x_dim = 150;
+// // //  int y_dim = 150;
   
-//   vector<int> dims;
-//   dims.push_back(y_dim);
-//   dims.push_back(x_dim);
+// //   vector<int> dims;
+// //   dims.push_back(y_dim);
+// //   dims.push_back(x_dim);
 
 
 
-//   int frames;
-//   frames = (int)bt.get_particle(bt.size() -1)->get_value(wrapper::d_frame);
+// //   int frames;
+// //   frames = (int)bt.get_particle(bt.size() -1)->get_value(wrapper::d_frame);
 
   
-//   hash_case s(bt,dims,5,frames+1);
+// //   hash_case s(bt,dims,5,frames+1);
   
 
   
-//   track_shelf tracks;
+// //   track_shelf tracks;
   
 
 
-//   s.link(5,tracks);
+// //   s.link(5,tracks);
 
 
 
-//   Svector<double> msd_vec;
-//   Svector<int> msd_count_vec;
+// //   Svector<double> msd_vec;
+// //   Svector<int> msd_count_vec;
   
-//   msd_vec.data.resize(500);
-//   msd_count_vec.data.resize(500);
+// //   msd_vec.data.resize(500);
+// //   msd_count_vec.data.resize(500);
 
 
-//   tracks.remove_short_tracks(200);
+// //   tracks.remove_short_tracks(200);
 
-//   tracks.msd(msd_vec, msd_count_vec);
+// //   tracks.msd(msd_vec, msd_count_vec);
   
-//   msd_vec.print();
-//   msd_count_vec.print();
+// //   msd_vec.print();
+// //   msd_count_vec.print();
   
 
-//   Histogram hist1(25,0,frames);
-//   Histogram hist2(25,0,frames);
+// //   Histogram hist1(25,0,frames);
+// //   Histogram hist2(25,0,frames);
 
-//   tracks.track_length_histogram(hist1);
-//   tracks.remove_short_tracks(200);
-//   tracks.track_length_histogram(hist2);
-//   hist1.print();
-//   hist2.print();
+// //   tracks.track_length_histogram(hist1);
+// //   tracks.remove_short_tracks(200);
+// //   tracks.track_length_histogram(hist2);
+// //   hist1.print();
+// //   hist2.print();
 
-//   bt.initialize_out();
-//   tracks.set_shelf();
-//   bt.finalize_out();
+// //   bt.initialize_out();
+// //   tracks.set_shelf();
+// //   bt.finalize_out();
 
-
-  return 0;
-}

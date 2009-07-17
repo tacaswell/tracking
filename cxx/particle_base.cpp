@@ -36,11 +36,34 @@ using std::endl;
 using utilities::Tuple;
 int particle_base::running_total_ = 0;
 
+// static initialization
 wrapper_o_base* particle_base::wrapper_out_ = NULL;
 wrapper_i_base* particle_base::wrapper_in_ = NULL;
 std::set<wrapper::p_vals>* particle_base::data_types_ = NULL;
 
-particle_base::particle_base( int i_ind){
+
+// constructors 
+particle_base::particle_base( int i_ind):frame_(0){
+  priv_init(i_ind);
+  fill_position();
+  
+}
+
+// tac 2009-07-17
+// added
+particle_base::particle_base( int i_ind,Tuple pos,int frame)
+ :position_(pos),frame_(frame){
+  priv_init(i_ind);
+}
+
+
+
+// private functions
+
+// tac 2009-07-17
+// added to streamline multiple constructors
+void particle_base::priv_init(int i_ind)
+{
   if(wrapper_in_ ==NULL)
     throw "wrapper_in_ not initialized";
 
@@ -49,15 +72,18 @@ particle_base::particle_base( int i_ind){
   
   ind_ = i_ind;
   unq_id_ = running_total_++;
-  fill_position();
-  
-};
+}
+
+
 
 void particle_base::fill_position(){
   position_[0] = get_value(wrapper::d_xpos);
   position_[1] = get_value(wrapper::d_ypos);
 }
 
+
+
+// public functions
 
 double particle_base::distancesq(const particle_base* part_in)const{
 

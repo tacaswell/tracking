@@ -30,7 +30,7 @@
 #ifndef WRAPPER_FILE
 #define WRAPPER_FILE
 namespace tracking{
-
+class params_file;
 using std::map;
 /**
    Wrapper class for dealing with data from a text file.  This

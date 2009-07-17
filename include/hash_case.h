@@ -82,11 +82,6 @@ public:
   template <class particle>
   hash_case(master_box_t<particle> & mb,const utilities::Tuple & img_dims, 
 	    unsigned int ppb, int frames);
-  
-  template <class particle>
-  void  init(master_box_t<particle> & mb,const utilities::Tuple & img_dims, 
-	    unsigned int ppb, int frames);
-  
   hash_case();
   
 
@@ -197,6 +192,13 @@ protected:
   
 
   bool inited;
+	    
+	    
+  
+  template <class particle>
+  void  init(master_box_t<particle> & mb,const utilities::Tuple & img_dims, 
+	    unsigned int ppb, int frames);
+
 
 };
 

@@ -57,7 +57,10 @@ public:
   particle * get_particle(int n){
     return particle_vec.at(n);
   }
-  
+
+  /**
+     adds a new type to the data_types
+   */
   void append_to_data_types(wrapper::p_vals type){
     data_types.insert(type);
   }
@@ -69,10 +72,6 @@ public:
 
 
   master_box_t();
-
-  ///Constructor that uses n to determine which type of particle
-  ///objects to make
-  master_box_t(params_file* params_in,params_file* params_out, int n);
     
   ///Returns the total number of particles contained in the
   ///master_box_t.
@@ -173,7 +172,9 @@ void master_box_t<particle>::init(params* params_in, params* params_out){
   particle_base::intialize_data_types(&data_types);
 
   particle_vec.reserve(in_wrapper->num_entries());
-  for(int j = 0; j<in_wrapper->num_entries(); ++j){
+  int num_entries= in_wrapper->num_entries();
+  
+  for(int j = 0; j<num_entries; ++j){
     particle_vec.push_back( new particle(j));
   }
   

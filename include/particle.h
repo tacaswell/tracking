@@ -52,17 +52,7 @@ namespace tracking{
 class particle_base{
   
 public:
-  ///A program generated global unique id, useful for tracking, comparing
-  ///particles and that sort of thing that does not depends on
-  ///properly parsing the data or the data being handed in behaving in
-  ///any sort of nice way, but this does mean that the particle
-  ///objects just got 32bits bigger
-  int unq_id_;
-
-  ///Pring out a rasonable representation of the partile
-  virtual void print() const;
-  
-  
+    
   ///Default constructor
   //clean this up/use inline intilization
   //  particle_base(wrapper_i_base * i_data, wrapper_o_base* o_out, 
@@ -74,10 +64,28 @@ public:
    */
   particle_base(int i_ind);
 
+  /**
+     Constructor that takes the position of the particle. 
+   */
+  particle_base(int ind, utilities::Tuple pos,int frame=0);
+  
+  
   ///default Destructor, made virtual
   virtual ~particle_base(){
     
   }
+
+
+  ///A program generated global unique id, useful for tracking, comparing
+  ///particles and that sort of thing that does not depends on
+  ///properly parsing the data or the data being handed in behaving in
+  ///any sort of nice way, but this does mean that the particle
+  ///objects just got 32bits bigger
+  int unq_id_;
+
+  ///Pring out a rasonable representation of the partile
+  virtual void print() const;
+  
 
   ///Returns the value of 'type' for the particle as specified
   ///by the in_wrapper
@@ -136,18 +144,24 @@ protected:
   static std::set<wrapper::p_vals>* data_types_;
   ///Identifier that comes from the wrapper
   int ind_;
-
+  
   /**
      New attempt at storing the position data, this has the 
      problem of taking more memory, but it might help the time.
      This will also make keeping track of the displacements.
    */
   utilities::Tuple position_;
+  
+  /**
+     The frame of the particle
+  */
+  int frame_;
 
   
 private:
   void fill_position();
-
+  void priv_init(int i_ind);
+  
 };
 }
 #endif

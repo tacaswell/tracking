@@ -22,53 +22,46 @@
 //containing parts covered by the terms of MATLAB User License, the
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
-#include <iostream>
-#include <map>
 
-#include "wrapper.h"
+#include "wrapper_i_hdf5.h"
+
+using H5::H5File;
+using H5::DataSpaceIException;
+using H5::DataSetIException ;
+using H5::FileIException;
+using H5::Group;
+using H5::DataSet;
+using H5::DataSpace;
+using namespace tracking;
 
 
-
-
-#ifndef WRAPPER_BASE
-#define WRAPPER_BASE
-
-namespace tracking{
-//forward declarations
-template <class particle> class master_box_t;
-class particle_track;
-
-using std::map;
-using std::string;
-/**
-   Abstract base class for input wrappers.  Defines the basic
-   functionality that a input wrapper needs to have.  This moatly
-   exists to make the polymorphism in/out wrappers type safe.
- */
-class wrapper_i_base: public wrapper{
-
-private:
-
-protected:
-  
-
-public:
-  virtual double get_value(int ind, wrapper::p_vals type)=0;
-  virtual void print(int ind);
-  //  virtual int num_entries()=0;
-  wrapper_i_base(std::map<p_vals,int>map_in):wrapper(map_in){};
-  
-  virtual ~wrapper_i_base(){};
-  
-  /**
-     function to fill a master_box_t from the input wrapper
-   */
-  virtual void fill_master_box(master_box_t<particle_track> test);
+int Wrapper_i_hdf5::num_entries() const
+{
+      
+  H5File* file = new H5File( file_name_, H5F_ACC_RDONLY );
+  Group*  group;
   
   
-};
+  int total_part = 0;
+    
+
+    for(unsigned int j = 0; j<file->getNumObjs();++j)
+    {
+
+      
+      group = new Group(file->openGroup(file->getObjnameByIdx(j)));
+
+      total_part += ((group->openDataSet("x")).getSpace()).getSimpleExtentNpoints();
+    
+      
+      delete group;
+      group = NULL;
+      
+    
+    }
+
+    delete file;
+    return total_part;
+    
 
 }
-
-#endif
-

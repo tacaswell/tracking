@@ -462,7 +462,7 @@ void track_shelf::corrected_tracks_out(Cell & output, utilities::Generic_wrapper
     data_out_wrapper->finish_row();
     
     // Deal with the displacements
-    ((*(working_track)).second)->extract_raw_disp(tmp);
+    ((*(working_track)).second)->extract_corrected_disp(tmp);
     output.add_array(tmp);
 
     // increment the iterator 
