@@ -1,20 +1,22 @@
 cmake_minimum_required (VERSION 2.6) 
 project(TRACKING)
 
-SET(CMAKE_CXX_COMPILER "/usr/bin/g++-4.1") 
-set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}//")
+SET(CMAKE_CXX_COMPILER "/usr/bin/g++") 
+#SET(CMAKE_CXX_COMPILER "/usr/bin/g++-4.1") 
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
 include(FindMatlab)
 include(FindHDF5)
+find_package( HDF5)
 
 include_directories(${TRACKING_SOURCE_DIR}/include)
-include_directories(${MATLAB_INCLUDE_DIR})
+#include_directories(${MATLAB_INCLUDE_DIR})
 
 set(MATLAB_MEXFILE_EXT mexa64)
 
-set(CMAKE_SHARED_LINKER_FLAGS  "-pthread  -Wl,--version-script,/usr/local/matlab/extern/lib/glnxa64/mexFunction.map -Wl,--no-undefined")
-SET(CMAKE_CXX_FLAGS "-ansi -D_GNU_SOURCE -fPIC -fno-omit-frame-pointer -pthread -DMATLAB_MEX_FILE")
-SET(CMAKE_C_FLAGS "-ansi -D_GNU_SOURCE -fexceptions -fPIC -fno-omit-frame-pointer -pthread -DMATLAB_MEX_FILE")
+set(CMAKE_SHARED_LINKER_FLAGS  "-pthread  -Wl,--no-undefined")
+SET(CMAKE_CXX_FLAGS "-ansi -D_GNU_SOURCE -fPIC -fno-omit-frame-pointer -pthread ")
+SET(CMAKE_C_FLAGS "-ansi -D_GNU_SOURCE -fexceptions -fPIC -fno-omit-frame-pointer -pthread ")
 
 
 set(CMAKE_SHARED_LINKER_FLAGS_PROFILE  " -pg")

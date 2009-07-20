@@ -78,7 +78,7 @@ public:
   //  int add_particle();
 
   ///print out a representation of the data
-  void print();
+  void print() const;
   
   void print(int ind);
   
@@ -87,7 +87,7 @@ public:
   wrapper_o_file(params_file* params);
   
 
-  int num_entries(){return data.size();}
+  int num_entries() const{return data.size();}
 
   //  virtual void set_value(int ind, wrapper::p_vals type,double val);
 

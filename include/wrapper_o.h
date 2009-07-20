@@ -101,7 +101,7 @@ public:
   ///this is for debugging only, will be removed (maybe)
   virtual void print(int ind)=0;
   ///returns the number of particles stored
-  virtual int num_entries()=0;
+  virtual int num_entries() const=0;
   
   ///adds another particle to the data table and fills it with
   ///zero values.  Returns the index of the new particle

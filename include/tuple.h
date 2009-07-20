@@ -46,11 +46,11 @@ public:
   /**
      Overides random access
    */
-  double& operator[] (int i);	
+  float& operator[] (int i);	
   /**
      Overides random access
    */
-  const double& operator[] (int i) const;
+  const float& operator[] (int i) const;
 
   /**
      Over loads for element-wise addition
@@ -59,7 +59,7 @@ public:
   /**
      Over loads for constant addition
    */
-  Tuple operator+ (const double y)const;
+  Tuple operator+ (const float y)const;
   /**
      adds Tuple to the current Tuple
    */
@@ -67,7 +67,7 @@ public:
   /**
      adds constant to the current Tuple
    */
-  void operator+= (const double y);
+  void operator+= (const float y);
 
 
 
@@ -78,7 +78,7 @@ public:
   /**
      Over loads for constant subtraction
    */
-  Tuple operator- ( const double y)const;
+  Tuple operator- ( const float y)const;
   /**
      subtracts Tuple to the current Tuple
    */
@@ -86,14 +86,14 @@ public:
   /**
      subtracts constant to the current Tuple
    */
-  void operator-= (const double y);
+  void operator-= (const float y);
 
 
 
   /**
      Over loads for constant multilplication
    */
-  Tuple operator* (const double y) const;
+  Tuple operator* (const float y) const;
   /**
      Over loads for elementwise mustiplication
    */
@@ -105,7 +105,7 @@ public:
   /**
      multiplies current Tuple by a constant
    */
-  void operator*= (const double y);
+  void operator*= (const float y);
 
 
 
@@ -120,34 +120,34 @@ public:
   /**
      devides current Tuple by a constant
    */
-  void operator/= (const double y);
+  void operator/= (const float y);
 
 
 
   /**
      square of the magnitude of the Tuple assuming euclidian space
    */
-  double magnitude_sqr () const;
+  float magnitude_sqr () const;
 
   /**
      magnitude of the Tuple assuming euclidian space
    */
-  double magnitude () const;
+  float magnitude () const;
 
   /**
      take the dot product between two tuple
    */
-  double dot(const Tuple & y) const;
+  float dot(const Tuple & y) const;
    
   /**
      Ruturns the product of the elements
    */
-  double prod()const;
+  float prod()const;
   
   /**
      Ruturns the sum of the elements
    */
-  double sum()const;
+  float sum()const;
   
 
   /**
@@ -192,11 +192,16 @@ public:
   */
   const static int length_ =2;
   
+  /**
+     hard coded 2-D constructor 
+   */
+  Tuple(float x,float y);
+  
 protected:
   /**
      pointer to data
    */
-  double data_[length_];
+  float data_[length_];
 
 private:
 };

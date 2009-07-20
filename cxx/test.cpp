@@ -43,6 +43,7 @@
 #include "hash_case.h"
 
 #include "wrapper_i_ning.h"
+#include "wrapper_i_hdf5.h"
 #include "params_ning.h"
 // #include "hash_case3d.h"	
 
@@ -55,17 +56,95 @@ using std::ifstream;
 using std::endl;
 using std::ios;
 using std::vector;
+using std::exception;
+
+
 using utilities::Histogram;
 using utilities::Svector;
 
 
+using H5::DataSpaceIException;
+using H5::DataSetIException ;
+using H5::FileIException;
 
 
 
 
 
 int main(){
+  
+  //nonsense to get the map set up
+  map<wrapper::p_vals, int> contents;
+  //   wrapper::p_vals tmp[] = {wrapper::d_index,wrapper::d_xpos,
+  // 			   wrapper::d_ypos, wrapper::d_zpos, 
+  // 			   wrapper::d_frame};
+  //   int tmp2[] = {0, 1, 2 ,3,4};
+  wrapper::p_vals tmp[] = {wrapper::d_xpos,
+			   wrapper::d_ypos, 
+			   wrapper::d_frame};
+  int tmp2[] = {0, 1, 2 };
+  
 
+  vector<wrapper::p_vals > tmp3(tmp, tmp+3);
+  vector<wrapper::p_vals>::iterator it1 = tmp3.begin();
+
+  vector<int> tmp4(tmp2, tmp2+3);
+  vector<int>::iterator it2 = tmp4.begin();
+
+  map<wrapper::p_vals, int>::iterator it3 = contents.begin();
+
+  for( ;it2<tmp4.end() && it1<tmp3.end() ; it1++, it2++, it3++)
+    contents.insert(it3,pair<wrapper::p_vals, int>(*it1, *it2));
+  //end nonsense
+  //there has to be a better way to do this
+    
+
+
+  try
+  {
+    
+    Wrapper_i_hdf5 wrap(contents);
+    master_box_t<particle_track> master_box;
+    wrap.fill_master_box(master_box);
+    
+    cout<<"total number of particles is: "<<master_box.size()<<endl;;
+    
+
+  }
+  
+  // catch failure caused by the H5File operations
+  catch( FileIException error )
+  {
+    error.printError();
+    return -1;
+  }
+
+  // catch failure caused by the DataSet operations
+  catch( DataSetIException error )
+  {
+    error.printError();
+    return -1;
+  }
+
+  // catch failure caused by the DataSpace operations
+  catch( DataSpaceIException error )
+  {
+    error.printError();
+    return -1;
+  }
+  catch(const char * err){
+    cout<<err<<endl;
+  } 
+  catch(exception & e)
+  {
+    cout<<e.what()<<endl;
+  }
+  catch(...){
+    cout<<"uncaught error"<<endl;
+  }
+
+
+  
 
 
   return 0;

@@ -121,7 +121,7 @@ public:
   /**
      Intialize the static input wrapper for all particles
    */
-  static void intialize_wrapper_in(wrapper_i_base* in);
+  static void intialize_wrapper_in(const wrapper_i_base* in);
   /**
      Intialize the static output wrapper for all particles
    */
@@ -135,7 +135,7 @@ protected:
   ///A running total of all particles created 
   static int running_total_;
   ///object that takes care of all the underling data structures.
-  static wrapper_i_base* wrapper_in_;
+  const static wrapper_i_base* wrapper_in_;
   ///object that takes care of 
   static wrapper_o_base* wrapper_out_;
   ///Vector of the types of data that

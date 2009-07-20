@@ -30,6 +30,7 @@
 
 #include "wrapper_i_ning.h"
 #include "params_file.h"
+#include "master_box_t.h"
 
 
 using namespace tracking;
@@ -124,12 +125,12 @@ void wrapper_i_ning::fill_data(string file_name, int row, int col){
 
 
 
-int wrapper_i_ning::num_entries(){
+int wrapper_i_ning::num_entries()const{
   return rows;
 }
 
 
- double wrapper_i_ning::get_value(int ind,  wrapper::p_vals type){
+ double wrapper_i_ning::get_value(int ind,  wrapper::p_vals type)const{
 
 
  //   map<wrapper::p_vals,int>::iterator it = data_types.find(type);
@@ -138,13 +139,13 @@ int wrapper_i_ning::num_entries(){
  //     return *(first + ind * cols + (*it).second);
  //   }
 
-   int data_posistion = data_layout[type];
+   int data_posistion = data_layout_[type];
    if(data_posistion >=0)
      return *(first + ind * cols + data_posistion);
 
    //deal with error
    cout<<"wraper does not store this type of data, size of set it: "
-       <<data_types.size()
+       <<data_types_.size()
        <<   endl;
    //    return;
    return -123456789;
@@ -154,7 +155,7 @@ int wrapper_i_ning::num_entries(){
 
 }
 
-void wrapper_i_ning::print(){
+void wrapper_i_ning::print() const{
   cout<<"rows: "<<rows<<" cols: "<<cols<<endl;
 }
 
@@ -163,3 +164,4 @@ wrapper_i_ning::~wrapper_i_ning(){
   free(first);
 }
 
+void wrapper_i_ning::fill_master_box(master_box_t<particle_track>& test)const{};

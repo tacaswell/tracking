@@ -37,12 +37,12 @@ void Tuple::operator= (const Tuple& y){
   for(int j = 0;j<length_; ++j)
     data_[j] = y.data_[j];
 }
-double& Tuple::operator[] (int i){
+float& Tuple::operator[] (int i){
   if(i<0 || i>= length_)
     throw "Tuple range error"; 		// place holder for proper error handling
   return data_[i];
 }
-const double& Tuple::operator[] (int i) const{
+const float& Tuple::operator[] (int i) const{
   if(i<0 || i>= length_)
     throw "Tuple range error"; 		// place holder for proper error handeling
   return data_[i];
@@ -62,7 +62,7 @@ Tuple Tuple::operator+ (const Tuple& y) const{
     tmp.data_[j] = y.data_[j] + data_[j];
   return tmp;
 }
-Tuple Tuple::operator+ (const double y)const{
+Tuple Tuple::operator+ (const float y)const{
   Tuple tmp;
   for(int j = 0;j<length_; ++j)
     tmp.data_[j] = y + data_[j];
@@ -74,7 +74,7 @@ void Tuple::operator+= (const Tuple& y){
 
 }
  
-void Tuple::operator+= (const double y){
+void Tuple::operator+= (const float y){
   for(int j = 0;j<length_; ++j)
     data_[j] += y ;
 
@@ -87,7 +87,7 @@ Tuple Tuple::operator- (const Tuple& y) const{
     tmp.data_[j] = -y.data_[j] + data_[j];
   return tmp;
 }
-Tuple Tuple::operator- (const double y) const{
+Tuple Tuple::operator- (const float y) const{
   Tuple tmp;
   for(int j = 0;j<length_; ++j)
     tmp.data_[j] = -y + data_[j];
@@ -98,7 +98,7 @@ void Tuple::operator-= (const Tuple& y){
     data_[j] -= y.data_[j] ;
 
 }
-void Tuple::operator-= (const double y){
+void Tuple::operator-= (const float y){
   for(int j = 0;j<length_; ++j)
     data_[j] -= y ;
 }
@@ -112,7 +112,7 @@ Tuple Tuple::operator* (const Tuple& y) const{
   }
   return tmp;
 }
-Tuple Tuple::operator* (const double y) const{
+Tuple Tuple::operator* (const float y) const{
   Tuple tmp;
   for(int j = 0;j<length_; ++j){
     tmp.data_[j] = data_[j] * y ;
@@ -123,7 +123,7 @@ void Tuple::operator*= (const Tuple& y){
   for(int j = 0;j<length_; ++j)
     data_[j] *= y.data_[j] ;
 }
-void Tuple::operator*= (const double y){
+void Tuple::operator*= (const float y){
   for(int j = 0;j<length_; ++j)
     data_[j] *= y ;
 }
@@ -136,7 +136,7 @@ void Tuple::operator/= (const Tuple& y){
     data_[j] /= y.data_[j] ;
 
 }
-void Tuple::operator/= (const double y){
+void Tuple::operator/= (const float y){
   for(int j = 0;j<length_; ++j)
     data_[j] /= y ;
 }
@@ -160,45 +160,45 @@ void Tuple::print() const{
 }
 
 
-double Tuple::magnitude_sqr() const{
-  double tmp = 0;
+float Tuple::magnitude_sqr() const{
+  float tmp = 0;
   for(int j = 0;j<length_; ++j)
     tmp += data_[j]*data_[j] ;
   return tmp;
 }
 
-double Tuple::magnitude() const
+float Tuple::magnitude() const
 {
   return sqrt(magnitude_sqr());
 }
 
-double Tuple::dot(const Tuple & y) const
+float Tuple::dot(const Tuple & y) const
 {
-  double tmp = 0;
+  float tmp = 0;
   for(int j = 0;j<length_; ++j)
     tmp += data_[j]*y.data_[j] ;
   return tmp;
 }
 
 
-double Tuple::prod()const
+float Tuple::prod()const
 {
-  double tmp = 1;
+  float tmp = 1;
   for(int j = 0;j<length_; ++j)
     tmp *= data_[j];
   return tmp;
   
 }
-double Tuple::sum()const
+float Tuple::sum()const
 {
-  double tmp = 0;
+  float tmp = 0;
   for(int j = 0;j<length_; ++j)
     tmp += data_[j];
   return tmp;
 } 
 
 void Tuple::make_unit(){
-  double tmp = magnitude();
+  float tmp = magnitude();
   for(int j = 0;j<length_; ++j)
     data_[j] /= tmp ;
 }
@@ -216,7 +216,7 @@ void Tuple::clear(){
 }
 
 Tuple::Tuple(){
-  //  data_= (double*) new double[length_];
+  //  data_= (float*) new float[length_];
   for(int j = 0;j<length_; ++j)
     data_[j] = 0;
   //  std::cout<<"make"<< std::endl;
@@ -235,4 +235,11 @@ Tuple::~Tuple(){
   //  std::cout<<"died"<< std::endl;
   // delete[] data_;
 //   data_ = NULL;
+}
+
+Tuple::Tuple(float x,float y)
+{
+  data_[0] = x;
+  data_[1] = y;
+  
 }

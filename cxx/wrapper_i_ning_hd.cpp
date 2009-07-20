@@ -32,6 +32,8 @@
 #include "wrapper_i_ning_hd.h"
 #include "wrapper_i_ning.h"
 #include "params_ning_hd.h"
+#include "master_box_t.h"
+
 
 
 using namespace tracking;
@@ -85,3 +87,5 @@ void wrapper_i_ning_hd::fill_data(std::string file_name, int row, int col){
   cout<<rows<<endl;
   indatafile.close();
 };
+
+void wrapper_i_ning_hd::fill_master_box(master_box_t<particle_track>& test)const{};

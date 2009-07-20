@@ -38,7 +38,7 @@ using namespace tracking;
 
 
 ///print out a representation of the data
-void wrapper_o_file::print(){
+void wrapper_o_file::print()const{
 //   for(unsigned int j = 0; j<data.size();j++){
 //     for(unsigned int k = 0; k<(data.at(j)).size();k++)
 //       cout<<(data.at(j)).at(k)<<" ";
@@ -113,7 +113,7 @@ void wrapper_o_file::start_new_particle(){
 
 void wrapper_o_file::set_new_value(wrapper::p_vals type, double val){
   
-  int data_posistion = data_layout[type];
+  int data_posistion = data_layout_[type];
   if(data_posistion >=0){
     if(part_open){
       //change to [] eventually?

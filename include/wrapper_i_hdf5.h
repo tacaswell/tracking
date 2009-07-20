@@ -25,6 +25,7 @@
 
 #include "H5Cpp.h"
 #include <vector>
+#include <map>
 #include "wrapper_i.h"
 #ifndef WRAPPER_I_MATLAB
 #define WRAPPER_I_MATLAB
@@ -51,12 +52,18 @@ public:
   int num_entries() const;
   
   
-  void print();
-  double get_value(int ind, wrapper::p_vals type);
+  void print()const;
+  double get_value(int ind, wrapper::p_vals type)const;
   
-  virtual ~Wrapper_i_hdf5();
+  
+  virtual ~Wrapper_i_hdf5()
+  {
+  };
   Wrapper_i_hdf5(Params_hdf5* param);
-  Wrapper_i_hdf5();
+  void fill_master_box(master_box_t<particle_track> & test) const;
+
+  Wrapper_i_hdf5(std::map<wrapper::p_vals, int> wrap);
+  
   
 };
 

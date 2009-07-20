@@ -38,7 +38,7 @@ int particle_base::running_total_ = 0;
 
 // static initialization
 wrapper_o_base* particle_base::wrapper_out_ = NULL;
-wrapper_i_base* particle_base::wrapper_in_ = NULL;
+const wrapper_i_base* particle_base::wrapper_in_ = NULL;
 std::set<wrapper::p_vals>* particle_base::data_types_ = NULL;
 
 
@@ -144,7 +144,7 @@ void particle_base::print()const{
   wrapper_in_->print(ind_);
 }
 
-void particle_base::intialize_wrapper_in(wrapper_i_base* in){
+void particle_base::intialize_wrapper_in(const wrapper_i_base* in){
   if(wrapper_in_ !=NULL)
     throw "Wrapper in already initialized";
   wrapper_in_ = in;

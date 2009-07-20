@@ -58,23 +58,23 @@ public:
 
   ///Prints out the currents contents of the wrapper in some
   ///sort of sensible way.
-  virtual void print() = 0;
+  virtual void print() const= 0;
   
   ///returns the current number of particle entires that the wrapper
   ///has under it's control.  
-  virtual int num_entries()=0;
+  virtual int num_entries() const =0;
 
   /**
      Returns a set of the types of data that the wrapper knows how
      to deal with.  
    */
-  virtual std::set<p_vals> get_data_types();
+  virtual  std::set<p_vals> get_data_types()const;
 
   /**
      Returns a pointer to the map
   */
   std::map<p_vals, int>* get_map_ptr(){
-    return &data_types;
+    return &data_types_;
   }
 
   wrapper(std::map<p_vals,int>map_in);
@@ -95,8 +95,8 @@ protected:
      this sort of thing wasn't uesful.  Thus, it has been dragged up to
      the top level.
    */
-  std::map<p_vals, int> data_types;
-  int data_layout[16];
+  std::map<p_vals, int> data_types_;
+  int data_layout_[16];
 };
 }
 #endif

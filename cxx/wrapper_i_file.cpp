@@ -31,6 +31,7 @@
 
 #include "wrapper_i_file.h"
 #include "params_file.h"
+#include "master_box_t.h"
 
 
 using namespace tracking;
@@ -44,7 +45,7 @@ using std::ios;
  */
 
 
-int wrapper_i_file::num_entries(){
+int wrapper_i_file::num_entries() const{
   return rows;
 }
 
@@ -81,10 +82,10 @@ void wrapper_i_file::fill_data(string file_name, int row, int col){
 }
 
 
-double wrapper_i_file::get_value(int ind,  wrapper::p_vals type){
+double wrapper_i_file::get_value(int ind,  wrapper::p_vals type)const{
 
   
-  int data_posistion = data_layout[type];
+  int data_posistion = data_layout_[type];
   if(data_posistion >=0)
     return *(first + ind * cols + data_posistion);
 
@@ -92,7 +93,7 @@ double wrapper_i_file::get_value(int ind,  wrapper::p_vals type){
   
   //deal with error
   cout<<"wraper does not store this type of data, size of set it: "
-      <<data_types.size()
+      <<data_types_.size()
       <<   endl;
   //    return;
   return -123456789;
@@ -115,7 +116,7 @@ void wrapper_i_file::print(int ind){
 
 }
 */
-void wrapper_i_file::print(){
+void wrapper_i_file::print()const{
   cout<<"rows: "<<rows<<" cols: "<<cols<<endl;
 }
 
@@ -145,3 +146,6 @@ wrapper_i_file::wrapper_i_file(params_file* param):wrapper_i_base(param->contain
       return set<wrapper::p_vals>();
 
       }*/
+
+
+void wrapper_i_file::fill_master_box(master_box_t<particle_track>& test)const{};

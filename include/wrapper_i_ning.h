@@ -37,16 +37,16 @@ class params_file;
 
 class wrapper_i_ning:public wrapper_i_base{
 public:
-  int num_entries();
+  int num_entries() const;
 
   //  void print(int ind);
-  void print();
-  double get_value(int ind, wrapper::p_vals type);
+  void print()const;
+  double get_value(int ind, wrapper::p_vals type)const;
   
   virtual ~wrapper_i_ning();
   wrapper_i_ning(params_file* param);
   wrapper_i_ning(std::map<wrapper::p_vals,int>map_in);
-  
+  void fill_master_box(master_box_t<particle_track>& test)const;
 protected:
   ///Pointer to the first data point of the 
   double * first;

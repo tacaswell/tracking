@@ -50,15 +50,17 @@ protected:
   map<wrapper::p_vals, int> contents;
   void fill_data(string file_name, int row, int col);
 public:
-  int num_entries();
+  int num_entries() const;
 
   //  void print(int ind);
-  void print();
-  double get_value(int ind, wrapper::p_vals type);
+  void print()const;
+  double get_value(int ind, wrapper::p_vals type)const;
   
   ~wrapper_i_file();
   wrapper_i_file(params_file* param);
   
+  void fill_master_box(master_box_t<particle_track>& test) const;
+
 
 };
 }

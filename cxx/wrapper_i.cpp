@@ -28,11 +28,11 @@ using namespace tracking;
 using std::map;
 using std::cout;
 using std::endl;
-void wrapper_i_base::print(int ind){
+void wrapper_i_base::print(int ind) const{
   //  cout<< "file "<<"\t";
 
-  for(map<wrapper::p_vals,int>::iterator it = data_types.begin();
-      it!=data_types.end(); it++)
+  for(map<wrapper::p_vals,int>::const_iterator it = data_types_.begin();
+      it!=data_types_.end(); it++)
     cout<<get_value(ind, (*it).first)<<"\t";
   
   cout<<endl;
