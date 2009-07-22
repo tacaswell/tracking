@@ -140,15 +140,23 @@ void hash_shelf::init2(){
 
 
 void hash_shelf::print() const{
-  
+  // tac 2009-07-22
+  // changed print to spew less
 
+  int total = 0;
+  
   for(int i=0; i<hash_dims_[0];i++){
     for(int j=0; j<hash_dims_[1];j++){
-      cout<<(hash_.at(j*(int)hash_dims_[0] + i))->get_size() <<"\t";
+      //    cout<<(hash_.at(j*(int)hash_dims_[0] + i))->get_size() <<"\t";
+      total += (hash_.at(j*(int)hash_dims_[0] + i))->get_size();
+      
     }
-    cout<<endl;
+    //    cout<<endl;
   }
-  mean_forward_disp_.print();
+  //mean_forward_disp_.print();
+
+  cout<<total<<endl;
+  
 
 }
 
@@ -672,10 +680,17 @@ void hash_shelf::nearest_neighbor_array(utilities::Array & pos_array,
   
   for(int j = 0; j<(int)hash_.size(); ++j)
   {
-    int buffer = 1;
+    int buffer = 2;
     hash_[j]->box_to_list(current_box);
     get_region(j,current_region,buffer);
-    while(current_region.empty())
+    if(current_box.empty())
+    {
+      continue;
+    }
+    
+    // tac 2009-07-22
+    // infinite loop if no particles 
+    while(current_region.size()<=1 && buffer<hash_dims_[0] &&buffer<hash_dims_[1])
     {
       ++buffer;
       get_region(j,current_region,buffer);
@@ -686,7 +701,8 @@ void hash_shelf::nearest_neighbor_array(utilities::Array & pos_array,
     {
       const particle_base* box_part_ptr = *box_part;
       const particle_base* nn_prtcle = current_region.front();
-      double min_r= box_part_ptr->distancesq(nn_prtcle);
+      double min_r= 999999999;
+      
       
       for(list<particle_base*>::const_iterator region_part = ++(current_region.begin());
 	  region_part!= current_region.end();++region_part)
@@ -702,6 +718,13 @@ void hash_shelf::nearest_neighbor_array(utilities::Array & pos_array,
 	{
 	  min_r = sep_r;
 	  nn_prtcle = region_part_ptr;
+	  if(sep_r == 0)
+	  {
+	    box_part_ptr->print();
+	    nn_prtcle->print();
+	    
+	  }
+	  
 	}
       }
       nn_array.push(nn_prtcle->get_position() - box_part_ptr->get_position());

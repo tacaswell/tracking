@@ -72,6 +72,7 @@
 
 using namespace tracking;
 using std::exception;
+using std::cerr;
 
 using utilities::array_to_mat;
 using utilities::vector_to_mat;
@@ -127,37 +128,59 @@ void mexFunction( int nlhs, mxArray *plhs[],
     
 
     params_matlab p_in = params_matlab(prhs,contents);
-    contents.insert(pair<wrapper::p_vals, int>(wrapper::d_trackid,3));
-    
+
+    //this is meaningless and not used
     params_matlab p_out = params_matlab(plhs,contents,mxGetM(*prhs),
  					contents.size());
-    master_box_t<particle_track>bt(&p_in,&p_out);
-    track_shelf tracks;
-    
+
+    master_box_t<particle_base>bt(&p_in,&p_out);
     cout<<"total number of particles is: "<<bt.size()<<endl;;
   
-    hash_case s(bt,dims,max_r,frames);
+    particle_base *p;
+    int max_sz = bt.size();
+    int cur_frame = -1;
+    
+    for(unsigned int j = 0; j<max_sz; ++j)
+    {
+      p = bt.get_particle(j);
+
+      int tmp_frame = (int)p->get_value(wrapper::d_frame);
+      if(tmp_frame != cur_frame)
+      {
+	cout<<tmp_frame<<"\t"<<j<<endl;
+	cur_frame = tmp_frame;
+      }
+    }
+    
+    
+    
+    hash_case h_case(bt,dims,max_r,frames);
     cout<<"case built"<<endl;
+
+    h_case.print();
+    
+    
+    
 
     // Output NN vectors
     Cell_matlab nn_cell(frames,plhs+1);
     Cell_matlab pos_cell(frames,plhs);
-    s.nearest_neighbor_array(pos_cell,nn_cell,max_r);
-    
+    h_case.nearest_neighbor_array(pos_cell,nn_cell,max_r);
+    cout<<"out put"<<endl;
     
 
     
 
   }
   catch(const char * err){
-    cout<<err<<endl;
+    cerr<<err<<endl;
   } 
   catch(exception & e)
   {
-    cout<<e.what()<<endl;
+    cerr<<e.what()<<endl;
   }
   catch(...){
-    cout<<"uncaught error"<<endl;
+    cerr<<"uncaught error"<<endl;
   }
 
 

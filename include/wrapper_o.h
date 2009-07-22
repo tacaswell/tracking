@@ -69,12 +69,12 @@ protected:
   
   
   
-  wrapper_o_base(){
-    part_count = 0;
-    seq_count = 0;
-    part_open = false;
-    wrapper_open = false;
-  }
+//   wrapper_o_base(){
+//     part_count = 0;
+//     seq_count = 0;
+//     part_open = false;
+//     wrapper_open = false;
+//   }
   
   wrapper_o_base(std::map<p_vals,int>map_in)
     :wrapper(map_in),part_count(0),
@@ -93,13 +93,13 @@ public:
   */
   //\@{
   
-  ///Sets the value of 'type' for particle 'ind' to be 'val'
-  ///this assume random acess, gives too much control away from this
+  //Sets the value of 'type' for particle 'ind' to be 'val'
+  //this assume random acess, gives too much control away from this
   //class
   //virtual void set_value(int ind, wrapper::p_vals type,double val)=0;
-  ///Prints the entry ind
-  ///this is for debugging only, will be removed (maybe)
-  virtual void print(int ind)=0;
+  //Prints the entry ind
+  //this is for debugging only, will be removed (maybe)
+  //virtual void print(int ind)=0;
   ///returns the number of particles stored
   virtual int num_entries() const=0;
   

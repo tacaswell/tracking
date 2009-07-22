@@ -62,6 +62,8 @@ void Array::push(const Tuple&  tuple_in){
 }
 
 void Array::set_array(Generic_wrapper_base * out_wrapper) const{
+  cout<<"starting...";
+  
   out_wrapper->initialize_wrapper();
   for(int j = 0; j<rows_;++j){
     out_wrapper->start_new_row();
@@ -71,7 +73,8 @@ void Array::set_array(Generic_wrapper_base * out_wrapper) const{
     out_wrapper->finish_row();
   }
   out_wrapper->finalize_wrapper();
-
+  cout<<"...ending"<<endl;
+  
 }
 
 void Array::clear(){

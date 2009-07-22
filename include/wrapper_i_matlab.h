@@ -53,15 +53,16 @@ protected:
 
   void init();
 public:
-  int num_entries();
+  int num_entries() const;
 
   //  void print(int ind);
-  void print();
-  double get_value(int ind, wrapper::p_vals type);
+  void print()const;
+  double get_value(int ind, wrapper::p_vals type)const;
   
   virtual ~wrapper_i_matlab();
   wrapper_i_matlab(params_matlab* param);
   wrapper_i_matlab();
+  void fill_master_box(master_box_t<particle_track>& test) const{};
   
 };
 

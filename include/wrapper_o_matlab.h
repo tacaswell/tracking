@@ -37,11 +37,11 @@ class params_matlab;
 */
 class wrapper_o_matlab:public wrapper_o_base{
 public:  
-  //old
-  int  num_entries()					  {return 0;};
-  void set_value(int, tracking::wrapper::p_vals, double)  {};
-  void print(int)					  {};
-  int  add_particle()                                     {return 0;}; 
+//   //old
+
+//   void set_value(int, tracking::wrapper::p_vals, double)  {};
+//   void print(int);
+//   int  add_particle()                                     {return 0;}; 
 
 
   //new
@@ -55,15 +55,17 @@ public:
   wrapper_o_matlab(params_matlab* parms);
   ~wrapper_o_matlab();
 
-  void print(){};
+  void print()const;
 
+  int  num_entries()const{return 0;};
+  
 
  protected:
 
   
  private:
   ///Pointer to matlab array that holds the data
-  mxArray ** data_array;
+  mxArray ** data_array_;
   ///The number of rows in the array.  This isn't strictly needed,
   ///hoever it should make returning values faster by amoritizing the
   ///dereference cost, maybe

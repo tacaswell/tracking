@@ -251,6 +251,7 @@ void hash_case::nearest_neighbor_array(utilities::Cell & pos_cell,
     
     utilities::Array nn_array(1);
     utilities::Array pos_array(1);
+
     (*shelf_it)->nearest_neighbor_array(pos_array,nn_array,range);
     nn_cell.add_array(nn_array);
     pos_cell.add_array(pos_array);

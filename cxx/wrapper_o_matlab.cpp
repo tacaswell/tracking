@@ -31,7 +31,7 @@ void wrapper_o_matlab::set_new_value(wrapper::p_vals type, double val){
 
 
 
-  int data_posistion = data_layout[type];
+  int data_posistion = data_layout_[type];
   if(data_posistion >=0){
     if(part_open){
       *(first + part_index  + rows * data_posistion) = val;
@@ -61,8 +61,8 @@ void wrapper_o_matlab::initialize_wrapper(){
     return;
   }
   //allocates the mex array
-  *data_array = mxCreateDoubleMatrix(rows,cols, mxREAL);
-  first = mxGetPr(*data_array);
+  *data_array_ = mxCreateDoubleMatrix(rows,cols, mxREAL);
+  first = mxGetPr(*data_array_);
   wrapper_open = true;
 }
 
@@ -73,7 +73,7 @@ void wrapper_o_matlab::reset_wrapper(params * param_in){
   part_count = 0;
   wrapper_open = false;
   part_open = false;
-  data_array = param->data_out;
+  data_array_ = param->data_out;
 };
 
 void wrapper_o_matlab::start_new_particle(){
@@ -93,7 +93,7 @@ void wrapper_o_matlab::start_new_particle(){
 
 
 wrapper_o_matlab::wrapper_o_matlab(params_matlab* parms)
-  :wrapper_o_base(parms->contains),data_array(parms->data_out),
+  :wrapper_o_base(parms->contains),data_array_(parms->data_out),
    rows(parms->rows),cols(parms->cols){
   //this needs more sanity checking!
 }
@@ -104,7 +104,13 @@ wrapper_o_matlab::~wrapper_o_matlab(){
   if(wrapper_open)
     finalize_wrapper();
   //do nothing because the memory is in the control of matlab, not the
-  //mex code
+  //mex code, I hope
 }
 
  
+void wrapper_o_matlab::print()const
+{
+  cout<<rows<<"\t"<<cols<<endl;
+  
+  return;
+}

@@ -42,31 +42,31 @@ using std::cout;
  */
 
 
-int wrapper_i_matlab::num_entries(){
+int wrapper_i_matlab::num_entries()const{
   return rows;
 }
 
 
 
-double wrapper_i_matlab::get_value(int ind,  wrapper::p_vals type){
+double wrapper_i_matlab::get_value(int ind,  wrapper::p_vals type)const{
   //note that this is sideways to deal with the fact that matlab is
   //blasted coloum major
 
 
-  std::map<p_vals,int>::const_iterator it = data_types.find(type);
-  if(it == data_types.end())
+  std::map<p_vals,int>::const_iterator it = data_types_.find(type);
+  if(it == data_types_.end())
     {
       throw "type not in wrapper";
     }
   
-  int data_posistion = data_layout[type];
+  int data_posistion = data_layout_[type];
   if(data_posistion >=0)
     return *(first + ind  + rows * data_posistion);
 
   
   //deal with error
   cout<<"wraper does not store this type of data, size of set it: "
-      <<data_types.size()
+      <<data_types_.size()
       <<   endl;
   //    return;
   return -123456789;
@@ -75,7 +75,7 @@ double wrapper_i_matlab::get_value(int ind,  wrapper::p_vals type){
 }
 
 
-void wrapper_i_matlab::print(){
+void wrapper_i_matlab::print()const{
   cout<<"rows: "<<rows<<" cols: "<<cols<<endl;
 }
 

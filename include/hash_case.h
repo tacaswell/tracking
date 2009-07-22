@@ -231,7 +231,9 @@ void hash_case::init(master_box_t<particle> & mb,const utilities::Tuple & img_di
   }
   // cout<<
   particle *p;
-  for(unsigned int j = 0; j<mb.size(); j++){
+  int max_sz = mb.size();
+  
+  for(unsigned int j = 0; j<max_sz; ++j){
     p = mb.get_particle(j);
     try{//    cout<<(int)p->get_value(wrapper::d_frame)<<"-";
       (h_case_.at((int)p->get_value(wrapper::d_frame)))->push(p);
