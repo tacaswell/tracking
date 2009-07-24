@@ -740,6 +740,7 @@ void hash_shelf::next_nearest_neighbor_array(utilities::Array & pos_array,
 //   cout<<"particle_count_"<<particle_count_<<endl;
 
   nn_array.resize(particle_count_);
+  nnn_array.resize(particle_count_);
   pos_array.resize(particle_count_);
 
   

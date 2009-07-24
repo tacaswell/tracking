@@ -287,3 +287,16 @@ void hash_case::next_nearest_neighbor_array(utilities::Cell & pos_cell,
   
 
 }
+
+void hash_case::gofr2D(double max_d, utilities::Histogram2D& gofr2 ) const
+{
+  
+for(vector<hash_shelf*>::const_iterator shelf_it = h_case_.begin();
+      shelf_it!= h_case_.end();++shelf_it)
+  {
+
+    
+    (*shelf_it)->gofr2D(max_d,gofr2);
+    
+  }
+}

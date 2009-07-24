@@ -41,6 +41,7 @@
 namespace utilities{
 class Array;
 class Coarse_grain_array;
+class Histogram2D;
 }
 
 namespace tracking{
@@ -169,6 +170,10 @@ public:
 				   utilities::Cell & nn_array,
 				   utilities::Cell & nnn_array)const;
   
+  /**
+     pass one at 2-D gofr
+   */
+  void gofr2D(double max_d, utilities::Histogram2D& gofr2 ) const;
   
 
   ///Destructor

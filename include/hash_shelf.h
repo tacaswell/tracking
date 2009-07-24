@@ -39,6 +39,8 @@ namespace utilities{
 class Coarse_grain_array;
 class Counted_vector;
 class Array;
+class Histogram2D;
+
 
 }
 
@@ -138,6 +140,8 @@ public:
   double gofr(double max_d, int nbins, vector<double>& bin_count,int & count) const;
   ///@}
 
+  
+
 
   /**
      G(r) filling in a more sensible object
@@ -223,10 +227,18 @@ public:
    */
   void nearest_neighbor_array(utilities::Array & pos_array,
 			      utilities::Array & nn_array, double range)const;
-
+  
+  /**
+     next nn
+   */
   void next_nearest_neighbor_array(utilities::Array & pos_array,
 				   utilities::Array & nn_array,
 				   utilities::Array & nnn_array)const;
+
+  /**
+     2D gofr
+   */
+  void gofr2D(double max_d, utilities::Histogram2D & gofr2 ) const;
   
   
 protected:

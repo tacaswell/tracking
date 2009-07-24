@@ -58,6 +58,7 @@
 
 
 #include "histogram.h"
+#include "histogram2d.h"
 #include "svector.h"
 
 #include "array.h"
@@ -77,6 +78,7 @@ using utilities::array_to_mat;
 using utilities::vector_to_mat;
 using utilities::Svector;
 using utilities::Histogram;
+using utilities::Histogram2D;
 using utilities::Array;
 using utilities::Cell_matlab;
 using utilities::Generic_wrapper_base;
@@ -90,7 +92,7 @@ extern void _main();
 void mexFunction( int nlhs, mxArray *plhs[], 
 		  int nrhs, const mxArray* prhs[] ){
 
-  if(nlhs!=2|| nrhs!=5){
+  if(nlhs!=1|| nrhs!=5){
     cout<<"Error, wrong number of arguments"<<endl;
     return;
   }
@@ -172,13 +174,31 @@ void mexFunction( int nlhs, mxArray *plhs[],
     //  params_file p_out = params_file(5,contents);
     //  master_box b = master_box(&p,&p,6);
 
-    master_box_t<particle_track>bt(&p_in,&p_out);
-    track_shelf tracks;
+    master_box_t<particle_base>bt(&p_in,&p_out);
+    
     
     cout<<"total number of particles is: "<<bt.size()<<endl;;
   
-    hash_case s(bt,dims,max_r,frames);
+    hash_case hcase(bt,dims,max_r,frames);
     cout<<"case built"<<endl;
+    
+
+
+    Histogram2D hist = Histogram2D(500,-max_r,max_r,500,-max_r,max_r);
+    hcase.gofr2D(max_r,hist);
+
+        
+    Generic_parameters_matlab arr_parm4(500*500,3,plhs);
+    Generic_wrapper_base *hist_wrap = arr_parm4.make_wrapper();
+
+    hist.output_to_wrapper(hist_wrap);
+    
+    delete hist_wrap;
+    hist_wrap = NULL;
+    
+    
+
+    
 //      s.link(max_r,tracks);
 //     //     int yar = tracks.get_track_count();
     
@@ -192,9 +212,9 @@ void mexFunction( int nlhs, mxArray *plhs[],
 // //     }
 
     // Output NN vectors
-    Cell_matlab nn_cell(frames,plhs+1);
-    Cell_matlab pos_cell(frames,plhs);
-    s.nearest_neighbor_array(pos_cell,nn_cell,max_r);
+//     Cell_matlab nn_cell(frames,plhs+1);
+//     Cell_matlab pos_cell(frames,plhs);
+//     s.nearest_neighbor_array(pos_cell,nn_cell,max_r);
     
     
 

@@ -29,9 +29,13 @@
 #include "math.h"
 #include <list>
 
+#include "histogram2d.h"
 
 using namespace tracking;
 using std::list;
+
+using utilities::Histogram2D;
+
 
 void vec_print(vector<double> in){
   for(unsigned int j = 0 ; j<in.size(); j++)
@@ -311,3 +315,61 @@ int hash_box::gofr(double max_d, int nbins, hash_box* points,
   return contents_.size(); 
 }
 	     
+void hash_shelf::gofr2D(double max_d, utilities::Histogram2D & gofr2 ) const
+{
+  int buffer = (int)ceil(max_d/ppb);
+  
+
+  
+  list<particle_base*> current_box;
+  list<particle_base*> current_region;
+
+  max_d *=max_d;
+  
+  for(unsigned int x = buffer; x<(hash_dims_[0]-buffer-1);++x)
+  {
+    for(unsigned int y = buffer; y<(hash_dims_[1]-buffer-1);++y)
+    {
+      // problem may be here, check order
+      int j = y * (int)hash_dims_[0] + x;
+      
+
+      
+      hash_[j]->box_to_list(current_box);
+      get_region(j,current_region,buffer);
+      if(current_box.empty())
+      {
+	continue;
+      }
+      
+      for(list<particle_base*>::const_iterator box_part = current_box.begin();
+	  box_part != current_box.end();++box_part)
+      {
+	const particle_base* box_part_ptr = *box_part;
+	for(list<particle_base*>::const_iterator region_part = ++(current_region.begin());
+	    region_part!= current_region.end();++region_part)
+	{
+	  const particle_base* region_part_ptr = *region_part;
+	  if(region_part_ptr == box_part_ptr)
+	  {
+	    continue;
+	  }
+	  double sep_r = box_part_ptr->distancesq(region_part_ptr);
+	  if(sep_r == 0)
+	  {
+	    continue;
+	    // if the paritcles are on top of each other don't record them
+	  }
+	  if(sep_r<max_d)
+	  {
+	    utilities::Tuple tmp = box_part_ptr->get_position()-region_part_ptr->get_position() ;
+	    gofr2.add_data_point(tmp);
+	    
+	    
+	  }
+	  
+	}
+      }
+    }
+  }
+}
