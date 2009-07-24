@@ -161,6 +161,14 @@ public:
    */
   void nearest_neighbor_array(utilities::Cell & pos_cell,
 			      utilities::Cell & nn_cell, double range)const;
+
+  /**
+     looks at the first two nn 
+   */
+  void next_nearest_neighbor_array(utilities::Cell & pos_array,
+				   utilities::Cell & nn_array,
+				   utilities::Cell & nnn_array)const;
+  
   
 
   ///Destructor

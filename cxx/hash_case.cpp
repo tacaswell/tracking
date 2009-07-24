@@ -260,3 +260,30 @@ void hash_case::nearest_neighbor_array(utilities::Cell & pos_cell,
   
 
 }
+
+
+
+void hash_case::next_nearest_neighbor_array(utilities::Cell & pos_cell,
+				       utilities::Cell & nn_cell ,
+				       utilities::Cell & nnn_cell )const
+{
+  int j = 0;
+  
+  for(vector<hash_shelf*>::const_iterator shelf_it = h_case_.begin();
+      shelf_it!= h_case_.end();++shelf_it)
+  {
+    cout<<"here!! "<<j++<<endl;
+    
+    utilities::Array nn_array(1);
+    utilities::Array nnn_array(1);
+    utilities::Array pos_array(1);
+
+    (*shelf_it)->next_nearest_neighbor_array(pos_array,nn_array,nnn_array);
+    nn_cell.add_array(nn_array);
+    nnn_cell.add_array(nnn_array);
+    pos_cell.add_array(pos_array);
+    
+  }
+  
+
+}

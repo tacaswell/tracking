@@ -223,6 +223,11 @@ public:
    */
   void nearest_neighbor_array(utilities::Array & pos_array,
 			      utilities::Array & nn_array, double range)const;
+
+  void next_nearest_neighbor_array(utilities::Array & pos_array,
+				   utilities::Array & nn_array,
+				   utilities::Array & nnn_array)const;
+  
   
 protected:
   //change all of this to be pointers to hash_boxes, to keep

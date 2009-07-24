@@ -1,4 +1,4 @@
-//Copyright 2008,2009 Thomas A Caswell
+//Copyright 2009 Thomas A Caswell
 //tcaswell@uchicago.edu
 //http://jfi.uchicago.edu/~tcaswell
 //
@@ -91,7 +91,7 @@ extern void _main();
 void mexFunction( int nlhs, mxArray *plhs[], 
 		  int nrhs, const mxArray* prhs[] ){
 
-  if(nlhs!=2|| nrhs!=5){
+  if(nlhs!=3|| nrhs!=5){
     cout<<"Error, wrong number of arguments"<<endl;
     return;
   }
@@ -164,8 +164,9 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
     // Output NN vectors
     Cell_matlab nn_cell(frames,plhs+1);
+    Cell_matlab nnn_cell(frames,plhs+2);
     Cell_matlab pos_cell(frames,plhs);
-    h_case.nearest_neighbor_array(pos_cell,nn_cell,max_r);
+    h_case.next_nearest_neighbor_array(pos_cell,nn_cell,nnn_cell);
     cout<<"out put"<<endl;
     
 

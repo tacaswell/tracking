@@ -733,6 +733,90 @@ void hash_shelf::nearest_neighbor_array(utilities::Array & pos_array,
   }
 }
 
+void hash_shelf::next_nearest_neighbor_array(utilities::Array & pos_array,
+					utilities::Array & nn_array,
+					utilities::Array & nnn_array)const
+{
+//   cout<<"particle_count_"<<particle_count_<<endl;
+
+  nn_array.resize(particle_count_);
+  pos_array.resize(particle_count_);
+
+  
+    
+  list<particle_base*> current_box;
+  list<particle_base*> current_region;
+  
+  for(int j = 0; j<(int)hash_.size(); ++j)
+  {
+    int buffer = 2;
+    hash_[j]->box_to_list(current_box);
+    get_region(j,current_region,buffer);
+    if(current_box.empty())
+    {
+      continue;
+    }
+    
+    // tac 2009-07-22
+    // infinite loop if no particles 
+    while(!(current_region.size()>3) && buffer<hash_dims_[0] &&buffer<hash_dims_[1])
+    {
+      ++buffer;
+      get_region(j,current_region,buffer);
+    }
+    
+    for(list<particle_base*>::const_iterator box_part = current_box.begin();
+	box_part != current_box.end();++box_part)
+    {
+      const particle_base* box_part_ptr = *box_part;
+      const particle_base* nn_prtcle = current_region.front();
+      const particle_base* nnn_prtcle = current_region.front();
+      double nn_r= 999999999;
+      double nnn_r= 999999999;
+      
+      for(list<particle_base*>::const_iterator region_part = ++(current_region.begin());
+	  region_part!= current_region.end();++region_part)
+      {
+	const particle_base* region_part_ptr = *region_part;
+	if(region_part_ptr == box_part_ptr)
+	{
+	  continue;
+	}
+	
+	double sep_r = box_part_ptr->distancesq(region_part_ptr);
+	if(sep_r == 0)
+	{
+	  box_part_ptr->print();
+	  nn_prtcle->print();
+	  continue;
+	  // if the paritcles are on top of each other don't record them
+	}
+	if(sep_r<nnn_r)
+	{
+	  
+	  if (sep_r<nn_r)
+	  {
+	    nnn_r = nn_r;
+	    nnn_prtcle = nn_prtcle;
+	    
+	    nn_r = sep_r;
+	    nn_prtcle = region_part_ptr;
+	  }
+	  else
+	  {
+	    nnn_r = sep_r;
+	    nnn_prtcle = region_part_ptr;
+	    
+	  }
+	}
+      }
+      nn_array.push(nn_prtcle->get_position() - box_part_ptr->get_position());
+      nnn_array.push(nnn_prtcle->get_position() - box_part_ptr->get_position());
+      pos_array.push(box_part_ptr->get_position());
+    }
+  }
+}
+
 
 
 
