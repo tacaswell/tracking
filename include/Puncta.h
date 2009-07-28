@@ -22,7 +22,7 @@
 //containing parts covered by the terms of MATLAB User License, the
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
-#include "particle.h"
+#include "particle_base.h"
 
 #ifndef PUNCTA
 #define PUNCTA

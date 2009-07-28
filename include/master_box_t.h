@@ -25,7 +25,7 @@
 #include <vector>
 #include <iostream>
 #include <set>
-#include "particle.h"
+#include "particle_base.h"
 #include "params.h"
 
 #include "wrapper.h"

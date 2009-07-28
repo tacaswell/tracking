@@ -239,6 +239,12 @@ public:
      2D gofr
    */
   void gofr2D(double max_d, utilities::Histogram2D & gofr2 ) const;
+
+  /**
+     Fills in the neighbor vectors for the particles in the shelf
+   */
+  void fill_in_neighborhood();
+  
   
   
 protected:

@@ -38,7 +38,7 @@
 
 #include "params_file.h"
 #include "master_box_t.h"
-#include "particle.h"
+#include "particle_base.h"
 #include "hash_shelf.h"
 #include "wrapper.h"
 

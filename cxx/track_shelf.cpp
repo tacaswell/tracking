@@ -23,6 +23,9 @@
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
 
+#include <iostream>
+#include <cmath>
+
 #include "track_shelf.h"
 #include "histogram.h"
 #include "track_box.h"
@@ -30,22 +33,26 @@
 #include "svector.h"
 #include "counted_vector.h"
 #include "generic_wrapper_base.h"
-
 #include "array.h"
 #include "cell.h"
-
 #include "exception.h"
 
-#include <iostream>
-#include <cmath>
-using std::map;
 
-using namespace tracking;
+using std::map;
+using std::pair;
+using std::cout;
+using std::endl;
+using std::vector;
+
+
 using utilities::Histogram;
 using utilities::Svector;
 using utilities::Ll_range_error;
 using utilities::Array;
 using utilities::Cell;
+
+using namespace tracking;
+
 typedef  map<int,track_box*> tr_map;
 
 track_shelf::~track_shelf(){

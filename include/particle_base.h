@@ -30,15 +30,16 @@
 
 //local includes
 #include "wrapper.h"
-#include "wrapper_i.h"
-#include "wrapper_o.h"
+// #include "wrapper_i.h"
+// #include "wrapper_o.h"
 #include "tuple.h"
 
 
 #ifndef PARTICLE_BASE
 #define PARTICLE_BASE
 namespace tracking{
-
+class wrapper_i_base;
+class wrapper_o_base;
 
 /**
    Base class for particles. Defines the basic functions
@@ -118,6 +119,24 @@ public:
     return position_;
   };
 
+
+  /**
+     Sorts the neighborhood vector in ascending order 
+   */
+  void sort_neighborhood();
+  
+  /**
+     checks to make sure the neighborhood does not include any repeats, returns true
+     if the neighborhood is repeat free.  Mostly for debugging
+   */
+  bool no_neighborhood_repeats()const;
+  
+  /**
+     adds a particle to the neighborhood if it is close enough
+     returns true if the particle is added, false otherwise
+   */
+  bool add_to_neighborhood(const particle_base* in);
+
   /**
      Intialize the static input wrapper for all particles
    */
@@ -130,6 +149,15 @@ public:
      Intialize the static data types for all particles
    */
   static void intialize_data_types(std::set<wrapper::p_vals>*  data_types);
+
+  /**
+     returns the maximum neighborhood range
+   */
+  static float get_max_range()
+  {
+    return max_range_;
+  }
+  
 
 protected:
   ///A running total of all particles created 
@@ -157,10 +185,30 @@ protected:
   */
   int frame_;
 
+
+  /**
+     Vector of the particles with in max_range_ in the hash_shelf_ of
+     the particle.
+   */
+  std::vector<const particle_base*> neighborhood_;
+  
+  /**
+     Maximum distance to be part of the neighborhood
+   */
+  static float max_range_;
   
 private:
   void fill_position();
   void priv_init(int i_ind);
+
+  /**
+     function for sorting the vectors in ascending order, returns true
+     if the first argument goes before the second argument in the
+     specific strict weak ordering it defines, and false otherwise.
+
+   */
+  bool lthan(const particle_base* a,const particle_base* b)const;
+  
   
 };
 }

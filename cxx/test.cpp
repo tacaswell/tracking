@@ -32,7 +32,7 @@
 #include "wrapper_i.h"
 #include "wrapper_o.h"
 
-#include "particle.h"
+#include "particle_base.h"
 #include "params.h"
 
 

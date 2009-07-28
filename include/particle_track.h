@@ -22,9 +22,9 @@
 //containing parts covered by the terms of MATLAB User License, the
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
-#include "particle.h"
-
+#include "particle_base.h"
 #include "tuple.h"
+#include <utility>
 
 // namespace utilities{
 // class Tuple;
@@ -222,7 +222,7 @@ public:
   bool has_track()const;
   
   /**
-     returns if a particle has a next
+     returns if a particle_base.has a next
    */
   bool has_next()const;
   /**
@@ -253,12 +253,12 @@ protected:
      pointer to a list of particles to be used durring the tracking
      process
    */
-  std::list<pair<particle_track*, double> >* n_pos_link;
+  std::list<std::pair<particle_track*, double> >* n_pos_link;
   /**h
      pointer to a list of particles to be used durring the tracking
      process
   */
-  std::list<pair<particle_track*, double> >* p_pos_link;
+  std::list<std::pair<particle_track*, double> >* p_pos_link;
 
   /**
      The foward displacement vector

@@ -820,6 +820,47 @@ void hash_shelf::next_nearest_neighbor_array(utilities::Array & pos_array,
 
 
 
+void hash_shelf::fill_in_neighborhood()
+{
+//   cout<<"particle_count_"<<particle_count_<<endl;
+  
+  list<particle_base*> current_box;
+  list<particle_base*> current_region;
+  
+  for(int j = 0; j<(int)hash_.size(); ++j)
+  {
+    int buffer = (int)ceil(particle_base::get_max_range()/ppbq);
+    if(buffer<1)
+    {
+      buffer = 1;
+    }
+    
+    hash_[j]->box_to_list(current_box);
+    if(current_box.empty())
+    {
+      continue;
+    }
+    
+    get_region(j,current_region,buffer);
+
+    for(list<particle_base*>::iterator box_part = current_box.begin();
+	box_part != current_box.end();++box_part)
+    {
+      particle_base* box_part_ptr = *box_part;
+      for(list<particle_base*>::const_iterator region_part = ++(current_region.begin());
+	  region_part!= current_region.end();++region_part)
+      {
+	const particle_base* region_part_ptr = *region_part;
+	box_part_ptr->add_to_neighborhood(region_part_ptr);
+	
+      }
+      box_part_ptr->sort_neighborhood();
+      
+    }
+  }
+}
+
+
 
 
 // void hash_shelf::D_lots2(utilities::Coarse_grain_array & Duu,

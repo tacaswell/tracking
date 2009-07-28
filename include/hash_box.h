@@ -24,7 +24,7 @@
 //the resulting work.
 #include <vector>
 #include <list>
-#include "particle.h"
+#include "particle_base.h"
 #include "particle_track.h"
 
 
@@ -93,7 +93,7 @@ public:
   /**
      Returns a vector of the data of p_vals type for the box.
    */
-  void get_val_vec(vector<double> & vec, wrapper::p_vals type);
+  void get_val_vec(std::vector<double> & vec, wrapper::p_vals type);
 
   /**
      Returns an iterator to the front of the contents vector,
@@ -160,22 +160,22 @@ public:
    * how many dimensions they are in.
   */
   int gofr(double max_d, int nbins, hash_box* points,
-	   vector<double>& bin_count,vector<double>& bin_r);
+	   std::vector<double>& bin_count,std::vector<double>& bin_r);
 
 
   ///Same as gofr, but assumes that bin_count is properly initialized
   int gofr(double max_d, int nbins, hash_box* points,
-	   vector<double>& bin_count);
+	   std::vector<double>& bin_count);
 
   ///Same as gofr, with the bin count vector is normalized with
   ///respect to area
   int gofr_norm_a(double max_d, unsigned int nbins, hash_box* points,
-	   vector<double>& bin_count,vector<double>& bin_r);
+	   std::vector<double>& bin_count,std::vector<double>& bin_r);
   
   ///Same as gofr_norm_a, with the bin count vector is normalized with
   ///respect to area and the local average density
   int gofr_norm_an(double max_d, int nbins, 
-		   vector<double> & bin_count,vector<double>& bin_r);
+		   std::vector<double> & bin_count,std::vector<double>& bin_r);
 
 
   ///Returns g(r).  The information is returned in two vectors,
@@ -185,10 +185,10 @@ public:
   ///This function uses linearly distributed boxes.  This function
   ///uses intel code
   void gofr_ipp(unsigned int max_d, unsigned int nbins, 
-       vector<int> bin_count,vector<double> bin_r);
+       std::vector<int> bin_count,std::vector<double> bin_r);
 
   int gofr2D(double max_d, int nbins, hash_box* points,
-		       vector<double>& bin_count);
+		       std::vector<double>& bin_count);
     
   ///@}
 };

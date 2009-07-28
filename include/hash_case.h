@@ -25,7 +25,7 @@
 #include <vector>
 #include <list>
 #include "hash_shelf.h"
-#include "particle.h"
+#include "particle_base.h"
 #include "master_box_t.h"
 #include "wrapper.h"
 #include "track_list.h"

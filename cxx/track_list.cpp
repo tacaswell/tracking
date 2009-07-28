@@ -30,6 +30,7 @@ using namespace tracking;
 using std::vector;
 using std::set;
 using std::list;
+using std::pair;
 
 
 void track_list::link_next(list<particle_track*>* new_next){
@@ -461,7 +462,7 @@ void track_list::trivial_bonds(){
       it!=n_list->end();it++)
     {
       tmp_next_particle = *it;
-      //if a particle has no possible previous links than it must be a new track
+      //if a particle_base.has no possible previous links than it must be a new track
       //as far as the algorithm is concerned
       if((tmp_next_particle->p_pos_link)==NULL){
 	  tracks->add_new_track(tmp_next_particle);

@@ -22,7 +22,10 @@
 //containing parts covered by the terms of MATLAB User License, the
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
-#include "particle.h"
+#include "particle_base.h"
+#include "wrapper_i.h"
+#include "wrapper_o.h"
+#include <algorithm>
 #include <cmath>
 
 using namespace tracking;
@@ -35,6 +38,7 @@ using std::endl;
 
 using utilities::Tuple;
 int particle_base::running_total_ = 0;
+float particle_base::max_range_ = 0;
 
 // static initialization
 wrapper_o_base* particle_base::wrapper_out_ = NULL;
@@ -162,4 +166,73 @@ void particle_base::intialize_data_types(std::set<wrapper::p_vals>*  data_types)
   if(data_types_ !=NULL)
     throw "data types already initialized";
   data_types_ = data_types;
+}
+
+bool particle_base::lthan(const particle_base* a,const particle_base* b)const
+{
+  if(distancesq(a)<distancesq(b))
+  {
+    return true;
+  }
+  else
+  {
+    return false;
+  }
+}
+
+struct mysortobj
+{
+  const particle_base* tmp;
+  mysortobj(const particle_base* in):
+    tmp(in)
+  {
+  }
+  bool operator()(const tracking::particle_base* a,const tracking::particle_base* b)
+  {
+    if(tmp->distancesq(a)< tmp->distancesq(b))
+    {
+      return true;
+    }
+    else
+    {
+      return false;
+    } 
+  }
+};
+
+void particle_base::sort_neighborhood()
+{
+  mysortobj lthan_obj(this);
+  sort(neighborhood_.begin(),neighborhood_.end(),lthan_obj);
+}
+
+bool particle_base::no_neighborhood_repeats() const
+{
+  vector<const particle_base*>::const_iterator myend = neighborhood_.end();
+  
+  for(vector<const particle_base*>::const_iterator outer = neighborhood_.begin(); outer!= myend;++outer)
+  {
+    vector<const particle_base*>::const_iterator inner = outer;
+    ++inner;
+    for(; inner!= myend;++inner)
+    {
+      if((*inner)==(*outer))
+      {
+	return false;
+      }
+    }
+  }
+  return true;
+}
+
+bool particle_base::add_to_neighborhood(const particle_base* in)
+{
+  if(in->frame_ != frame_)
+  {
+    return false;
+  }
+  if(distancesq(in)<(max_range_*max_range_))
+  {
+    neighborhood_.push_back(in);
+  }
 }
