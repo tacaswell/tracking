@@ -81,8 +81,10 @@ void particle_base::priv_init(int i_ind)
 
 
 void particle_base::fill_position(){
-  position_[0] = get_value(wrapper::d_xpos);
-  position_[1] = get_value(wrapper::d_ypos);
+  position_[0] = wrapper_in_->get_value(ind_,wrapper::d_xpos);
+  position_[1] = wrapper_in_->get_value(ind_,wrapper::d_ypos);
+  frame_ = (int) (wrapper_in_->get_value(ind_, wrapper::d_frame));
+  
 }
 
 

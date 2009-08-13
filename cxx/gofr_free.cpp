@@ -207,6 +207,8 @@ void hash_case::gofr_norm(double max_d, int nbins,
   for(vector<hash_shelf*>::const_iterator it = h_case_.begin();
       it != h_case_.end(); ++it)
     {
+      cout<<"plane: "<<(*it)->get_plane_num()<<endl;
+      
       dens += ((*it)->gofr(max_d, nbins, bin_count,count));
      
     }
@@ -217,17 +219,17 @@ void hash_case::gofr_norm(double max_d, int nbins,
   cout<<"total count "<<count<<endl;
   cout<<"average density "<<dens/h_case_.size()<<endl;
 
-    transform(bin_count.begin(), bin_count.end(), 
+  transform(bin_count.begin(), bin_count.end(), 
    	    area.begin(),
     	    bin_count.begin(),
    	    mymathobs.mydob);
   
-    //average over number of particles
-    mymathobs.mydob.div = count ;
-    transform(bin_count.begin(), bin_count.end(), bin_count.begin(),mymathobs.mydob);
-    // //normalize by density
-    mymathobs.mydob.div = dens/h_case_.size() ;
-    transform(bin_count.begin(), bin_count.end(), bin_count.begin(),mymathobs.mydob);
+  //average over number of particles
+  mymathobs.mydob.div = count ;
+  transform(bin_count.begin(), bin_count.end(), bin_count.begin(),mymathobs.mydob);
+  // //normalize by density
+  mymathobs.mydob.div = dens/h_case_.size() ;
+  transform(bin_count.begin(), bin_count.end(), bin_count.begin(),mymathobs.mydob);
   
 }
 
@@ -239,7 +241,7 @@ double hash_shelf::gofr(double max_d, int nbins, vector<double>& bin_count,
   // how the size mismatch for the image and the hash table are handled
   unsigned int buffer = (unsigned int)((int)max_d%(int)ppb==0?max_d/ppb:(1+max_d/ppb));
   int local_count = 0;
-
+  
   hash_box*  working_box;
   hash_box working_region = hash_box();
 
@@ -253,7 +255,8 @@ double hash_shelf::gofr(double max_d, int nbins, vector<double>& bin_count,
     for(unsigned int y = buffer; y<(hash_dims_[1]-buffer-1);++y){
       working_box = get_box(x,y);
       get_region(x,y,&working_region,buffer);
-
+//       cout<<"("<<x<<","<<y<<")"<<endl;
+      
       local_count += working_box->gofr(max_d,nbins,&working_region,bin_count);
       working_region.clear();
     }
@@ -295,10 +298,10 @@ int hash_box::gofr(double max_d, int nbins, hash_box* points,
 	points_it !=(points->contents_).end();++points_it )
 	{
    	  tmp_dist = (*box_it)->distancesq(*points_it);
-//   	  (*box_it)->print();
-//   	  (*points_it)->print();
-//   	  cout<<"distance sqr: "<<tmp_dist<<endl;
-// 	  cout<<"max distance sqr: "<<max_d_sqr<<endl;
+  	  // (*box_it)->print();
+	  //   	  (*points_it)->print();
+	  //   	  cout<<"distance sqr: "<<tmp_dist<<endl;
+	  // 	  cout<<"max distance sqr: "<<max_d_sqr<<endl;
 	  if((tmp_dist < max_d_sqr) && (tmp_dist !=0))
 	    {
 	      bin_count.at((int)(((sqrt(tmp_dist))/max_d)*nbins))++;

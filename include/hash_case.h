@@ -246,10 +246,28 @@ void hash_case::init(master_box_t<particle> & mb,const utilities::Tuple & img_di
   particle *p;
   int max_sz = mb.size();
   
-  for(unsigned int j = 0; j<max_sz; ++j){
+
+  int current_frame =-1;
+  int current_count = 0;
+  
+
+
+  for( int j = 0; j<max_sz; ++j){
     p = mb.get_particle(j);
-    try{//    cout<<(int)p->get_value(wrapper::d_frame)<<"-";
-      (h_case_.at((int)p->get_value(wrapper::d_frame)))->push(p);
+    try{
+      int cf = (int)(p->get_value(wrapper::d_frame));
+      if(cf != current_frame)
+      {
+	cout<<"frame "<<cf<<": "<<current_count<<endl;
+	current_frame = cf;
+	current_count = 1;
+      }
+      else
+      {
+	++current_count;
+      }
+      
+      (h_case_.at((int)(p->get_value(wrapper::d_frame))))->push(p);
     }
     catch(...){
       int yar = (int)p->get_value(wrapper::d_frame);
@@ -258,7 +276,7 @@ void hash_case::init(master_box_t<particle> & mb,const utilities::Tuple & img_di
     }
   
   }
-  //  cout<<endl;
+  cout<<current_count<<endl;
   inited = true;
 }
 

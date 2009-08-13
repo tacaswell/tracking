@@ -26,8 +26,7 @@
 /*
   This file is a specific static application of the tracking tool
   chain.  This file is for dealing with data sets at a fixed volume
-  fraction and returns the mean g(r), the corrected msd, and the
-  corrected tracks for the data set.
+  fraction and returns the mean g(r)
  */
 
 
@@ -81,10 +80,6 @@ void mexFunction( int nlhs, mxArray *plhs[],
   }
   try{
 
-  
-//     utilities::Tuple dims;	
-//     dims[0] = (520);
-//     dims[1] = (1390);
     /**
        \todo add checks on input types
     */
@@ -105,7 +100,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 			     wrapper::d_ypos, 
 			     wrapper::d_frame};
     int tmp2[] = {0, 1, 2};
-      vector<wrapper::p_vals > tmp3(tmp, tmp+3);
+    vector<wrapper::p_vals > tmp3(tmp, tmp+3);
     vector<wrapper::p_vals>::iterator it1 = tmp3.begin();
     vector<int> tmp4(tmp2, tmp2+3);
     vector<int>::iterator it2 = tmp4.begin();
@@ -118,7 +113,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
     
 
     params_matlab p_in = params_matlab(prhs,contents);
-    //    params_ning_hd p_in = params_ning_hd(20464,contents);
+ 
 
 
     contents.insert(pair<wrapper::p_vals, int>(wrapper::d_trackid,5));
@@ -127,10 +122,6 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
 
     master_box_t<particle_track>bt(&p_in,&p_out);
-
-    // dims[0] = (2000);
-//     dims[1] = (3000);
-    
     
     track_shelf tracks;
     cout<<"total number of particles is: "<<bt.size()<<endl;
@@ -144,59 +135,20 @@ void mexFunction( int nlhs, mxArray *plhs[],
      
   
     //build hash case
-    hash_case s(bt,dims,(int)max_r,frames);
+    hash_case hcase(bt,dims,(int)max_r,frames);
     cout<<"case built"<<endl;
 
+//     hcase.print();
     
 
     // Compute G(r)
     vector<double> gofr_bin_count;
     vector<double> gofr_bin_edges;
-    s.gofr_norm(max_r,bins,gofr_bin_count,gofr_bin_edges);
+    cout<<"starting gofr"<<endl;
+    hcase.gofr_norm(max_r,bins,gofr_bin_count,gofr_bin_edges);
     vector_to_mat(plhs,gofr_bin_count);
     vector_to_mat(plhs +1,gofr_bin_edges);
     cout<<"gofr computed"<<endl;
-
-//     //link tracks
-//      s.link(2,tracks);
-//     cout<<"linked"<<endl;
-    
-//     //compute the mean displacements from frame to frame
-//     s.compute_mean_disp();
-    
-    
-//     Array mean_frame_disp(frames);
-//     s.get_mean_disp(mean_frame_disp);
-//     Generic_parameters_matlab arr_parm(frames,2,plhs+2);
-//     Generic_wrapper_base * wrapper = arr_parm.make_wrapper();
-//     mean_frame_disp.set_array(wrapper);
-    // delete wrapper;
-
-//     cout<<"mean disp"<<endl;
-    
-//     //trim out short tracks
-//     tracks.remove_short_tracks(10);
-//     cout<<"trimed"<<endl;
-  
-//     // Compute msd
-
-//     Svector<double> msd_vec;
-//     Svector<int> msd_count_vec;
-    
-//     msd_vec.data.clear();
-//     msd_vec.data.resize(200);
-//     msd_count_vec.data.clear();
-//     msd_count_vec.data.resize(200);
-//     tracks.msd_corrected(msd_vec, msd_count_vec);
-//     vector_to_mat(plhs+3, msd_vec.data);
-//     vector_to_mat(plhs+4, msd_count_vec.data);
-//     cout<<"c msd"<<endl;
-
-
-//     // output tracks
-//     Cell_matlab test_cell2(tracks.get_track_count(),plhs+5);
-//     tracks.set_corrected_disp_to_cell(test_cell2);
-//     cout<<"c tracks"<<endl;
 
     
     

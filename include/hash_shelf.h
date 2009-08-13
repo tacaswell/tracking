@@ -116,6 +116,12 @@ public:
 		   std::list<particle_track*>& in_list, int range=1) const;
   void get_region( int n,
 		   std::list<particle_base*>& in_list, int range=1) const;
+
+  int get_plane_num() const
+  {
+    return plane_number_;
+  }
+  
   ///@}
 
   ///@name g(r)
@@ -274,7 +280,7 @@ protected:
   unsigned int ppb;
   //@}
   ///stores the plane number of the shelf
-  int plane_number;
+  int plane_number_;
   
   /**
      The mean displacement of the plane.  The definition of velocity

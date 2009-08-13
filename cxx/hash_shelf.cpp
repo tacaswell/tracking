@@ -99,7 +99,7 @@ void hash_shelf::push(particle_track * p){
 
 hash_shelf::hash_shelf(unsigned int imsz1, 
 		       unsigned int imsz2, unsigned int PPB,
-		       int i_frame):  ppb(PPB), plane_number(i_frame),
+		       int i_frame):  ppb(PPB), plane_number_(i_frame),
 				      next_(NULL),particle_count_(0)
 {
   img_dims_[0] = (imsz1);
@@ -110,7 +110,7 @@ hash_shelf::hash_shelf(unsigned int imsz1,
 hash_shelf::hash_shelf(utilities::Tuple imgsz, 
 		       unsigned int ippb, 
 		       int i_frame):img_dims_(imgsz),  ppb(ippb),  
-				    plane_number(i_frame), 
+				    plane_number_(i_frame), 
 				    next_(NULL),particle_count_(0)
 {  
   init2();
@@ -829,7 +829,7 @@ void hash_shelf::fill_in_neighborhood()
   
   for(int j = 0; j<(int)hash_.size(); ++j)
   {
-    int buffer = (int)ceil(particle_base::get_max_range()/ppbq);
+    int buffer = (int)ceil(particle_base::get_max_range()/ppb);
     if(buffer<1)
     {
       buffer = 1;
