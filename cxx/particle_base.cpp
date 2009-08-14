@@ -35,10 +35,11 @@ using std::set;
 using std::list;
 using std::cout;
 using std::endl;
+using std::complex;
 
 using utilities::Tuple;
 int particle_base::running_total_ = 0;
-float particle_base::max_range_ = 0;
+float particle_base::max_neighborhood_range_ = 0;
 
 // static initialization
 wrapper_o_base* particle_base::wrapper_out_ = NULL;
@@ -233,8 +234,41 @@ bool particle_base::add_to_neighborhood(const particle_base* in)
   {
     return false;
   }
-  if(distancesq(in)<(max_range_*max_range_))
+  if(distancesq(in)<(max_neighborhood_range_*max_neighborhood_range_))
   {
     neighborhood_.push_back(in);
+    return true;
   }
+  return false;
+  
+}
+
+void particle_base::fill_phi_6()
+{
+  s_order_parameter_ = compute_phi_6();
+}
+
+
+complex<float> particle_base::compute_phi_6()const 
+{
+  if(neighborhood_.size() ==0)
+  {
+    throw "no neighborhood";
+  }
+  
+  complex<float> phi6(0,0);
+  complex<float> i(0,1);
+  
+  vector<const particle_base*>::const_iterator myend = neighborhood_.end();
+  
+  for(vector<const particle_base*>::const_iterator cur_nei = neighborhood_.begin();
+      cur_nei!=myend;++cur_nei)
+  {
+    Tuple tmp = (*cur_nei)->get_position()-position_;
+    // angle made with the y-axis (I think, doesn't really matter for this
+    float theta6 = atan2(tmp[0],tmp[1])*6;
+    phi6 += exp(i*theta6);
+  }
+  phi6/=(float)neighborhood_.size();
+  return phi6;
 }

@@ -28,10 +28,10 @@
 #include <set>
 #include <list>
 
+#include <complex>
+
 //local includes
 #include "wrapper.h"
-// #include "wrapper_i.h"
-// #include "wrapper_o.h"
 #include "tuple.h"
 
 
@@ -71,10 +71,13 @@ public:
   particle_base(int ind, utilities::Tuple pos,int frame=0);
   
   
+
+  particle_base(const particle_base &p);
+
+  
+  
   ///default Destructor, made virtual
-  virtual ~particle_base(){
-    
-  }
+  virtual ~particle_base(){}
 
 
   ///A program generated global unique id, useful for tracking, comparing
@@ -86,38 +89,33 @@ public:
 
   ///Pring out a rasonable representation of the partile
   virtual void print() const;
+
+  ///Store this particle in the output wrapper structure
+  virtual void set_particle() const;
   
 
   ///Returns the value of 'type' for the particle as specified
   ///by the in_wrapper
   virtual double get_value(wrapper::p_vals type) const;
-
-  ///Store this particle in the output wrapper structure
-  virtual void set_particle() const;
-  //  virtual void set_particle_old();
+  /**
+     returns a tuple of the particle's position
+   */
+  const utilities::Tuple & get_position() const{
+    return position_;}
   /**
      Retruns the distance from this particle to part_in
    */
   virtual double distancesq(const particle_base* part_in) const;
-
   /**
      Returns the distance of the particle from the specified origin
      @param origin the cordinates of the new origin
    */
   double get_r(const utilities::Tuple & origin) const;
-
   /**
      Returns the angle in the plane from the Y-axis
      @param origin the cordinates of the new origin
    */
   double get_theta(const utilities::Tuple & origin) const;
-
-  /**
-     returns a tuple of the particle's position
-   */
-  const utilities::Tuple & get_position() const{
-    return position_;
-  };
 
 
   /**
@@ -136,6 +134,33 @@ public:
      returns true if the particle is added, false otherwise
    */
   bool add_to_neighborhood(const particle_base* in);
+  /**
+     returns the maximum neighborhood range
+   */
+  static float get_max_range()
+  {
+    return max_neighborhood_range_;
+    
+  }
+
+
+  /**
+     Fills the order parameter with \f$\Phi_6\f$.
+     See compute_phi_6()
+   */
+  void fill_phi_6();
+  /**
+     computes and returns the order parameter \f$\Phi_6\f$.
+     Defined by
+     \f[
+     \Phi_{6}(r_{m}) = \frac{1}{N_{b}}\sum_{n=1}^{N_{b}}e^{6 i\theta_{mn} }
+     \f]    
+   */
+  std::complex<float> compute_phi_6()const;
+  
+
+
+  
 
   /**
      Intialize the static input wrapper for all particles
@@ -150,14 +175,8 @@ public:
    */
   static void intialize_data_types(std::set<wrapper::p_vals>*  data_types);
 
-  /**
-     returns the maximum neighborhood range
-   */
-  static float get_max_range()
-  {
-    return max_range_;
-  }
   
+
 
 protected:
   ///A running total of all particles created 
@@ -195,7 +214,14 @@ protected:
   /**
      Maximum distance to be part of the neighborhood
    */
-  static float max_range_;
+  static float max_neighborhood_range_;
+
+  /**
+     Scaler order parameter, ex phi_6 in 2D
+   */
+  std::complex<float> s_order_parameter_;
+  
+
   
 private:
   void fill_position();
