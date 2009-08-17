@@ -147,17 +147,15 @@ void hash_shelf::print() const{
   
   for(int i=0; i<hash_dims_[0];i++){
     for(int j=0; j<hash_dims_[1];j++){
-      //    cout<<(hash_.at(j*(int)hash_dims_[0] + i))->get_size() <<"\t";
+      cout<<(hash_.at(j*(int)hash_dims_[0] + i))->get_size() <<"\t";
       total += (hash_.at(j*(int)hash_dims_[0] + i))->get_size();
       
     }
-    //    cout<<endl;
+    cout<<endl;
   }
   //mean_forward_disp_.print();
 
   cout<<total<<endl;
-  
-
 }
 
 void hash_shelf::get_region( int n, int m,
@@ -819,10 +817,9 @@ void hash_shelf::next_nearest_neighbor_array(utilities::Array & pos_array,
 }
 
 
-
 void hash_shelf::fill_in_neighborhood()
 {
-//   cout<<"particle_count_"<<particle_count_<<endl;
+  cout<<"particle_count_"<<particle_count_<<endl;
   
   list<particle_base*> current_box;
   list<particle_base*> current_region;
@@ -862,201 +859,25 @@ void hash_shelf::fill_in_neighborhood()
 
 
 
-
-// void hash_shelf::D_lots2(utilities::Coarse_grain_array & Duu,
-// 			utilities::Coarse_grain_array & DuuL,
-// 			utilities::Coarse_grain_array & DuuT,
-// 			utilities::Coarse_grain_array & Ddrdr,
-// 			utilities::Coarse_grain_array & Dxx,
-// 			utilities::Coarse_grain_array & Dyy,
-// 			utilities::Coarse_grain_array & Ddudu,
-// 			utilities::Counted_vector const& md 
-// 			)const
-// {
-
-//   if(!(md.averaged()))
-//   {
-//     throw "need an averaged md";
-//   }
+void hash_shelf::pass_fun_to_part(void(particle_base::*fun)())
+{
+  vector<hash_box*>::iterator myend =  hash_.end();
+  for(vector<hash_box*>::iterator it = hash_.begin();
+      it!=myend;++it)
+  {
+    (*it)->pass_fun_to_part(fun);
     
-//   list<particle_track*> current_box;
-//   list<particle_track*> current_region;
-  
-//   int max_r_int = (int) ceil(Duu.get_r_max());
-//   int buffer = (max_r_int%ppb == 0)?(max_r_int/ppb):(max_r_int/ppb + 1);
-//   int max_tau = Duu.get_d_bins();
-//   double max_sep = Duu.get_r_max();
-//   double min_sep = Duu.get_r_min();
-  
-//   for(int j = 0; j<(int)hash_.size(); ++j)
-//   {
+  }
+}
 
-//     get_region(j,current_region,buffer);
-//     hash_[j]->box_to_list(current_box);
-//     // remove particles with out tracks as they are
-//     // useless for this
-//     for(list<particle_track*>::iterator it = current_region.begin();
-// 	it != current_region.end();)
-//     {
-//       if((*it)->has_track())
-//       {
-// 	++it;
-//       }
-//       else
-//       {
-// 	current_region.erase(it++);
-//       }
-      
-//     }
-//     for(list<particle_track*>::iterator it = current_box.begin();
-// 	it != current_box.end();)
-//     {
-//       if((*it)->has_track())
-//       {
-// 	track_box* cur_track = (*it)->get_track();
-// 	if ((*it) == (cur_track->get_first()))
-// 	{
-// 	  ++it;
-// 	}
-// 	else
-// 	{
-// 	  current_box.erase(it++);
-// 	}
-//       }
-//       else
-//       {
-// 	current_region.erase(it++);
-//       }
-//     }
-      
-
-//   for(int tau = 1; tau<=max_tau;++tau)
-//   {
+void hash_shelf::pass_fun_to_part(void(particle_base::*fun)()const)const
+{
+  vector<hash_box*>::const_iterator myend =  hash_.end();
+  for(vector<hash_box*>::const_iterator it = hash_.begin();
+      it!=myend;++it)
+  {
+    (*it)->pass_fun_to_part(fun);
     
-    
-//       for(list<particle_track*>::const_iterator box_part = current_box.begin();
-// 	  box_part != current_box.end();++box_part)
-//       {
-// 	for(list<particle_track*>::const_iterator region_part = current_region.begin();
-// 	    region_part!= current_region.end();++region_part)
-// 	{
-	  
-// 	}
-//       }
-      
-    
-//   }
-// }
+  }
+}
 
-
-
-// 	  const particle_track* box_part_ptr = *box_part;
-// 	  const particle_track* region_part_ptr = *region_part;
-// 	  double sep_r;
-// 	  // only compute the correlations once for each pair that
-// 	  // starts in this frame
-// 	  if((region_part_ptr == ((region_part_ptr)->get_track())->get_first()) &&  
-// 	     (((region_part_ptr)->get_position())[0] < ((box_part_ptr)->get_position())[0]))
-// 	  {
-// 	    continue;
-// 	  }
-// 	  // ignore self
-// 	  if((region_part_ptr)== (box_part_ptr) )
-// 	  {
-// 	    continue;
-// 	  }
-// 	  sep_r = sqrt(box_part_ptr->distancesq(region_part_ptr));
-// 	  if((sep_r>max_sep) || (sep_r<min_sep))
-// 	  {
-// 	    continue;
-// 	  }
-// 	  // the positions with any drift removed
-// 	  Tuple pos_box_i    = (box_part_ptr)->get_position() - cumulative_disp_;;
-// 	  Tuple pos_region_i = (region_part_ptr)->get_position() - cumulative_disp_;;
-// 	  Tuple Rij          = pos_region_i - pos_box_i;
-// 	  Rij.make_unit();
-
-// 	  // figure out the maximum step that can be taken
-// 	  int box_part_trk_len = ((box_part_ptr)->get_track())->get_length();
-// 	  int region_part_trk_len = ((region_part_ptr)->get_track())->get_length();
-// 	  int max_step = (box_part_trk_len < region_part_trk_len)? box_part_trk_len : region_part_trk_len;
-// 	  max_step = (max_step<max_tau)?max_step:max_tau;
-// 	  {
-// 	    // the pointers that will walk along the tracks
-// 	    const particle_track * tmp_box_part = *box_part;
-// 	    const particle_track * tmp_region_part = *region_part;
-
-// 	    // take the first step
-// 	    bool more_box_track = tmp_region_part->step_forwards(tau,tmp_region_part);
-// 	    bool more_region_track = tmp_box_part->step_forwards(tau,tmp_box_part);
-// 	    double u_bar = md.get_val(tau-1);
-	  
-
-// 	    while (more_region_track && more_box_track)
-// 	    {
-// 	      // get the amount of drift in the frame we have stepped to
-// 	      const Tuple displacement_correction= ((tmp_box_part->get_shelf())->get_cum_forward_disp());
-// 	      //  // and find the center of the pair in this frame
-// 	      // 	    Tuple center_tau = center + displacement_correction;
-	    
-	    
-						   
-	      
-// 	      // 	    double r_box_tau    = (tmp_box_part)->   get_r(center_tau);
-// 	      // 	    double r_region_tau = (tmp_region_part)->get_r(center_tau);
-	      
-// 	      // 	    double theta_box_tau    = (tmp_box_part)->   get_theta(center_tau);
-// 	      // 	    double theta_region_tau = (tmp_region_part)->get_theta(center_tau);
-	    
-// 	      Tuple pos_box_tau    = ((tmp_box_part)->get_position())   -displacement_correction;
-// 	      Tuple pos_region_tau = ((tmp_region_part)->get_position())-displacement_correction;
-	    
-// 	      Tuple u_box_tau =  (pos_box_tau - pos_box_i);
-// 	      Tuple u_region_tau = (pos_region_tau - pos_region_i);
-	    
-	      
-
-// 	      // 	    // adds to Drr, the correlation in the radial direction
-// 	      // 	    Drr.add_to_element(sep_r,tau-1,
-// 	      // 			       (r_box_tau - r_box_i) * (r_region_tau - r_region_i)
-// 	      // 			       );
-// 	      // 	    // adds to Drr, the correlation in the \theta direction
-// 	      // 	    Dtt.add_to_element(sep_r,tau-1,
-// 	      // 			       (theta_box_tau - theta_box_i) *
-// 	      // 			       (theta_region_tau - theta_region_i)
-// 	      // 			       );
-	
-	    
-// 	      Duu.add_to_element(sep_r,tau-1,u_box_tau.dot(u_region_tau));
-// 	      double u_box_T= (u_box_tau.dot(Rij));
-// 	      double u_region_T = (u_region_tau.dot(Rij));
-// 	      DuuT.add_to_element(sep_r,tau-1, (u_box_T) * (u_region_T));
-// 	      DuuL.add_to_element(sep_r,tau-1, (u_box_tau - (Rij*u_box_T)).dot((u_region_tau - (Rij*u_region_T))));
-	    
-	    
-// 	      Dxx.add_to_element(sep_r,tau-1,u_box_tau[0]*u_region_tau[0]);
-// 	      Dyy.add_to_element(sep_r,tau-1,u_box_tau[1]*u_region_tau[1]);
-
-
-// 	      // mobility correlation
-// 	      Ddrdr.add_to_element(sep_r,tau-1,(u_box_tau.magnitude())*(u_region_tau.magnitude()));
-// 	      Ddudu.add_to_element(sep_r,tau-1,(u_box_tau.magnitude() - u_bar)*(u_region_tau.magnitude() - u_bar));
-	      
-	      
-// 	      more_region_track = tmp_region_part->step_forwards(tau,tmp_region_part);
-// 	      more_box_track    = tmp_box_part   ->step_forwards(tau,tmp_box_part);
-	      
-	    
-// 	    }
-	  
-	  
-// 	  }
-
-// 	}
-//       }
-    
-//     } // loop over boxes
-    
-//   }
-  
-// }

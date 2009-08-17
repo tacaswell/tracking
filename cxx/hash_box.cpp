@@ -86,3 +86,23 @@ void  hash_box::box_to_list(std::list<particle_base*>& p_list) const
     p_list.push_back(*it);
   }
 }
+
+void hash_box::pass_fun_to_part(void(particle_base::*fun)())
+{
+  vector<particle_base*>::iterator myend = contents_.end();
+  for(vector<particle_base*>::iterator it = contents_.begin();
+      it!=myend;++it)
+  {
+    ((*it)->*fun)();
+  }
+}
+
+void hash_box::pass_fun_to_part(void(particle_base::*fun)()const)const
+{
+  vector<particle_base*>::const_iterator myend = contents_.end();
+  for(vector<particle_base*>::const_iterator it = contents_.begin();
+      it!=myend;++it)
+  {
+    ((*it)->*fun)();
+  }
+}

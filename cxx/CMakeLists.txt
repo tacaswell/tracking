@@ -52,7 +52,7 @@ set_target_properties(quick_test PROPERTIES
     SUFFIX  ".${MATLAB_MEXFILE_EXT}"
 )
 
-SET(APPS basic_static basic_dynamic nn_vectors nnn_vectors corr_test)
+SET(APPS basic_static basic_dynamic nn_vectors nnn_vectors corr_test phi6)
 
 foreach(app ${APPS})
   add_library(${app} SHARED apps/${app}.cpp ${COMMON_TRACK_SRC} ${MATLAB_UTIL_SRC})

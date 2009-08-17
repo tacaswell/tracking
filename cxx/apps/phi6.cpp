@@ -23,33 +23,19 @@
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
 
+
 //standard includes
 #include<iostream>
 #include<fstream>
 #include <exception>
 
-//my includes
-#include "wrapper.h"
-#include "wrapper_i.h"
-#include "wrapper_o.h"
 
-#include "particle_base.h"
-#include "params.h"
-
-
-#include "hash_box.h"
-#include "hash_shelf.h"
-#include "track_box.h"
-#include "master_box_t.h"
 #include "hash_case.h"
+
 
 #include "wrapper_i_matlab.h"
 #include "params_matlab.h"
 
-
-#include "wrapper_i_ning.h"
-#include "params_ning.h"
-#include "params_file.h"
 
 
 #include "mex.h"
@@ -57,33 +43,10 @@
 #include "matlab_utils.h"
 
 
-#include "histogram.h"
-#include "svector.h"
-
-#include "array.h"
-
-#include "generic_wrapper_matlab.h"
-#include "generic_parameters_matlab.h"
-
-#include "cell_matlab.h"
-
-#include "coarse_grain_array.h"
-#include "counted_vector.h"
 
 using namespace tracking;
 using std::exception;
 using std::cerr;
-
-using utilities::array_to_mat;
-using utilities::vector_to_mat;
-using utilities::Svector;
-using utilities::Histogram;
-using utilities::Array;
-using utilities::Cell_matlab;
-using utilities::Generic_wrapper_base;
-using utilities::Generic_parameters_matlab;
-using utilities::Coarse_grain_array;
-using utilities::Counted_vector;
 
 
 
@@ -91,20 +54,20 @@ extern void _main();
 void mexFunction( int nlhs, mxArray *plhs[], 
 		  int nrhs, const mxArray* prhs[] ){
 
-  if(nlhs!=2|| nrhs!=5){
+  if(nlhs!=0|| nrhs!=5){
     cout<<"Error, wrong number of arguments"<<endl;
     return;
   }
   try{
 
-    
+      
     utilities::Tuple dims;	
     dims[0] = (int)mxGetScalar(prhs[1]);
     dims[1] = (int)mxGetScalar(prhs[2]);
     int frames = (int)mxGetScalar(prhs[3]);
-    int max_r =  (int)mxGetScalar(prhs[4]);;
-    
-    
+    float neighbor_range =  (float)mxGetScalar(prhs[4]);;
+
+ 
     //nonsense to get the map set up
     map<wrapper::p_vals, int> contents;
     wrapper::p_vals tmp[] = {wrapper::d_xpos,
@@ -127,50 +90,31 @@ void mexFunction( int nlhs, mxArray *plhs[],
     //there has to be a better way to do this
     
 
+  
     params_matlab p_in = params_matlab(prhs,contents);
 
     //this is meaningless and not used
     params_matlab p_out = params_matlab(plhs,contents,mxGetM(*prhs),
  					contents.size());
+    
 
-    master_box_t<particle_base>bt(&p_in,&p_out);
-    cout<<"total number of particles is: "<<bt.size()<<endl;;
-  
-//     particle_base *p;
-//     int max_sz = bt.size();
-//     int cur_frame = -1;
     
-//     for(unsigned int j = 0; j<max_sz; ++j)
-//     {
-//       p = bt.get_particle(j);
-
-//       int tmp_frame = (int)p->get_value(wrapper::d_frame);
-//       if(tmp_frame != cur_frame)
-//       {
-// 	cout<<tmp_frame<<"\t"<<j<<endl;
-// 	cur_frame = tmp_frame;
-//       }
-//     }
+    master_box_t<particle_base>master_box(&p_in,&p_out);
+    cout<<"total number of particles is: "<<master_box.size()<<endl;;
     
     
-    
-    hash_case h_case(bt,dims,max_r,frames);
+    hash_case h_case(master_box,dims,(int)ceil(neighbor_range),frames);
     cout<<"case built"<<endl;
-
-//     h_case.print();
     
+    h_case.print();
     
+    particle_base::set_neighborhood_range(neighbor_range);
     
-
-    // Output NN vectors
-    Cell_matlab nn_cell(frames,plhs+1);
-    Cell_matlab pos_cell(frames,plhs);
-    h_case.nearest_neighbor_array(pos_cell,nn_cell,max_r);
-    cout<<"out put"<<endl;
-    
+    h_case.pass_fun_to_shelf(&hash_shelf::fill_in_neighborhood);
+    h_case.pass_fun_to_part(&particle_base::fill_phi_6);
+    h_case.pass_fun_to_part(&particle_base::print);
 
     
-
   }
   catch(const char * err){
     cerr<<err<<endl;
@@ -187,3 +131,4 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
   return;
 }
+

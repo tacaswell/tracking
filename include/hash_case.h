@@ -145,7 +145,9 @@ public:
   void D_rr(utilities::Coarse_grain_array& D)const;
 
   
-
+  /**
+     comupute lots of correlations, need to clean this up
+   */
   void D_lots(utilities::Coarse_grain_array & Duu,
 	      utilities::Coarse_grain_array & DuuL,
 	      utilities::Coarse_grain_array & DuuT,
@@ -174,6 +176,33 @@ public:
      pass one at 2-D gofr
    */
   void gofr2D(double max_d, utilities::Histogram2D& gofr2 ) const;
+
+  /**
+     Passes functions all the way down the pyramid, this one for void,
+     argument-less functions, non-const
+  */
+  void pass_fun_to_part(void(particle_base::*fun)());
+
+  /**
+     Passes functions all the way down the pyramid, this one for void,
+     argument-less functions, const
+  */
+  void pass_fun_to_part(void(particle_base::*fun)() const)const;
+
+
+
+  /**
+     Passes functions to the shelves in the case, this one for void,
+     argument-less functions
+  */
+  void pass_fun_to_shelf(void(hash_shelf::*fun)());
+
+  /**
+     Passes functions to the shelves in the case, this one for void,
+     argument-less functions
+  */
+  void pass_fun_to_shelf(void(hash_shelf::*fun)()const)const;
+
   
 
   ///Destructor
@@ -190,7 +219,7 @@ protected:
   /**
      Given a list of particles fills in the n_pos_link lists and appends
      the appropriate values to the p_pos_link lists when those particles are
-     added to the n_pos_link lists.
+
      @param
      tlist list of particles to find the possible next particles of
      @param in_it iterator to the vector h_case that points to the
@@ -258,7 +287,7 @@ void hash_case::init(master_box_t<particle> & mb,const utilities::Tuple & img_di
       int cf = (int)(p->get_value(wrapper::d_frame));
       if(cf != current_frame)
       {
-	cout<<"frame "<<cf<<": "<<current_count<<endl;
+	cout<<"frame "<<current_frame<<": "<<current_count<<endl;
 	current_frame = cf;
 	current_count = 1;
       }
@@ -276,7 +305,8 @@ void hash_case::init(master_box_t<particle> & mb,const utilities::Tuple & img_di
     }
   
   }
-  cout<<current_count<<endl;
+  cout<<"frame "<<current_frame<<": "<<current_count<<endl;
+
   inited = true;
 }
 

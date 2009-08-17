@@ -57,10 +57,6 @@ public:
   ~hash_box(){
     contents_.clear();
   }
-  
-
-  
-
 
   ///clears all the pointers, but doesn't destroy the box.
   void clear(){contents_.clear();}
@@ -186,11 +182,27 @@ public:
   ///uses intel code
   void gofr_ipp(unsigned int max_d, unsigned int nbins, 
        std::vector<int> bin_count,std::vector<double> bin_r);
-
+  
+  /**
+     computes 2D histogram 
+   */
   int gofr2D(double max_d, int nbins, hash_box* points,
 		       std::vector<double>& bin_count);
     
   ///@}
+
+  /**
+     Passes functions down the pyramid, this one for void, argument-less
+     functions noncosnst
+   */
+  void pass_fun_to_part(void(particle_base::*fun)());
+  /**
+
+     Passes functions down the pyramid, this one for void, argument-less
+     functions const
+   */
+  void pass_fun_to_part(void(particle_base::*fun)()const)const;
+  
 };
 }
 #endif

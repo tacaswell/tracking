@@ -250,6 +250,19 @@ public:
      Fills in the neighbor vectors for the particles in the shelf
    */
   void fill_in_neighborhood();
+
+  /**
+     Passes functions down the pyramid, this one for void, argument-less
+     functions non-const
+   */
+  void pass_fun_to_part(void(particle_base::*fun)());
+  
+
+  /**
+     Passes functions down the pyramid, this one for void, argument-less
+     functions, const
+   */
+  void pass_fun_to_part(void(particle_base::*fun)()const)const;
   
   
   

@@ -148,6 +148,9 @@ double particle_base::get_theta(const utilities::Tuple & origin) const{
 void particle_base::print()const{
   //    cout<<ind<<endl;
   cout<<unq_id_<<"\t";
+  cout<<neighborhood_.size()<<"\t";
+  cout<<s_order_parameter_<<"\t";
+  cout<<abs(s_order_parameter_)<<"\t";
   wrapper_in_->print(ind_);
 }
 

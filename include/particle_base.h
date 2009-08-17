@@ -174,7 +174,13 @@ public:
      Intialize the static data types for all particles
    */
   static void intialize_data_types(std::set<wrapper::p_vals>*  data_types);
-
+  /**
+     Sets the maximum neighborhood range
+   */
+  static void set_neighborhood_range(float in)
+  {
+    max_neighborhood_range_ = in;
+  }
   
 
 

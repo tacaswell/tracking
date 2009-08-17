@@ -294,9 +294,53 @@ void hash_case::gofr2D(double max_d, utilities::Histogram2D& gofr2 ) const
 for(vector<hash_shelf*>::const_iterator shelf_it = h_case_.begin();
       shelf_it!= h_case_.end();++shelf_it)
   {
-
-    
     (*shelf_it)->gofr2D(max_d,gofr2);
+  }
+}
+
+
+void hash_case::pass_fun_to_part(void(particle_base::*fun)())
+{
+  vector<hash_shelf*>::iterator myend =  h_case_.end();
+  for(vector<hash_shelf*>::iterator it = h_case_.begin();
+      it!=myend;++it)
+  {
+    (*it)->pass_fun_to_part(fun);
+    
+  }
+}
+
+
+void hash_case::pass_fun_to_shelf(void(hash_shelf::*fun)())
+{
+  vector<hash_shelf*>::iterator myend =  h_case_.end();
+  for(vector<hash_shelf*>::iterator it = h_case_.begin();
+      it!=myend;++it)
+  {
+    ((*it)->*fun)();
+    
+  }
+}
+
+void hash_case::pass_fun_to_part(void(particle_base::*fun)()const)const
+{
+  vector<hash_shelf*>::const_iterator myend =  h_case_.end();
+  for(vector<hash_shelf*>::const_iterator it = h_case_.begin();
+      it!=myend;++it)
+  {
+    (*it)->pass_fun_to_part(fun);
+    
+  }
+}
+
+
+void hash_case::pass_fun_to_shelf(void(hash_shelf::*fun)()const)const
+{
+  vector<hash_shelf*>::const_iterator myend =  h_case_.end();
+  for(vector<hash_shelf*>::const_iterator it = h_case_.begin();
+      it!=myend;++it)
+  {
+    ((*it)->*fun)();
     
   }
 }
