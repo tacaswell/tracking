@@ -82,9 +82,9 @@ void particle_base::priv_init(int i_ind)
 
 
 void particle_base::fill_position(){
-  position_[0] = wrapper_in_->get_value(ind_,wrapper::d_xpos);
-  position_[1] = wrapper_in_->get_value(ind_,wrapper::d_ypos);
-  frame_ = (int) (wrapper_in_->get_value(ind_, wrapper::d_frame));
+  position_[0] = wrapper_in_->get_value(ind_,wrapper::D_XPOS);
+  position_[1] = wrapper_in_->get_value(ind_,wrapper::D_YPOS);
+  frame_ = (int) (wrapper_in_->get_value(ind_, wrapper::D_FRAME));
   
 }
 
@@ -98,15 +98,15 @@ double particle_base::distancesq(const particle_base* part_in)const{
   //  return (position_ - (part_in->get_position())).magnitude_sqr();
   return (position_ - (part_in->position_ )).magnitude_sqr();
 
-  //   double X =get_value(wrapper::d_xpos) - part_in->get_value(wrapper::d_xpos);
-  //   double Y =get_value(wrapper::d_ypos) - part_in->get_value(wrapper::d_ypos);
+  //   double X =get_value(wrapper::D_XPOS) - part_in->get_value(wrapper::D_XPOS);
+  //   double Y =get_value(wrapper::D_YPOS) - part_in->get_value(wrapper::D_YPOS);
   //   //  double Z =get_value(wrapper::d_zpos) - part_in->get_value(wrapper::d_zpos);
   //   return X*X + Y*Y ;//+ Z*Z;
 }
 
 
 
-void particle_base::set_particle() const{
+void particle_base::output_to_wrapper() const{
   if(wrapper_out_ ==NULL)
     throw "wrapper_out_ not initialized";
 
@@ -130,7 +130,7 @@ void particle_base::set_particle() const{
 double particle_base::get_value(wrapper::p_vals type) const{
   //add check to make sure that the particle know about this
   //type
-  if(type == wrapper::d_unqid)
+  if(type == wrapper::D_UNQID)
     return (double)unq_id_;
   
   return wrapper_in_->get_value(ind_, type);

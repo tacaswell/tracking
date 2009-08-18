@@ -1,4 +1,4 @@
-//Copyright 2008,2009 Thomas A Caswell
+//Copyright 2009 Thomas A Caswell
 //tcaswell@uchicago.edu
 //http://jfi.uchicago.edu/~tcaswell
 //
@@ -22,39 +22,20 @@
 //containing parts covered by the terms of MATLAB User License, the
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
-#include "hash_shelf.h"
 
-#ifndef HASH_SHELF_3D
-#define HASH_SHELF_3D
-namespace tracking{
-  /**
-     Derived class from hash_shelf to deal with three dimensions
-   */
-class hash_shelf3d :public hash_shelf{
+namespace tracking
+{
+class hash_case;
+
+
+/**
+   Top level class to make my sense of hierarchy happy and to define
+   a clear interface for these things
+*/
+class Hash_case_writer{
 public:
-  unsigned int hash_function(particle_base* p){
-    return 
-      (((int)p->get_value(wrapper::d_zpos))/ppb)*((int)(hash_dims_[0]*hash_dims_[1]))+
-      (((int)p->get_value(wrapper::D_YPOS))/ppb)*((int)hash_dims_[1])+
-      (((int)p->get_value(wrapper::D_XPOS))/ppb);
-  }
-
-  hash_shelf3d(vector<int> imgsz, unsigned int ippb, int i_frame):
-    hash_shelf(imgsz, ippb, i_frame){};
-  void print();
-  void get_region( particle_base* p,
-		   hash_box* box, int range=1);
-  void get_region( int n,  int m, int s,
-		  hash_box* box, int range=1);
-
-  ~hash_shelf3d(){}
-protected:
-
-
-private:
+  Hash_case_writer(){};
+  virtual void write_hash_case(const hash_case * hc ) const=0;
+  virtual ~Hash_case_writer(){}
 };
 }
-  
-
-
-#endif

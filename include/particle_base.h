@@ -91,7 +91,7 @@ public:
   virtual void print() const;
 
   ///Store this particle in the output wrapper structure
-  virtual void set_particle() const;
+  virtual void output_to_wrapper() const;
   
 
   ///Returns the value of 'type' for the particle as specified

@@ -32,7 +32,7 @@ master_box::master_box(params_file* params_in,params_file* params_out ){
   out_wrapper = params_out->make_wrapper_out();
   
   data_types = in_wrapper->get_data_types();
-  data_types.insert(wrapper::d_unqid);
+  data_types.insert(wrapper::D_UNQID);
 
   
   contents.reserve(in_wrapper->num_entries());
@@ -53,7 +53,7 @@ master_box::master_box(params_file* params_in,params_file* params_out, int n ){
   out_wrapper = params_out->make_wrapper_out();
   
   data_types = in_wrapper->get_data_types();
-  data_types.insert(wrapper::d_unqid);
+  data_types.insert(wrapper::D_UNQID);
 
   particle_base::intialize_wrapper_in(in_wrapper);
   particle_base::intialize_wrapper_out(out_wrapper);

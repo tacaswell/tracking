@@ -263,8 +263,8 @@ void hash_case::init(master_box_t<particle> & mb,const utilities::Tuple & img_di
   }
     
 
-  mb.append_to_data_types(wrapper::d_next);
-  mb.append_to_data_types(wrapper::d_prev);
+  mb.append_to_data_types(wrapper::D_NEXT);
+  mb.append_to_data_types(wrapper::D_PREV);
   h_case_.resize(frames);
   h_case_.at(0) = new hash_shelf(img_dims, ppb,0);
   for(unsigned int j = 1; j<h_case_.size(); ++j){
@@ -284,7 +284,7 @@ void hash_case::init(master_box_t<particle> & mb,const utilities::Tuple & img_di
   for( int j = 0; j<max_sz; ++j){
     p = mb.get_particle(j);
     try{
-      int cf = (int)(p->get_value(wrapper::d_frame));
+      int cf = (int)(p->get_value(wrapper::D_FRAME));
       if(cf != current_frame)
       {
 	cout<<"frame "<<current_frame<<": "<<current_count<<endl;
@@ -296,10 +296,10 @@ void hash_case::init(master_box_t<particle> & mb,const utilities::Tuple & img_di
 	++current_count;
       }
       
-      (h_case_.at((int)(p->get_value(wrapper::d_frame))))->push(p);
+      (h_case_.at((int)(p->get_value(wrapper::D_FRAME))))->push(p);
     }
     catch(...){
-      int yar = (int)p->get_value(wrapper::d_frame);
+      int yar = (int)p->get_value(wrapper::D_FRAME);
       cout<<"trying to put in to shelf: "<<yar<<endl;
       return;
     }

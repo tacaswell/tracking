@@ -88,10 +88,10 @@ void particle_track::set_next(particle_track* n_next){
   if(next_!=NULL)
     throw "nuking the list";
   next_ = n_next;
-//   forward_disp_[0] = (n_next -> get_value(wrapper::d_xpos))
-//     - get_value(wrapper::d_xpos);
-//   forward_disp_[1] = (n_next -> get_value(wrapper::d_ypos))
-//     - get_value(wrapper::d_ypos);
+//   forward_disp_[0] = (n_next -> get_value(wrapper::D_XPOS))
+//     - get_value(wrapper::D_XPOS);
+//   forward_disp_[1] = (n_next -> get_value(wrapper::D_YPOS))
+//     - get_value(wrapper::D_YPOS);
   forward_disp_ = (n_next -> get_position()) - position_;
   
 
@@ -212,20 +212,20 @@ particle_track::~particle_track(){
 
 
 double particle_track::get_value(wrapper::p_vals type) const{
-  if(type == wrapper::d_next){
+  if(type == wrapper::D_NEXT){
     if(next_==NULL)
       return -1;
-    //    return next->get_value(wrapper::d_unqid);
-    return next_->get_value(wrapper::d_index);
+    //    return next->get_value(wrapper::D_UNQID);
+    return next_->get_value(wrapper::D_INDEX);
   }
-  if(type == wrapper::d_prev){
+  if(type == wrapper::D_PREV){
     if(prev_==NULL)
       return -1;
     // tac 2009-04-10
     // changed to match the other one
-    return prev_->get_value(wrapper::d_index);
+    return prev_->get_value(wrapper::D_INDEX);
   }
-  if(type ==wrapper::d_trackid)
+  if(type ==wrapper::D_TRACKID)
     {
 
       if(track==NULL)
@@ -236,15 +236,15 @@ double particle_track::get_value(wrapper::p_vals type) const{
   
   // tac 2009-07-17
   // added special cases to avoid call to wrappers
-  if(type ==wrapper::d_xpos)
+  if(type ==wrapper::D_XPOS)
   {
     return position_[0];
   }
-  if(type == wrapper::d_ypos)
+  if(type == wrapper::D_YPOS)
   {
     return position_[1];
   }
-  if(type == wrapper::d_frame)
+  if(type == wrapper::D_FRAME)
   {
     return frame_;
   }
@@ -270,8 +270,8 @@ double particle_track::distancesq_corrected(const particle_track* part_in)const{
 	     (part_in->position_ )  - ((part_in->shelf_)->get_cum_forward_disp()))
 	  ).magnitude_sqr();
 
-  //   double X =get_value(wrapper::d_xpos) - part_in->get_value(wrapper::d_xpos);
-  //   double Y =get_value(wrapper::d_ypos) - part_in->get_value(wrapper::d_ypos);
+  //   double X =get_value(wrapper::D_XPOS) - part_in->get_value(wrapper::D_XPOS);
+  //   double Y =get_value(wrapper::D_YPOS) - part_in->get_value(wrapper::D_YPOS);
   //   //  double Z =get_value(wrapper::d_zpos) - part_in->get_value(wrapper::d_zpos);
   //   return X*X + Y*Y ;//+ Z*Z;
 }

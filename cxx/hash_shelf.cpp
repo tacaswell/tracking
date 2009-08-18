@@ -48,7 +48,7 @@ void hash_shelf::push(particle_base * p){
   catch (std::exception& e)    {
     cout << e.what() << endl;
     std::cout<<hash_function(p)<<"\t"<<hash_.size()<<std::endl;
-    std::cout<<p->get_value(wrapper::d_ypos)<<"\t"<<p->get_value(wrapper::d_xpos)<<std::endl;
+    std::cout<<p->get_value(wrapper::D_YPOS)<<"\t"<<p->get_value(wrapper::D_XPOS)<<std::endl;
     p->print();
     throw;
 
@@ -74,7 +74,7 @@ void hash_shelf::push(particle_track * p){
   catch (std::exception& e)    {
     cout << e.what() << endl;
     std::cout<<hash_function(p)<<"\t"<<hash_.size()<<std::endl;
-    std::cout<<p->get_value(wrapper::d_ypos)<<"\t"<<p->get_value(wrapper::d_xpos)<<std::endl;
+    std::cout<<p->get_value(wrapper::D_YPOS)<<"\t"<<p->get_value(wrapper::D_XPOS)<<std::endl;
     p->print();
     throw;
 

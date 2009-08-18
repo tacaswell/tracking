@@ -355,8 +355,8 @@ inline unsigned int hash_shelf::hash_function(particle_base* p) const{
   return (unsigned int)
     (((unsigned int)cur_pos[1]/ppb)*hash_dims_[0] + cur_pos[0]/ppb);
 //   return (unsigned int)
-//     (((unsigned int)p->get_value(wrapper::d_ypos)/ppb)*hash_dims[0] +
-//        p->get_value(wrapper::d_xpos)/ppb);
+//     (((unsigned int)p->get_value(wrapper::D_YPOS)/ppb)*hash_dims[0] +
+//        p->get_value(wrapper::D_XPOS)/ppb);
 }
 }
 #endif

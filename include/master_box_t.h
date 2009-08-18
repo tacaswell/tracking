@@ -164,7 +164,7 @@ void master_box_t<particle>::init(params* params_in, params* params_out){
   out_wrapper = params_out->make_wrapper_out();
   
   data_types = in_wrapper->get_data_types();
-  data_types.insert(wrapper::d_unqid);
+  data_types.insert(wrapper::D_UNQID);
 
   
   particle_base::intialize_wrapper_in(in_wrapper);

@@ -94,7 +94,7 @@ wrapper_i_matlab::wrapper_i_matlab(params_matlab* param):
 {
   
   //   //nonsense to get the map set up
-  //   p_vals tmp[] = {d_index, d_xpos, d_ypos, d_I, d_r2, d_frame};
+  //   p_vals tmp[] = {d_index, D_XPOS, D_YPOS, d_I, d_r2, D_FRAME};
   //   int tmp2[] = {0, 1, 2 ,3,4,5};
     
   //   vector<wrapper::p_vals > tmp3(tmp, tmp+6);
@@ -111,8 +111,8 @@ wrapper_i_matlab::wrapper_i_matlab(params_matlab* param):
   //there has to be a better way to do this
 
   /*  cout<<data_types[d_index]<<"\t"
-      <<data_types[d_xpos	]<<"\t"
-      <<data_types[d_ypos	]<<"\t"
+      <<data_types[D_XPOS	]<<"\t"
+      <<data_types[D_YPOS	]<<"\t"
       <<data_types[d_I	]<<"\t"
       <<data_types[d_r2	]<<"\t"
       <<data_types[d_e    ]<<"\t"

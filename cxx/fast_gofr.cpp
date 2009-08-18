@@ -63,8 +63,8 @@ int main(int argc, char* argv[]) {
   // set up the input wrapper 
   //nonsense to get the map set up
   map<wrapper::p_vals, int> contents;
-  wrapper::p_vals tmp[] = {wrapper::d_xpos,
-			   wrapper::d_ypos};
+  wrapper::p_vals tmp[] = {wrapper::D_XPOS,
+			   wrapper::D_YPOS};
   int tmp2[] = {0, 1};
   vector<wrapper::p_vals > tmp3(tmp, tmp+2);
   vector<wrapper::p_vals>::iterator it1 = tmp3.begin();

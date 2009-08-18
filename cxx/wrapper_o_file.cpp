@@ -49,7 +49,14 @@ void wrapper_o_file::print()const{
 void wrapper_o_file::initialize(params_file* param){
   //This clearly needs to be fixed to do something with the 
   //parameter file
-  p_vals tmp[] = {d_index, d_xpos, d_ypos, d_I, d_r2, d_e};
+  p_vals tmp[] = {
+    wrapper::D_INDEX, 
+    wrapper::D_XPOS, 
+    wrapper::D_YPOS, 
+    wrapper::D_I, 
+    wrapper::D_R2, 
+    wrapper::D_E
+  };
   int tmp2[] = {0, 1, 2 ,3,4,5};
   
   vector<wrapper::p_vals > tmp3(tmp, tmp+6);

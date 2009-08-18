@@ -52,7 +52,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
   // set up the input wrapper 
   //nonsense to get the map set up
   map<wrapper::p_vals, int> contents;
-  wrapper::p_vals tmp[] = {wrapper::d_xpos,
+  wrapper::p_vals tmp[] = {wrapper::D_XPOS,
 			   wrapper::d_ypos, 
 			   wrapper::d_frame};
   int tmp2[] = {0, 1, 2 };

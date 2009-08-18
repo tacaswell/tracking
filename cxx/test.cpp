@@ -75,13 +75,13 @@ int main(){
   
   //nonsense to get the map set up
   map<wrapper::p_vals, int> contents;
-  //   wrapper::p_vals tmp[] = {wrapper::d_index,wrapper::d_xpos,
-  // 			   wrapper::d_ypos, wrapper::d_zpos, 
-  // 			   wrapper::d_frame};
+  //   wrapper::p_vals tmp[] = {wrapper::D_INDEX,wrapper::D_XPOS,
+  // 			   wrapper::D_YPOS, wrapper::d_zpos, 
+  // 			   wrapper::D_FRAME};
   //   int tmp2[] = {0, 1, 2 ,3,4};
-  wrapper::p_vals tmp[] = {wrapper::d_xpos,
-			   wrapper::d_ypos, 
-			   wrapper::d_frame};
+  wrapper::p_vals tmp[] = {wrapper::D_XPOS,
+			   wrapper::D_YPOS, 
+			   wrapper::D_FRAME};
   int tmp2[] = {0, 1, 2 };
   
 
@@ -159,9 +159,9 @@ int main(){
 //   //  params_file p = params_file(50*50,6);
 //   //  params_ning_hd p = params_ning_hd(20464,6);
 // //   map<wrapper::p_vals, int> contents;
-// //   wrapper::p_vals tmp[] = {wrapper::d_index,wrapper::d_xpos,
-// // 			   wrapper::d_ypos, wrapper::d_zpos, 
-// // 			   wrapper::d_frame};
+// //   wrapper::p_vals tmp[] = {wrapper::D_INDEX,wrapper::D_XPOS,
+// // 			   wrapper::D_YPOS, wrapper::d_zpos, 
+// // 			   wrapper::D_FRAME};
 // //   int tmp2[] = {0, 1, 2 ,3,4};
   
 // //   vector<wrapper::p_vals > tmp3(tmp, tmp+5);
@@ -176,13 +176,13 @@ int main(){
 // //     contents.insert(it3,pair<wrapper::p_vals, int>(*it1, *it2));
 //   //nonsense to get the map set up
 //   map<wrapper::p_vals, int> contents;
-// //   wrapper::p_vals tmp[] = {wrapper::d_index,wrapper::d_xpos,
-// // 			   wrapper::d_ypos, wrapper::d_zpos, 
-// // 			   wrapper::d_frame};
+// //   wrapper::p_vals tmp[] = {wrapper::D_INDEX,wrapper::D_XPOS,
+// // 			   wrapper::D_YPOS, wrapper::d_zpos, 
+// // 			   wrapper::D_FRAME};
 // //   int tmp2[] = {0, 1, 2 ,3,4};
-//   wrapper::p_vals tmp[] = {wrapper::d_xpos,
-// 			   wrapper::d_ypos, 
-// 			   wrapper::d_frame};
+//   wrapper::p_vals tmp[] = {wrapper::D_XPOS,
+// 			   wrapper::D_YPOS, 
+// 			   wrapper::D_FRAME};
 //   int tmp2[] = {0, 1, 2 };
 
 //   vector<wrapper::p_vals > tmp3(tmp, tmp+3);
@@ -203,7 +203,7 @@ int main(){
 //   params_file p_in = params_file(num_particles,"rawdata_from_matlab.txt",contents);
 //   //  params_file p_in = params_file(num_particles,"new_dummy.txt",contents);
 
-//   contents.insert(pair<wrapper::p_vals, int>(wrapper::d_trackid,3));
+//   contents.insert(pair<wrapper::p_vals, int>(wrapper::D_TRACKID,3));
   
 //   params_file p_out = params_file(num_particles,"new_out.txt",contents);
 
@@ -212,7 +212,7 @@ int main(){
 
 //   particle_base::intialize_wrapper_in(in_wrapper);
 //   std::set<wrapper::p_vals> data_types = in_wrapper->get_data_types();
-//   data_types.insert(wrapper::d_unqid);
+//   data_types.insert(wrapper::D_UNQID);
 
 
 
@@ -241,11 +241,11 @@ int main(){
 // //     const particle_track* tmp;
 // //     const particle_track* working;
 // //     working = *vec_it;
-// //     cout<<working->get_value(wrapper::d_unqid)<<"\t";
+// //     cout<<working->get_value(wrapper::D_UNQID)<<"\t";
 // //     tmp = working->get_prev();
 // //     if(tmp!=NULL)
 // //     {
-// //       cout<<tmp->get_value(wrapper::d_unqid)<<"\t";
+// //       cout<<tmp->get_value(wrapper::D_UNQID)<<"\t";
 // //     }
 // //     else
 // //     {
@@ -254,7 +254,7 @@ int main(){
 // //     tmp = working->get_next();
 // //     if(tmp!=NULL)
 // //     {
-// //       cout<<tmp->get_value(wrapper::d_unqid)<<"\t";
+// //       cout<<tmp->get_value(wrapper::D_UNQID)<<"\t";
 // //     }
 // //     else
 // //     {
@@ -271,7 +271,7 @@ int main(){
 //   {
 //     if(tmp_t!=NULL)
 //     {
-//       cout<<tmp_t->get_value(wrapper::d_unqid)<<"\t";
+//       cout<<tmp_t->get_value(wrapper::D_UNQID)<<"\t";
 //     }
 //     else
 //     {
@@ -298,7 +298,7 @@ int main(){
 
 
 // //   int frames;
-// //   frames = (int)bt.get_particle(bt.size() -1)->get_value(wrapper::d_frame);
+// //   frames = (int)bt.get_particle(bt.size() -1)->get_value(wrapper::D_FRAME);
 
   
 // //   hash_case s(bt,dims,5,frames+1);

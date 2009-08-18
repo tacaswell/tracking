@@ -76,7 +76,7 @@ void track_box::set_track() const{
   const particle_track * current_particle = t_first_;
   
   while(current_particle !=NULL){
-    current_particle -> set_particle();
+    current_particle -> output_to_wrapper();
     current_particle = current_particle->get_next();
   }
 

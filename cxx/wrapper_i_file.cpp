@@ -107,11 +107,11 @@ double wrapper_i_file::get_value(int ind,  wrapper::p_vals type)const{
 void wrapper_i_file::print(int ind){
   //  cout<< "file "<<"\t";
   cout<<get_value(ind, d_index)<<"\t";
-  cout<<get_value(ind,d_xpos ) <<"\t";
-  cout<<get_value(ind,d_ypos ) <<"\t";
+  cout<<get_value(ind,D_XPOS ) <<"\t";
+  cout<<get_value(ind,D_YPOS ) <<"\t";
   cout<<get_value(ind, d_I) <<"\t";
   cout<<get_value(ind, d_r2) <<"\t";
-  cout<<get_value(ind, d_frame) <<"\t";
+  cout<<get_value(ind, D_FRAME) <<"\t";
   cout<<endl;
 
 }
@@ -129,8 +129,8 @@ wrapper_i_file::~wrapper_i_file(){
 wrapper_i_file::wrapper_i_file(params_file* param):wrapper_i_base(param->contains){
   
   /*  cout<<contents[d_index]<<"\t"
-      <<contents[d_xpos	]<<"\t"
-      <<contents[d_ypos	]<<"\t"
+      <<contents[D_XPOS	]<<"\t"
+      <<contents[D_YPOS	]<<"\t"
       <<contents[d_I	]<<"\t"
       <<contents[d_r2	]<<"\t"
       <<contents[d_e    ]<<"\t"

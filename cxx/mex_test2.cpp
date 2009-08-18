@@ -158,13 +158,13 @@ void mexFunction( int nlhs, mxArray *plhs[],
     
     //nonsense to get the map set up
     map<wrapper::p_vals, int> contents;
-    //   wrapper::p_vals tmp[] = {wrapper::d_index,wrapper::d_xpos,
-    // 			   wrapper::d_ypos, wrapper::d_zpos, 
-    // 			   wrapper::d_frame};
+    //   wrapper::p_vals tmp[] = {wrapper::D_INDEX,wrapper::D_XPOS,
+    // 			   wrapper::D_YPOS, wrapper::d_zpos, 
+    // 			   wrapper::D_FRAME};
     //   int tmp2[] = {0, 1, 2 ,3,4};
-    wrapper::p_vals tmp[] = {wrapper::d_xpos,
-			     wrapper::d_ypos, 
-			     wrapper::d_frame};
+    wrapper::p_vals tmp[] = {wrapper::D_XPOS,
+			     wrapper::D_YPOS, 
+			     wrapper::D_FRAME};
     int tmp2[] = {0, 1, 2 };
   
 
@@ -182,7 +182,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
     //there has to be a better way to do this
   
     params_matlab p_in = params_matlab(prhs,contents);
-    contents.insert(pair<wrapper::p_vals, int>(wrapper::d_trackid,3));
+    contents.insert(pair<wrapper::p_vals, int>(wrapper::D_TRACKID,3));
   
     params_matlab p_out 
       = params_matlab(plhs,contents,mxGetM(*prhs),contents.size());
@@ -190,9 +190,9 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
     // params_ning p_in = params_ning(3,100*1000,contents);
 
-    //  contents.insert(pair<wrapper::p_vals, int>(wrapper::d_unqid,4));
-    //  contents[wrapper::d_index] = 5;
-    //  contents.insert(pair<wrapper::p_vals, int>(wrapper::d_trackid,3));
+    //  contents.insert(pair<wrapper::p_vals, int>(wrapper::D_UNQID,4));
+    //  contents[wrapper::D_INDEX] = 5;
+    //  contents.insert(pair<wrapper::p_vals, int>(wrapper::D_TRACKID,3));
     //  params_matlab p_out = params_matlab(plhs,contents,mxGetM(*prhs),contents.size());
     //  params_file p_out = params_file(5,contents);
     //  master_box b = master_box(&p,&p,6);

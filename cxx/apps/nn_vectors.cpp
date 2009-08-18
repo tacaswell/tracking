@@ -107,9 +107,9 @@ void mexFunction( int nlhs, mxArray *plhs[],
     
     //nonsense to get the map set up
     map<wrapper::p_vals, int> contents;
-    wrapper::p_vals tmp[] = {wrapper::d_xpos,
-			     wrapper::d_ypos, 
-			     wrapper::d_frame};
+    wrapper::p_vals tmp[] = {wrapper::D_XPOS,
+			     wrapper::D_YPOS, 
+			     wrapper::D_FRAME};
     int tmp2[] = {0, 1, 2 };
   
 
@@ -144,7 +144,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 //     {
 //       p = bt.get_particle(j);
 
-//       int tmp_frame = (int)p->get_value(wrapper::d_frame);
+//       int tmp_frame = (int)p->get_value(wrapper::D_FRAME);
 //       if(tmp_frame != cur_frame)
 //       {
 // 	cout<<tmp_frame<<"\t"<<j<<endl;

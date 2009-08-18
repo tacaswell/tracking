@@ -44,7 +44,7 @@ using std::ios;
  */
 
 void wrapper_i_ning::init(){
-//   p_vals tmp[] = {d_index, d_xpos, d_ypos, d_zpos, d_frame};
+//   p_vals tmp[] = {d_index, D_XPOS, D_YPOS, d_zpos, D_FRAME};
 //   int tmp2[] = {0, 1, 2 ,3,4};
 
 //   vector<wrapper::p_vals > tmp3(tmp, tmp+5);
@@ -59,8 +59,8 @@ void wrapper_i_ning::init(){
 //     contents.insert(it3,pair<p_vals, int>(*it1, *it2));
   
   /*  cout<<contents[d_index]<<"\t"
-      <<contents[d_xpos	]<<"\t"
-      <<contents[d_ypos	]<<"\t"
+      <<contents[D_XPOS	]<<"\t"
+      <<contents[D_YPOS	]<<"\t"
       <<contents[d_I	]<<"\t"
       <<contents[d_r2	]<<"\t"
       <<contents[d_e    ]<<"\t"

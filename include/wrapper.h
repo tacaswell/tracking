@@ -39,22 +39,25 @@ namespace tracking{
 class wrapper{
 public:
   ///enumeration for data types
-  enum p_vals {d_index=0, 
-	       d_xpos, 
-	       d_ypos, 
-	       d_frame, 
-	       d_I, 
-	       d_r2, 
-	       d_e,
-	       d_next,
-	       d_prev, 
-	       d_dx, 
-	       d_dy, 
-	       d_orgx, 
-	       d_orgy, 
-	       d_zpos,
-	       d_unqid,
-	       d_trackid};
+  enum p_vals {
+    D_INDEX=0, 
+    D_XPOS, 
+    D_YPOS, 
+    D_FRAME, 
+    D_I, 
+    D_R2, 
+    D_E,
+    D_NEXT,
+    D_PREV, 
+    D_DX, 
+    D_DY, 
+    D_ORGX, 
+    D_ORGY, 
+    D_ZPOS,
+    D_UNQID,
+    D_TRACKID,
+    D_S_ORDER_PARAMETER,
+  };
 
   ///Prints out the currents contents of the wrapper in some
   ///sort of sensible way.

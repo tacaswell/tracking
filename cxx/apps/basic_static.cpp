@@ -96,9 +96,9 @@ void mexFunction( int nlhs, mxArray *plhs[],
     //nonsense to get the map set up
     map<wrapper::p_vals, int> contents;
 
-    wrapper::p_vals tmp[] = {wrapper::d_xpos,
-			     wrapper::d_ypos, 
-			     wrapper::d_frame};
+    wrapper::p_vals tmp[] = {wrapper::D_XPOS,
+			     wrapper::D_YPOS, 
+			     wrapper::D_FRAME};
     int tmp2[] = {0, 1, 2};
     vector<wrapper::p_vals > tmp3(tmp, tmp+3);
     vector<wrapper::p_vals>::iterator it1 = tmp3.begin();
@@ -116,7 +116,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
  
 
 
-    contents.insert(pair<wrapper::p_vals, int>(wrapper::d_trackid,5));
+    contents.insert(pair<wrapper::p_vals, int>(wrapper::D_TRACKID,5));
     params_matlab p_out = params_matlab(plhs,contents,mxGetM(*prhs),
 					 contents.size());
 
@@ -129,7 +129,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 //     for(int k = 0;k<15;++k)
 //     {
 //       (bt.get_particle(k))->print();
-//       cout<<      (bt.get_particle(k))->get_value(wrapper::d_frame)<<endl;
+//       cout<<      (bt.get_particle(k))->get_value(wrapper::D_FRAME)<<endl;
 //     }
     
      
