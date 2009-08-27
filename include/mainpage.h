@@ -125,7 +125,7 @@ stand alone/IDL GUI
 The primary advantage of this implementation is that it is
 significantly faster than implantation in IDL or MATLAB simply because
 they are interpreted languages (~20x against the Blair code but I think
-that can be improved).  However, this implementation also provides
+that can be improved).  This implementation also provides
 structural advantages and allows information about the particle's
 spatial and temporal neighborhood to be quickly extracted.
 
@@ -136,13 +136,16 @@ wrapper classes that can be quickly subclassed to allow the program to
 take input/give output to basically anything.  Currently there are
 implementations for input/output from/to text files and MATLAB.
 
-Currently only track linking has been implemented, but the long
-term goal is to move all static and dynamic measurements in to
-this frame work.  There is also a long term plan to merge Peter Lu's
-particle identification code into this frame work.  The most current
-version of that code, as well as a MATLAB wrapper for it is available
-at 
-<a href="http://plutarc.sourceforge.net/">http://plutarc.sourceforge.net/</a>
+Currently track linking and a few basic static measurements
+ (g(r),\f$\Phi_6\f$) have been implemented, but the long term goal is
+ to move all static and dynamic measurements in to this frame work.
+ The frame work allows any measurement that requires information about
+ a particles neighborhood can be efficiently calculated.
+
+ There is also a long term plan to merge Peter Lu's particle
+ identification code into this frame work.  The most current version
+ of that code, as well as a MATLAB wrapper for it is available at <a
+ href="http://plutarc.sourceforge.net/">http://plutarc.sourceforge.net/</a>
  
 
 
