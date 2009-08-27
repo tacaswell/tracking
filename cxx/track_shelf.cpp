@@ -119,13 +119,11 @@ void track_shelf::print(){
 
 
 
-void track_shelf::set_shelf(){
-  for(map<int,track_box* >::iterator it = track_map.begin();
-      it!= track_map.end(); it++)
-    ((*it).second)->set_track();
-
-	
-}
+// void track_shelf::set_shelf(){
+//   for(map<int,track_box* >::iterator it = track_map.begin();
+//       it!= track_map.end(); it++)
+//     ((*it).second)->set_track();
+// }
 
 void track_shelf::remove_track_internal_(  map<int,track_box*>::iterator it)
 {

@@ -31,9 +31,9 @@
 #include <complex>
 
 //local includes
-#include "wrapper.h"
-#include "tuple.h"
 
+#include "tuple.h"
+#include "wrapper.h"
 
 #ifndef PARTICLE_BASE
 #define PARTICLE_BASE
@@ -90,8 +90,6 @@ public:
   ///Pring out a rasonable representation of the partile
   virtual void print() const;
 
-  ///Store this particle in the output wrapper structure
-  virtual void output_to_wrapper() const;
   
 
   ///Returns the value of 'type' for the particle as specified
@@ -157,6 +155,19 @@ public:
      \f]    
    */
   std::complex<float> compute_phi_6()const;
+
+  /**
+     returns the scaler order parameter
+   */
+  std::complex<float> get_scaler_order_pram()const
+  {
+    return s_order_parameter_;
+  }
+  
+  int get_neighborhood_size()const
+  {
+    return neighborhood_.size();
+  }
   
 
 
@@ -166,10 +177,7 @@ public:
      Intialize the static input wrapper for all particles
    */
   static void intialize_wrapper_in(const wrapper_i_base* in);
-  /**
-     Intialize the static output wrapper for all particles
-   */
-  static void intialize_wrapper_out(wrapper_o_base* out);
+
   /**
      Intialize the static data types for all particles
    */
@@ -189,12 +197,10 @@ protected:
   static int running_total_;
   ///object that takes care of all the underling data structures.
   const static wrapper_i_base* wrapper_in_;
-  ///object that takes care of 
-  static wrapper_o_base* wrapper_out_;
   ///Vector of the types of data that
   ///remove this
-
   static std::set<wrapper::p_vals>* data_types_;
+
   ///Identifier that comes from the wrapper
   int ind_;
   

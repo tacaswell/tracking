@@ -33,6 +33,11 @@
 #include "coarse_grain_array.h"
 #include "counted_vector.h"
 #include "array.h"
+
+#include "particle_base.h"
+#include "particle_track.h"
+
+
 using namespace tracking;
 using std::list;
 using utilities::Coarse_grain_array;
@@ -255,19 +260,30 @@ list<particle_track*> * hash_shelf::shelf_to_list() const{
 }
 
 
-void hash_shelf::shelf_to_list(std::list<particle_track*> *tmp) const{
-  tmp->clear();
+void hash_shelf::shelf_to_list(std::list<particle_track*> &tmp) const{
+  tmp.clear();
   for(vector<hash_box*>::const_iterator cur_box = hash_.begin(); cur_box<hash_.end(); ++cur_box)
     {
       
       for(vector<particle_base*>::iterator cur_part = (*cur_box)->begin();
 	  cur_part!=(*cur_box)->end(); ++cur_part)
 	{
-	  tmp->push_back(static_cast<particle_track*>(*cur_part));
+	  tmp.push_back(static_cast<particle_track*>(*cur_part));
 	}
     }
-  
-  
+}
+
+void hash_shelf::shelf_to_list(std::list<const particle_base*> &tmp) const{
+  tmp.clear();
+  for(vector<hash_box*>::const_iterator cur_box = hash_.begin(); cur_box<hash_.end(); ++cur_box)
+    {
+      
+      for(vector<particle_base*>::const_iterator cur_part = (*cur_box)->begin();
+	  cur_part!=(*cur_box)->end(); ++cur_part)
+	{
+	  tmp.push_back(*cur_part);
+	}
+    }
 }
 
 
@@ -819,7 +835,7 @@ void hash_shelf::next_nearest_neighbor_array(utilities::Array & pos_array,
 
 void hash_shelf::fill_in_neighborhood()
 {
-  cout<<"particle_count_"<<particle_count_<<endl;
+  //  cout<<"particle_count_"<<particle_count_<<endl;
   
   list<particle_base*> current_box;
   list<particle_base*> current_region;

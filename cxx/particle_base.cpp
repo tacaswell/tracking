@@ -24,7 +24,7 @@
 //the resulting work.
 #include "particle_base.h"
 #include "wrapper_i.h"
-#include "wrapper_o.h"
+
 #include <algorithm>
 #include <cmath>
 
@@ -42,7 +42,6 @@ int particle_base::running_total_ = 0;
 float particle_base::max_neighborhood_range_ = 0;
 
 // static initialization
-wrapper_o_base* particle_base::wrapper_out_ = NULL;
 const wrapper_i_base* particle_base::wrapper_in_ = NULL;
 std::set<wrapper::p_vals>* particle_base::data_types_ = NULL;
 
@@ -106,27 +105,6 @@ double particle_base::distancesq(const particle_base* part_in)const{
 
 
 
-void particle_base::output_to_wrapper() const{
-  if(wrapper_out_ ==NULL)
-    throw "wrapper_out_ not initialized";
-
-  wrapper::p_vals tmp_type;
-  map<wrapper::p_vals,int> * map_tmp = wrapper_out_->get_map_ptr();
-  wrapper_out_->start_new_particle();
-
-
-   for(map<wrapper::p_vals,int>::const_iterator it = map_tmp->begin();
-       it!=map_tmp->end(); it++){
-     tmp_type = (*it).first;
-     
-     
-     wrapper_out_->set_new_value(tmp_type, get_value(tmp_type));
-   }
-  wrapper_out_->end_new_particle();
-  
-}
-
-
 double particle_base::get_value(wrapper::p_vals type) const{
   //add check to make sure that the particle know about this
   //type
@@ -158,13 +136,6 @@ void particle_base::intialize_wrapper_in(const wrapper_i_base* in){
   if(wrapper_in_ !=NULL)
     throw "Wrapper in already initialized";
   wrapper_in_ = in;
-}
-
-
-void particle_base::intialize_wrapper_out(wrapper_o_base* out){
-  if(wrapper_out_ !=NULL)
-    throw "Wrapper out already initialized";
-  wrapper_out_ = out;
 }
 
 
@@ -248,7 +219,16 @@ bool particle_base::add_to_neighborhood(const particle_base* in)
 
 void particle_base::fill_phi_6()
 {
-  s_order_parameter_ = compute_phi_6();
+  try
+  {
+    s_order_parameter_ = compute_phi_6();
+  }
+  catch(const char * er)
+  {
+    std::cerr<<er<<endl;
+    print();
+  }
+  
 }
 
 

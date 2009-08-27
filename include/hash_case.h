@@ -203,6 +203,14 @@ public:
   */
   void pass_fun_to_shelf(void(hash_shelf::*fun)()const)const;
 
+  /**
+     returns the number of frames in the hash case
+   */
+  int get_num_frames() const
+  {
+    return h_case_.size();
+  }
+  
   
 
   ///Destructor

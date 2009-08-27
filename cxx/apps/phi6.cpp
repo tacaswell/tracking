@@ -32,7 +32,7 @@
 
 #include "hash_case.h"
 
-
+#include "master_box_t.h"
 #include "wrapper_i_matlab.h"
 #include "params_matlab.h"
 
@@ -42,11 +42,18 @@
 
 #include "matlab_utils.h"
 
+#include "generic_parameters_matlab.h"
+#include "generic_wrapper_base.h"
 
+#include "hash_case_writer_generic.h"
 
 using namespace tracking;
 using std::exception;
 using std::cerr;
+
+using utilities::Generic_wrapper_base;
+using utilities::Generic_parameters_matlab;
+using utilities::Hash_case_writer_generic;
 
 
 
@@ -54,7 +61,7 @@ extern void _main();
 void mexFunction( int nlhs, mxArray *plhs[], 
 		  int nrhs, const mxArray* prhs[] ){
 
-  if(nlhs!=0|| nrhs!=5){
+  if(nlhs!=1|| nrhs!=5){
     cout<<"Error, wrong number of arguments"<<endl;
     return;
   }
@@ -93,27 +100,32 @@ void mexFunction( int nlhs, mxArray *plhs[],
   
     params_matlab p_in = params_matlab(prhs,contents);
 
-    //this is meaningless and not used
-    params_matlab p_out = params_matlab(plhs,contents,mxGetM(*prhs),
- 					contents.size());
     
 
     
-    master_box_t<particle_base>master_box(&p_in,&p_out);
+    master_box_t<particle_base>master_box(&p_in);
     cout<<"total number of particles is: "<<master_box.size()<<endl;;
     
     
     hash_case h_case(master_box,dims,(int)ceil(neighbor_range),frames);
     cout<<"case built"<<endl;
     
-    h_case.print();
+//     h_case.print();
     
     particle_base::set_neighborhood_range(neighbor_range);
     
     h_case.pass_fun_to_shelf(&hash_shelf::fill_in_neighborhood);
     h_case.pass_fun_to_part(&particle_base::fill_phi_6);
-    h_case.pass_fun_to_part(&particle_base::print);
+//     h_case.pass_fun_to_part(&particle_base::print);
 
+    Generic_parameters_matlab arr_parm2(master_box.size(),6,plhs);
+    Generic_wrapper_base * ow = arr_parm2.make_wrapper();
+    Hash_case_writer_generic test(ow);
+    
+
+    
+    test.write_hash_case(&h_case);
+    
     
   }
   catch(const char * err){

@@ -68,7 +68,7 @@ public:
   
   ///Constructor for a master_box_t based on
   ///data read in from a txt file
-  master_box_t(params* prams_in, params* prams_out);
+  master_box_t(params* prams_in);
 
 
   master_box_t();
@@ -77,24 +77,13 @@ public:
   ///master_box_t.
   unsigned int size(){ return particle_vec.size();}
 
-  ///Finalized the out_wrapper (ie, write to disk)
-  void finalize_out(){
-    out_wrapper->finalize_wrapper();
-  }
-
-  ///initialize the out_wrapper
-  void initialize_out(){
-    out_wrapper->initialize_wrapper();
-  }
-  
-
   ///Cleans up hanging lists from the tracking procedure
   void clean_pos_link();
 
   /**
      public facing initilization attemting to deal with matlab
    */
-  void init(params* prams_in, params* prams_out);
+  void init(params* prams_in);
 
   ~master_box_t();
 
@@ -118,15 +107,6 @@ protected:
      parameter object.
   */
    wrapper_i_base * in_wrapper;
-  /**
-     Pointer to wrapper to take care of particle location
-     data output.  This class is responcible for creating
-     and destroying this wrapper.  This pointer will be handed
-     to every particle that is part of this master_box_t.  The
-     exact type of wrapper that is made will be determined by the
-     parameter object.
-  */
-  wrapper_o_base * out_wrapper;
   
   //imlement this
   unsigned int  imagesz1;
@@ -139,36 +119,36 @@ protected:
 
 
 template <class particle>
-master_box_t<particle>::master_box_t(params* params_in,params* params_out )
- :in_wrapper(NULL),out_wrapper(NULL){
+master_box_t<particle>::master_box_t(params* params_in )
+ :in_wrapper(NULL){
   
-  init(params_in,params_out );
+  init(params_in);
 
 }
 
 template <class particle>
 master_box_t<particle>::master_box_t()
-  :in_wrapper(NULL),out_wrapper(NULL){
+  :in_wrapper(NULL){
   
 
 }
 
 template <class particle>
-void master_box_t<particle>::init(params* params_in, params* params_out){
-  if(in_wrapper!=NULL || out_wrapper !=NULL){
+void master_box_t<particle>::init(params* params_in){
+  if(in_wrapper!=NULL){
     std::cout<<"can't re-initialize"<<std::endl;
     return;
   }
   
   in_wrapper = params_in->make_wrapper_in();
-  out_wrapper = params_out->make_wrapper_out();
+
   
   data_types = in_wrapper->get_data_types();
   data_types.insert(wrapper::D_UNQID);
 
   
   particle_base::intialize_wrapper_in(in_wrapper);
-  particle_base::intialize_wrapper_out(out_wrapper);
+  
   particle_base::intialize_data_types(&data_types);
 
   particle_vec.reserve(in_wrapper->num_entries());
@@ -195,7 +175,7 @@ master_box_t<particle>::~master_box_t(){
     }
   //deletes the wrapper objects
   delete in_wrapper;
-  delete out_wrapper;
+  
   
 //   std::cout<<"mb dead"<<std::endl;
 }

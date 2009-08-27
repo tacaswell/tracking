@@ -24,13 +24,16 @@
 //the resulting work.
 #include <vector>
 #include <list>
-#include "particle_base.h"
-#include "particle_track.h"
 
 
 #ifndef HASH_BOX
 #define HASH_BOX
+#include "wrapper.h"
+
 namespace tracking{
+class particle_base;
+class particle_track;
+
 /**
    Class for storing particles in the hash table.  This class will
    hold a list of any  generation of particles.  The primary purpose

@@ -23,9 +23,10 @@
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
 
-#ifndef HASH_CASE_WRITER
-#define HASH_CASE_WRITER
+#ifndef HASH_CASE_WRITER_GENERIC
+#define HASH_CASE_WRITER_GENERIC
 
+#include "hash_case_writer.h"
 
 namespace tracking
 {
@@ -35,19 +36,24 @@ class hash_case;
 
 namespace utilities
 {
-
+class Generic_wrapper_base;
 
 
 /**
-   Top level class to make my sense of hierarchy happy and to define
-   a clear interface for these things
+   outputs the hash_case to a generic wrapper so the 
 */
-class Hash_case_writer{
+class Hash_case_writer_generic: public Hash_case_writer{
 public:
-  Hash_case_writer(){};
-  virtual void write_hash_case(const tracking::hash_case*  hc ) const=0;
-  virtual ~Hash_case_writer(){}
+  Hash_case_writer_generic(Generic_wrapper_base * wo)
+    :output_wrapper_(wo){};
+  void write_hash_case( const tracking::hash_case* hc ) const;
+  virtual ~Hash_case_writer_generic(){}
+private:
+  Generic_wrapper_base * output_wrapper_;
+  
 };
 }
 
 #endif
+
+

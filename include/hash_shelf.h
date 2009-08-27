@@ -163,9 +163,14 @@ public:
   std::list<particle_track*> * shelf_to_list() const;
 
   /**
+     Converts the whole shelf to a list of const pointers
+   */
+  void shelf_to_list(std::list<const particle_base*> &tmp) const;
+  
+  /**
      Converts the whole shelf to a list
    */
-  void shelf_to_list(std::list<particle_track*> *tmp) const;
+  void shelf_to_list(std::list<particle_track*> &tmp) const;
   
   /**
      Computes the mean displacement of a frame.  This is done to deal

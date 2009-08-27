@@ -117,11 +117,9 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
 
     contents.insert(pair<wrapper::p_vals, int>(wrapper::D_TRACKID,5));
-    params_matlab p_out = params_matlab(plhs,contents,mxGetM(*prhs),
-					 contents.size());
 
 
-    master_box_t<particle_track>bt(&p_in,&p_out);
+    master_box_t<particle_track>bt(&p_in);
     
     track_shelf tracks;
     cout<<"total number of particles is: "<<bt.size()<<endl;
