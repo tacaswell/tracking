@@ -1,4 +1,4 @@
-//Copyright 2008,2009 Thomas A Caswell
+//Copyright 2009 Thomas A Caswell
 //tcaswell@uchicago.edu
 //http://jfi.uchicago.edu/~tcaswell
 //
@@ -22,50 +22,32 @@
 //containing parts covered by the terms of MATLAB User License, the
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
-#include "wrapper_i.h"
-#include "mex.h"
 
+#include "data_map.h"
+using namespace utilities;
+using std::map;
 
-#ifndef WRAPPER_I_MATLAB
-#define WRAPPER_I_MATLAB
-namespace tracking{
-
-class params_matlab;
-/**
-   Wrapper class for dealing with data from matlab
-*/
-
-class wrapper_i_matlab:public wrapper_i_base{
-private:
-  ///Pointer to double array that holds the data
-  doumle * data_array;
-  ///The number of rows in the array.  This isn't strictly needed,
-  ///hoever it should make returning values faster by amoritizing the
-  ///dereference cost, maybe
-  int rows;
-  ///The number of columns (and hence number of values in the array.
-  ///This isn't strictly needed, hoever it should make returning
-  ///values faster by amoritizing the dereference cost, maybe
-  int cols;
+Data_map:: Data_map(const std::map<utilities::D_TYPE,int>& in)
+{
+  int count = 0;
   
-  //anchor to data with in array
-  //  double * first;
-protected:
-
-  void init();
-public:
-  int num_entries();
-
-  //  void print(int ind);
-  void print();
-  double get_value(int ind, utilities::D_TYPE type);
-  
-  virtual ~wrapper_i_matlab();
-  wrapper_i_matlab(params_matlab* param);
-  wrapper_i_matlab();
-  
-};
-
+  for(std::map<utilities::D_TYPE,int>::const_iterator it = in.begin();
+      it!= in.end(); ++it)
+  {
+    if(!((*it).first<D_TYPE_COUNT))
+    {
+      throw "constants wrong, type out of array bounds";
+    }
+    data_layout_[(*it).first] = (*it).second;
+    ++count;
+    if(!(count<D_TYPE_COUNT))
+    {
+      throw "out of array spaces";
+    }
+  }
 }
 
-#endif
+
+
+
+  

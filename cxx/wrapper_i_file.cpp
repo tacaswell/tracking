@@ -82,7 +82,7 @@ void wrapper_i_file::fill_data(string file_name, int row, int col){
 }
 
 
-double wrapper_i_file::get_value(int ind,  wrapper::p_vals type)const{
+double wrapper_i_file::get_value(int ind,  utilities::D_TYPE type)const{
 
   
   int data_posistion = data_layout_[type];
@@ -140,10 +140,10 @@ wrapper_i_file::wrapper_i_file(params_file* param):wrapper_i_base(param->contain
   
 }
 
-/*set<wrapper::p_vals> get_data_types(){
-  set<wrapper::p_vals> tmp;
+/*set<utilities::D_TYPE> get_data_types(){
+  set<utilities::D_TYPE> tmp;
   for(;;)
-      return set<wrapper::p_vals>();
+      return set<utilities::D_TYPE>();
 
       }*/
 

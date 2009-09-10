@@ -22,20 +22,31 @@
 //containing parts covered by the terms of MATLAB User License, the
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
-#include "wrapper_i.h"
-#include "mex.h"
+
 
 
 #ifndef WRAPPER_I_MATLAB
 #define WRAPPER_I_MATLAB
-namespace tracking{
+
+#include <complex>
+
+#include "wrapper2.h"
+#include "mex.h"
+#include "data_map.h"
+
+namespace tracking
+{
+class particle_track;
+}
+
+namespace utilities{
 
 class params_matlab;
 /**
    Wrapper class for dealing with data from matlab
 */
 
-class wrapper_i_matlab:public wrapper_i_base{
+class Wrapper_i_matlab:public Wrapper_in{
 private:
   ///Pointer to matlab array that holds the data
   //  const mxArray * data_array;
@@ -50,19 +61,37 @@ private:
   ///anchor to data with in array
   double * first;
 protected:
-
+  /**
+     A map between the data types and a posistion in the data structure.
+     This orginally had been burried down in the derived classes, but 
+     I couldn't think of a data structure for storing particle data where
+     this sort of thing wasn't uesful.  Thus, it has been dragged up to
+     the top level.
+  */
+  std::map<utilities::D_TYPE, int> data_types_;
+  /**
+     object for fast lookup
+   */
+  Data_map data_map_;
+  /**
+     internal initialization
+   */
   void init();
 public:
-  int num_entries() const;
+  int get_num_entries() const;
 
   //  void print(int ind);
   void print()const;
-  double get_value(int ind, wrapper::p_vals type)const;
+  float get_value(int ind, utilities::D_TYPE type,int frame = 0)const;
+  void get_value(float &out,int ind, utilities::D_TYPE type,int frame = 0)const;
+  void get_value(std::complex<float> &out,int ind, utilities::D_TYPE type,int frame = 0)const;
   
-  virtual ~wrapper_i_matlab();
-  wrapper_i_matlab(params_matlab* param);
-  wrapper_i_matlab();
-  void fill_master_box(master_box_t<particle_track>& test) const{};
+  virtual ~Wrapper_i_matlab();
+  Wrapper_i_matlab(params_matlab* param);
+  Wrapper_i_matlab();
+  //void fill_master_box(tracking::master_box_t<tracking::particle_track>& test) const{};
+  std::set<utilities::D_TYPE> get_data_types() const;
+  void get_data_types(std::set<utilities::D_TYPE>&) const;
   
 };
 

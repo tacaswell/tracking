@@ -40,7 +40,7 @@ using tracking::hash_shelf;
 using tracking::particle_base;
 
 
-void Hash_case_writer_generic::write_hash_case(const hash_case*  hc)const
+void Hash_case_writer_generic::write_hash_case(const hash_case&  hc)const
 {
   output_wrapper_->initialize_wrapper();
   

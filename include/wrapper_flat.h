@@ -25,9 +25,9 @@
 #include <set>
 #include <map>
 
-#ifndef WRAPPER_
-#define WRAPPER_
-namespace tracking{
+#ifndef WRAPPER_FLAT
+#define WRAPPER_FLAT
+namespace utilities{
                                                                                
    
 
@@ -39,67 +39,15 @@ namespace tracking{
    data types
 */
 
-class wrapper{
+class Wrapper_flat{
 public:
-  ///enumeration for data types
-  enum p_vals {
-    D_INDEX=0, 
-    D_XPOS, 
-    D_YPOS, 
-    D_FRAME, 
-    D_I, 
-    D_R2, 
-    D_E,
-    D_NEXT,
-    D_PREV, 
-    D_DX, 
-    D_DY, 
-    D_ORGX, 
-    D_ORGY, 
-    D_ZPOS,
-    D_UNQID,
-    D_TRACKID,
-    D_S_ORDER_PARAMETER,
-  };
-
-
-  /**                                                                         
-     Enumeration for wrapper types
-  */                                                                         
-  enum W_TYPE{                                                                
-    W_MATLAB = 0,                                                           
-    W_TEXT,                                                                 
-    W_NING,                                                                 
-    W_HDF,                                                                  
-  };                                                                        
-
-
-
-  ///Prints out the currents contents of the wrapper in some
-  ///sort of sensible way.
-  virtual void print() const= 0;
   
-  ///returns the current number of particle entires that the wrapper
-  ///has under it's control.  
-  virtual int num_entries() const =0;
-
-  /**
-     Returns a set of the types of data that the wrapper knows how
-     to deal with.  
-  */
-  virtual  std::set<p_vals> get_data_types()const;
-
-  /**
-     Returns a pointer to the map
-  */
-  std::map<p_vals, int>* get_map_ptr(){
-    return &data_types_;
-  }
-
-  wrapper(std::map<p_vals,int>map_in);
-  wrapper(){};
-  virtual ~wrapper(){};
-
+  
+  
+  Wrapper_flat(std::map<p_vals,int>map_in);
+  Wrapper_flat(){};
+  virtual ~Wrapper_flat(){};
+  
   
 protected:
   ///Boolean value to determine if this is a cloned wrapper or not.

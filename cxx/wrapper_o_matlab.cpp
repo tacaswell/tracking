@@ -24,14 +24,16 @@
 //the resulting work.
 #include "wrapper_o_matlab.h"
 #include "params_matlab.h"
-using namespace tracking;
+#include <iostream>
+using namespace utilities;
 using std::cout;
+using std::endl;
 
-void wrapper_o_matlab::set_new_value(wrapper::p_vals type, double val){
+void Wrapper_o_matlab::set_value(utilities::D_TYPE type, float val){
 
 
 
-  int data_posistion = data_layout_[type];
+  int data_posistion = data_map_(type);
   if(data_posistion >=0){
     if(part_open){
       *(first + part_index  + rows * data_posistion) = val;
@@ -43,19 +45,19 @@ void wrapper_o_matlab::set_new_value(wrapper::p_vals type, double val){
   cout<<"wrapper doesn't have this data_type"<<endl;
 
 }
-void wrapper_o_matlab::end_new_particle(){
+void Wrapper_o_matlab::end_particle(){
   part_open = false;
   part_index = -1;
   //nothing else special needs to be done in this function because we
   //are writing straight into the matlab memory.  
   return;
 }
-void wrapper_o_matlab::finalize_wrapper(){
+void Wrapper_o_matlab::finalize_wrapper(){
   wrapper_open = false;
   //we don't need to do anything special for matlab arrays because we
   //are writing straight in to the memory
 }
-void wrapper_o_matlab::initialize_wrapper(){
+void Wrapper_o_matlab::initialize_wrapper(){
   if(wrapper_open){
     cout<<"err, wrapper is open";
     return;
@@ -66,7 +68,7 @@ void wrapper_o_matlab::initialize_wrapper(){
   wrapper_open = true;
 }
 
-void wrapper_o_matlab::reset_wrapper(params * param_in){
+void Wrapper_o_matlab::reset_wrapper(params * param_in){
   params_matlab* param;
   param = dynamic_cast<params_matlab*>(param_in);
   seq_count = 0;
@@ -76,7 +78,7 @@ void wrapper_o_matlab::reset_wrapper(params * param_in){
   data_array_ = param->data_out;
 };
 
-void wrapper_o_matlab::start_new_particle(){
+void Wrapper_o_matlab::new_particle(){
   if(part_open)
     cout<<"particle already open w_o_m"<<endl;
 
@@ -92,14 +94,14 @@ void wrapper_o_matlab::start_new_particle(){
 }
 
 
-wrapper_o_matlab::wrapper_o_matlab(params_matlab* parms)
-  :wrapper_o_base(parms->contains),data_array_(parms->data_out),
-   rows(parms->rows),cols(parms->cols){
-  //this needs more sanity checking!
-}
+Wrapper_o_matlab::Wrapper_o_matlab(params_matlab* parms)
+  :data_array_(parms->data_out),
+   rows(parms->rows),cols(parms->cols),
+   data_map_(parms->contains)
+{}
   
 
-wrapper_o_matlab::~wrapper_o_matlab(){
+Wrapper_o_matlab::~Wrapper_o_matlab(){
   //
   if(wrapper_open)
     finalize_wrapper();
@@ -108,7 +110,7 @@ wrapper_o_matlab::~wrapper_o_matlab(){
 }
 
  
-void wrapper_o_matlab::print()const
+void Wrapper_o_matlab::print()const
 {
   cout<<rows<<"\t"<<cols<<endl;
   

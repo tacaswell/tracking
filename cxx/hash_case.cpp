@@ -24,12 +24,18 @@
 //the resulting work.
 #include "hash_case.h"
 #include <stdexcept> // out_of_range exception
+#include <iostream>
+#include <vector>
 #include "tuple.h"
 #include "array.h"
 #include "cell.h"
 using namespace tracking;
 using std::list;
 using utilities::Tuple;
+using std::cout;
+using std::endl;
+using std::vector;
+using std::pair;
 
 void hash_case::print() const{
   for(unsigned int j = 0; j<h_case_.size();j++){

@@ -23,7 +23,7 @@
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
 #include "particle_base.h"
-#include "wrapper_i.h"
+#include "wrapper2.h"
 
 #include <algorithm>
 #include <cmath>
@@ -38,12 +38,13 @@ using std::endl;
 using std::complex;
 
 using utilities::Tuple;
+using utilities::Wrapper_in;
 int particle_base::running_total_ = 0;
 float particle_base::max_neighborhood_range_ = 0;
 
 // static initialization
-const wrapper_i_base* particle_base::wrapper_in_ = NULL;
-std::set<wrapper::p_vals>* particle_base::data_types_ = NULL;
+const Wrapper_in* particle_base::wrapper_in_ = NULL;
+std::set<utilities::D_TYPE>* particle_base::data_types_ = NULL;
 
 
 // constructors 
@@ -81,9 +82,9 @@ void particle_base::priv_init(int i_ind)
 
 
 void particle_base::fill_position(){
-  position_[0] = wrapper_in_->get_value(ind_,wrapper::D_XPOS);
-  position_[1] = wrapper_in_->get_value(ind_,wrapper::D_YPOS);
-  frame_ = (int) (wrapper_in_->get_value(ind_, wrapper::D_FRAME));
+  position_[0] = wrapper_in_->get_value(ind_,utilities::D_XPOS);
+  position_[1] = wrapper_in_->get_value(ind_,utilities::D_YPOS);
+  frame_ = (int) (wrapper_in_->get_value(ind_, utilities::D_FRAME));
   
 }
 
@@ -97,18 +98,18 @@ double particle_base::distancesq(const particle_base* part_in)const{
   //  return (position_ - (part_in->get_position())).magnitude_sqr();
   return (position_ - (part_in->position_ )).magnitude_sqr();
 
-  //   double X =get_value(wrapper::D_XPOS) - part_in->get_value(wrapper::D_XPOS);
-  //   double Y =get_value(wrapper::D_YPOS) - part_in->get_value(wrapper::D_YPOS);
-  //   //  double Z =get_value(wrapper::d_zpos) - part_in->get_value(wrapper::d_zpos);
+  //   double X =get_value(utilities::D_XPOS) - part_in->get_value(utilities::D_XPOS);
+  //   double Y =get_value(utilities::D_YPOS) - part_in->get_value(utilities::D_YPOS);
+  //   //  double Z =get_value(utilities::d_zpos) - part_in->get_value(utilities::d_zpos);
   //   return X*X + Y*Y ;//+ Z*Z;
 }
 
 
 
-double particle_base::get_value(wrapper::p_vals type) const{
+double particle_base::get_value(utilities::D_TYPE type) const{
   //add check to make sure that the particle know about this
   //type
-  if(type == wrapper::D_UNQID)
+  if(type == utilities::D_UNQID)
     return (double)unq_id_;
   
   return wrapper_in_->get_value(ind_, type);
@@ -129,17 +130,19 @@ void particle_base::print()const{
   cout<<neighborhood_.size()<<"\t";
   cout<<s_order_parameter_<<"\t";
   cout<<abs(s_order_parameter_)<<"\t";
-  wrapper_in_->print(ind_);
+  cout<<"finish this"<<endl;
+  
+  //wrapper_in_->print(ind_);
 }
 
-void particle_base::intialize_wrapper_in(const wrapper_i_base* in){
+void particle_base::intialize_wrapper_in(const Wrapper_in* in){
   if(wrapper_in_ !=NULL)
     throw "Wrapper in already initialized";
   wrapper_in_ = in;
 }
 
 
-void particle_base::intialize_data_types(std::set<wrapper::p_vals>*  data_types){
+void particle_base::intialize_data_types(std::set<utilities::D_TYPE>*  data_types){
   if(data_types_ !=NULL)
     throw "data types already initialized";
   data_types_ = data_types;

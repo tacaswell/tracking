@@ -185,7 +185,7 @@ public:
   /**
      Returns the value of type for this particle.
    */
-  virtual double get_value(wrapper::p_vals type) const;
+  virtual double get_value(utilities::D_TYPE type) const;
 
   /**
      Returns pointer to the shelf the particle resides in

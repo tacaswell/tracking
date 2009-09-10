@@ -29,43 +29,45 @@
 #include <string>
 
 #include "mex.h"
-
-#include "wrapper_i.h"
 #include "params_matlab.h"
 #include "wrapper_i_matlab.h"
 
-using namespace tracking;
+using namespace utilities;
 using std::cout;
+using std::complex;
+using std::endl;
+using std::set;
+using std::map;
 
 /**
    Implementation for wrapper_i of files.
  */
 
 
-int wrapper_i_matlab::num_entries()const{
+int Wrapper_i_matlab::get_num_entries()const{
   return rows;
 }
 
 
 
-double wrapper_i_matlab::get_value(int ind,  wrapper::p_vals type)const{
+float Wrapper_i_matlab::get_value(int ind,  utilities::D_TYPE type,int junk)const{
   //note that this is sideways to deal with the fact that matlab is
   //blasted coloum major
 
 
-  std::map<p_vals,int>::const_iterator it = data_types_.find(type);
-  if(it == data_types_.end())
-    {
-      throw "type not in wrapper";
-    }
+//   std::map<utilities::D_TYPE,int>::const_iterator it = data_types_.find(type);
+//   if(it == data_types_.end())
+//     {
+//       throw "type not in wrapper";
+//     }
   
-  int data_posistion = data_layout_[type];
+  int data_posistion = data_map_(type);
   if(data_posistion >=0)
     return *(first + ind  + rows * data_posistion);
 
   
   //deal with error
-  cout<<"wraper does not store this type of data, size of set it: "
+  cout<<"wrapper does not store this type of data, size of set is: "
       <<data_types_.size()
       <<   endl;
   //    return;
@@ -74,30 +76,56 @@ double wrapper_i_matlab::get_value(int ind,  wrapper::p_vals type)const{
 
 }
 
+void Wrapper_i_matlab::get_value(float &out,int ind, utilities::D_TYPE type,int frame)const
+{
+  out = get_value(ind,type,frame);
+}
 
-void wrapper_i_matlab::print()const{
+void Wrapper_i_matlab::get_value(std::complex<float> &out,int ind, utilities::D_TYPE type,int frame)const
+{
+  throw " this wrapper type does not deal with complex yet";
+}
+
+
+void Wrapper_i_matlab::print()const{
   cout<<"rows: "<<rows<<" cols: "<<cols<<endl;
 }
 
 
-wrapper_i_matlab::~wrapper_i_matlab(){
+Wrapper_i_matlab::~Wrapper_i_matlab(){
   //don't need to do anything here because everything is taken care of
   //by matlab, or so we hope.
   first = NULL;
   
 }
 
-wrapper_i_matlab::wrapper_i_matlab(params_matlab* param):
-  wrapper_i_base(param->contains),
-   rows(mxGetM(*(param->data_in))),
-  cols(mxGetN(*(param->data_in))), first(mxGetPr(*(param->data_in)))
+
+std::set<utilities::D_TYPE> Wrapper_i_matlab::get_data_types() const{
+  set<utilities::D_TYPE> tmp;
+  for(map<utilities::D_TYPE,int>::const_iterator it = data_types_.begin();
+      it!= data_types_.end(); it++)
+    tmp.insert((*it).first);
+  return set<utilities::D_TYPE>(tmp);
+}
+
+
+void Wrapper_i_matlab::get_data_types(std::set<utilities::D_TYPE>& out) const{
+  out = get_data_types();
+  
+}
+
+
+Wrapper_i_matlab::Wrapper_i_matlab(params_matlab* param):
+  rows(mxGetM(*(param->data_in))),
+  cols(mxGetN(*(param->data_in))), first(mxGetPr(*(param->data_in))),
+  data_map_(param->contains)
 {
   
   //   //nonsense to get the map set up
   //   p_vals tmp[] = {d_index, D_XPOS, D_YPOS, d_I, d_r2, D_FRAME};
   //   int tmp2[] = {0, 1, 2 ,3,4,5};
     
-  //   vector<wrapper::p_vals > tmp3(tmp, tmp+6);
+  //   vector<utilities::D_TYPE > tmp3(tmp, tmp+6);
   //   vector<p_vals>::iterator it1 = tmp3.begin();
     
   //   vector<int> tmp4(tmp2, tmp2+6);
@@ -118,6 +146,7 @@ wrapper_i_matlab::wrapper_i_matlab(params_matlab* param):
       <<data_types[d_e    ]<<"\t"
       <<endl;
   */
+
 
   
 }

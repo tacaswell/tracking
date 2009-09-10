@@ -22,38 +22,57 @@
 //containing parts covered by the terms of MATLAB User License, the
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
-#include "wrapper_o.h"
-#include "mex.h"
 
 
 #ifndef WRAPPER_O_MATLAB
 #define WRAPPER_O_MATLAB
+#include <complex>
+
+#include "wrapper2.h"
+#include "data_map.h"
+#include "mex.h"
 
 
-namespace tracking{
+
+namespace utilities{
 class params_matlab;
 /**
    Wrapper class for dealing with output to matlab
 */
-class wrapper_o_matlab:public wrapper_o_base{
+class Wrapper_o_matlab:public Wrapper_out{
 public:  
 //   //old
 
-//   void set_value(int, tracking::wrapper::p_vals, double)  {};
+//   void set_value(int, tracking::utilities::D_TYPE, double)  {};
 //   void print(int);
 //   int  add_particle()                                     {return 0;}; 
 
 
   //new
-  void set_new_value(wrapper::p_vals type, double val);
-  void end_new_particle();
+  void set_value(utilities::D_TYPE type, float val);
+  void set_value(utilities::D_TYPE type, std::complex<float> val)
+  {
+    throw "not implemented";
+  }
+  void end_particle();
+  void edit_particle(int)
+  {
+    throw "not implemented";
+  }
+  void open_plane(int)
+  {
+    throw "not implemented";
+  }
+  void close_plane(){
+    throw "not implemented";
+  }
   void finalize_wrapper();
   void initialize_wrapper();
   void reset_wrapper(params * param);
-  void start_new_particle();
+  void new_particle();
   
-  wrapper_o_matlab(params_matlab* parms);
-  ~wrapper_o_matlab();
+  Wrapper_o_matlab(params_matlab* parms);
+  ~Wrapper_o_matlab();
 
   void print()const;
 
@@ -61,6 +80,19 @@ public:
   
 
  protected:
+    ///Count of the number of particles that have been added
+  int part_count;
+  
+  ///to be removed, move this accounting to derived classes
+  ///posistion in squence
+  int seq_count;
+
+  ///if a particle is 'opened'
+  bool part_open;
+  
+  ///if the wrapper is 'open' to get additional particles
+  bool wrapper_open;
+  
 
   
  private:
@@ -78,6 +110,11 @@ public:
   double * first;
   ///index of current open particle
   int part_index;
+  /**
+     object that does type to index conversion
+   */
+  Data_map data_map_;
+  
 };
 
 }

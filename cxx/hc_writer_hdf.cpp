@@ -23,37 +23,28 @@
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
 
-#ifndef HASH_CASE_WRITER_GENERIC
-#define HASH_CASE_WRITER_GENERIC
 
-#include "hash_case_writer.h"
+#include "hash_case_writer_hdf.h"
+#include "tuple.h"
 
-namespace tracking
+#include "hash_case.h"
+#include <list>
+#include <complex>
+
+
+using namespace utilities;
+using std::list;
+using std::complex;
+using tracking::hash_case;
+using tracking::hash_shelf;
+using tracking::particle_base;
+
+void Hash_case_writer_hdf::write_hash_case(const hash_case* hc)
 {
-class hash_case;
+  // set up hdf file stuff
+
+  // ask hash case what kinds of information it contains
+
+  // ask the file what kinds of 
 }
-
-
-namespace utilities
-{
-class Generic_wrapper_base;
-
-
-/**
-   outputs the hash_case to a generic wrapper so the 
-*/
-class Hash_case_writer_generic: public Hash_case_writer{
-public:
-  Hash_case_writer_generic(Generic_wrapper_base * wo)
-    :output_wrapper_(wo){};
-  void write_hash_case( const tracking::hash_case& hc ) const;
-  virtual ~Hash_case_writer_generic(){}
-private:
-  Generic_wrapper_base * output_wrapper_;
-  
-};
-}
-
-#endif
-
 

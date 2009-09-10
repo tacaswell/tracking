@@ -96,7 +96,7 @@ public:
   //Sets the value of 'type' for particle 'ind' to be 'val'
   //this assume random acess, gives too much control away from this
   //class
-  //virtual void set_value(int ind, wrapper::p_vals type,double val)=0;
+  //virtual void set_value(int ind, utilities::D_TYPE type,double val)=0;
   //Prints the entry ind
   //this is for debugging only, will be removed (maybe)
   //virtual void print(int ind)=0;
@@ -154,7 +154,7 @@ public:
      @param val
      the value to set the parameter to
   */
-  virtual void set_new_value(wrapper::p_vals type, double val)=0;
+  virtual void set_new_value(utilities::D_TYPE type, double val)=0;
   
   /**
      'closes' a partcile anc garuntees that the data is written to the

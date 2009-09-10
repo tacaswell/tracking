@@ -107,27 +107,27 @@ void mexFunction( int nlhs, mxArray *plhs[],
     
     
     //nonsense to get the map set up
-    map<wrapper::p_vals, int> contents;
-    //   wrapper::p_vals tmp[] = {wrapper::D_INDEX,wrapper::D_XPOS,
+    map<utilities::D_TYPE, int> contents;
+    //   utilities::D_TYPE tmp[] = {wrapper::D_INDEX,wrapper::D_XPOS,
     // 			   wrapper::D_YPOS, wrapper::d_zpos, 
     // 			   wrapper::D_FRAME};
     //   int tmp2[] = {0, 1, 2 ,3,4};
-    wrapper::p_vals tmp[] = {wrapper::D_XPOS,
+    utilities::D_TYPE tmp[] = {wrapper::D_XPOS,
 			     wrapper::D_YPOS, 
 			     wrapper::D_FRAME};
     int tmp2[] = {0, 1, 2 };
   
 
-    vector<wrapper::p_vals > tmp3(tmp, tmp+3);
-    vector<wrapper::p_vals>::iterator it1 = tmp3.begin();
+    vector<utilities::D_TYPE > tmp3(tmp, tmp+3);
+    vector<utilities::D_TYPE>::iterator it1 = tmp3.begin();
 
     vector<int> tmp4(tmp2, tmp2+3);
     vector<int>::iterator it2 = tmp4.begin();
 
-    map<wrapper::p_vals, int>::iterator it3 = contents.begin();
+    map<utilities::D_TYPE, int>::iterator it3 = contents.begin();
 
     for( ;it2<tmp4.end() && it1<tmp3.end() ; it1++, it2++, it3++)
-      contents.insert(it3,pair<wrapper::p_vals, int>(*it1, *it2));
+      contents.insert(it3,pair<utilities::D_TYPE, int>(*it1, *it2));
     //end nonsense
     //there has to be a better way to do this
     
@@ -157,7 +157,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
 
     params_matlab p_in = params_matlab(prhs,contents);
-    contents.insert(pair<wrapper::p_vals, int>(wrapper::D_TRACKID,3));
+    contents.insert(pair<utilities::D_TYPE, int>(wrapper::D_TRACKID,3));
     
     params_matlab p_out = params_matlab(plhs,contents,mxGetM(*prhs),
  					contents.size());
@@ -167,9 +167,9 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
     // params_ning p_in = params_ning(3,100*1000,contents);
 
-    //  contents.insert(pair<wrapper::p_vals, int>(wrapper::D_UNQID,4));
+    //  contents.insert(pair<utilities::D_TYPE, int>(wrapper::D_UNQID,4));
     //  contents[wrapper::D_INDEX] = 5;
-    //  contents.insert(pair<wrapper::p_vals, int>(wrapper::D_TRACKID,3));
+    //  contents.insert(pair<utilities::D_TYPE, int>(wrapper::D_TRACKID,3));
     //  params_matlab p_out = params_matlab(plhs,contents,mxGetM(*prhs),contents.size());
     //  params_file p_out = params_file(5,contents);
     //  master_box b = master_box(&p,&p,6);

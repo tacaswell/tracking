@@ -94,19 +94,19 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
 
     //nonsense to get the map set up
-    map<wrapper::p_vals, int> contents;
+    map<utilities::D_TYPE, int> contents;
 
-    wrapper::p_vals tmp[] = {wrapper::D_XPOS,
+    utilities::D_TYPE tmp[] = {wrapper::D_XPOS,
 			     wrapper::D_YPOS, 
 			     wrapper::D_FRAME};
     int tmp2[] = {0, 1, 2};
-    vector<wrapper::p_vals > tmp3(tmp, tmp+3);
-    vector<wrapper::p_vals>::iterator it1 = tmp3.begin();
+    vector<utilities::D_TYPE > tmp3(tmp, tmp+3);
+    vector<utilities::D_TYPE>::iterator it1 = tmp3.begin();
     vector<int> tmp4(tmp2, tmp2+3);
     vector<int>::iterator it2 = tmp4.begin();
-    map<wrapper::p_vals, int>::iterator it3 = contents.begin();
+    map<utilities::D_TYPE, int>::iterator it3 = contents.begin();
     for( ;it2<tmp4.end() && it1<tmp3.end() ; it1++, it2++, it3++)
-      contents.insert(it3,pair<wrapper::p_vals, int>(*it1, *it2));
+      contents.insert(it3,pair<utilities::D_TYPE, int>(*it1, *it2));
     //end nonsense
     //there has to be a better way to do this
 
@@ -116,7 +116,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
  
 
 
-    contents.insert(pair<wrapper::p_vals, int>(wrapper::D_TRACKID,5));
+    contents.insert(pair<utilities::D_TYPE, int>(wrapper::D_TRACKID,5));
 
 
     master_box_t<particle_track>bt(&p_in);

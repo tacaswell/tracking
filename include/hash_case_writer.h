@@ -45,7 +45,7 @@ namespace utilities
 class Hash_case_writer{
 public:
   Hash_case_writer(){};
-  virtual void write_hash_case(const tracking::hash_case*  hc ) const=0;
+  virtual void write_hash_case(const tracking::hash_case&  hc ) const=0;
   virtual ~Hash_case_writer(){}
 };
 }

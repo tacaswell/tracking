@@ -48,7 +48,7 @@ int wrapper_i_matlab::num_entries(){
 
 
 
-double wrapper_i_matlab::get_value(int ind,  wrapper::p_vals type){
+double wrapper_i_matlab::get_value(int ind,  utilities::D_TYPE type){
   //note that this is sideways to deal with the fact that matlab is
   //blasted coloum major
 
@@ -96,7 +96,7 @@ wrapper_i_matlab::wrapper_i_matlab(params_matlab* param):
   //   p_vals tmp[] = {d_index, D_XPOS, D_YPOS, d_I, d_r2, D_FRAME};
   //   int tmp2[] = {0, 1, 2 ,3,4,5};
     
-  //   vector<wrapper::p_vals > tmp3(tmp, tmp+6);
+  //   vector<utilities::D_TYPE > tmp3(tmp, tmp+6);
   //   vector<p_vals>::iterator it1 = tmp3.begin();
     
   //   vector<int> tmp4(tmp2, tmp2+6);

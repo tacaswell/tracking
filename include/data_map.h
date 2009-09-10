@@ -1,4 +1,4 @@
-//Copyright 2008,2009 Thomas A Caswell
+//Copyright 2009 Thomas A Caswell
 //tcaswell@uchicago.edu
 //http://jfi.uchicago.edu/~tcaswell
 //
@@ -22,50 +22,40 @@
 //containing parts covered by the terms of MATLAB User License, the
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
-#include "wrapper_i.h"
-#include "mex.h"
 
+#ifndef DATA_MAP
+#define DATA_MAP
 
-#ifndef WRAPPER_I_MATLAB
-#define WRAPPER_I_MATLAB
-namespace tracking{
+#include <map>
 
-class params_matlab;
+#include "wrapper2.h"
+
+namespace utilities
+{
 /**
-   Wrapper class for dealing with data from matlab
-*/
-
-class wrapper_i_matlab:public wrapper_i_base{
-private:
-  ///Pointer to double array that holds the data
-  doumle * data_array;
-  ///The number of rows in the array.  This isn't strictly needed,
-  ///hoever it should make returning values faster by amoritizing the
-  ///dereference cost, maybe
-  int rows;
-  ///The number of columns (and hence number of values in the array.
-  ///This isn't strictly needed, hoever it should make returning
-  ///values faster by amoritizing the dereference cost, maybe
-  int cols;
-  
-  //anchor to data with in array
-  //  double * first;
-protected:
-
-  void init();
+   class to handle translation from D_TYPE to column
+   position for flat data structures 
+ */
+class Data_map
+{
 public:
-  int num_entries();
-
-  //  void print(int ind);
-  void print();
-  double get_value(int ind, utilities::D_TYPE type);
+  Data_map(const std::map<utilities::D_TYPE,int>& in);
+  ~Data_map(){}
+  /**
+     looks up the position of in
+   */
+  int operator()(utilities::D_TYPE in)const
+  {
+    return data_layout_[in];
+  }
   
-  virtual ~wrapper_i_matlab();
-  wrapper_i_matlab(params_matlab* param);
-  wrapper_i_matlab();
+  
+private:
+  
+  int data_layout_[D_TYPE_COUNT];
   
 };
-
 }
+
 
 #endif

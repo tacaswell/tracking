@@ -45,7 +45,7 @@ void hash_box::print(){
 
 }
 
-void hash_box::get_val_vec(vector<double> & vec, wrapper::p_vals type){
+void hash_box::get_val_vec(vector<double> & vec, utilities::D_TYPE type){
   
   vec.reserve(contents_.size());
   vector<particle_base *>::iterator it;

@@ -44,7 +44,7 @@ class params_file;
    explicitly told to write the data to disk
  */
 
-class wrapper_o_file :public wrapper_o_base{
+class wrapper_o_file :public Wrapper_out{
 private:
 
 protected:
@@ -68,7 +68,7 @@ protected:
   void store_data(int index, int pos, double val);
   
   ///Map that stores what values go where in what columns
-  map<wrapper::p_vals, int> contents;
+  map<utilities::D_TYPE, int> contents;
 
 
 
@@ -89,11 +89,11 @@ public:
 
   int num_entries() const{return data.size();}
 
-  //  virtual void set_value(int ind, wrapper::p_vals type,double val);
+  //  virtual void set_value(int ind, utilities::D_TYPE type,double val);
 
 
 
-  void set_new_value(wrapper::p_vals type, double val);
+  void set_new_value(utilities::D_TYPE type, double val);
   void end_new_particle();
   void finalize_wrapper();
   void initialize_wrapper();

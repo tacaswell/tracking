@@ -49,7 +49,7 @@ public:
      @param s filename
      @param contents map of contents
    */
-  params_file(int a,  string  s, std::map<wrapper::p_vals,int> contents )
+  params_file(int a,  string  s, std::map<utilities::D_TYPE,int> contents )
     :params(contents),rows(a),cols(contents.size()), fname(s)
   {
   }
@@ -61,16 +61,16 @@ public:
      @param a number of particles
      @param contents map of contents
    */
-  params_file(int a,  std::map<wrapper::p_vals,int> contents )
+  params_file(int a,  std::map<utilities::D_TYPE,int> contents )
     :params(contents),rows(a),cols(contents.size()), fname("dummy.txt"){
   }
 
-  wrapper_i_base* make_wrapper_in(){
+  Wrapper_in* make_wrapper_in(){
     return new wrapper_i_file(this);
   }
 
 
-  wrapper_o_base* make_wrapper_out(){
+  Wrapper_out* make_wrapper_out(){
     return new wrapper_o_file(this);
   }
 

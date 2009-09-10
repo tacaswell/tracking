@@ -44,12 +44,12 @@ using namespace tracking;
 
 const int BUFF_LEN = 50;
 
-Wrapper_i_hdf5::Wrapper_i_hdf5(map<wrapper::p_vals, int> wrap):
+Wrapper_i_hdf5::Wrapper_i_hdf5(map<utilities::D_TYPE, int> wrap):
   wrapper_i_base(wrap),file_name_("processed_30um_27-2_0.h5")
 {
   
 }
-double Wrapper_i_hdf5::get_value(int, tracking::wrapper::p_vals) const
+double Wrapper_i_hdf5::get_value(int, tracking::utilities::D_TYPE) const
 {
   
 }
@@ -97,7 +97,7 @@ int Wrapper_i_hdf5::num_entries() const
 
 void Wrapper_i_hdf5::fill_master_box(master_box_t<particle_track> & master_box) const
 {
-  std::set<wrapper::p_vals> data_type_tmp = this->get_data_types();
+  std::set<utilities::D_TYPE> data_type_tmp = this->get_data_types();
   
   particle_base::intialize_wrapper_in(this);
   particle_base::intialize_data_types(&data_type_tmp);

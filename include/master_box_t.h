@@ -28,7 +28,7 @@
 #include "particle_base.h"
 #include "params.h"
 
-#include "wrapper.h"
+#include "wrapper2.h"
 
 #ifndef MASTER_BOX_T
 #define MASTER_BOX_T
@@ -61,14 +61,14 @@ public:
   /**
      adds a new type to the data_types
    */
-  void append_to_data_types(wrapper::p_vals type){
+  void append_to_data_types(utilities::D_TYPE type){
     data_types.insert(type);
   }
 
   
   ///Constructor for a master_box_t based on
   ///data read in from a txt file
-  master_box_t(params* prams_in);
+  master_box_t(utilities::params* prams_in);
 
 
   master_box_t();
@@ -83,7 +83,7 @@ public:
   /**
      public facing initilization attemting to deal with matlab
    */
-  void init(params* prams_in);
+  void init(utilities::params* prams_in);
 
   ~master_box_t();
 
@@ -96,7 +96,7 @@ protected:
      polymorphism.  This class is responcible to creating and destroying
      all of the particle objects.
   */
-  vector<particle*> particle_vec;
+  std::vector<particle*> particle_vec;
   
   /**
      Pointer to wrapper to take care of particle location
@@ -106,20 +106,20 @@ protected:
      exact type of wrapper that is made will be determined by the
      parameter object.
   */
-   wrapper_i_base * in_wrapper;
+  utilities::Wrapper_in * in_wrapper;
   
   //imlement this
   unsigned int  imagesz1;
   unsigned int  imagesz2;
 
-  std::set<wrapper::p_vals> data_types;
+  std::set<utilities::D_TYPE> data_types;
 
 };
 
 
 
 template <class particle>
-master_box_t<particle>::master_box_t(params* params_in )
+master_box_t<particle>::master_box_t(utilities::params* params_in )
  :in_wrapper(NULL){
   
   init(params_in);
@@ -134,7 +134,7 @@ master_box_t<particle>::master_box_t()
 }
 
 template <class particle>
-void master_box_t<particle>::init(params* params_in){
+void master_box_t<particle>::init(utilities::params* params_in){
   if(in_wrapper!=NULL){
     std::cout<<"can't re-initialize"<<std::endl;
     return;
@@ -144,15 +144,16 @@ void master_box_t<particle>::init(params* params_in){
 
   
   data_types = in_wrapper->get_data_types();
-  data_types.insert(wrapper::D_UNQID);
+  data_types.insert(utilities::D_UNQID);
 
   
   particle_base::intialize_wrapper_in(in_wrapper);
   
   particle_base::intialize_data_types(&data_types);
+  
+  int num_entries= in_wrapper->get_num_entries();
+  particle_vec.reserve(num_entries);
 
-  particle_vec.reserve(in_wrapper->num_entries());
-  int num_entries= in_wrapper->num_entries();
   
   for(int j = 0; j<num_entries; ++j){
     particle_vec.push_back( new particle(j));

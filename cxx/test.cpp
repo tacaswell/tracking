@@ -25,7 +25,7 @@
 //standard includes
 #include<iostream>
 #include<fstream>
-#include <mcheck.h>
+
 
 //my includes
 #include "wrapper.h"
@@ -74,27 +74,27 @@ using H5::FileIException;
 int main(){
   
   //nonsense to get the map set up
-  map<wrapper::p_vals, int> contents;
-  //   wrapper::p_vals tmp[] = {wrapper::D_INDEX,wrapper::D_XPOS,
+  map<utilities::D_TYPE, int> contents;
+  //   utilities::D_TYPE tmp[] = {wrapper::D_INDEX,wrapper::D_XPOS,
   // 			   wrapper::D_YPOS, wrapper::d_zpos, 
   // 			   wrapper::D_FRAME};
   //   int tmp2[] = {0, 1, 2 ,3,4};
-  wrapper::p_vals tmp[] = {wrapper::D_XPOS,
+  utilities::D_TYPE tmp[] = {wrapper::D_XPOS,
 			   wrapper::D_YPOS, 
 			   wrapper::D_FRAME};
   int tmp2[] = {0, 1, 2 };
   
 
-  vector<wrapper::p_vals > tmp3(tmp, tmp+3);
-  vector<wrapper::p_vals>::iterator it1 = tmp3.begin();
+  vector<utilities::D_TYPE > tmp3(tmp, tmp+3);
+  vector<utilities::D_TYPE>::iterator it1 = tmp3.begin();
 
   vector<int> tmp4(tmp2, tmp2+3);
   vector<int>::iterator it2 = tmp4.begin();
 
-  map<wrapper::p_vals, int>::iterator it3 = contents.begin();
+  map<utilities::D_TYPE, int>::iterator it3 = contents.begin();
 
   for( ;it2<tmp4.end() && it1<tmp3.end() ; it1++, it2++, it3++)
-    contents.insert(it3,pair<wrapper::p_vals, int>(*it1, *it2));
+    contents.insert(it3,pair<utilities::D_TYPE, int>(*it1, *it2));
   //end nonsense
   //there has to be a better way to do this
     
@@ -158,43 +158,43 @@ int main(){
 //   //  mtrace();
 //   //  params_file p = params_file(50*50,6);
 //   //  params_ning_hd p = params_ning_hd(20464,6);
-// //   map<wrapper::p_vals, int> contents;
-// //   wrapper::p_vals tmp[] = {wrapper::D_INDEX,wrapper::D_XPOS,
+// //   map<utilities::D_TYPE, int> contents;
+// //   utilities::D_TYPE tmp[] = {wrapper::D_INDEX,wrapper::D_XPOS,
 // // 			   wrapper::D_YPOS, wrapper::d_zpos, 
 // // 			   wrapper::D_FRAME};
 // //   int tmp2[] = {0, 1, 2 ,3,4};
   
-// //   vector<wrapper::p_vals > tmp3(tmp, tmp+5);
-// //   vector<wrapper::p_vals>::iterator it1 = tmp3.begin();
+// //   vector<utilities::D_TYPE > tmp3(tmp, tmp+5);
+// //   vector<utilities::D_TYPE>::iterator it1 = tmp3.begin();
   
 // //   vector<int> tmp4(tmp2, tmp2+5);
 // //   vector<int>::iterator it2 = tmp4.begin();
   
-// //   map<wrapper::p_vals, int>::iterator it3 = contents.begin();
+// //   map<utilities::D_TYPE, int>::iterator it3 = contents.begin();
   
 // //   for( ;it2<tmp4.end() && it1<tmp3.end() ; it1++, it2++, it3++)
-// //     contents.insert(it3,pair<wrapper::p_vals, int>(*it1, *it2));
+// //     contents.insert(it3,pair<utilities::D_TYPE, int>(*it1, *it2));
 //   //nonsense to get the map set up
-//   map<wrapper::p_vals, int> contents;
-// //   wrapper::p_vals tmp[] = {wrapper::D_INDEX,wrapper::D_XPOS,
+//   map<utilities::D_TYPE, int> contents;
+// //   utilities::D_TYPE tmp[] = {wrapper::D_INDEX,wrapper::D_XPOS,
 // // 			   wrapper::D_YPOS, wrapper::d_zpos, 
 // // 			   wrapper::D_FRAME};
 // //   int tmp2[] = {0, 1, 2 ,3,4};
-//   wrapper::p_vals tmp[] = {wrapper::D_XPOS,
+//   utilities::D_TYPE tmp[] = {wrapper::D_XPOS,
 // 			   wrapper::D_YPOS, 
 // 			   wrapper::D_FRAME};
 //   int tmp2[] = {0, 1, 2 };
 
-//   vector<wrapper::p_vals > tmp3(tmp, tmp+3);
-//   vector<wrapper::p_vals>::iterator it1 = tmp3.begin();
+//   vector<utilities::D_TYPE > tmp3(tmp, tmp+3);
+//   vector<utilities::D_TYPE>::iterator it1 = tmp3.begin();
 
 //   vector<int> tmp4(tmp2, tmp2+3);
 //   vector<int>::iterator it2 = tmp4.begin();
 
-//   map<wrapper::p_vals, int>::iterator it3 = contents.begin();
+//   map<utilities::D_TYPE, int>::iterator it3 = contents.begin();
 
 //   for( ;it2<tmp4.end() && it1<tmp3.end() ; it1++, it2++, it3++)
-//     contents.insert(it3,pair<wrapper::p_vals, int>(*it1, *it2));
+//     contents.insert(it3,pair<utilities::D_TYPE, int>(*it1, *it2));
 //   //end nonsense
 //   //there has to be a better way to do this
 
@@ -203,15 +203,15 @@ int main(){
 //   params_file p_in = params_file(num_particles,"rawdata_from_matlab.txt",contents);
 //   //  params_file p_in = params_file(num_particles,"new_dummy.txt",contents);
 
-//   contents.insert(pair<wrapper::p_vals, int>(wrapper::D_TRACKID,3));
+//   contents.insert(pair<utilities::D_TYPE, int>(wrapper::D_TRACKID,3));
   
 //   params_file p_out = params_file(num_particles,"new_out.txt",contents);
 
-//   wrapper_i_base * in_wrapper = p_in.make_wrapper_in();
+//   Wrapper_in * in_wrapper = p_in.make_wrapper_in();
   
 
 //   particle_base::intialize_wrapper_in(in_wrapper);
-//   std::set<wrapper::p_vals> data_types = in_wrapper->get_data_types();
+//   std::set<utilities::D_TYPE> data_types = in_wrapper->get_data_types();
 //   data_types.insert(wrapper::D_UNQID);
 
 

@@ -435,7 +435,7 @@ void track_shelf::initial_corrected_pos_to_wrapper(utilities::Generic_wrapper_ba
     
     data_out_wrapper->append_to_row(i_pos[0]);
     data_out_wrapper->append_to_row(i_pos[1]);
-    data_out_wrapper->append_to_row(working_track_ptr->get_value(wrapper::D_FRAME));
+    data_out_wrapper->append_to_row(working_track_ptr->get_value(utilities::D_FRAME));
     
     data_out_wrapper->finish_row();
   }
@@ -462,7 +462,7 @@ void track_shelf::corrected_tracks_out(Cell & output, utilities::Generic_wrapper
     
     data_out_wrapper->append_to_row(i_pos[0]);
     data_out_wrapper->append_to_row(i_pos[1]);
-    data_out_wrapper->append_to_row(working_track_ptr->get_value(wrapper::D_FRAME));
+    data_out_wrapper->append_to_row(working_track_ptr->get_value(utilities::D_FRAME));
     
     data_out_wrapper->finish_row();
     

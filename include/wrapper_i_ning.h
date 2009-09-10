@@ -41,11 +41,11 @@ public:
 
   //  void print(int ind);
   void print()const;
-  double get_value(int ind, wrapper::p_vals type)const;
+  double get_value(int ind, utilities::D_TYPE type)const;
   
   virtual ~wrapper_i_ning();
   wrapper_i_ning(params_file* param);
-  wrapper_i_ning(std::map<wrapper::p_vals,int>map_in);
+  wrapper_i_ning(std::map<utilities::D_TYPE,int>map_in);
   void fill_master_box(master_box_t<particle_track>& test)const;
 protected:
   ///Pointer to the first data point of the 
@@ -55,7 +55,7 @@ protected:
   int rows;
 
   int cols;
-  //std::map<wrapper::p_vals, int> contents;
+  //std::map<utilities::D_TYPE, int> contents;
   virtual void fill_data(std::string file_name, int row, int col);
   void init();
 

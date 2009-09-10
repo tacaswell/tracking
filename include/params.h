@@ -23,16 +23,16 @@
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
 #include <string>
-#include "wrapper.h"
-#include "wrapper_i.h"
-#include "wrapper_o.h"
+#include <map>
+#include "wrapper2.h"
+
 
 
 
 
 #ifndef PARAMS
 #define PARAMS
-namespace tracking{
+namespace utilities{
 /**
     Abstract base Class to handle passing parameters around between
     the levels of the functions.  This will have lots of children.
@@ -41,9 +41,9 @@ namespace tracking{
 class params{
 
 public:
-  std::map<wrapper::p_vals,int> contains;
+  std::map<utilities::D_TYPE,int> contains;
   ///Default constructor
-  params(std::map<wrapper::p_vals,int> contents ):contains(contents){};
+  params(std::map<utilities::D_TYPE,int> contents ):contains(contents){};
   ///hack to make stuff compile, kill this!
   //  params(){};
   ///virtual default destructor
@@ -56,7 +56,7 @@ public:
      probably be moved in to protected and have every child class be
      friends with master_box.
    */
-  virtual wrapper_o_base* make_wrapper_out()=0;
+  virtual Wrapper_out* make_wrapper_out()=0;
   /**
      Returns a pointer to a wrapper_i object based on the parameter
      object.  This function instataites an object, but the paramter
@@ -65,7 +65,7 @@ public:
      be moved in to protected and have every child class be friends
      with master_box.
    */
-  virtual wrapper_i_base* make_wrapper_in()=0;
+  virtual Wrapper_in* make_wrapper_in()=0;
 protected:
 };
 }

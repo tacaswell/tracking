@@ -47,7 +47,7 @@ void wrapper_i_ning::init(){
 //   p_vals tmp[] = {d_index, D_XPOS, D_YPOS, d_zpos, D_FRAME};
 //   int tmp2[] = {0, 1, 2 ,3,4};
 
-//   vector<wrapper::p_vals > tmp3(tmp, tmp+5);
+//   vector<utilities::D_TYPE > tmp3(tmp, tmp+5);
 //   vector<p_vals>::iterator it1 = tmp3.begin();
 
 //   vector<int> tmp4(tmp2, tmp2+5);
@@ -68,7 +68,7 @@ void wrapper_i_ning::init(){
 
 }
 
-wrapper_i_ning::wrapper_i_ning(std::map<wrapper::p_vals,int>map_in)
+wrapper_i_ning::wrapper_i_ning(std::map<utilities::D_TYPE,int>map_in)
   :wrapper_i_base(map_in)
 {
 
@@ -130,10 +130,10 @@ int wrapper_i_ning::num_entries()const{
 }
 
 
- double wrapper_i_ning::get_value(int ind,  wrapper::p_vals type)const{
+ double wrapper_i_ning::get_value(int ind,  utilities::D_TYPE type)const{
 
 
- //   map<wrapper::p_vals,int>::iterator it = data_types.find(type);
+ //   map<utilities::D_TYPE,int>::iterator it = data_types.find(type);
 
  //   if(it !=data_types.end()){
  //     return *(first + ind * cols + (*it).second);

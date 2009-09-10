@@ -59,7 +59,7 @@ void wrapper_o_file::initialize(params_file* param){
   };
   int tmp2[] = {0, 1, 2 ,3,4,5};
   
-  vector<wrapper::p_vals > tmp3(tmp, tmp+6);
+  vector<utilities::D_TYPE > tmp3(tmp, tmp+6);
   vector<p_vals>::iterator it1 = tmp3.begin();
 
   vector<int> tmp4(tmp2, tmp2+6);
@@ -80,7 +80,7 @@ void wrapper_o_file::initialize(params_file* param){
 //   return seq_count++;
 // }
 
-// void wrapper_o_file::set_value(int ind, wrapper::p_vals type,double val){
+// void wrapper_o_file::set_value(int ind, utilities::D_TYPE type,double val){
 //   (data.at(ind)).at(contents[type]) = val;
 // }
 
@@ -118,7 +118,7 @@ void wrapper_o_file::start_new_particle(){
   
 }
 
-void wrapper_o_file::set_new_value(wrapper::p_vals type, double val){
+void wrapper_o_file::set_new_value(utilities::D_TYPE type, double val){
   
   int data_posistion = data_layout_[type];
   if(data_posistion >=0){

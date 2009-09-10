@@ -131,7 +131,7 @@ public:
      Averages g(r) over the contained hash_shelfs 
    */
   void gofr_norm(double max_d, int nbins,
-		 vector<double>& bin_count,vector<double>& bin_r) const;
+		 std::vector<double>& bin_count,std::vector<double>& bin_r) const;
 
   /**
      Computes D_rr, theu two point microrhelogy correlation.
@@ -219,7 +219,7 @@ protected:
   /**
      vector of pointers to shelves
    */
-  vector<hash_shelf*> h_case_;
+  std::vector<hash_shelf*> h_case_;
 
 
   
@@ -236,7 +236,7 @@ protected:
      the maximum allowed displacement when looking for possible particles
   */
   void fill_pos_link_next(std::list<particle_track*>* tlist, 
-			  vector<hash_shelf*>::iterator in_it, double max_disp);
+			  std::vector<hash_shelf*>::iterator in_it, double max_disp);
 
   
   
@@ -295,7 +295,7 @@ void hash_case::init(master_box_t<particle> & mb,const utilities::Tuple & img_di
       int cf = (int)(p->get_value(wrapper::D_FRAME));
       if(cf != current_frame)
       {
-	cout<<"frame "<<current_frame<<": "<<current_count<<endl;
+	std::cout<<"frame "<<current_frame<<": "<<current_count<<std::endl;
 	current_frame = cf;
 	current_count = 1;
       }
@@ -308,12 +308,12 @@ void hash_case::init(master_box_t<particle> & mb,const utilities::Tuple & img_di
     }
     catch(...){
       int yar = (int)p->get_value(wrapper::D_FRAME);
-      cout<<"trying to put in to shelf: "<<yar<<endl;
+      std::cout<<"trying to put in to shelf: "<<yar<<std::endl;
       return;
     }
   
   }
-  cout<<"frame "<<current_frame<<": "<<current_count<<endl;
+  std::cout<<"frame "<<current_frame<<": "<<current_count<<std::endl;
 
   inited = true;
 }

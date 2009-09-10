@@ -53,7 +53,7 @@ protected:
   
 
 public:
-  virtual double get_value(int ind, wrapper::p_vals type) const=0;
+  virtual double get_value(int ind, utilities::D_TYPE type) const=0;
   virtual void print(int ind)const;
   virtual int num_entries() const =0;
   wrapper_i_base(std::map<p_vals,int>map_in):wrapper(map_in){};

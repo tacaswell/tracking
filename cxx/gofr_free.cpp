@@ -22,6 +22,7 @@
 //containing parts covered by the terms of MATLAB User License, the
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
+#include <iostream>
 #include "hash_box.h"
 #include "hash_shelf.h"
 #include "hash_case.h"
@@ -33,6 +34,9 @@
 
 using namespace tracking;
 using std::list;
+using std::vector;
+using std::endl;
+using std::cout;
 
 using utilities::Histogram2D;
 

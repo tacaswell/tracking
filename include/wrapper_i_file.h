@@ -47,14 +47,14 @@ protected:
   int rows;
 
   int cols;
-  map<wrapper::p_vals, int> contents;
+  map<utilities::D_TYPE, int> contents;
   void fill_data(string file_name, int row, int col);
 public:
   int num_entries() const;
 
   //  void print(int ind);
   void print()const;
-  double get_value(int ind, wrapper::p_vals type)const;
+  double get_value(int ind, utilities::D_TYPE type)const;
   
   ~wrapper_i_file();
   wrapper_i_file(params_file* param);

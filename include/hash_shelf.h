@@ -129,13 +129,13 @@ public:
 
   ///returns the fully normalized g(r)
   void gofr_norm(double max_d, int nbins,
-	    vector<double>& bin_count,vector<double>& bin_r) const;
+	    std::vector<double>& bin_count,std::vector<double>& bin_r) const;
   /**
      returns the total number of particles.  The bin_c is
      normalized by area and density, but not averaged
    */
   int gofr(double max_d, int nbins,
-	    vector<double>& bin_count,vector<double>& bin_r) const;
+	    std::vector<double>& bin_count,std::vector<double>& bin_r) const;
 
   /**
      returns the total number of particles.  The bin_c is
@@ -143,7 +143,7 @@ public:
      not reinitialize the data arrays
    */
 
-  double gofr(double max_d, int nbins, vector<double>& bin_count,int & count) const;
+  double gofr(double max_d, int nbins, std::vector<double>& bin_count,int & count) const;
   ///@}
 
   
@@ -279,7 +279,7 @@ protected:
   ///Main data structure.  This is an vector of
   ///hash boxes.  For simplicity the strcuture is stored as
   ///a 1-D array and the class takes care of the 1D<->2D conversion
-  vector<hash_box*> hash_;
+  std::vector<hash_box*> hash_;
   
   ///@name grid properties.
   /// These should not be allowed to change once
@@ -341,8 +341,8 @@ hash_shelf::hash_shelf(master_box_t<particle> & mb, int imsz1,
 		       int imsz2, unsigned int PPB): ppb(PPB){
   img_dims_[0] = imsz1;
   img_dims_[1] = imsz2;
-  cout<<img_dims_[0]<<endl
-      <<img_dims_[1]<<endl;
+  std::cout<<img_dims_[0]<<std::endl
+      <<img_dims_[1]<<std::endl;
   init2();
   for(unsigned int j = 0; j<mb.size();j++)
     {

@@ -31,7 +31,7 @@ using std::endl;
 void wrapper_i_base::print(int ind) const{
   //  cout<< "file "<<"\t";
 
-  for(map<wrapper::p_vals,int>::const_iterator it = data_types_.begin();
+  for(map<utilities::D_TYPE,int>::const_iterator it = data_types_.begin();
       it!=data_types_.end(); it++)
     cout<<get_value(ind, (*it).first)<<"\t";
   

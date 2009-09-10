@@ -22,13 +22,15 @@
 //containing parts covered by the terms of MATLAB User License, the
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
-#include "hash_shelf.h"
+
 #include <exception>
 #include <stdexcept> // out_of_range exception
 #include "exception.h"
 #include <cmath>
 #include<iostream>
+#include <vector>
 
+#include "hash_shelf.h"
 #include "track_box.h"
 #include "coarse_grain_array.h"
 #include "counted_vector.h"
@@ -44,6 +46,9 @@ using utilities::Coarse_grain_array;
 using utilities::Tuple;
 using utilities::Null_field;
 using utilities::Ll_range_error;
+using std::cout;
+using std::endl;
+using std::vector;
 
 
 void hash_shelf::push(particle_base * p){
@@ -53,7 +58,7 @@ void hash_shelf::push(particle_base * p){
   catch (std::exception& e)    {
     cout << e.what() << endl;
     std::cout<<hash_function(p)<<"\t"<<hash_.size()<<std::endl;
-    std::cout<<p->get_value(wrapper::D_YPOS)<<"\t"<<p->get_value(wrapper::D_XPOS)<<std::endl;
+    std::cout<<p->get_value(utilities::D_YPOS)<<"\t"<<p->get_value(utilities::D_XPOS)<<std::endl;
     p->print();
     throw;
 
@@ -79,7 +84,7 @@ void hash_shelf::push(particle_track * p){
   catch (std::exception& e)    {
     cout << e.what() << endl;
     std::cout<<hash_function(p)<<"\t"<<hash_.size()<<std::endl;
-    std::cout<<p->get_value(wrapper::D_YPOS)<<"\t"<<p->get_value(wrapper::D_XPOS)<<std::endl;
+    std::cout<<p->get_value(utilities::D_YPOS)<<"\t"<<p->get_value(utilities::D_XPOS)<<std::endl;
     p->print();
     throw;
 

@@ -1,4 +1,4 @@
-//Copyright 2008,2009 Thomas A Caswell
+//Copyright 2009 Thomas A Caswell
 //tcaswell@uchicago.edu
 //http://jfi.uchicago.edu/~tcaswell
 //
@@ -23,12 +23,13 @@
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
 
+#ifndef WRAPPER_I_HDF
+#define WRAPPER_I_HDF
+
 #include "H5Cpp.h"
 #include <vector>
 #include <map>
 #include "wrapper_i.h"
-#ifndef WRAPPER_I_MATLAB
-#define WRAPPER_I_MATLAB
 
 
 namespace tracking{
@@ -53,7 +54,7 @@ public:
   
   
   void print()const;
-  double get_value(int ind, wrapper::p_vals type)const;
+  double get_value(int ind, utilities::D_TYPE type)const;
   
   
   virtual ~Wrapper_i_hdf5()
@@ -62,7 +63,7 @@ public:
   Wrapper_i_hdf5(Params_hdf5* param);
   void fill_master_box(master_box_t<particle_track> & test) const;
 
-  Wrapper_i_hdf5(std::map<wrapper::p_vals, int> wrap);
+  Wrapper_i_hdf5(std::map<utilities::D_TYPE, int> wrap);
   
   
 };

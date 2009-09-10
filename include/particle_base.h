@@ -33,13 +33,18 @@
 //local includes
 
 #include "tuple.h"
-#include "wrapper.h"
+#include "wrapper2.h"
 
 #ifndef PARTICLE_BASE
 #define PARTICLE_BASE
+namespace utilities
+{
+class Wrapper_in;
+}
+
 namespace tracking{
-class wrapper_i_base;
-class wrapper_o_base;
+
+class Wrapper_out;
 
 /**
    Base class for particles. Defines the basic functions
@@ -56,7 +61,7 @@ public:
     
   ///Default constructor
   //clean this up/use inline intilization
-  //  particle_base(wrapper_i_base * i_data, wrapper_o_base* o_out, 
+  //  particle_base(Wrapper_in * i_data, Wrapper_out* o_out, 
   //	int i_ind);
 
   /**
@@ -94,7 +99,7 @@ public:
 
   ///Returns the value of 'type' for the particle as specified
   ///by the in_wrapper
-  virtual double get_value(wrapper::p_vals type) const;
+  virtual double get_value(utilities::D_TYPE type) const;
   /**
      returns a tuple of the particle's position
    */
@@ -176,12 +181,12 @@ public:
   /**
      Intialize the static input wrapper for all particles
    */
-  static void intialize_wrapper_in(const wrapper_i_base* in);
+  static void intialize_wrapper_in(const utilities::Wrapper_in* in);
 
   /**
      Intialize the static data types for all particles
    */
-  static void intialize_data_types(std::set<wrapper::p_vals>*  data_types);
+  static void intialize_data_types(std::set<utilities::D_TYPE>*  data_types);
   /**
      Sets the maximum neighborhood range
    */
@@ -196,10 +201,10 @@ protected:
   ///A running total of all particles created 
   static int running_total_;
   ///object that takes care of all the underling data structures.
-  const static wrapper_i_base* wrapper_in_;
+  const static utilities::Wrapper_in* wrapper_in_;
   ///Vector of the types of data that
   ///remove this
-  static std::set<wrapper::p_vals>* data_types_;
+  static std::set<utilities::D_TYPE>* data_types_;
 
   ///Identifier that comes from the wrapper
   int ind_;

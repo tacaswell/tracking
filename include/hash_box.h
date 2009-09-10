@@ -28,7 +28,7 @@
 
 #ifndef HASH_BOX
 #define HASH_BOX
-#include "wrapper.h"
+#include "wrapper2.h"
 
 namespace tracking{
 class particle_base;
@@ -92,7 +92,7 @@ public:
   /**
      Returns a vector of the data of p_vals type for the box.
    */
-  void get_val_vec(std::vector<double> & vec, wrapper::p_vals type);
+  void get_val_vec(std::vector<double> & vec, utilities::D_TYPE type);
 
   /**
      Returns an iterator to the front of the contents vector,
