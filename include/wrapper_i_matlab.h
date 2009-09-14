@@ -30,7 +30,8 @@
 
 #include <complex>
 
-#include "wrapper2.h"
+#include "wrapper_i.h"
+#include "enum_utils.h"
 #include "mex.h"
 #include "data_map.h"
 

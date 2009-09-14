@@ -22,51 +22,60 @@
 //containing parts covered by the terms of MATLAB User License, the
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
-#include <iostream>
-#include <map>
-
-#include "wrapper.h"
 
 
 
 
-#ifndef WRAPPER_BASE
-#define WRAPPER_BASE
 
-namespace tracking{
-//forward declarations
-template <class particle> class master_box_t;
-class particle_track;
 
-using std::map;
-using std::string;
+
+#ifndef WRAPPER_I_BASE
+#define WRAPPER_I_BASE
+#include "enum_utils.h"
+
+#include <set>
+#include <complex>
+namespace utilities{
 /**
-   Abstract base class for input wrappers.  Defines the basic
-   functionality that a input wrapper needs to have.  This moatly
-   exists to make the polymorphism in/out wrappers type safe.
- */
-class wrapper_i_base: public wrapper{
-
-private:
-
-protected:
-  
-
+   ABC for input wrappers
+*/
+class Wrapper_in
+{
 public:
-  virtual double get_value(int ind, utilities::D_TYPE type) const=0;
-  virtual void print(int ind)const;
-  virtual int num_entries() const =0;
-  wrapper_i_base(std::map<p_vals,int>map_in):wrapper(map_in){};
-  
-  virtual ~wrapper_i_base(){};
+  /**
+     Returns the value of the type specified from the particle selected.  use the other version
+   */
+  virtual float get_value(int ind,D_TYPE type, int frame = -1) const = 0;
+  /**
+     Returns the value of the type specified from the particle selected
+   */
+  virtual void get_value(std::complex<float>& out,int ind,D_TYPE type, int frame) const = 0;
+  /**
+     Returns the value of the type specified from the particle selected
+   */
+  virtual void get_value(float& out,int ind,D_TYPE type, int frame) const = 0;
+
+  /**
+     Returns a set of the data types.  Use the other version
+   */
+  virtual std::set<D_TYPE> get_data_types() const = 0;
+
+  /**
+     Returns a set of the data types.  Use the other version
+   */
+  virtual void  get_data_types(std::set<D_TYPE> & out) const = 0;
   
   /**
-     function to fill a master_box_t from the input wrapper
+     Returns the number of particles in the wrapper
    */
-  virtual void fill_master_box(master_box_t<particle_track>& test) const=0;
+  virtual int get_num_entries() const = 0;
   
   
 };
+
+
+
+
 
 }
 

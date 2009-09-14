@@ -28,7 +28,7 @@
 #include "particle_base.h"
 #include "params.h"
 
-#include "wrapper2.h"
+#include "enum_utils.h"
 
 #ifndef MASTER_BOX_T
 #define MASTER_BOX_T

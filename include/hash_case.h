@@ -22,21 +22,21 @@
 //containing parts covered by the terms of MATLAB User License, the
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
+
+#ifndef HASH_CASE
+#define HASH_CASE
 #include <vector>
 #include <list>
 #include "hash_shelf.h"
 #include "particle_base.h"
 #include "master_box_t.h"
-#include "wrapper.h"
+
 #include "track_list.h"
 #include "track_shelf.h"
 
-#include "wrapper.h"
+
 
 #include "tuple.h"
-
-#ifndef HASH_CASE
-#define HASH_CASE
 
 namespace utilities{
 class Array;
@@ -271,8 +271,8 @@ void hash_case::init(master_box_t<particle> & mb,const utilities::Tuple & img_di
   }
     
 
-  mb.append_to_data_types(wrapper::D_NEXT);
-  mb.append_to_data_types(wrapper::D_PREV);
+  mb.append_to_data_types(utilities::D_NEXT);
+  mb.append_to_data_types(utilities::D_PREV);
   h_case_.resize(frames);
   h_case_.at(0) = new hash_shelf(img_dims, ppb,0);
   for(unsigned int j = 1; j<h_case_.size(); ++j){
@@ -292,7 +292,7 @@ void hash_case::init(master_box_t<particle> & mb,const utilities::Tuple & img_di
   for( int j = 0; j<max_sz; ++j){
     p = mb.get_particle(j);
     try{
-      int cf = (int)(p->get_value(wrapper::D_FRAME));
+      int cf = (int)(p->get_value(utilities::D_FRAME));
       if(cf != current_frame)
       {
 	std::cout<<"frame "<<current_frame<<": "<<current_count<<std::endl;
@@ -304,10 +304,10 @@ void hash_case::init(master_box_t<particle> & mb,const utilities::Tuple & img_di
 	++current_count;
       }
       
-      (h_case_.at((int)(p->get_value(wrapper::D_FRAME))))->push(p);
+      (h_case_.at((int)(p->get_value(utilities::D_FRAME))))->push(p);
     }
     catch(...){
-      int yar = (int)p->get_value(wrapper::D_FRAME);
+      int yar = (int)p->get_value(utilities::D_FRAME);
       std::cout<<"trying to put in to shelf: "<<yar<<std::endl;
       return;
     }

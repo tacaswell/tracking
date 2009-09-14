@@ -45,7 +45,7 @@ void Wrapper_o_matlab::set_value(utilities::D_TYPE type, float val){
   cout<<"wrapper doesn't have this data_type"<<endl;
 
 }
-void Wrapper_o_matlab::end_particle(){
+void Wrapper_o_matlab::close_particle(){
   part_open = false;
   part_index = -1;
   //nothing else special needs to be done in this function because we
@@ -78,7 +78,7 @@ void Wrapper_o_matlab::reset_wrapper(params * param_in){
   data_array_ = param->data_out;
 };
 
-void Wrapper_o_matlab::new_particle(){
+void Wrapper_o_matlab::open_particle(int){
   if(part_open)
     cout<<"particle already open w_o_m"<<endl;
 

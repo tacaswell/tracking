@@ -25,6 +25,8 @@
 #ifndef TOUPLE
 #define TOUPLE
 
+#include <iostream>
+#include <sstream>
 namespace utilities{
 /**
    Class for carrying around the posistion and velocity vectors.
@@ -196,7 +198,7 @@ public:
      hard coded 2-D constructor 
    */
   Tuple(float x,float y);
-  
+
 protected:
   /**
      pointer to data
@@ -205,6 +207,33 @@ protected:
 
 private:
 };
+
+  
+  /**
+     prints out the tuple to cout
+     lifted almost whole cloth from c++/4.3/complex
+  */
+  template<typename _CharT, class _Traits>
+  std::basic_ostream<_CharT, _Traits>&
+  operator<<(std::basic_ostream<_CharT, _Traits>& __os, const Tuple& in)
+  {
+
+    
+    std::basic_ostringstream<_CharT, _Traits> s;
+    s.flags(__os.flags());
+    s.imbue(__os.getloc());
+    s.precision(__os.precision());
+
+    
+    s << '(' ;
+    s<< in[0]  ;
+    for(int j = 1;j<(Tuple::length_);++j)
+      s<< ','<<in[j]  ;
+    s << ')';
+
+    return __os << s.str();
+  }
+
 
 
 }

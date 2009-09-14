@@ -23,7 +23,7 @@
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
 #include "particle_base.h"
-#include "wrapper2.h"
+#include "wrapper_i.h"
 
 #include <algorithm>
 #include <cmath>
@@ -125,14 +125,12 @@ double particle_base::get_theta(const utilities::Tuple & origin) const{
 }
 
 void particle_base::print()const{
-  //    cout<<ind<<endl;
   cout<<unq_id_<<"\t";
+  cout<<position_<<"\t\t"<<frame_<<'\t';
   cout<<neighborhood_.size()<<"\t";
   cout<<s_order_parameter_<<"\t";
-  cout<<abs(s_order_parameter_)<<"\t";
-  cout<<"finish this"<<endl;
-  
-  //wrapper_in_->print(ind_);
+  cout<<abs(s_order_parameter_);
+  cout<<endl;
 }
 
 void particle_base::intialize_wrapper_in(const Wrapper_in* in){

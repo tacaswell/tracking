@@ -23,6 +23,9 @@
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
 //standard incldues
+
+#ifndef PARTICLE_BASE
+#define PARTICLE_BASE
 #include <vector>
 #include <iostream>
 #include <set>
@@ -33,10 +36,9 @@
 //local includes
 
 #include "tuple.h"
-#include "wrapper2.h"
+#include "enum_utils.h"
 
-#ifndef PARTICLE_BASE
-#define PARTICLE_BASE
+
 namespace utilities
 {
 class Wrapper_in;
@@ -44,7 +46,7 @@ class Wrapper_in;
 
 namespace tracking{
 
-class Wrapper_out;
+
 
 /**
    Base class for particles. Defines the basic functions

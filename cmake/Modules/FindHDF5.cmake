@@ -6,19 +6,19 @@
 
 
 
-FIND_LIBRARY(HDF5_HL_LIBRARY
-  hdf5_hl
-  /usr/lib
-  )
-
 FIND_LIBRARY(HDF5_CPP_LIBRARY
   hdf5_cpp
-  /usr/lib
+  HINTS
+  /home/tcaswell/other_source/hdf/hdf5-1.6.5/hdf5/lib
+#  /usr/lib
   )
 
 FIND_LIBRARY(HDF5_LIBRARY
   hdf5
-  /usr/lib
+  HINTS
+  /home/tcaswell/other_source/hdf/hdf5-1.6.5/hdf5/lib
+#  /home/tcaswell/other_source/hdf/hdf5-1.8.3/hdf5/lib
+#  /usr/lib
   )
 
 
@@ -30,7 +30,11 @@ FIND_LIBRARY(M_LIBRARY
   m
   /usr/lib
   )
-
+FIND_PATH(HDF_INCLUDE_DIR
+  "H5Cpp.h"
+  HINTS
+  "/home/tcaswell/other_source/hdf/hdf5-1.6.5/hdf5/include"
+  )
 
 
 
@@ -38,7 +42,6 @@ FIND_LIBRARY(M_LIBRARY
 SET(HDF5_LIBRARIES
   ${HDF5_LIBRARY}
   ${HDF5_CPP_LIBRARY}
-  ${HDF5_HL_LIBRARY}
   ${Z_LIBRARY}
   ${M_LIBRARY}
   )

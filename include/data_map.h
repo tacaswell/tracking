@@ -28,7 +28,7 @@
 
 #include <map>
 
-#include "wrapper2.h"
+#include "enum_utils.h"
 
 namespace utilities
 {
@@ -40,6 +40,8 @@ class Data_map
 {
 public:
   Data_map(const std::map<utilities::D_TYPE,int>& in);
+  Data_map();
+  
   ~Data_map(){}
   /**
      looks up the position of in
@@ -48,6 +50,11 @@ public:
   {
     return data_layout_[in];
   }
+  int operator()(int in)const
+  {
+    return data_layout_[in];
+  }
+  void set_lookup(D_TYPE,int);
   
   
 private:
@@ -55,7 +62,36 @@ private:
   int data_layout_[D_TYPE_COUNT];
   
 };
+
+
+  
+/**
+   prints out the tuple to cout
+   lifted almost whole cloth from c++/4.3/complex
+*/
+template<typename _CharT, class _Traits>
+std::basic_ostream<_CharT, _Traits>&
+operator<<(std::basic_ostream<_CharT, _Traits>& __os, const Data_map& in)
+{
+
+    
+  std::basic_ostringstream<_CharT, _Traits> s;
+  s.flags(__os.flags());
+  s.imbue(__os.getloc());
+  s.precision(__os.precision());
+
+    
+  s << '(' ;
+  s<< in(0)  ;
+  for(int j = 1;j<D_TYPE_COUNT;++j)
+    s<< ','<<in(j)  ;
+  s << ')';
+
+  return __os << s.str();
 }
+}
+
+
 
 
 #endif

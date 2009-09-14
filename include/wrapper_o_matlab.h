@@ -28,8 +28,10 @@
 #define WRAPPER_O_MATLAB
 #include <complex>
 
-#include "wrapper2.h"
+#include "enum_utils.h"
+#include "wrapper_o.h"
 #include "data_map.h"
+
 #include "mex.h"
 
 
@@ -41,35 +43,25 @@ class params_matlab;
 */
 class Wrapper_o_matlab:public Wrapper_out{
 public:  
-//   //old
 
-//   void set_value(int, tracking::utilities::D_TYPE, double)  {};
-//   void print(int);
-//   int  add_particle()                                     {return 0;}; 
-
-
-  //new
   void set_value(utilities::D_TYPE type, float val);
   void set_value(utilities::D_TYPE type, std::complex<float> val)
   {
     throw "not implemented";
   }
-  void end_particle();
-  void edit_particle(int)
+  void close_particle();
+
+  void open_frame(int,int)
   {
     throw "not implemented";
   }
-  void open_plane(int)
-  {
-    throw "not implemented";
-  }
-  void close_plane(){
+  void close_frame(){
     throw "not implemented";
   }
   void finalize_wrapper();
   void initialize_wrapper();
   void reset_wrapper(params * param);
-  void new_particle();
+  void open_particle(int);
   
   Wrapper_o_matlab(params_matlab* parms);
   ~Wrapper_o_matlab();

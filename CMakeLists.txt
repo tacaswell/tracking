@@ -11,6 +11,7 @@ find_package( HDF5)
 
 include_directories(${TRACKING_SOURCE_DIR}/include)
 include_directories(${MATLAB_INCLUDE_DIR})
+include_directories(${HDF_INCLUDE_DIR})
 
 set(MATLAB_MEXFILE_EXT mexa64)
 

@@ -22,13 +22,15 @@
 //containing parts covered by the terms of MATLAB User License, the
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
-#include <vector>
-#include <list>
+
 
 
 #ifndef HASH_BOX
 #define HASH_BOX
-#include "wrapper2.h"
+#include <vector>
+#include <list>
+
+#include "enum_utils.h"
 
 namespace tracking{
 class particle_base;

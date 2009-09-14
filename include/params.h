@@ -22,9 +22,6 @@
 //containing parts covered by the terms of MATLAB User License, the
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
-#include <string>
-#include <map>
-#include "wrapper2.h"
 
 
 
@@ -32,6 +29,11 @@
 
 #ifndef PARAMS
 #define PARAMS
+#include <string>
+#include <map>
+#include "wrapper_i.h"
+#include "wrapper_o.h"
+
 namespace utilities{
 /**
     Abstract base Class to handle passing parameters around between

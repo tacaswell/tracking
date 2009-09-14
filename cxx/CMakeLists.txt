@@ -4,12 +4,11 @@ particle_track.cpp track_box.cpp track_list.cpp track_shelf.cpp )
 
 SET(UTIL_SRC  tuple.cpp array.cpp cell.cpp
 coarse_grain_array.cpp counted_vector.cpp histogram2d.cpp
-data_map.cpp)
+data_map.cpp enum_utils.cpp)
 
 SET(MATLAB_WRAPPER_SRC  wrapper_i_matlab.cpp wrapper_o_matlab.cpp)
 
-SET(OTHER_WRAPPER_SRC wrapper_base.cpp wrapper_i.cpp
-wrapper_i_file.cpp wrapper_i_ning.cpp wrapper_i_ning_hd.cpp
+SET(OTHER_WRAPPER_SRC wrapper_i_file.cpp wrapper_i_ning.cpp wrapper_i_ning_hd.cpp
 wrapper_o_file.cpp)
 
 SET(HDF_SRC wrapper_i_hdf5.cpp)
@@ -37,16 +36,19 @@ set_target_properties(test PROPERTIES
 
 
 
+
+
 add_library(test3 SHARED mex_test3.cpp ${COMMON_TRACK_SRC} ${MATLAB_UTIL_SRC}
-  ${UTIL_SRC} ${MATLAB_WRAPPER_SRC})
+  ${UTIL_SRC} ${MATLAB_WRAPPER_SRC} wrapper_o_hdf.cpp)
 target_link_libraries(test3 ${MATLAB_LIBRARIES})
+target_link_libraries(test3 ${HDF5_LIBRARIES})
 set_target_properties(test3 PROPERTIES link_flags "-Wl,--version-script=/usr/local/matlab/extern/lib/glnxa64/mexFunction.map")
 set_target_properties(test3 PROPERTIES compile_flags  "-DMATLAB_MEX_FILE")
 set_target_properties(test3 PROPERTIES
     PREFIX ""
     SUFFIX  ".${MATLAB_MEXFILE_EXT}"
 )
-
+message( ${HDF_INCLUDE_DIR})
 
 add_library(test2 SHARED mex_test2.cpp ${COMMON_TRACK_SRC} ${MATLAB_UTIL_SRC})
 target_link_libraries(test2 ${MATLAB_LIBRARIES})

@@ -24,11 +24,16 @@
 //the resulting work.
 
 #include "data_map.h"
+#include <iostream>
 using namespace utilities;
 using std::map;
-
+using std::cout;
+using std::endl;
 Data_map:: Data_map(const std::map<utilities::D_TYPE,int>& in)
 {
+  for(int j = 0;j<D_TYPE_COUNT;++j)
+    data_layout_[j] = -1;
+  
   int count = 0;
   
   for(std::map<utilities::D_TYPE,int>::const_iterator it = in.begin();
@@ -47,6 +52,22 @@ Data_map:: Data_map(const std::map<utilities::D_TYPE,int>& in)
   }
 }
 
+
+
+Data_map:: Data_map()
+{
+  for(int j = 0;j<D_TYPE_COUNT;++j)
+    data_layout_[j] = -1;
+}
+
+
+void Data_map::set_lookup(D_TYPE dt ,int loc)
+{
+  cout<<dt<<'\t'<<loc<<endl;
+  data_layout_[dt] = loc;
+  cout<<dt<<':'<<data_layout_[dt]<<endl;
+  
+}
 
 
 
