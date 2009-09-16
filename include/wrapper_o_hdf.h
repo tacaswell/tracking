@@ -75,6 +75,8 @@ public:
   
   void print()const;
   int  num_entries()const{return 0;};
+
+  void get_content_tpyes(std::set<D_TYPE>&) const;
   
   ~Wrapper_o_hdf();
 

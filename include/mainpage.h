@@ -142,9 +142,9 @@ Currently track linking and a few basic static measurements
  The frame work allows any measurement that requires information about
  a particles neighborhood can be efficiently calculated.
 
- There is also a long term plan to merge Peter Lu's particle
- identification code into this frame work.  The most current version
- of that code, as well as a MATLAB wrapper for it is available at <a
+ The identification code is a modified version of Peter Lu's particle
+ identification code.  The most current version of PLuTARC, as well as
+ a MATLAB wrapper for it, is available at <a
  href="http://plutarc.sourceforge.net/">http://plutarc.sourceforge.net/</a>
  
 
@@ -154,7 +154,11 @@ Currently track linking and a few basic static measurements
 The most recent code is revision TREV avaialble at
 <KBD>svn://innoue.uchicago.edu/tracking/trunk</KBD> or as a <a
 href="http://jfi.uchicago.edu/~tcaswell/track_doc/tars/tarball_rev_TTAR.tar">
-tarball</a>.
+tarball</a>.  This code should be reasonably portable to other *nix systems,
+but the library paths will need to be fixed.  As it is the code will not
+work with matlab on a windows machine, but might work as a stand alone. (There
+are lots of couts in the code which matlab in linux can cope with, but matlab
+on windows apparently can't (according to matlab documentation)).
 
 The current 'stable' version is 0.1 and is available at 
 <KBD>svn://innoue.uchicago.edu/tracking/tags/tracking-0.1</KBD>
@@ -190,6 +194,13 @@ containing parts covered by the terms of MATLAB User License, the
 licensors of this Program grant you additional permission to convey
 the resulting work.
 
+If you modify this Program, or any covered work, by linking or
+combining it with IPP (or a modified version of that library),
+containing parts covered by the terms of End User License Agreement
+for the Intel(R) Software Development Products, the licensors of
+this Program grant you additional permission to convey the resulting
+work.
+
 
 */
  
@@ -202,7 +213,7 @@ namespace tracking{}
 /**
    Name space for all of the particle identification code.
 */
-namespace identification{}
+namespace iden{}
 
 /**
    Namespace for utilities and helper functions

@@ -42,6 +42,8 @@ namespace utilities{
 class Array;
 class Coarse_grain_array;
 class Histogram2D;
+class Wrapper_o;
+
 }
 
 namespace tracking{
@@ -84,9 +86,13 @@ public:
   hash_case(master_box_t<particle> & mb,const utilities::Tuple & img_dims, 
 	    unsigned int ppb, int frames);
   hash_case();
-  
 
-  ///Print out a sensible representation of the data
+  /**
+     constructor for an empty hash case
+   */
+  hash_case(int ppb_in ,int frames,bool own_p = false);
+
+  ///print out a sensible representation of the data
   void print() const;
 
   /**
@@ -212,7 +218,11 @@ public:
   }
   
   
-
+  /**
+     outputs the hash case to the Wrapper that is passed in
+   */
+  void output_to_wrapper(utilities::Wrapper_o * ) const;
+  
   ///Destructor
   ~hash_case();
 protected:
@@ -248,7 +258,12 @@ protected:
   template <class particle>
   void  init(master_box_t<particle> & mb,const utilities::Tuple & img_dims, 
 	    unsigned int ppb, int frames);
-
+  
+  /**
+     If the hash_case owns the particles or a master box owns the particles
+   */
+  bool own_particles_;
+  
 
 };
 

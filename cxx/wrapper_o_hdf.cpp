@@ -50,6 +50,9 @@ using H5::DataSet;
 using H5::DSetCreatPropList;
 
 
+using utilities::D_TYPE;
+
+
 Wrapper_o_hdf::Wrapper_o_hdf(const string& file_name,set<D_TYPE> d_add):
   part_count_(0),part_open_(false), wrapper_open_(false), frame_open_(false),
   part_index_(-1), frame_max_count_(-1), frame_index_(-1), new_hdf_(true),over_write_(true),
@@ -147,7 +150,7 @@ void Wrapper_o_hdf::open_particle(int ind)
   part_open_ = true;
 }
 
-void Wrapper_o_hdf::set_value(utilities::D_TYPE type, float val)
+void Wrapper_o_hdf::set_value(D_TYPE type, float val)
 {
   if(!part_open_)
     throw "particle not open";
@@ -155,7 +158,7 @@ void Wrapper_o_hdf::set_value(utilities::D_TYPE type, float val)
   float_data_.at(float_map_(type))[part_index_] = val;
 }
 
-void Wrapper_o_hdf::set_value(utilities::D_TYPE type, std::complex<float> val)
+void Wrapper_o_hdf::set_value(D_TYPE type, std::complex<float> val)
 {
   if(!part_open_)
     throw "particle not open";
@@ -167,7 +170,7 @@ void Wrapper_o_hdf::set_value(utilities::D_TYPE type, std::complex<float> val)
 
 }
 
-void Wrapper_o_hdf::set_value(utilities::D_TYPE type, int val)
+void Wrapper_o_hdf::set_value(D_TYPE type, int val)
 {
   if(!part_open_)
     throw "particle not open";
@@ -193,7 +196,7 @@ void Wrapper_o_hdf::close_frame()
     }
     if(part_count_ != frame_max_count_)
       throw "not enough particles added";
-    no
+    
     
     string frame_name_ = format_name(frame_index_);
     Group* group_ = new Group(file_->openGroup(frame_name_));
@@ -345,6 +348,12 @@ Wrapper_o_hdf::~Wrapper_o_hdf()
   finalize_wrapper();
   
 }
+
+set<D_TYPE> Wrapper_o_hdf::get_content_tpyes() const
+{
+  return set<D_TYPE>(d_types_add_);
+}
+
 
 
 string Wrapper_o_hdf::format_name(int in)const

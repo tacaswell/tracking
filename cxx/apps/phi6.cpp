@@ -45,16 +45,23 @@
 #include "generic_parameters_matlab.h"
 #include "generic_wrapper_base.h"
 
-#include "hash_case_writer_generic.h"
+
 
 using namespace tracking;
 using std::exception;
 using std::cerr;
+using std::cout;
+using std::endl;
+using std::map;
+using std::vector;
+using std::pair;
+
 
 using utilities::Generic_wrapper_base;
 using utilities::Generic_parameters_matlab;
-using utilities::Hash_case_writer_generic;
-
+using utilities::Wrapper_o_matlab;
+using utilities::Wrapper_i_matlab;
+using utilities::params_matlab;
 
 
 extern void _main();
@@ -77,9 +84,9 @@ void mexFunction( int nlhs, mxArray *plhs[],
  
     //nonsense to get the map set up
     map<utilities::D_TYPE, int> contents;
-    utilities::D_TYPE tmp[] = {wrapper::D_XPOS,
-			     wrapper::D_YPOS, 
-			     wrapper::D_FRAME};
+    utilities::D_TYPE tmp[] = {utilities::D_XPOS,
+			     utilities::D_YPOS, 
+			     utilities::D_FRAME};
     int tmp2[] = {0, 1, 2 };
   
 

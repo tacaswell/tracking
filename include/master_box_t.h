@@ -22,13 +22,14 @@
 //containing parts covered by the terms of MATLAB User License, the
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
+
+#include "particle_base.h"
+#include "params.h"
+#include "enum_utils.h"
+
 #include <vector>
 #include <iostream>
 #include <set>
-#include "particle_base.h"
-#include "params.h"
-
-#include "enum_utils.h"
 
 #ifndef MASTER_BOX_T
 #define MASTER_BOX_T

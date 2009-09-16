@@ -29,9 +29,11 @@
 #define WRAPPER_O_BASE
 
 #include <complex>
-
+#include <set>
 
 #include "enum_utils.h"
+
+
 namespace utilities
 {
 class params;
@@ -136,11 +138,18 @@ public:
   
   /**
      changes where the wrapper is pointing (ie, write out to a
-     different array or file or somethin
+     different array or file or some thin
    */
   virtual void reset_wrapper(params * param)=0;
 
+  
+
   //\@}
+
+  /**
+     Returns a set containing the D_TYPES that the wrapper can cope with
+   */
+  virtual void get_content_tpyes(std::set<D_TYPE>&) const = 0;
   
   /**
      virtual destructor

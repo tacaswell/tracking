@@ -326,8 +326,13 @@ protected:
      Minor memory hit, but useful to know
    */
   unsigned int particle_count_;
-  
 
+  /**
+     if the containing hash_case, and thus this shelf and it's boxes own the
+     particles and need to clean them up at the end
+   */
+  bool own_particles_;
+  
 private:
   ///Initialization function
   //  void init(unsigned int X, unsigned int Y, unsigned int PPB);

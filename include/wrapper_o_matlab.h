@@ -67,7 +67,7 @@ public:
   ~Wrapper_o_matlab();
 
   void print()const;
-
+  void get_content_tpyes(std::set<D_TYPE>&) const {};
   int  num_entries()const{return 0;};
   
 

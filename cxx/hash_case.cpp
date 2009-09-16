@@ -50,6 +50,10 @@ hash_case::hash_case()
 
 }
 
+hash_case(int ppb_in ,int frames,bool own_p = false):ppb(ppb_in), frames(frames_in),own_particles_(own_p){
+  
+};
+
 
 hash_case::~hash_case(){
   for(unsigned int j = 0; j<h_case_.size(); j++){

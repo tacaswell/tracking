@@ -1,20 +1,43 @@
-SET(COMMON_TRACK_SRC gofr_free.cpp hash_box.cpp hash_case.cpp
-hash_shelf.cpp histogram.cpp particle_base.cpp
-particle_track.cpp track_box.cpp track_list.cpp track_shelf.cpp )
+SET(COMMON_TRACK_SRC
+ ${PROJECT_SOURCE_DIR}/cxx/gofr_free.cpp
+ ${PROJECT_SOURCE_DIR}/cxx/hash_box.cpp
+ ${PROJECT_SOURCE_DIR}/cxx/hash_case.cpp
+ ${PROJECT_SOURCE_DIR}/cxx/hash_shelf.cpp
+ ${PROJECT_SOURCE_DIR}/cxx/histogram.cpp
+ ${PROJECT_SOURCE_DIR}/cxx/particle_base.cpp
+ ${PROJECT_SOURCE_DIR}/cxx/particle_track.cpp
+ ${PROJECT_SOURCE_DIR}/cxx/track_box.cpp
+ ${PROJECT_SOURCE_DIR}/cxx/track_list.cpp
+ ${PROJECT_SOURCE_DIR}/cxx/track_shelf.cpp )
 
-SET(UTIL_SRC  tuple.cpp array.cpp cell.cpp
-coarse_grain_array.cpp counted_vector.cpp histogram2d.cpp
-data_map.cpp enum_utils.cpp)
+SET(UTIL_SRC
+  ${PROJECT_SOURCE_DIR}/cxx/tuple.cpp
+  ${PROJECT_SOURCE_DIR}/cxx/array.cpp
+  ${PROJECT_SOURCE_DIR}/cxx/cell.cpp
+  ${PROJECT_SOURCE_DIR}/cxx/coarse_grain_array.cpp
+  ${PROJECT_SOURCE_DIR}/cxx/counted_vector.cpp
+  ${PROJECT_SOURCE_DIR}/cxx/histogram2d.cpp
+  ${PROJECT_SOURCE_DIR}/cxx/data_map.cpp
+  ${PROJECT_SOURCE_DIR}/cxx/enum_utils.cpp)
 
-SET(MATLAB_WRAPPER_SRC  wrapper_i_matlab.cpp wrapper_o_matlab.cpp)
+SET(MATLAB_WRAPPER_SRC
+  ${PROJECT_SOURCE_DIR}/cxx/wrapper_i_matlab.cpp
+  ${PROJECT_SOURCE_DIR}/cxx/wrapper_o_matlab.cpp)
 
-SET(OTHER_WRAPPER_SRC wrapper_i_file.cpp wrapper_i_ning.cpp wrapper_i_ning_hd.cpp
-wrapper_o_file.cpp)
+SET(OTHER_WRAPPER_SRC
+  ${PROJECT_SOURCE_DIR}/cxx/wrapper_i_file.cpp
+  ${PROJECT_SOURCE_DIR}/cxx/wrapper_i_ning.cpp
+  ${PROJECT_SOURCE_DIR}/cxx/wrapper_i_ning_hd.cpp
+  ${PROJECT_SOURCE_DIR}/cxx/wrapper_o_file.cpp)
 
-SET(HDF_SRC wrapper_i_hdf5.cpp)
+SET(HDF_SRC
+  ${PROJECT_SOURCE_DIR}/cxx/wrapper_i_hdf5.cpp)
 
-SET(MATLAB_UTIL_SRC matlab_utils.cpp
-  generic_wrapper_matlab.cpp generic_parameters_matlab.cpp cell_matlab.cpp )
+SET(MATLAB_UTIL_SRC
+  ${PROJECT_SOURCE_DIR}/cxx/matlab_utils.cpp
+  ${PROJECT_SOURCE_DIR}/cxx/generic_wrapper_matlab.cpp
+  ${PROJECT_SOURCE_DIR}/cxx/generic_parameters_matlab.cpp
+  ${PROJECT_SOURCE_DIR}/cxx/cell_matlab.cpp )
 
 
 message( ${PROJECT_BINARY_DIR})
@@ -74,3 +97,7 @@ foreach(app ${APPS})
     SUFFIX  ".${MATLAB_MEXFILE_EXT}"
     )
 endforeach(app)
+
+
+
+add_subdirectory(iden)

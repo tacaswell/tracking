@@ -1,4 +1,4 @@
-//Copyright 2009 Thomas A Caswell
+//Copyright 2008,2009 Thomas A Caswell
 //tcaswell@uchicago.edu
 //http://jfi.uchicago.edu/~tcaswell
 //
@@ -23,37 +23,35 @@
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
 
-#ifndef HASH_CASE_WRITER_GENERIC
-#define HASH_CASE_WRITER_GENERIC
+//If you modify this Program, or any covered work, by linking or
+//combining it with IPP (or a modified version of that library),
+//containing parts covered by the terms of End User License Agreement
+//for the Intel(R) Software Development Products, the licensors of
+//this Program grant you additional permission to convey the resulting
+//work.
 
-#include "hash_case_writer.h"
+#ifndef CORR_
+#define CORR_
 
 namespace tracking
 {
-class hash_case;
-}
-
-
-namespace utilities
-{
-class Generic_wrapper_base;
-
+class particle_base;
+class particle_track;
 
 /**
-   outputs the hash_case to a generic wrapper so the 
-*/
-class Hash_case_writer_generic: public Hash_case_writer{
+   An ABC of objects that can be handed into hash_case and calculates
+   correlation functions.  Both types of function need to be defined.
+ */
+class Corr
+{
 public:
-  Hash_case_writer_generic(Generic_wrapper_base * wo)
-    :output_wrapper_(wo){};
-  void write_hash_case( const tracking::hash_case& hc ) const;
-  virtual ~Hash_case_writer_generic(){}
-private:
-  Generic_wrapper_base * output_wrapper_;
+  void compute(const particle_base &) = 0;
+  void compute(const particle_track &)=0;
   
 };
+
+
 }
 
+
 #endif
-
-
