@@ -29,11 +29,11 @@
 #define WRAPPER_I_PLU
 
 #include <complex>
-
+#include <vector>
 #include "wrapper_i.h"
 #include "enum_utils.h"
 #include "data_map.h"
-
+#include "ipp.h"
 namespace tracking
 {
 class particle_track;
@@ -46,13 +46,66 @@ class params_matlab;
    Wrapper class for dealing with data from Peter Lu's code
 */
 
-class Wrapper_i_matlab:public Wrapper_in{
+class Wrapper_i_plu:public Wrapper_in{
+
+public:
+
+  /**
+     adds a pointer to data_
+   */
+  void add_frame_data(Ipp32f[][9], int frame ,int num);
+
+  int get_num_entries(int j) const;
+  
+  
+  
+
+  //  void print(int ind);
+  void print()const;
+
+  
+  float get_value(int, utilities::D_TYPE, int) const
+  {
+    throw "depreciated";
+    return -1;
+  }
+  
+  void get_value(int& out,int ind,D_TYPE type, int frame) const;
+  void get_value(float &out,int ind, utilities::D_TYPE type,int frame )const;
+  void get_value(std::complex<float> &out,int ind, utilities::D_TYPE type,int frame )const
+  {throw "wrapper_i_plu:wrapper has no complex support";}
+
+  
+  Wrapper_i_plu(int);  
+  virtual ~Wrapper_i_plu();
+  
+  
+
+  void get_data_types(std::set<utilities::D_TYPE>& ) const;
+  bool contains_type(utilities::D_TYPE) const;
+  
+  int get_num_frames()const
+  {
+    return frame_count_.size();
+  }
+  
+  std::set<utilities::D_TYPE> get_data_types() const
+  {
+    return std::set<D_TYPE>(data_types_);
+  }
+  
+    
+  
 private:
   /**
      vectors of pointers to data
      The wrapper owns these pointers
    */
-  vector<IPP32f *> data_;
+  std::vector<Ipp32f(*) [9]> data_;
+  std::vector<int> frame_count_;
+  
+  static const int cols = 9;
+  
   
 protected:
   /**
@@ -62,36 +115,16 @@ protected:
      this sort of thing wasn't uesful.  Thus, it has been dragged up to
      the top level.
   */
-  std::map<utilities::D_TYPE, int> data_types_;
+  std::set<utilities::D_TYPE> data_types_;
   /**
      object for fast lookup
    */
   Data_map data_map_;
-  /**
-     internal initialization
-   */
-  void init();
-public:
-  int get_num_entries() const;
 
-  //  void print(int ind);
-  void print()const;
-  float get_value(int ind, utilities::D_TYPE type,int frame = 0)const;
-  void get_value(float &out,int ind, utilities::D_TYPE type,int frame = 0)const;
-  void get_value(std::complex<float> &out,int ind, utilities::D_TYPE type,int frame = 0)const
-  {throw "wrapper_i_plu:wrapper has no complex support";}
-  
-  
-  virtual ~Wrapper_i_plu();
-  Wrapper_i_plu(int);
-  //void fill_master_box(tracking::master_box_t<tracking::particle_track>& test) const{};
-  std::set<utilities::D_TYPE> get_data_types() const;
-  void get_data_types(std::set<utilities::D_TYPE>&) const;
-  
   /**
-     adds a pointer to data_
+     count of particles added
    */
-  void add_frame_data(Ipp32f *, int);
+  int count_;
   
 };
 

@@ -55,7 +55,7 @@ public:
 
 
   
-  particle_track(int i_ind);
+  particle_track(int i_ind,int frame);
 
   /**
      constructor that does not require any calls to the wrapper to get
@@ -109,19 +109,19 @@ public:
   const utilities::Tuple get_corrected_forward_disp()const;
 
   
-//   /*
-//      returns the particle n from the current particle forward down the
-//      list where n=0 is the current particle.  If the end of the track
-//      is reached   throws an error.
-//    */
-//   const particle_track* step_forwards(int n)const;
+  /**
+     returns the particle n from the current particle forward down the
+     list where n=0 is the current particle.  If the end of the track
+     is reached   throws an error.
+   */
+  const particle_track* step_forwards(int n)const;
   
-//   /*
-//      returns the particle n from the current particle backwards up the
-//      list where n=0 is the current particle.  If the front of the
-//      track is reached throws an error
-//    */
-//   const particle_track* step_backwards(int n)const;
+  /**
+     returns the particle n from the current particle backwards up the
+     list where n=0 is the current particle.  If the front of the
+     track is reached throws an error
+   */
+  const particle_track* step_backwards(int n)const;
 
   
   /**

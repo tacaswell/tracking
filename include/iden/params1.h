@@ -47,7 +47,7 @@
 
 #include <fstream>
 #include <string>
-#include "mex.h"
+//#include "mex.h"
 
 /*
  * modified 06/08 by tcaswell to make compatable with matlab mex code
@@ -62,13 +62,14 @@ std::string make_file_number(const int framenumber, const int stacknumber);
 class Params
 {
 public:
-  Params();
-  Params(const int numargs, const mxArray *arguments);	/*//Regular used constructor that reads command-line parameters*/
+
+  //  Params(const int numargs, const mxArray *arguments);	/*//Regular used constructor that reads command-line parameters*/
   Params(const int numargs);						/*//Constructor that simply checks for enough arguments*/
-	
+  Params(int,float,int,float,int);
+  
   const Params &operator=(const Params &);	/*//overloaded assignment operator*/
 
-  void PrintOutParameters(std::ostream &out);
+  void PrintOutParameters(std::ostream &out) const;
 
   ~Params();
   int get_feature_radius() const

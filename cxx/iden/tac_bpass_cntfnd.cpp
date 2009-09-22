@@ -115,12 +115,12 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
 
     
- Image2D image_bpass(image_in.get_length(), image_in.get_width());	
+ Image2D image_bpass(image_in.get_height(), image_in.get_width());	
 //     /*//result of bandpassing original image data*/
 
- Image2D image_bpass_thresh(image_in.get_length(), image_in.get_width());	
+ Image2D image_bpass_thresh(image_in.get_height(), image_in.get_width());	
  //     /*//result of setting lower threshold on bandpassed image*//
- Image2D image_localmax(image_in.get_length(), image_in.get_width());
+ Image2D image_localmax(image_in.get_height(), image_in.get_width());
 //     /*//holds 1 in pixel locations with local max, 0 otherwise*/
     
  RecenterImage(image_in);
@@ -148,15 +148,15 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
  if(nlhs>1)
    {
-     plhs[1] = mxCreateDoubleMatrix(image_in.get_width(), image_in.get_length(), mxREAL);
+     plhs[1] = mxCreateDoubleMatrix(image_in.get_width(), image_in.get_height(), mxREAL);
      IPP_to_mat(plhs[1],image_bpass_thresh);
      if(nlhs>2)
        {
-	 plhs[2] = mxCreateDoubleMatrix(image_in.get_width(), image_in.get_length(), mxREAL);
+	 plhs[2] = mxCreateDoubleMatrix(image_in.get_width(), image_in.get_height(), mxREAL);
 	 IPP_to_mat(plhs[2],image_localmax);
 	 if(nlhs>3)
 	   {
-	     plhs[3] = mxCreateDoubleMatrix(image_in.get_width(), image_in.get_length(), mxREAL);
+	     plhs[3] = mxCreateDoubleMatrix(image_in.get_width(), image_in.get_height(), mxREAL);
 	     IPP_to_mat(plhs[3],image_bpass);
 	   }
        }

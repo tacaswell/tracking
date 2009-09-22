@@ -45,7 +45,13 @@ public:
   /**
      Returns the value of the type specified from the particle selected.  use the other version
    */
-  virtual float get_value(int ind,D_TYPE type, int frame = -1) const = 0;
+  virtual float get_value(int ind,D_TYPE type, int frame = -1) const=0;
+
+
+  /**
+       Returns the value of the type specified from the particle selected
+  */
+  virtual void get_value(int& out,int ind,D_TYPE type, int frame) const = 0;
   /**
      Returns the value of the type specified from the particle selected
    */
@@ -55,10 +61,12 @@ public:
    */
   virtual void get_value(float& out,int ind,D_TYPE type, int frame) const = 0;
 
+
+
   /**
      Returns a set of the data types.  Use the other version
    */
-  virtual std::set<D_TYPE> get_data_types() const = 0;
+  virtual std::set<D_TYPE> get_data_types() const =0;
 
   /**
      Returns a set of the data types.  Use the other version
@@ -66,10 +74,19 @@ public:
   virtual void  get_data_types(std::set<D_TYPE> & out) const = 0;
   
   /**
-     Returns the number of particles in the wrapper
-   */
-  virtual int get_num_entries() const = 0;
+     Return the number of entries the specified frame. Frame -1 returns the total for all frames
+  */
+  virtual int get_num_entries(int frame) const = 0;
   
+  /**
+     Return the number of frames
+   */
+  virtual int get_num_frames() const = 0;
+  
+  /**
+     Returns if the wrapper contains the specified data type
+   */
+  virtual bool contains_type(D_TYPE type) const = 0;
   
 };
 

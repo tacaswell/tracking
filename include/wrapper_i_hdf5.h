@@ -27,24 +27,34 @@
 #define WRAPPER_I_HDF
 
 #include "H5Cpp.h"
+
+#include <string>
 #include <vector>
 #include <map>
 #include "wrapper_i.h"
 
+namespace tracking
+{
+template <class T>
+class master_box_t;
+class particle_base;
 
-namespace tracking{
+}
+
+
+namespace utilities{
 
 class Params_hdf5;
 
 /**
    Wrapper class for eating data from hdf files
  */
-class Wrapper_i_hdf5:public wrapper_i_base{
+class Wrapper_i_hdf5:public Wrapper_in{
 private:
   /**
      name for the data file
    */
-  H5std_string file_name_;
+  std::string file_name_;
   
 protected:
   std::vector<int> frame_offsets_;
@@ -61,7 +71,7 @@ public:
   {
   };
   Wrapper_i_hdf5(Params_hdf5* param);
-  void fill_master_box(master_box_t<particle_track> & test) const;
+  void fill_master_box(tracking::master_box_t<tracking::particle_base> & test) const;
 
   Wrapper_i_hdf5(std::map<utilities::D_TYPE, int> wrap);
   

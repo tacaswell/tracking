@@ -48,7 +48,7 @@ std::set<utilities::D_TYPE>* particle_base::data_types_ = NULL;
 
 
 // constructors 
-particle_base::particle_base( int i_ind):frame_(0){
+particle_base::particle_base( int i_ind,int frame):frame_(frame){
   priv_init(i_ind);
   fill_position();
   
@@ -82,10 +82,11 @@ void particle_base::priv_init(int i_ind)
 
 
 void particle_base::fill_position(){
-  position_[0] = wrapper_in_->get_value(ind_,utilities::D_XPOS);
-  position_[1] = wrapper_in_->get_value(ind_,utilities::D_YPOS);
-  frame_ = (int) (wrapper_in_->get_value(ind_, utilities::D_FRAME));
-  
+  // position_[0] = wrapper_in_->get_value(ind_,utilities::D_XPOS);
+//   position_[1] = wrapper_in_->get_value(ind_,utilities::D_YPOS);
+//   frame_ = (int) (wrapper_in_->get_value(ind_, utilities::D_FRAME));
+  wrapper_in_->get_value(position_[0],ind_,utilities::D_XPOS,frame_);
+  wrapper_in_->get_value(position_[1],ind_,utilities::D_YPOS,frame_);
 }
 
 

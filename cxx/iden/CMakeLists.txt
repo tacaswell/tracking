@@ -1,4 +1,12 @@
-SET(COMMON_IDEN_SRC data_proc1.cpp image1.cpp kernel1.cpp params1.cpp)
+SET(COMMON_IDEN_SRC
+  data_proc1.cpp
+  image1.cpp
+  kernel1.cpp
+  params1.cpp
+  iden.cpp
+  wrapper_i_plu.cpp)
+
+
 
 
 
@@ -7,13 +15,20 @@ SET(COMMON_IDEN_SRC data_proc1.cpp image1.cpp kernel1.cpp params1.cpp)
 
 
 find_package(IPP REQUIRED)
-include_directories(${IPP_INCLUDE_DIRS})
-set(LIBS ${LIBS} ${IPPI_LIB})
-set(LIBS ${LIBS} ${IPPS_LIB})
-set(LIBS ${LIBS} ${IPPV_LIB})
-set(LIBS ${LIBS} ${IPPC_LIB})
+find_package(FreeImage REQUIRED)
+find_package(HDF5 REQUIRED)
 
-include(FindFreeImage)
+include_directories(${IPP_INCLUDE_DIRS})
+include_directories(${FreeImage_INCLUDE_DIR})
+include_directories("/home/tcaswell/other_source/gnuplot-cpp-read-only/")
+#set(LIBS ${LIBS} ${IPPI_LIB})
+#set(LIBS ${LIBS} ${IPPS_LIB})
+#set(LIBS ${LIBS} ${IPPV_LIB})
+#set(LIBS ${LIBS} ${IPPC_LIB})
+#
+
+
+
 
 
 add_library(iden SHARED tac_bpass_cntfnd.cpp ${COMMON_IDEN_SRC}
@@ -32,7 +47,11 @@ set_target_properties(iden PROPERTIES
 #ADD_CUSTOM_TARGET(driver ALL DEPENDS iden.m)
 
 
-add_executable(Iden iden.cpp ${COMMON_IDEN_SRC} ${COMMON_TRACK_SRC} ${UTIL_SRC} ${HDF_SRC})
+
+add_executable(Iden process.cpp ${COMMON_IDEN_SRC} ${COMMON_TRACK_SRC} ${UTIL_SRC} ${HDF_SRC})
+message(STATUS "Found IPP: ${IPP_LIBRARIES}")
 target_link_libraries(Iden ${IPP_LIBRARIES} )
-target_link_libraries(Iden ${HDF_LIBRARIES} )
-target_link_libraries(Iden ${Freeimage_LIBRARIES})
+message(STATUS "Found HDF: ${HDF5_LIBRARIES}")
+target_link_libraries(Iden ${HDF5_LIBRARIES} )
+message(STATUS "Found FreeImage: ${FreeImage_LIBRARIES}")
+target_link_libraries(Iden ${FreeImage_LIBRARIES})

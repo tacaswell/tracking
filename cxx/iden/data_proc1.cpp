@@ -63,6 +63,9 @@ using std::ostream;
 using std::endl;
 using std::ios;
 
+using std::endl;
+using std::cout;
+
  
 using iden::Image2D;
 using iden::Convolution_Kernel;
@@ -74,25 +77,34 @@ IppStatus iden::BandPass_2D(Image2D &image_in, Image2D &image_bandpassed, const 
 {
 	/*//set status variable*/
 	IppStatus status;
-	Gaussian_Kernel GaussKernel(feature_radius, hwhm_length, image_in.get_width(), image_in.get_length());
-	Tophat_Kernel TopHatKernel(feature_radius, image_in.get_width(), image_in.get_length());
+	Gaussian_Kernel GaussKernel(feature_radius, hwhm_length, image_in.get_width(), image_in.get_height());
+	Tophat_Kernel TopHatKernel(feature_radius, image_in.get_width(), image_in.get_height());
 	int number_of_pixels = image_in.get_numberofpixels();
 	int step_size = image_in.get_stepsize();
 	
 	/*//Create and initialize intermediate images*/
-	Image2D image_gauss_col(image_in.get_length(), image_in.get_width());
-	Image2D image_gauss_rowcol(image_in.get_length(), image_in.get_width());
-	Image2D image_tophat(image_in.get_length(), image_in.get_width());
+	Image2D image_gauss_col(image_in.get_height(), image_in.get_width());
+	Image2D image_gauss_rowcol(image_in.get_height(), image_in.get_width());
+	Image2D image_tophat(image_in.get_height(), image_in.get_width());
+	
 	
 	/*//Gaussian kernel convolution*/
-	status = ippiFilterColumn_32f_C1R(image_in.get_image2D() + GaussKernel.get_offset(), step_size, 
-		image_gauss_col.get_image2D() + GaussKernel.get_offset(), step_size, 
-		GaussKernel.get_ROI_size(), GaussKernel.get_gaussian_kernel(),
-		GaussKernel.get_kernel_length(), GaussKernel.get_anchor_point());
-	status = ippiFilterRow_32f_C1R(image_gauss_col.get_image2D() + GaussKernel.get_offset(), step_size, 
-		image_gauss_rowcol.get_image2D() + GaussKernel.get_offset(), step_size, 
-		GaussKernel.get_ROI_size(), GaussKernel.get_gaussian_kernel(),
-		GaussKernel.get_kernel_length(), GaussKernel.get_anchor_point());
+	status = ippiFilterColumn_32f_C1R(image_in.get_image2D() + GaussKernel.get_offset(),
+					  step_size,
+					  image_gauss_col.get_image2D() + GaussKernel.get_offset(),
+					  step_size,
+					  GaussKernel.get_ROI_size(),
+					  GaussKernel.get_gaussian_kernel(),
+					  GaussKernel.get_kernel_length(),
+					  GaussKernel.get_anchor_point());
+	status = ippiFilterRow_32f_C1R(image_gauss_col.get_image2D() + GaussKernel.get_offset(),
+				       step_size,
+				       image_gauss_rowcol.get_image2D() + GaussKernel.get_offset(),
+				       step_size,
+				       GaussKernel.get_ROI_size(),
+				       GaussKernel.get_gaussian_kernel(),
+				       GaussKernel.get_kernel_length(),
+				       GaussKernel.get_anchor_point());
 	
 	/*//tophat kernel convolution/filterbox operation*/
 	status = ippiFilterBox_32f_C1R(image_in.get_image2D() + TopHatKernel.get_offset(), step_size, 
@@ -129,8 +141,8 @@ IppStatus iden::FindLocalMax_2D(Image2D &image_bpass, Image2D &image_bpass_thres
 						  const int intensity_threshold, const int dilation_radius)
 {
 	IppStatus status;
-	Image2D image_dilated(image_bpass.get_length(), image_bpass.get_width());
-	Dilation_Kernel DilationKernel(dilation_radius, image_bpass.get_width(), image_bpass.get_length());
+	Image2D image_dilated(image_bpass.get_height(), image_bpass.get_width());
+	Dilation_Kernel DilationKernel(dilation_radius, image_bpass.get_width(), image_bpass.get_height());
 	
 	/*//Threshold darker pixels in bandpassed image (in preparation for later subtraction)*/
 	RecenterImage(image_bpass);
@@ -169,9 +181,9 @@ IppStatus iden::FindLocalMax_2D(Image2D &image_bpass, Image2D &image_bpass_thres
 *{
 *	IppStatus status;
 *	
-*	Image2D image_out(image_in.get_length(), image_in.get_width());
-*	Image2D image_overlay(image_in.get_length(), image_in.get_width());
-*	Image2D centerpoints(image_in.get_length(), image_in.get_width());
+*	Image2D image_out(image_in.get_height(), image_in.get_width());
+*	Image2D image_overlay(image_in.get_height(), image_in.get_width());
+*	Image2D centerpoints(image_in.get_height(), image_in.get_width());
 *	
 *	Ipp32f brightness = 75;
 *       
@@ -247,7 +259,7 @@ Ipp32f (*iden::ParticleStatistics(Image2D &image_localmax, Image2D &image_in,
 	IppStatus status;
 	
 	/*//setup kernels*/
-	Convolution_Kernel ConvolutionKernels(mask_radius, image_localmax.get_width(), image_localmax.get_length());
+	Convolution_Kernel ConvolutionKernels(mask_radius, image_localmax.get_width(), image_localmax.get_height());
 	
 	/*//Convert 32-bit FP image data in image_localmax to 8-bit integer data*/
 	Ipp8u *localmaxdata = ippsMalloc_8u((int) image_localmax.get_numberofpixels());
@@ -271,25 +283,39 @@ Ipp32f (*iden::ParticleStatistics(Image2D &image_localmax, Image2D &image_in,
 	int maxy = image_localmax.get_height() - miny;
 	int xval = 0;
 	int yval = 0;
-		
-	counter = 0;									/*//index that keeps track of which particle*/
+	
+	cout<<"minx: "<<minx<<'\t';
+	cout<<"miny: "<<miny<<'\t';
+	cout<<"maxx: "<<maxx<<'\t';
+	cout<<"maxy: "<<maxy<<'\t';
+	cout<<endl;
+	
+	counter = 0;				
+	/*//index that keeps track of which particle*/
 	int imagewidth = image_in.get_width();
 	/*//determine integer x and y values (in pixels) for each local maximum outside*/
 	/*//of border exclusion area*/
-	for(int j = 0; j < numberofpixels; j++) {
-		if(localmaxdata[j] == 1) {
-			xval = image_in.getx(j);
-			yval = image_in.gety(j);
-			
-			if (xval > minx && xval < maxx && yval > miny && yval < maxy) {
-				particledata[counter][0] = j;
-				particledata[counter][1] = xval;
-				particledata[counter][2] = yval;
-				counter++;
-			}
-		}
-	}
+	cout<<"np "<<numberofpixels<<endl;
 	
+	
+	for(int j = 0; j < numberofpixels; j++) {
+	  if(localmaxdata[j] == 1) 
+	  {
+	    xval = image_in.getx(j);
+	    yval = image_in.gety(j);
+	    if (xval > minx && xval < maxx && yval > miny && yval < maxy) 
+	    {
+	      particledata[counter][0] = j;
+	      particledata[counter][1] = xval;
+	      particledata[counter][2] = yval;
+	      counter++;
+	    }
+	  }
+	}
+// 	cout<<"---------------"<<endl;
+// 	cout<<counter<<endl;
+// 	cout<<"---------------"<<endl;
+    
 	/*//extract local region around each maximum*/
 	int extract_radius = mask_radius;
 	int extract_diameter = 2 * extract_radius + 1;

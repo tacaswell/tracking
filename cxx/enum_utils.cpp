@@ -74,7 +74,7 @@ std::string DT2str_s(D_TYPE in)
     break; 
   case D_ORGY: 
     out = "org_y";
-break; 
+    break; 
   case D_ZPOS: 
     out = std::string("z") ; 
     return out;
@@ -86,6 +86,9 @@ break;
     return out;
   case D_S_ORDER_PARAMETER: 
     out = std::string("scaler_order_parameter") ; 
+    return out;
+  case D_MULT:
+    out = "multiplicity";
     return out;
   default:
     throw("unknown type");
@@ -112,7 +115,9 @@ V_TYPE v_type(D_TYPE in)
   case D_TRACKID:
   case D_ORGX: 
   case D_ORGY: 
+  case D_MULT:
     return V_INT;
+
     // float data types
   case D_XPOS: 
   case D_YPOS: 
@@ -123,9 +128,11 @@ V_TYPE v_type(D_TYPE in)
   case D_DY: 
   case D_ZPOS:
     return V_FLOAT;
+
     // complex data types
   case D_S_ORDER_PARAMETER:
     return V_COMPLEX;
+
     // default to break stuff
   default:
     return V_ERROR;

@@ -45,10 +45,18 @@
 #define IMAGE1_H
 
 #include "ipp.h"
+// include this here so we get to use the typedefs to pretend that we
+// will try for cross compatibility
 
+#include "FreeImage.h"
 #include "mex.h"
 /*#include <string>*/
 
+/*  tac 2009-09-17
+    working on making this class behave better, ie  not exposing it's private meembers
+    to the world.
+  
+ */
 
 /*modified 6/08
  *Beating this code in to a form that can be compiled in to mex files
@@ -64,42 +72,73 @@ namespace iden
 class Image2D
 {
 public:
-	Image2D();
-	Image2D(const int image_length, const int image_width);
-	~Image2D();
+  Image2D();
+  Image2D(const int image_length, const int image_width);
 
-	int getx(const int index1D);	/*//given the index of image data, returns x-position in pixels*/
-	int gety(const int index1D);	/*//given the index of image data, returns y-position in pixels*/
-	int get1Dindex(const int x, const int y);	/*//given x and y, return 1-dim index of image*/
+  
+  ~Image2D();
+  
 
-	Ipp32f *get_image2D() const
-	{return imagedata;}
-	int get_stepsize() const
-	{return stepsize;}
-	int get_width() const
-	{return width;}
-	int get_length() const
-	{return length;}
-	int get_numberofpixels() const
-	{return numberofpixels;}
-	int get_height() const
-	{return length;}
-	IppiSize get_ROIfull() const
-	{return ROIfull;}
+  int getx(const int index1D);	/*//given the index of image data, returns x-position in pixels*/
+  int gety(const int index1D);	/*//given the index of image data, returns y-position in pixels*/
+  int get1Dindex(const int x, const int y);	/*//given x and y, return 1-dim index of image*/
 
+  /**
+     fill the image with data from matlab
+   */
+  void set_data(const mxArray *data);
+  /**
+     Fill the image with data form a pointer to unsigned ints (16bit)
+   */
+  void set_data(const WORD *data_in, int rows,int cols,WORD in_step);
+  
+  /**
+        let the outside world see the pointer, 
+	get rid of this eventually? or make it safer.  This will require a bunch of rewriting, sadly
+   */
+  Ipp32f *get_image2D() const
+  {return imagedata_;}
+  int get_stepsize() const
+  {return stepsize_;}
+  int get_width() const
+  {return width_;}
+  // tac 2009-09-17
+  // no reason for this function, get_height takes care of it
+  //   int get_length() const
+  //   {return height_;}
+  int get_numberofpixels() const
+  {return numberofpixels_;}
+  int get_height() const
+  {return height_;}
+  IppiSize get_ROIfull() const
+  {return ROIfull_;}
+  
+  /**
+     Display the image, scaled to 8bit, using the gnuplot pipes wrapper
+   */
+  void display_image() const;
+  
+  
 
 private:
-	Ipp32f *imagedata;					/*//actual image data in Ipp32f format*/
-	int stepsize;						/*//stepsize for use with IPP functions (step size in bytes)*/
-	int width;							/*//width of image, in pixels*/
-	int length;							/*//length (or height) of image, in pixels*/
-	int numberofpixels;					/*//total number of pixels in image*/
-	IppiSize ROIfull;					/*//ROI of the full image, used in IPP functions, when including whole image*/
+  Ipp32f *imagedata_;					/*//actual image data in Ipp32f format*/
+  int stepsize_;						/*//stepsize for use with IPP functions (step size in bytes)*/
+  int width_;							/*//width of image, in pixels*/
+  int height_;							/*//length (or height) of image, in pixels*/
+  int numberofpixels_;					/*//total number of pixels in image*/
+  IppiSize ROIfull_;					/*//ROI of the full image, used in IPP functions, when including whole image*/
 
+
+  
 };
 
+/**
+   kill this off, functionality merged into object
+ */
 Image2D mat_to_IPP(const mxArray *data);
-
+/**
+   kill this off, functionality merged into object
+ */
 IppStatus IPP_to_mat(mxArray *data, Image2D &image_out);
 }
 

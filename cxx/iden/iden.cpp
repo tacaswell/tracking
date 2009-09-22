@@ -1,4 +1,4 @@
-a//Copyright 2008,2009 Thomas A Caswell
+//Copyright 2008,2009 Thomas A Caswell
 //tcaswell@uchicago.edu
 //http://jfi.uchicago.edu/~tcaswell
 //
@@ -39,32 +39,180 @@ a//Copyright 2008,2009 Thomas A Caswell
 
 
 #include "iden/iden.h"
+#include "iden/wrapper_i_plu.h"
+#include "iden/image1.h"
+#include "iden/data_proc1.h"
+
+#include "ipp.h"
+#include "FreeImagePlus.h"
+
+using std::string;
+
+#include <iostream>
+using std::cout;
+using std::endl;
+
 
 using tracking::hash_case;
-using iden::Iden;
 
-void Iden::fill_hash_case(hash_case & h_case)
+using iden::Iden;
+using iden::Image2D;
+
+using utilities::Wrapper_i_plu;
+
+
+
+void Iden::fill_wrapper(Wrapper_i_plu & wrapper, int frames,int start)
 {
 
-  // make sure the case is ok (check frame # and that it is set to own particles)
-  // -need to write some extra functions for checking this, new costructors/destrcutors
-  //   for the cascade of hash_* class
 
   // load multi page
+  
+  FreeImage_Initialise();
+  BOOL bMemoryCache = TRUE;
+  fipMultiPage src(bMemoryCache);
+  // Open src file (read-only, use memory cache)
+  src.open(fname_.c_str(), FALSE, TRUE);
+  int img_frames = src.getPageCount();
 
+  if(start > img_frames)
+    throw "Iden: start is larger than the number of frames in image";
+  
+  if(start < 0)
+    throw "Iden: start is negetive, wtf";
+  
+
+  if(frames == 0)
+  {
+    frames = img_frames-start;
+  }
+  else if(start + frames > img_frames)
+  {
+    src.close(0);
+    throw "Iden: asking for more frames than the stack has";
+  }
+  
+  
+  // replace the wrapper with an entirely new one
+  wrapper = Wrapper_i_plu(frames);
+
+  fipImage image;
+  
+  // step in bytes on input image
+ 
   // loop over frames
+  for(int j = start;j<(frames+start);++j)
+  {
+    
 
-  // load and process frame
-  //  - most learning to get done
-  //  - need to figure out how to convert free image stuff to peter's classes
+    // load frame
+    image = src.lockPage(j);
+    // get data about image
+    WORD * data_ptr = (WORD *) image.accessPixels();
+    WORD scan_step = image.getScanWidth();
+    int rows = image.getHeight();
+    int cols = image.getWidth();
+
+
+    
+//     for(int k = 0;k < 20;++k)
+//     {
+//       cout<<*(data_ptr +k)<<endl;
+//     }
   
-  // get out massive nx9 array
+//     cout<<"-----------------"<<endl;
   
-  // put it in a wrapper
-  //  - need to write class, shouldn't be too bad, can hard code lots of things
-  // fill in plane
-  //  - trivial if the wrapper is working properly
-  // clean up nx9 array
+//     cout<<scan_step<<endl;
+    
+//     for(int k = 0;k < 20;++k)
+//     {
+//       for(int m =0;m<20;++m)
+//       {
+// 	cout<<*(data_ptr+k*scan_step/2 +m)<<'\t';
+//       }
+//       cout<<endl;
+      
+//     }
+    
+    
 
 
+    // shove data in to image object
+    Image2D image_in(rows,cols);
+    image_in.set_data(data_ptr, rows,cols,scan_step);
+
+    // clear the input data
+    src.unlockPage(image,false);
+
+    
+    // object for holding band passed image
+    Image2D image_bpass(rows,cols);
+    // object for holding the thresholded band passed image
+    Image2D image_bpass_thresh(rows,cols);
+    // object that holds the local max
+    Image2D image_localmax(rows,cols);
+
+
+    RecenterImage(image_in);
+
+    IppStatus status;
+    
+    status = BandPass_2D(image_in,
+			 image_bpass,
+			 params_.get_feature_radius(),
+			 params_.get_hwhm_length());
+
+
+    
+    status = FindLocalMax_2D(image_bpass,
+			     image_bpass_thresh,
+			     image_localmax,
+			     (int)params_.get_pctle_threshold(),
+			     params_.get_dilation_radius());
+    
+
+    
+    RecenterImage(image_bpass_thresh);
+    // image_in.display_image();
+//     image_bpass.display_image();
+//     image_bpass_thresh.display_image();
+//    image_localmax.display_image();
+    // get out massive nx9 array
+    int counter;
+    Ipp32f (*particledata)[9] =
+      ParticleStatistics(image_localmax,
+			 image_bpass_thresh, 
+			 params_.get_mask_radius(),
+			 params_.get_feature_radius(),
+			 counter);
+    
+    // put it in a wrapper
+    
+    cout<<"---------------"<<endl;
+    cout<<counter<<endl;
+    cout<<"---------------"<<endl;
+    
+    wrapper.add_frame_data(particledata,j-start,counter);
+    cout<<j<<endl;
+  }
+  
+  
+  src.close(0);
+  
+  FreeImage_DeInitialise();
+
+
+}
+
+void Iden::set_params(const Params & param_in)
+{
+  params_ = Params(param_in);
+}
+
+void Iden::set_fname(const std::string & in)
+{
+  fname_ = string(in);
+
+  // try to open the file
+  // look to see if the file has the meta data for the parameters
 }

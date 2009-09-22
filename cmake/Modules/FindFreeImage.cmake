@@ -20,7 +20,7 @@ find_path(FreeImage_INCLUDE_DIR
 )
 # finally the library itself
 find_library(FreeImage_LIBRARY
-  NAMES freeimage libfreeimage libfreeimage-3.11.0.so
+  NAMES freeimageplus
   HINTS  /home/tcaswell/other_source/FreeImage/Dist
   )
 
@@ -29,8 +29,12 @@ find_library(FreeImage_LIBRARY
 
 if(FreeImage_INCLUDE_DIR)
  message(STATUS "Found FreeImage: ${FreeImage_INCLUDE_DIR}")
+ message(STATUS "Found FreeImage: ${FreeImage_LIBRARY}")
 endif(FreeImage_INCLUDE_DIR)
 
 set(FreeImage_PROCESS_INCLUDES FreeImage_INCLUDE_DIR )
 set(FreeImage_PROCESS_LIBS FreeImage_LIBRARY )
 libfind_process(FreeImage)
+
+
+ message(STATUS "Found FreeImage: ${FreeImage_LIBRARIES}")

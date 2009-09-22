@@ -151,13 +151,16 @@ void master_box_t<particle>::init(utilities::params* params_in){
   particle_base::intialize_wrapper_in(in_wrapper);
   
   particle_base::intialize_data_types(&data_types);
-  
-  int num_entries= in_wrapper->get_num_entries();
-  particle_vec.reserve(num_entries);
-
-  
-  for(int j = 0; j<num_entries; ++j){
-    particle_vec.push_back( new particle(j));
+  int num_frames = in_wrapper->get_num_frames();
+  int total_entries= in_wrapper->get_num_entries(-1);
+  particle_vec.reserve(total_entries);
+    
+  for(int k = 0;k<num_frames;++k)
+  {
+    int num_entries= in_wrapper->get_num_entries(k);
+    for(int j = 0; j<num_entries; ++j){
+      particle_vec.push_back( new particle(j,k));
+    }
   }
   
 }

@@ -9,15 +9,16 @@
 FIND_LIBRARY(HDF5_CPP_LIBRARY
   hdf5_cpp
   HINTS
-  /home/tcaswell/other_source/hdf/hdf5-1.6.5/hdf5/lib
+#  /home/tcaswell/other_source/hdf/hdf5-1.6.5/hdf5/lib
 #  /usr/lib
+ /home/tcaswell/other_source/hdf/hdf5-1.8.3/hdf5/lib
   )
 
 FIND_LIBRARY(HDF5_LIBRARY
   hdf5
   HINTS
-  /home/tcaswell/other_source/hdf/hdf5-1.6.5/hdf5/lib
-#  /home/tcaswell/other_source/hdf/hdf5-1.8.3/hdf5/lib
+#  /home/tcaswell/other_source/hdf/hdf5-1.6.5/hdf5/lib
+  /home/tcaswell/other_source/hdf/hdf5-1.8.3/hdf5/lib
 #  /usr/lib
   )
 

@@ -45,8 +45,8 @@ particle_track::particle_track(Wrapper_in * i_data,
 
 }
 */
-particle_track::particle_track(int i_ind)
-  :particle_base(i_ind),
+particle_track::particle_track(int i_ind,int frame)
+  :particle_base(i_ind,frame),
    next_(NULL),
    prev_(NULL),
    track(NULL) ,
@@ -57,7 +57,7 @@ particle_track::particle_track(int i_ind)
 }
 
 particle_track::particle_track(int i_ind,utilities::Tuple pos,unsigned int frame)
-  :particle_base(i_ind,pos),
+  :particle_base(i_ind,pos,frame),
    next_(NULL),
    prev_(NULL),
    track(NULL) ,

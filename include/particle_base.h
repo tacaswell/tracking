@@ -70,7 +70,7 @@ public:
      move to this being the primary constructor, get rid of the other
      one
    */
-  particle_base(int i_ind);
+  particle_base(int i_ind,int frame=0);
 
   /**
      Constructor that takes the position of the particle. 

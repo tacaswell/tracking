@@ -35,61 +35,40 @@
 //containing parts covered by the terms of End User License Agreement
 //for FreeImage Public License, the licensors of
 //this Program grant you additional permission to convey the resulting
-//work.
+#include <iostream>
 
-
-#ifndef IDEN_OBJ
-#define IDEN_OBJ
-#include <string>
-
+#include "iden/wrapper_i_plu.h"
+#include "iden/iden.h"
 #include "iden/params1.h"
-namespace tracking
-{
-class hash_case;
-template <class T>
-class master_box_t;
 
-}
-namespace utilities
-{
-class Wrapper_i_plu;
-}
+//#include "gnuplot_i.hpp" //Gnuplot class handles POSIX-Pipe-communikation with Gnuplot
 
+using std::cout;
+using std::endl;
+using utilities::Wrapper_i_plu;
 
-namespace iden
-{
+using iden::Iden;
+using iden::Params;
 
-/**
-   Class to encapsulate all of the image processing for particle identification
- */
-class Iden
+int main()
 {
-public:
-  Iden(Params& in):params_(in)
+  try
   {
-  };			// needs arguements
-  ~Iden(){};
+    
+    Params p(4,1.3,3,1,3);
+    p.PrintOutParameters(std::cout);
   
-  void set_fname(const std::string &);
-  void set_params(const Params& param_in);
+    Iden iden(p);
+    iden.set_fname("30um_27-2_0.tif");
+    Wrapper_i_plu wp(1);
+    iden.fill_wrapper(wp,5,5);
+    cout<<wp.get_num_entries(-1)<<endl;
+    
+  }
+  catch(const char * err){
+    std::cout<<err<<endl;
+  } 
   
-  void fill_wrapper(utilities::Wrapper_i_plu &,int frames=0,int start=0);
-  
-private:
-  /**
-     name of the file to be working on
-   */
-  std::string fname_;
-  /**
-     Parameter object, holds the parameters for the image processing
-   */
-  Params params_;
-  
-};
-
-  
-
-
+  return 0;
 }
 
-#endif

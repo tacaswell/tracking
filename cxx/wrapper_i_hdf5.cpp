@@ -26,7 +26,7 @@
 #include "wrapper_i_hdf5.h"
 #include "master_box_t.h"
 #include "tuple.h"
-#include "particle_track.h"
+#include "particle_base.h"
 
 using H5::H5File;
 using H5::DataSpaceIException;
@@ -38,18 +38,24 @@ using H5::DataSpace;
 using H5::PredType;
 
 using utilities::Tuple;
+using utilities::Wrapper_i_hdf5;
 
+using std::map;
+using std::cout;
+using std::endl;
 
-using namespace tracking;
+using tracking::master_box_t;
+using tracking::particle_base;
+
 
 const int BUFF_LEN = 50;
 
 Wrapper_i_hdf5::Wrapper_i_hdf5(map<utilities::D_TYPE, int> wrap):
-  wrapper_i_base(wrap),file_name_("processed_30um_27-2_0.h5")
+  file_name_("processed_30um_27-2_0.h5")
 {
   
 }
-double Wrapper_i_hdf5::get_value(int, tracking::utilities::D_TYPE) const
+double Wrapper_i_hdf5::get_value(int, utilities::D_TYPE) const
 {
   
 }
@@ -95,7 +101,7 @@ int Wrapper_i_hdf5::num_entries() const
 }
 
 
-void Wrapper_i_hdf5::fill_master_box(master_box_t<particle_track> & master_box) const
+void Wrapper_i_hdf5::fill_master_box(master_box_t<particle_base> & master_box) const
 {
   std::set<utilities::D_TYPE> data_type_tmp = this->get_data_types();
   
@@ -138,7 +144,7 @@ void Wrapper_i_hdf5::fill_master_box(master_box_t<particle_track> & master_box) 
       data_x->read(&x, PredType::NATIVE_FLOAT,mspace,fspace);
       data_y->read(&y, PredType::NATIVE_FLOAT,mspace,fspace);
 
-      master_box.push(new particle_track(i,Tuple(x,y),j));
+      master_box.push(new particle_base(i,Tuple(x,y),j));
       
 
       //      read (void *buf, const DataType &mem_type, const DataSpace &mem_space=DataSpace::ALL, const DataSpace &file_space=DataSpace::ALL, const DSetMemXferPropList &xfer_plist=DSetMemXferPropList::DEFAULT) const

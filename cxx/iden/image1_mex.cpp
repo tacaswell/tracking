@@ -42,66 +42,70 @@
 //copied form https://plutarc.svn.sourceforge.net/svnroot/plutarc/trunk/matlab_wrapper rev9
 // Modified by Thomas Caswell tcaswell@uchicago.edu 09/2009-
 
-#include "iden/params1.h"
-#include "mex.h"
-#include <stdlib.h>
-#include <string>
 
-#include <iostream>
-#include <iomanip>
-#include <sstream>
-
-using std::cout;
-using std::endl;
-using std::ostream;
-
-
-using iden::Params;
-
-
-Params::~Params()
+Image2D iden::mat_to_IPP(const mxArray *data)
 {
-}
-Params::Params(int fr,float hwhm,int di,float pt,int mr):
-  feature_radius_(fr),
-  hwhm_length_(hwhm),dilation_radius_(di),pctle_threshold_(pt),mask_radius_(mr)
-{
-}
+  int j;
+  double *mat_tmp;
+  mat_tmp = mxGetPr(data);
+  IppStatus status;
 
-
+  int mat_width = mxGetM(data);
+  int mat_height = mxGetN(data);
   
-const Params &Params::operator =(const Params &Parameters)
-{
-  if (&Parameters != this) {
-    /*	infile_stem = Parameters.get_infilestem();
-	outfile_stem = Parameters.get_outfilestem();
-	file_extension = Parameters.get_file_extension();
-	start_frameofstack = Parameters.get_start_frameofstack();
-	end_frameofstack = Parameters.get_end_frameofstack();
-	start_stack = Parameters.get_start_stack();
-	end_stack = Parameters.get_end_stack();
-    */
-    feature_radius_ = Parameters.get_feature_radius();
-    hwhm_length_ = Parameters.get_hwhm_length();
-    dilation_radius_ = Parameters.get_dilation_radius();
-    pctle_threshold_ = Parameters.get_pctle_threshold();
-    mask_radius_ = Parameters.get_mask_radius();
-		
-  }
-  else {
-    cout << "Error: Parameters cannot be assigned to self!" << endl;
-  }
-  return *this;
-}
 
-
-void Params::PrintOutParameters(std::ostream &out) const
-{
-  out<<"feature_radius_" <<get_feature_radius() <<std::endl;
-  out<<"hwhm_length_"    <<get_hwhm_length()    <<std::endl;
-  out<<"dilation_radius_"<<get_dilation_radius()<<std::endl;
-  out<<"pctle_threshold_"<<get_pctle_threshold()<<std::endl;
-  out<<"mask_radius_"    <<get_mask_radius()    <<std::endl;
-}
-
+  IppiSize roi = {mat_width, mat_height};
   
+  Image2D image_in(mat_height, mat_width);
+  
+  Ipp32f *image_tmp;
+  image_tmp = image_in.get_image2D();
+  for(j=0;j<mat_height*mat_width;j++)
+    {
+      image_tmp[j] = mat_tmp[j];
+    } 
+
+  return image_in;
+}
+
+IppStatus iden::IPP_to_mat(mxArray *data, Image2D &image_out)
+{
+  int j;
+  double *mat_tmp;
+  mat_tmp = mxGetPr(data);
+  IppStatus status;
+  Ipp32f *image_tmp;
+  image_tmp = image_out.get_image2D();
+
+  for (j = 0; j <image_out.get_width()*image_out.get_height() ; j++)
+    {
+      mat_tmp[j] = (double)image_tmp[j];
+    }
+
+
+
+  return status;
+}
+
+
+void Image2D::set_data(const mxArray *data)
+{
+  int mat_width = mxGetM(data);
+  int mat_height = mxGetN(data);
+  if(!(mat_width==width_ && mat_height == height_))
+  {
+    std::cerr<<"height: "<<height_<<'\t'<<"mat_height: "<<mat_height<<std::endl;
+    std::cerr<<"width: "<<width_<<'\t'<<"mat_width: "<<mat_width<<std::endl;
+    throw "Image2D: data is wrong size";
+  }
+  
+  double *mat_tmp;
+  mat_tmp = mxGetPr(data);
+
+
+  for(int j=0;j<height_*width_;j++)
+  {
+    imagedata_[j] =(Ipp32f)mat_tmp[j];
+  } 
+
+}

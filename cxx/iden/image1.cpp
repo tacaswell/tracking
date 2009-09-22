@@ -45,6 +45,7 @@
 #include "mex.h"
 
 #include <fstream>
+#include <iostream>
 #include <math.h>
 // tac 2009-09-15
 // 
@@ -53,6 +54,12 @@
 // tac 2009-09-15
 // 
 using iden::Image2D;
+using std::cout;
+using std::endl;
+
+// tac 2009-09-21
+// added displaying functionality
+#include "gnuplot_i.hpp" //Gnuplot class handles POSIX-Pipe-communikation with Gnuplot
 
 
 /* modified 6/08
@@ -61,87 +68,129 @@ using iden::Image2D;
  */
 
 Image2D::Image2D(const int image_length, const int image_width):
-  imagedata(NULL), stepsize(0), width(0), length(0)
+  imagedata_(NULL), stepsize_(0), width_(0), height_(0)
 {
-  numberofpixels = image_width * image_length;
-  length = image_length;
-  width = image_width;
-  imagedata = ippsMalloc_32f(numberofpixels);
-  stepsize = 4 * image_width;
-  ROIfull.width = image_width;
-  ROIfull.height = image_length;
+  numberofpixels_ = image_width * image_length;
+  height_ = image_length;
+  width_ = image_width;
+  imagedata_ = ippsMalloc_32f(numberofpixels_);
+  stepsize_ = 4 * image_width;
+  ROIfull_.width = image_width;
+  ROIfull_.height = image_length;
   // tac 2009-03-02 
   // initialize the arrays to 0 to prevent junk in
   // them from around the edges from screwing with the
   // recentering processes
-  for(int j = 0;j<image_width*image_length; j++)
-    *(imagedata + j) = 0;
+  // for(int j = 0;j<image_width*image_length; j++)
+  //     *(imagedata + j) = 0;
+  // tac 2009-09-17
+  // changed to use ipp methods
+  
+  ippiSet_32f_C1R(0,imagedata_,stepsize_,ROIfull_);
+  
   
 }
 
+
+
 Image2D::~Image2D()
 {
-  ippsFree(imagedata);
-  imagedata = NULL;
+  ippsFree(imagedata_);
+  imagedata_ = NULL;
 }
 
 int Image2D::getx(const int index1D)
 {
-  return index1D % width;
+  return index1D % width_;
 }
 
 int Image2D::gety(const int index1D)
 {
-  return (int) floor((float) index1D / width);
+  return (int) floor((float) index1D / width_);
 }
 
 int Image2D::get1Dindex(const int x, const int y)
 {
-  return y * width + x;
+  return y * width_ + x;
 }
 
 
-/*Image2D TIFF_to_IPP(FIBITMAP *dib_in)*/
-Image2D iden::mat_to_IPP(const mxArray *data)
+void Image2D::set_data(const WORD * data_in, int rows, int cols,WORD in_step)
 {
-  int j;
-  double *mat_tmp;
-  mat_tmp = mxGetPr(data);
-  IppStatus status;
-
-  int width = mxGetM(data);
-  int height = mxGetN(data);
+  if(!(cols==width_ && rows == height_))
+  {
+    std::cerr<<"height: "<<height_<<'\t'<<"rows: "<<rows<<std::endl;
+    std::cerr<<"width: "<<width_<<'\t'<<"cols: "<<cols<<std::endl;
+    throw "Image2D: data is wrong size";
+  }
   
 
-  IppiSize roi = {width, height};
+  int data_step = cols*sizeof(Ipp32f);
   
-  Image2D image_in(height, width);
-  
-  Ipp32f *image_tmp;
-  image_tmp = image_in.get_image2D();
-  for(j=0;j<height*width;j++)
-    {
-      image_tmp[j] = mat_tmp[j];
-    } 
 
-  return image_in;
+  // this make the assumption that WORD is a short is an unsigned
+  // short and an Ipp16u is also an unsigned short, or atleast that
+  // they are the same thing.  This is true on linux
+
+
+  // copy data to this object
+  ippiConvert_16u32f_C1R(data_in, in_step,imagedata_,data_step,ROIfull_);
+  
 }
 
-IppStatus iden::IPP_to_mat(mxArray *data, Image2D &image_out)
-{
-  int j;
-  double *mat_tmp;
-  mat_tmp = mxGetPr(data);
-  IppStatus status;
-  Ipp32f *image_tmp;
-  image_tmp = image_out.get_image2D();
 
-  for (j = 0; j <image_out.get_width()*image_out.get_length() ; j++)
+
+void wait_for_key();
+ 
+void Image2D::display_image() const
+{
+  Gnuplot g;
+  cout << "window 9: plot_image" << endl;
+   const int iWidth  = width_;
+   const int iHeight = height_;
+//  const int iWidth  = 500;
+//  const int iHeight = 200;
+  
+  g.set_xrange(0,iWidth).set_yrange(0,iHeight).set_cbrange(0,255);
+
+  g.cmd("set palette gray");
+  unsigned char ucPicBuf[iWidth*iHeight];
+  // generate a greyscale image
+  Ipp32f max = -1;
+  ippiMax_32f_C1R(imagedata_,stepsize_,ROIfull_,&max);
+  cout<<"entering loop to make data.  Max: "<<max<<endl;
+  cout<<"h: "<<height_<<'\t'<<"w: "<<width_<<'\t'<<stepsize_<<endl;
+
+  
+  for(int oIndex = 0; oIndex < iHeight; oIndex++)
+  {
+    for(int iIndex = 0;iIndex<iWidth;++iIndex)
     {
-      mat_tmp[j] = (double)image_tmp[j];
+      *(ucPicBuf + iIndex +iWidth*oIndex) =
+	(unsigned char)(((*(imagedata_ +iIndex +stepsize_/sizeof(Ipp32f) * oIndex))/max)*255);
     }
+  }
+  cout<<"done with loop"<<endl;
+  g.plot_image(ucPicBuf,iWidth,iHeight,"greyscale");
+ 
+  wait_for_key();
+	
+}
 
 
+void wait_for_key ()
+{
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__TOS_WIN__)  // every keypress registered, also arrow keys
+  cout << endl << "Press any key to continue..." << endl;
 
-  return status;
+  FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
+  _getch();
+#elif defined(unix) || defined(__unix) || defined(__unix__) || defined(__APPLE__)
+  cout << endl << "Press ENTER to continue..." << endl;
+
+  std::cin.clear();
+  std::cin.ignore(std::cin.rdbuf()->in_avail());
+  std::cin.get();
+#endif
+  return;
 }

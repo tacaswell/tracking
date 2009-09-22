@@ -63,9 +63,9 @@ Data_map:: Data_map()
 
 void Data_map::set_lookup(D_TYPE dt ,int loc)
 {
-  cout<<dt<<'\t'<<loc<<endl;
+  //  cout<<dt<<'\t'<<loc<<endl;
   data_layout_[dt] = loc;
-  cout<<dt<<':'<<data_layout_[dt]<<endl;
+  //  cout<<dt<<':'<<data_layout_[dt]<<endl;
   
 }
 

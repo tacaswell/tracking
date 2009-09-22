@@ -64,6 +64,7 @@ typedef enum D_TYPE {
 
   D_TRACKID,
   D_S_ORDER_PARAMETER,
+  D_MULT,
 } D_TYPE;
 
 
@@ -71,7 +72,7 @@ typedef enum D_TYPE {
    Number of enumerated data types.  This needs to be right for the
    flat wrappers to work properly
  */
-const int D_TYPE_COUNT = 17;
+const int D_TYPE_COUNT = 18;
 
 /**
    Enumeration for the type of value the data is (ie float, int,complex)

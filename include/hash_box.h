@@ -33,7 +33,7 @@
 #include "enum_utils.h"
 
 namespace tracking{
-
+class particle_base;
 class particle_track;
 
 /**
@@ -46,7 +46,7 @@ class particle_track;
 class hash_box{
 protected:
   ///Contents of the box
-  std::vector<particle_track*> contents_;
+  std::vector<particle_base*> contents_;
 public:
   
   ///@name over all control
@@ -71,7 +71,7 @@ public:
   
 
   ///add next particle
-  void push(paticle_track* next){
+  void push(particle_base* next){
     contents_.push_back(next);
   };
 
@@ -102,7 +102,7 @@ public:
 
      figure out who uses this function is used and make private or kill
    */
-  std::vector<paticle_track*>::iterator begin(){
+  std::vector<particle_base*>::iterator begin(){
     return contents_.begin();
   }
   /**
@@ -111,7 +111,7 @@ public:
      
      figure out who uses this function is used and make private or kill
    */
-  std::vector<paticle_track*>::iterator end(){
+  std::vector<particle_base*>::iterator end(){
     return contents_.end();
   }
 
@@ -131,7 +131,7 @@ public:
   /**
      A safer version of converting a hash_box to a list
    */
-  void  box_to_list(std::list<paticle_track*>& p_list) const;
+  void  box_to_list(std::list<particle_base*>& p_list) const;
   
   //lots more of these along different components, likely reason to extend
   //these critters, however I haven't decided the most effective method of
@@ -200,13 +200,13 @@ public:
      Passes functions down the pyramid, this one for void, argument-less
      functions noncosnst
    */
-  void pass_fun_to_part(void(paticle_track::*fun)());
+  void pass_fun_to_part(void(particle_base::*fun)());
   /**
 
      Passes functions down the pyramid, this one for void, argument-less
      functions const
    */
-  void pass_fun_to_part(void(paticle_track::*fun)()const)const;
+  void pass_fun_to_part(void(particle_base::*fun)()const)const;
   
 };
 }
