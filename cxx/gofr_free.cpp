@@ -41,7 +41,7 @@ using std::cout;
 using utilities::Histogram2D;
 
 
-void vec_print(vector<double> in){
+void vec_print(vector<float> in){
   for(unsigned int j = 0 ; j<in.size(); j++)
     cout<<in.at(j)<<"\t";
   cout<<endl;
@@ -52,11 +52,11 @@ namespace{
 struct mymath{
   ///Local struct for use with the transform operators
   struct mysub{
-    double sub;
-    double operator()(double in){
+    float sub;
+    float operator()(float in){
       return in-sub;
     }
-    double operator()(double a, double b){
+    float operator()(float a, float b){
       
       return sqrt(pow(a,2)+pow(b,2));
     }
@@ -67,8 +67,8 @@ struct mymath{
   ///Local struct for use with the transform operators
   struct myarea{
     //figure out how to make this a static
-    double pi;
-    double operator()(double a, double b){
+    float pi;
+    float operator()(float a, float b){
       
       //      return (pow(b,2)-pow(a,2))*pi;
       return (b*b-a*a)*pi;
@@ -82,9 +82,9 @@ struct mymath{
 
 ///Local struct for use with the transform operators
   struct mydiv{
-    double div;
-    double operator()(double a){return a/div;}
-    double operator()(double a, double b){
+    float div;
+    float operator()(float a){return a/div;}
+    float operator()(float a, float b){
       return a/b;
     }
     mydiv(){div = 1;};
@@ -93,9 +93,9 @@ struct mymath{
 
 ///Local struct for use with the transform operators
   struct myadd{
-    double add;
-    double operator()(double a){return a+add;}
-    double operator()(double a, double b){
+    float add;
+    float operator()(float a){return a+add;}
+    float operator()(float a, float b){
       return a+b;
     }
     myadd(){add = 0;};
@@ -106,8 +106,8 @@ struct mymath{
 }mymathobs;
 }
 //}
-// int hash_box::gofr(double max_d, int nbins, hash_box* points,
-// 		   vector<double>& bin_count,vector<double>& bin_r){
+// int hash_box::gofr(float max_d, int nbins, hash_box* points,
+// 		   vector<float>& bin_count,vector<float>& bin_r){
 //   bin_count.clear();
 //   bin_count.resize(nbins);
 //   bin_r.clear();
@@ -120,11 +120,11 @@ struct mymath{
 
 // }
 
-// int hash_box::gofr_norm_a(double max_d, unsigned int nbins, hash_box* points,
-// 			  vector<double>& bin_count,vector<double>& bin_r){
+// int hash_box::gofr_norm_a(float max_d, unsigned int nbins, hash_box* points,
+// 			  vector<float>& bin_count,vector<float>& bin_r){
 //   cout<<"shouldn't be using this one"<<endl;
 //   int count = gofr(max_d, nbins, points, bin_count, bin_r);
-//   vector<double>area;
+//   vector<float>area;
 //   area.resize(bin_r.size());
 
 //   //vec_print(bin_r);
@@ -143,8 +143,8 @@ struct mymath{
   
 // }
 
-// int hash_shelf::gofr(double max_d, int nbins, vector<double>& bin_count,
-// 		      vector<double>& bin_r) const{
+// int hash_shelf::gofr(float max_d, int nbins, vector<float>& bin_count,
+// 		      vector<float>& bin_r) const{
 //   cout<<"shouldn't be using this one"<<endl;
 //   int count = 0;
 
@@ -166,8 +166,8 @@ struct mymath{
 // }
 
 
-// void hash_shelf::gofr_norm(double max_d, int nbins, vector<double>& bin_count,
-// 		      vector<double>& bin_r) const{
+// void hash_shelf::gofr_norm(float max_d, int nbins, vector<float>& bin_count,
+// 		      vector<float>& bin_r) const{
 //   cout<<"shouldn't be using this one"<<endl;
 //   int count =   gofr(max_d, nbins,bin_count,bin_r);
 
@@ -181,11 +181,11 @@ struct mymath{
 
 
 
-void hash_case::gofr_norm(double max_d, int nbins,
-			  vector<double>& bin_count,vector<double>& bin_r) const{
+void hash_case::gofr_norm(float max_d, int nbins,
+			  vector<float>& bin_count,vector<float>& bin_r) const{
   
   int count = 0;
-  double dens = 0;
+  float dens = 0;
   bin_count.clear();
   bin_count.resize(nbins);
 
@@ -198,7 +198,7 @@ void hash_case::gofr_norm(double max_d, int nbins,
   
   //compute the area of each ring, this requires a point at
   //max_d which is added and removed
-  vector<double>area(bin_r.size());
+  vector<float>area(bin_r.size());
   bin_r.push_back(max_d);
   transform(bin_r.begin(),bin_r.end()-1,
 	    bin_r.begin()+1,
@@ -238,7 +238,7 @@ void hash_case::gofr_norm(double max_d, int nbins,
 }
 
 
-double hash_shelf::gofr(double max_d, int nbins, vector<double>& bin_count,
+float hash_shelf::gofr(float max_d, int nbins, vector<float>& bin_count,
 			int & count) const{
   //this needs some extra code to cope with edge cases between this
   // and making the hash table something better needs to be done about
@@ -278,20 +278,20 @@ double hash_shelf::gofr(double max_d, int nbins, vector<double>& bin_count,
 
   count += local_count;
   //  cout<<count<<endl;
-  return local_count /(double)(ppb*ppb*(hash_dims_[0]-2*buffer -1)*(hash_dims_[1]-2*buffer-1));
+  return local_count /(float)(ppb*ppb*(hash_dims_[0]-2*buffer -1)*(hash_dims_[1]-2*buffer-1));
 
 
 
 }
 
 
-int hash_box::gofr(double max_d, int nbins, hash_box* points,
-		   vector<double>& bin_count){
+int hash_box::gofr(float max_d, int nbins, hash_box* points,
+		   vector<float>& bin_count){
 
 
 
-  double max_d_sqr = max_d * max_d;
-  double tmp_dist = 0;
+  float max_d_sqr = max_d * max_d;
+  float tmp_dist = 0;
 
   vector<particle_base*>::iterator box_it, points_it;
 
@@ -322,7 +322,7 @@ int hash_box::gofr(double max_d, int nbins, hash_box* points,
   return contents_.size(); 
 }
 	     
-void hash_shelf::gofr2D(double max_d, utilities::Histogram2D & gofr2 ) const
+void hash_shelf::gofr2D(float max_d, utilities::Histogram2D & gofr2 ) const
 {
   int buffer = (int)ceil(max_d/ppb);
   
@@ -361,7 +361,7 @@ void hash_shelf::gofr2D(double max_d, utilities::Histogram2D & gofr2 ) const
 	  {
 	    continue;
 	  }
-	  double sep_r = box_part_ptr->distancesq(region_part_ptr);
+	  float sep_r = box_part_ptr->distancesq(region_part_ptr);
 	  if(sep_r == 0)
 	  {
 	    continue;

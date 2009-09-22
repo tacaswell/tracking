@@ -188,12 +188,12 @@ void Iden::fill_wrapper(Wrapper_i_plu & wrapper, int frames,int start)
     
     // put it in a wrapper
     
-    cout<<"---------------"<<endl;
-    cout<<counter<<endl;
-    cout<<"---------------"<<endl;
+//     cout<<"---------------"<<endl;
+//     cout<<counter<<endl;
+//     cout<<"---------------"<<endl;
     
     wrapper.add_frame_data(particledata,j-start,counter);
-    cout<<j<<endl;
+    //    cout<<j<<endl;
   }
   
   
@@ -216,3 +216,4 @@ void Iden::set_fname(const std::string & in)
   // try to open the file
   // look to see if the file has the meta data for the parameters
 }
+

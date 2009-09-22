@@ -64,7 +64,7 @@ void hash_case::rehash(unsigned int ppb){
     (*it)->rehash(ppb);
 }
 
-void hash_case::link(double max_range, track_shelf& tracks){
+void hash_case::link(float max_range, track_shelf& tracks){
 
   //doing this rehash takes a long time for large data sets, better to just
   //get it right begin with
@@ -120,15 +120,15 @@ void hash_case::link(double max_range, track_shelf& tracks){
   //  cout<<"here"<<endl;
 }
 
-bool lt_pair_tac(const pair<particle_track*, double> &  lh, const pair<particle_track*, double> & rh){
+bool lt_pair_tac(const pair<particle_track*, float> &  lh, const pair<particle_track*, float> & rh){
     return lh.second<rh.second;
   }
 
 void hash_case::fill_pos_link_next(list<particle_track*>* tlist, 
-			vector<hash_shelf*>::iterator in_it, double max_disp)
+			vector<hash_shelf*>::iterator in_it, float max_disp)
 {
   hash_box tmp_box;
-  double distsq;
+  float distsq;
   list<particle_track*>* tmp_list = NULL;
   particle_track* tmp_particle1 = NULL;
   particle_track* tmp_particle2 = NULL;
@@ -166,17 +166,17 @@ void hash_case::fill_pos_link_next(list<particle_track*>* tlist,
 	  
 	  //make sure the lists exist
 	  if(tmp_particle2->p_pos_link==NULL){
-	    tmp_particle2->p_pos_link = new list<pair<particle_track*,double> >;
+	    tmp_particle2->p_pos_link = new list<pair<particle_track*,float> >;
 	  }
 	  if(tmp_particle1->n_pos_link==NULL){
-	    tmp_particle1->n_pos_link = new list<pair<particle_track*,double> >;
+	    tmp_particle1->n_pos_link = new list<pair<particle_track*,float> >;
 	  }
 	 
 	  //add pairing to list
 	  (tmp_particle2->p_pos_link)->
-	    push_back(pair<particle_track*, double>(tmp_particle1,distsq));
+	    push_back(pair<particle_track*, float>(tmp_particle1,distsq));
 	  (tmp_particle1->n_pos_link)->
-	    push_back(pair<particle_track*, double>(tmp_particle2,distsq));
+	    push_back(pair<particle_track*, float>(tmp_particle2,distsq));
 	  
 	}
       }
@@ -248,7 +248,7 @@ void hash_case::D_lots(utilities::Coarse_grain_array & Duu,
 
 
 void hash_case::nearest_neighbor_array(utilities::Cell & pos_cell,
-				       utilities::Cell & nn_cell, double range)const
+				       utilities::Cell & nn_cell, float range)const
 {
   for(vector<hash_shelf*>::const_iterator shelf_it = h_case_.begin();
       shelf_it!= h_case_.end();++shelf_it)
@@ -294,7 +294,7 @@ void hash_case::next_nearest_neighbor_array(utilities::Cell & pos_cell,
 
 }
 
-void hash_case::gofr2D(double max_d, utilities::Histogram2D& gofr2 ) const
+void hash_case::gofr2D(float max_d, utilities::Histogram2D& gofr2 ) const
 {
   
 for(vector<hash_shelf*>::const_iterator shelf_it = h_case_.begin();

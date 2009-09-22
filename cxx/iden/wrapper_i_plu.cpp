@@ -44,7 +44,7 @@ void Wrapper_i_plu::add_frame_data(Ipp32f data[][9], int frame,int num)
   if(data_.at(frame) !=NULL)
     throw "already data at this frame";
 
-  cout<<"frame"<<frame<<endl;
+  cout<<"frame "<<frame<<endl;
   
   data_.at(frame) = data;
   frame_count_.at(frame) = num;
@@ -69,7 +69,8 @@ void Wrapper_i_plu::get_value(int& out,int ind,D_TYPE type, int frame) const
     return;
   }
   
-  out = (int) *(*(data_.at(frame) + ind*cols) + data_map_(type));
+  //  out = (int) (*(*(data_.at(frame) + ind*cols) + data_map_(type)));
+  out = (int)(data_.at(frame)[ind][data_map_(type)]);
 }
 
 
@@ -78,7 +79,8 @@ void Wrapper_i_plu::get_value(float& out,int ind,D_TYPE type, int frame) const
   if(V_FLOAT!=v_type(type))
     throw "wrong data type";
   
-  out = (float)*(*(data_.at(frame) + ind*cols) + data_map_(type));
+  //  out = (float)(*(*(data_.at(frame) + ind*cols) + data_map_(type)));
+  out = (float)(data_.at(frame)[ind][data_map_(type)]);
 }
 
 Wrapper_i_plu::~Wrapper_i_plu()

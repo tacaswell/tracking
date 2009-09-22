@@ -145,7 +145,7 @@ void wait_for_key();
 void Image2D::display_image() const
 {
   Gnuplot g;
-  cout << "window 9: plot_image" << endl;
+  cout << "displaying image data" << endl;
    const int iWidth  = width_;
    const int iHeight = height_;
 //  const int iWidth  = 500;
@@ -158,10 +158,7 @@ void Image2D::display_image() const
   // generate a greyscale image
   Ipp32f max = -1;
   ippiMax_32f_C1R(imagedata_,stepsize_,ROIfull_,&max);
-  cout<<"entering loop to make data.  Max: "<<max<<endl;
-  cout<<"h: "<<height_<<'\t'<<"w: "<<width_<<'\t'<<stepsize_<<endl;
-
-  
+  cout<<"Max: "<<max<<endl;
   for(int oIndex = 0; oIndex < iHeight; oIndex++)
   {
     for(int iIndex = 0;iIndex<iWidth;++iIndex)
@@ -170,11 +167,10 @@ void Image2D::display_image() const
 	(unsigned char)(((*(imagedata_ +iIndex +stepsize_/sizeof(Ipp32f) * oIndex))/max)*255);
     }
   }
-  cout<<"done with loop"<<endl;
   g.plot_image(ucPicBuf,iWidth,iHeight,"greyscale");
- 
   wait_for_key();
-	
+  g.remove_tmpfiles();
+  
 }
 
 

@@ -211,7 +211,7 @@ particle_track::~particle_track(){
 }
 
 
-double particle_track::get_value(utilities::D_TYPE type) const{
+float particle_track::get_value(utilities::D_TYPE type) const{
   if(type == utilities::D_NEXT){
     if(next_==NULL)
       return -1;
@@ -256,7 +256,7 @@ double particle_track::get_value(utilities::D_TYPE type) const{
 }
 
 
-double particle_track::distancesq_corrected(const particle_track* part_in)const{
+float particle_track::distancesq_corrected(const particle_track* part_in)const{
 
   if (shelf_ ==NULL)
     {
@@ -270,9 +270,9 @@ double particle_track::distancesq_corrected(const particle_track* part_in)const{
 	     (part_in->position_ )  - ((part_in->shelf_)->get_cum_forward_disp()))
 	  ).magnitude_sqr();
 
-  //   double X =get_value(utilities::D_XPOS) - part_in->get_value(utilities::D_XPOS);
-  //   double Y =get_value(utilities::D_YPOS) - part_in->get_value(utilities::D_YPOS);
-  //   //  double Z =get_value(utilities::d_zpos) - part_in->get_value(utilities::d_zpos);
+  //   float X =get_value(utilities::D_XPOS) - part_in->get_value(utilities::D_XPOS);
+  //   float Y =get_value(utilities::D_YPOS) - part_in->get_value(utilities::D_YPOS);
+  //   //  float Z =get_value(utilities::d_zpos) - part_in->get_value(utilities::d_zpos);
   //   return X*X + Y*Y ;//+ Z*Z;
 }
 

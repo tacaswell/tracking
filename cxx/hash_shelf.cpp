@@ -342,8 +342,8 @@ void hash_shelf::D_rr(utilities::Coarse_grain_array & Drr)const
   int max_r_int = (int) ceil(Drr.get_r_max());
   int buffer = (max_r_int%ppb == 0)?(max_r_int/ppb):(max_r_int/ppb + 1);
   int max_tau = Drr.get_d_bins();
-  double max_sep = Drr.get_r_max();
-  double min_sep = Drr.get_r_min();
+  float max_sep = Drr.get_r_max();
+  float min_sep = Drr.get_r_min();
   
   
 
@@ -411,7 +411,7 @@ void hash_shelf::D_rr(utilities::Coarse_grain_array & Drr)const
 	  continue;
 	}
 	
-	double sep_r = sqrt(box_part_ptr->distancesq(region_part_ptr));
+	float sep_r = sqrt(box_part_ptr->distancesq(region_part_ptr));
 	if((sep_r>max_sep) || (sep_r<min_sep))
 	{
 	  continue;
@@ -420,8 +420,8 @@ void hash_shelf::D_rr(utilities::Coarse_grain_array & Drr)const
 	center/=2;
 	
 	
-	double box_r_i = (box_part_ptr)->get_r(center);
-	double region_r_i = (region_part_ptr)->get_r(center);
+	float box_r_i = (box_part_ptr)->get_r(center);
+	float region_r_i = (region_part_ptr)->get_r(center);
 		
 	int box_part_trk_len = ((box_part_ptr)->get_track())->get_length();
 	int region_part_trk_len = ((region_part_ptr)->get_track())->get_length();
@@ -442,9 +442,9 @@ void hash_shelf::D_rr(utilities::Coarse_grain_array & Drr)const
 	      tmp_box_part    = tmp_box_part   ->step_forwards(tau);
 	      const Tuple displacement_correction = 
 		(tmp_box_part->get_shelf())->get_cum_forward_disp();
-	      double box_r_tau = (tmp_box_part)->
+	      float box_r_tau = (tmp_box_part)->
 		get_r(center + (displacement_correction - cumulative_disp_));
-	      double region_r_tau = (tmp_region_part)->get_r(center);
+	      float region_r_tau = (tmp_region_part)->get_r(center);
 	      Drr.add_to_element(sep_r,tau-1,
 				 (box_r_tau - box_r_i) * (region_r_tau - region_r_i));
 	      
@@ -483,8 +483,8 @@ void hash_shelf::D_lots(utilities::Coarse_grain_array & Duu,
   int max_r_int = (int) ceil(Duu.get_r_max());
   int buffer = (max_r_int%ppb == 0)?(max_r_int/ppb):(max_r_int/ppb + 1);
   int max_tau = Duu.get_d_bins();
-  double max_sep = Duu.get_r_max();
-  double min_sep = Duu.get_r_min();
+  float max_sep = Duu.get_r_max();
+  float min_sep = Duu.get_r_min();
   
   
 
@@ -542,7 +542,7 @@ void hash_shelf::D_lots(utilities::Coarse_grain_array & Duu,
 	
 	const particle_track* box_part_ptr = *box_part;
 	const particle_track* region_part_ptr = *region_part;
-	double sep_r;
+	float sep_r;
 	
 
 	// only compute the correlations once for each pair that
@@ -579,12 +579,12 @@ void hash_shelf::D_lots(utilities::Coarse_grain_array & Duu,
 	// 	center/=2;
 	
 	// 	// need to add this frames drift back to the center to find the radius in this plane
-	// 	double r_box_i = (box_part_ptr)->get_r(center + cumulative_disp_);
-	// 	double r_region_i = (region_part_ptr)->get_r(center + cumulative_disp_);
+	// 	float r_box_i = (box_part_ptr)->get_r(center + cumulative_disp_);
+	// 	float r_region_i = (region_part_ptr)->get_r(center + cumulative_disp_);
 	
 	// 	// need to add this frames drift back to the center to find the angle in this plane
-	// 	double theta_box_i = (box_part_ptr)->get_theta(center + cumulative_disp_);
-	// 	double theta_region_i = (region_part_ptr)->get_theta(center + cumulative_disp_);
+	// 	float theta_box_i = (box_part_ptr)->get_theta(center + cumulative_disp_);
+	// 	float theta_region_i = (region_part_ptr)->get_theta(center + cumulative_disp_);
 
 	// figure out the maximum step that can be taken
 	int box_part_trk_len = ((box_part_ptr)->get_track())->get_length();
@@ -602,7 +602,7 @@ void hash_shelf::D_lots(utilities::Coarse_grain_array & Duu,
 	  // take the first step
 	  bool more_box_track = tmp_region_part->step_forwards(tau,tmp_region_part);
 	  bool more_region_track = tmp_box_part->step_forwards(tau,tmp_box_part);
-	  double u_bar = md.get_val(tau-1);
+	  float u_bar = md.get_val(tau-1);
 	  
 
 	  while (more_region_track && more_box_track)
@@ -626,8 +626,8 @@ void hash_shelf::D_lots(utilities::Coarse_grain_array & Duu,
 	    // tac 2009-06-29
 	    // removed the normalization
 	    Duu.add_to_element(sep_r,tau-1,(u_box_tau.dot(u_region_tau)));
-	    double u_box_T= (u_box_tau.dot(Rij));
-	    double u_region_T = (u_region_tau.dot(Rij));
+	    float u_box_T= (u_box_tau.dot(Rij));
+	    float u_region_T = (u_region_tau.dot(Rij));
 
 	    DuuT.add_to_element(sep_r,tau-1, (u_box_T) * (u_region_T));
 	    DuuL.add_to_element(sep_r,tau-1, (u_box_tau-(Rij*u_box_T)).dot((u_region_tau-(Rij*u_region_T))));
@@ -685,7 +685,7 @@ bool hash_shelf::step_forwards(int n, const hash_shelf* & dest)const{
 }
 
 void hash_shelf::nearest_neighbor_array(utilities::Array & pos_array,
-					utilities::Array & nn_array, double range)const
+					utilities::Array & nn_array, float range)const
 {
 //   cout<<"particle_count_"<<particle_count_<<endl;
   
@@ -720,7 +720,7 @@ void hash_shelf::nearest_neighbor_array(utilities::Array & pos_array,
     {
       const particle_base* box_part_ptr = *box_part;
       const particle_base* nn_prtcle = current_region.front();
-      double min_r= 999999999;
+      float min_r= 999999999;
       
       
       for(list<particle_base*>::const_iterator region_part = ++(current_region.begin());
@@ -732,7 +732,7 @@ void hash_shelf::nearest_neighbor_array(utilities::Array & pos_array,
 	  continue;
 	}
 	
-	double sep_r = box_part_ptr->distancesq(region_part_ptr);
+	float sep_r = box_part_ptr->distancesq(region_part_ptr);
 	if (sep_r<min_r)
 	{
 	  min_r = sep_r;
@@ -791,8 +791,8 @@ void hash_shelf::next_nearest_neighbor_array(utilities::Array & pos_array,
       const particle_base* box_part_ptr = *box_part;
       const particle_base* nn_prtcle = current_region.front();
       const particle_base* nnn_prtcle = current_region.front();
-      double nn_r= 999999999;
-      double nnn_r= 999999999;
+      float nn_r= 999999999;
+      float nnn_r= 999999999;
       
       for(list<particle_base*>::const_iterator region_part = ++(current_region.begin());
 	  region_part!= current_region.end();++region_part)
@@ -803,7 +803,7 @@ void hash_shelf::next_nearest_neighbor_array(utilities::Array & pos_array,
 	  continue;
 	}
 	
-	double sep_r = box_part_ptr->distancesq(region_part_ptr);
+	float sep_r = box_part_ptr->distancesq(region_part_ptr);
 	if(sep_r == 0)
 	{
 	  box_part_ptr->print();

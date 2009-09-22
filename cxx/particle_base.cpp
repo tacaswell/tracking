@@ -48,8 +48,8 @@ std::set<utilities::D_TYPE>* particle_base::data_types_ = NULL;
 
 
 // constructors 
-particle_base::particle_base( int i_ind,int frame):frame_(frame){
-  priv_init(i_ind);
+particle_base::particle_base( int i_ind,int frame):frame_(frame),ind_(i_ind){
+  priv_init();
   fill_position();
   
 }
@@ -57,8 +57,8 @@ particle_base::particle_base( int i_ind,int frame):frame_(frame){
 // tac 2009-07-17
 // added
 particle_base::particle_base( int i_ind,Tuple pos,int frame)
- :position_(pos),frame_(frame){
-  priv_init(i_ind);
+  :ind_(i_ind),position_(pos),frame_(frame){
+  priv_init();
 }
 
 
@@ -67,60 +67,88 @@ particle_base::particle_base( int i_ind,Tuple pos,int frame)
 
 // tac 2009-07-17
 // added to streamline multiple constructors
-void particle_base::priv_init(int i_ind)
+void particle_base::priv_init()
 {
   if(wrapper_in_ ==NULL)
     throw "wrapper_in_ not initialized";
 
   if(data_types_ ==NULL)
     throw "data_types_ not initialized";
-  
-  ind_ = i_ind;
   unq_id_ = running_total_++;
 }
 
 
 
 void particle_base::fill_position(){
-  // position_[0] = wrapper_in_->get_value(ind_,utilities::D_XPOS);
-//   position_[1] = wrapper_in_->get_value(ind_,utilities::D_YPOS);
-//   frame_ = (int) (wrapper_in_->get_value(ind_, utilities::D_FRAME));
   wrapper_in_->get_value(position_[0],ind_,utilities::D_XPOS,frame_);
   wrapper_in_->get_value(position_[1],ind_,utilities::D_YPOS,frame_);
 }
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // public functions
 
-double particle_base::distancesq(const particle_base* part_in)const{
+float particle_base::distancesq(const particle_base* part_in)const{
 
   
   //  return (position_ - (part_in->get_position())).magnitude_sqr();
   return (position_ - (part_in->position_ )).magnitude_sqr();
 
-  //   double X =get_value(utilities::D_XPOS) - part_in->get_value(utilities::D_XPOS);
-  //   double Y =get_value(utilities::D_YPOS) - part_in->get_value(utilities::D_YPOS);
-  //   //  double Z =get_value(utilities::d_zpos) - part_in->get_value(utilities::d_zpos);
+  //   float X =get_value(utilities::D_XPOS) - part_in->get_value(utilities::D_XPOS);
+  //   float Y =get_value(utilities::D_YPOS) - part_in->get_value(utilities::D_YPOS);
+  //   //  float Z =get_value(utilities::d_zpos) - part_in->get_value(utilities::d_zpos);
   //   return X*X + Y*Y ;//+ Z*Z;
 }
 
 
 
-double particle_base::get_value(utilities::D_TYPE type) const{
+float particle_base::get_value(utilities::D_TYPE type) const{
   //add check to make sure that the particle know about this
   //type
   if(type == utilities::D_UNQID)
-    return (double)unq_id_;
+    return (float)unq_id_;
+  int tmpi;
+  float tmpf;
   
-  return wrapper_in_->get_value(ind_, type);
+  switch(utilities::v_type(type))
+  {
+  case utilities::V_INT:
+    wrapper_in_->get_value(tmpi,ind_,type,frame_);
+    return (float) tmpi;
+  case utilities::V_FLOAT:
+    wrapper_in_->get_value(tmpf,ind_,type,frame_);
+    return tmpf;
+  default:
+    throw "particle_base: unsupported type";
+  }
+  
+    
+
 }
 
-double particle_base::get_r(const utilities::Tuple & origin) const{
+float particle_base::get_r(const utilities::Tuple & origin) const{
   return (position_ - origin).magnitude();
 }
 
-double particle_base::get_theta(const utilities::Tuple & origin) const{
+float particle_base::get_theta(const utilities::Tuple & origin) const{
   Tuple tmp =  (position_ - origin);
   return atan2(tmp[1], tmp[0]);
 }
@@ -128,6 +156,11 @@ double particle_base::get_theta(const utilities::Tuple & origin) const{
 void particle_base::print()const{
   cout<<unq_id_<<"\t";
   cout<<position_<<"\t\t"<<frame_<<'\t';
+  float tmp;
+  wrapper_in_->get_value(tmp,ind_,utilities::D_XPOS,frame_);
+  cout<<'['<<tmp<<',';
+  wrapper_in_->get_value(tmp,ind_,utilities::D_YPOS,frame_);
+  cout<<tmp<<']';
   cout<<neighborhood_.size()<<"\t";
   cout<<s_order_parameter_<<"\t";
   cout<<abs(s_order_parameter_);

@@ -78,7 +78,7 @@ void track_list::link_sub_ntwrk (){
   
   
   //call the recursive monster
-  double min = max_disp_sq*vec_size;
+  float min = max_disp_sq*vec_size;
   recur_fnc_pn(&best,&cur,0,min,
 	       p_sub_net.begin(),p_sub_net.end());
 
@@ -169,13 +169,13 @@ void track_list::link_pairs(vector<pair<particle_track*, particle_track*> >& in)
 //takes an iterator over p_sub_net, and looks for links forwards
 void track_list::recur_fnc_pn(vector<pair<particle_track*, particle_track*> >* min,
 			      vector<pair<particle_track*, particle_track*> >* cur,
-			      double disp,double &min_disp,
+			      float disp,float &min_disp,
 			      set<particle_track*>::iterator it,
 			      const set<particle_track*>::iterator& itend){
   
     
 
-  list<pair<particle_track*, double> >::iterator it2;
+  list<pair<particle_track*, float> >::iterator it2;
   //this is a 'prev' particle
   particle_track* tmp_prev_particle = *it;
   //this is a next particle
@@ -296,11 +296,11 @@ void track_list::recur_fnc_pn(vector<pair<particle_track*, particle_track*> >* m
 //takes an iterator over n_sub_net, and looks for links backwards
 void track_list::recur_fnc_np(  vector<pair<particle_track*, particle_track*> >* min,
 			     vector<pair<particle_track*, particle_track*> >* cur,
-			     double disp,double & min_disp,
+			     float disp,float & min_disp,
 			     set<particle_track*>::iterator it,
 			     const set<particle_track*>::iterator & itend){
 
-  list<pair<particle_track*, double> >::iterator it2;
+  list<pair<particle_track*, float> >::iterator it2;
   particle_track* tmp_next_particle = *it;
   particle_track* tmp_prev_particle = NULL;
   bool repeated_particle = false;
@@ -508,7 +508,7 @@ void track_list::set_up_sub_ntwrk(){
   list<particle_track*> tmp_p;
   list<particle_track*> tmp_n;
   pair<set<particle_track*>::iterator, bool> tmp_return;
-  list<pair<particle_track*,double> >::iterator it, it2,it_end;
+  list<pair<particle_track*,float> >::iterator it, it2,it_end;
   p_sub_net.clear();
   n_sub_net.clear();
 
@@ -583,7 +583,7 @@ void track_list::set_up_sub_ntwrk(){
 
 
 
-track_list::track_list(list<particle_track*>* first_list, double i_max_disp, 
+track_list::track_list(list<particle_track*>* first_list, float i_max_disp, 
 		       track_shelf* in_tracks):
   p_list(NULL), n_list(NULL), store_list(first_list), 
   tracks(in_tracks),max_disp(i_max_disp), max_disp_sq(i_max_disp*i_max_disp)

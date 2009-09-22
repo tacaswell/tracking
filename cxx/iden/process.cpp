@@ -41,11 +41,20 @@
 #include "iden/iden.h"
 #include "iden/params1.h"
 
+#include "master_box_t.h"
+#include "particle_base.h"
+#include "hash_case.h"
+#include "tuple.h"
 //#include "gnuplot_i.hpp" //Gnuplot class handles POSIX-Pipe-communikation with Gnuplot
 
 using std::cout;
 using std::endl;
 using utilities::Wrapper_i_plu;
+using utilities::Tuple;
+
+using tracking::master_box_t;
+using tracking::particle_base;
+using tracking::hash_case;
 
 using iden::Iden;
 using iden::Params;
@@ -61,12 +70,53 @@ int main()
     Iden iden(p);
     iden.set_fname("30um_27-2_0.tif");
     Wrapper_i_plu wp(1);
-    iden.fill_wrapper(wp,5,5);
+    int frame_c = 5;
+    
+    iden.fill_wrapper(wp,frame_c,0);
     cout<<wp.get_num_entries(-1)<<endl;
+    master_box_t<particle_base> box;
+    box.init(wp);
+    
+    cout<<"total number of particles is: "<<box.size()<<endl;;
+    
+    Tuple dims(1392,520);
+    particle_base* pa;
+    for(int k = 0;k<50;++k)
+	{
+	  pa = box.get_particle(k);
+	  cout<<k<<" ";
+	  pa->print();
+	}
+
+//     for(int j =0;j<box.size();++j)
+//     {
+//       particle_base* p = box.get_particle(j);
+//       const Tuple pos = p->get_position();
+      
+//       if(pos[1]>dims[1]||pos[0]>dims[0])
+//       {
+// 	cout<<"-------------------------"<<endl;
+// 	for(int k = -5;k<6;++k)
+// 	{
+// 	  p = box.get_particle(j+k);
+// 	  cout<<k<<" ";
+// 	  p->print();
+// 	}
+	
+//       }
+      
+//     }
+    
+ 
+    
+    hash_case hcase(box,dims,20,frame_c);
+    hcase.print();
+    
     
   }
   catch(const char * err){
-    std::cout<<err<<endl;
+    std::cerr<<"caught on error: ";
+    std::cerr<<err<<endl;
   } 
   
   return 0;

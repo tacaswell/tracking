@@ -45,14 +45,14 @@ void hash_box::print(){
 
 }
 
-void hash_box::get_val_vec(vector<double> & vec, utilities::D_TYPE type){
+void hash_box::get_val_vec(vector<float> & vec, utilities::D_TYPE type){
   
   vec.reserve(contents_.size());
   vector<particle_base *>::iterator it;
   
   for (it = contents_.begin(); it!=contents_.end(); ++it)
   {
-    vec.push_back((double)(*it)->get_value(type));
+    vec.push_back((float)(*it)->get_value(type));
   }
 }
 
