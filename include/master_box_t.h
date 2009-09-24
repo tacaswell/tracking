@@ -26,6 +26,7 @@
 #include "particle_base.h"
 #include "params.h"
 #include "enum_utils.h"
+#include "wrapper_i.h"
 
 #include <vector>
 #include <iostream>
@@ -86,6 +87,13 @@ public:
    */
   void init(utilities::params* prams_in);
 
+
+  /**
+     initialization to take in a wrapper
+   */
+  void init(const utilities::Wrapper_in & w_in);
+  
+
   ~master_box_t();
 
 protected:
@@ -107,7 +115,7 @@ protected:
      exact type of wrapper that is made will be determined by the
      parameter object.
   */
-  utilities::Wrapper_in * in_wrapper;
+  const utilities::Wrapper_in * in_wrapper;
   
   //imlement this
   unsigned int  imagesz1;
@@ -115,13 +123,26 @@ protected:
 
   std::set<utilities::D_TYPE> data_types;
 
+  /**
+     if the master box owns, and hence needs to delete the wrapper
+   */
+  bool own_wrapper_;
+
+  /**
+     private initialization function
+   */
+  
+  void priv_init();
+
+
+  
 };
 
 
 
 template <class particle>
 master_box_t<particle>::master_box_t(utilities::params* params_in )
- :in_wrapper(NULL){
+  :in_wrapper(NULL),own_wrapper_(false){
   
   init(params_in);
 
@@ -129,7 +150,7 @@ master_box_t<particle>::master_box_t(utilities::params* params_in )
 
 template <class particle>
 master_box_t<particle>::master_box_t()
-  :in_wrapper(NULL){
+  :in_wrapper(NULL),own_wrapper_(false){
   
 
 }
@@ -140,30 +161,56 @@ void master_box_t<particle>::init(utilities::params* params_in){
     std::cout<<"can't re-initialize"<<std::endl;
     return;
   }
+  own_wrapper_ = true;
   
   in_wrapper = params_in->make_wrapper_in();
+  
+  priv_init();
+}
 
+template <class particle>
+void master_box_t<particle>::init(const utilities::Wrapper_in & w_in)
+{
+  if(in_wrapper!=NULL){
+    std::cout<<"can't re-initialize"<<std::endl;
+    return;
+  }
+  own_wrapper_ = false;
+  
+  in_wrapper = &w_in;
+  
+  priv_init();
+  
+}
+
+template <class particle>
+void master_box_t<particle>::priv_init()
+{
+  
   
   data_types = in_wrapper->get_data_types();
   data_types.insert(utilities::D_UNQID);
 
   
   particle_base::intialize_wrapper_in(in_wrapper);
-  
   particle_base::intialize_data_types(&data_types);
-  int num_frames = in_wrapper->get_num_frames();
+
   int total_entries= in_wrapper->get_num_entries(-1);
   particle_vec.reserve(total_entries);
-    
+  
+
+  int num_frames = in_wrapper->get_num_frames();
   for(int k = 0;k<num_frames;++k)
   {
     int num_entries= in_wrapper->get_num_entries(k);
+    std::cout<<"adding: "<<num_entries<<std::endl;
+    
     for(int j = 0; j<num_entries; ++j){
       particle_vec.push_back( new particle(j,k));
     }
   }
-  
 }
+
 
 template <class particle>
 void master_box_t<particle>::print(){
@@ -179,7 +226,10 @@ master_box_t<particle>::~master_box_t(){
       delete particle_vec.at(j);
     }
   //deletes the wrapper objects
-  delete in_wrapper;
+  if(own_wrapper_)
+  {
+    delete in_wrapper;
+  }
   
   
 //   std::cout<<"mb dead"<<std::endl;

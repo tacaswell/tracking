@@ -87,12 +87,12 @@ public:
   virtual ~particle_base(){}
 
 
-  ///A program generated global unique id, useful for tracking, comparing
-  ///particles and that sort of thing that does not depends on
-  ///properly parsing the data or the data being handed in behaving in
-  ///any sort of nice way, but this does mean that the particle
-  ///objects just got 32bits bigger
-  int unq_id_;
+  //A program generated global unique id, useful for tracking, comparing
+  //particles and that sort of thing that does not depends on
+  //properly parsing the data or the data being handed in behaving in
+  //any sort of nice way, but this does mean that the particle
+  //objects just got 32bits bigger
+  //int unq_id_;
 
   ///Pring out a rasonable representation of the partile
   virtual void print() const;
@@ -100,27 +100,47 @@ public:
   
 
   ///Returns the value of 'type' for the particle as specified
-  ///by the in_wrapper
-  virtual double get_value(utilities::D_TYPE type) const;
+  ///by the in_wrapper, get rid of these
+  virtual float get_value(utilities::D_TYPE type) const;
+
+  virtual float              get_value(utilities::D_TYPE type,float &        ) const;
+  virtual int                 get_value(utilities::D_TYPE type,int &          ) const;
+  virtual std::complex<float> get_value(utilities::D_TYPE type,std::complex<float>&) const;
+
   /**
      returns a tuple of the particle's position
    */
   const utilities::Tuple & get_position() const{
     return position_;}
   /**
+     returns the index of the current particle
+   */
+  int get_ind()const
+  {
+    return ind_;
+  }
+  /**
+     returns the frame of the current particle
+   */
+  int get_frame()const
+  {
+    return frame_;
+  }
+  
+  /**
      Retruns the distance from this particle to part_in
    */
-  virtual double distancesq(const particle_base* part_in) const;
+  virtual float distancesq(const particle_base* part_in) const;
   /**
      Returns the distance of the particle from the specified origin
      @param origin the cordinates of the new origin
    */
-  double get_r(const utilities::Tuple & origin) const;
+  float get_r(const utilities::Tuple & origin) const;
   /**
      Returns the angle in the plane from the Y-axis
      @param origin the cordinates of the new origin
    */
-  double get_theta(const utilities::Tuple & origin) const;
+  float get_theta(const utilities::Tuple & origin) const;
 
 
   /**
@@ -200,8 +220,8 @@ public:
 
 
 protected:
-  ///A running total of all particles created 
-  static int running_total_;
+  //A running total of all particles created 
+  //static int running_total_;
   ///object that takes care of all the underling data structures.
   const static utilities::Wrapper_in* wrapper_in_;
   ///Vector of the types of data that
@@ -244,7 +264,7 @@ protected:
   
 private:
   void fill_position();
-  void priv_init(int i_ind);
+  void priv_init();
 
   /**
      function for sorting the vectors in ascending order, returns true

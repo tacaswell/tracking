@@ -39,7 +39,7 @@ using std::complex;
 
 using utilities::Tuple;
 using utilities::Wrapper_in;
-int particle_base::running_total_ = 0;
+//int particle_base::running_total_ = 0;
 float particle_base::max_neighborhood_range_ = 0;
 
 // static initialization
@@ -74,7 +74,7 @@ void particle_base::priv_init()
 
   if(data_types_ ==NULL)
     throw "data_types_ not initialized";
-  unq_id_ = running_total_++;
+  //  unq_id_= running_total_++;
 }
 
 
@@ -83,21 +83,6 @@ void particle_base::fill_position(){
   wrapper_in_->get_value(position_[0],ind_,utilities::D_XPOS,frame_);
   wrapper_in_->get_value(position_[1],ind_,utilities::D_YPOS,frame_);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -123,11 +108,8 @@ float particle_base::distancesq(const particle_base* part_in)const{
 float particle_base::get_value(utilities::D_TYPE type) const{
   //add check to make sure that the particle know about this
   //type
-  if(type == utilities::D_UNQID)
-    return (float)unq_id_;
   int tmpi;
   float tmpf;
-  
   switch(utilities::v_type(type))
   {
   case utilities::V_INT:
@@ -139,10 +121,39 @@ float particle_base::get_value(utilities::D_TYPE type) const{
   default:
     throw "particle_base: unsupported type";
   }
-  
-    
-
 }
+
+
+
+float particle_base::get_value(utilities::D_TYPE type,float & data_io ) const
+{
+  if(v_type(type) != utilities::V_FLOAT)
+    throw "particle_base: wrong V_TYPE";
+  
+  wrapper_in_->get_value(data_io,ind_,type,frame_);
+  return data_io;
+}
+
+int particle_base::get_value(utilities::D_TYPE type,int & data_io  ) const
+{
+  if(v_type(type) != utilities::V_INT)
+    throw "particle_base: wrong V_TYPE";
+  
+  wrapper_in_->get_value(data_io,ind_,type,frame_);
+  return data_io;
+}
+
+complex<float> particle_base::get_value(utilities::D_TYPE type,complex<float>&data_io) const
+{
+  if(v_type(type) != utilities::V_COMPLEX)
+    throw "particle_base: wrong V_TYPE";
+  
+  wrapper_in_->get_value(data_io,ind_,type,frame_);
+  return data_io;
+}
+
+
+
 
 float particle_base::get_r(const utilities::Tuple & origin) const{
   return (position_ - origin).magnitude();
@@ -154,13 +165,13 @@ float particle_base::get_theta(const utilities::Tuple & origin) const{
 }
 
 void particle_base::print()const{
-  cout<<unq_id_<<"\t";
-  cout<<position_<<"\t\t"<<frame_<<'\t';
-  float tmp;
-  wrapper_in_->get_value(tmp,ind_,utilities::D_XPOS,frame_);
-  cout<<'['<<tmp<<',';
-  wrapper_in_->get_value(tmp,ind_,utilities::D_YPOS,frame_);
-  cout<<tmp<<']';
+  cout<<'('<<frame_<<','<<ind_<<')'<<'\t';
+  cout<<position_<<"\t\t";
+  // float tmp;
+//   wrapper_in_->get_value(tmp,ind_,utilities::D_XPOS,frame_);
+//   cout<<'['<<tmp<<',';
+//   wrapper_in_->get_value(tmp,ind_,utilities::D_YPOS,frame_);
+//   cout<<tmp<<']';
   cout<<neighborhood_.size()<<"\t";
   cout<<s_order_parameter_<<"\t";
   cout<<abs(s_order_parameter_);
@@ -179,6 +190,8 @@ void particle_base::intialize_data_types(std::set<utilities::D_TYPE>*  data_type
     throw "data types already initialized";
   data_types_ = data_types;
 }
+
+
 
 bool particle_base::lthan(const particle_base* a,const particle_base* b)const
 {

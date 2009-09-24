@@ -28,6 +28,7 @@
 
 #include "wrapper_o_hdf.h"
 #include "H5Cpp.h"
+#include "particle_base.h"
 
 //using namespace H5;
 
@@ -38,6 +39,7 @@ using std::set;
 using std::vector;
 using std::cout;
 using std::endl;
+using std::complex;
 
 
 using H5::H5File;
@@ -51,6 +53,8 @@ using H5::DSetCreatPropList;
 
 
 using utilities::D_TYPE;
+
+using tracking::particle_base;
 
 
 Wrapper_o_hdf::Wrapper_o_hdf(const string& file_name,set<D_TYPE> d_add):
@@ -123,6 +127,9 @@ void Wrapper_o_hdf::open_frame(int frame,int count)
   
   // ititialize the tmp_data to something
   
+  // reset the particle count
+  part_count_ = 0;
+  
 
   frame_open_ = true;  
 }
@@ -144,8 +151,12 @@ void Wrapper_o_hdf::open_particle(int ind)
     part_count_++;
   }
   
-  if(!(part_count_<frame_max_count_))
-    throw "trying to add too many particles to frame";
+  if((part_count_>frame_max_count_))
+  {
+    cout<<"part_count_ "<<part_count_<<'\t';
+    cout<<"frame_max_count_ "<<frame_max_count_<<endl;
+    throw "wrapper_o_hdf: trying to add too many particles to frame";
+  }
   
   part_open_ = true;
 }
@@ -214,15 +225,15 @@ void Wrapper_o_hdf::close_frame()
     float fillvalue_f = 0;
     DSetCreatPropList plist_f;
     plist_f.setFillValue(PredType::NATIVE_FLOAT,&fillvalue_f);
-    //     plist_f.setChunk(1,&csize);
-    //     plist_f.setDeflate(9);
+    plist_f.setChunk(1,&csize);
+    plist_f.setDeflate(9);
     
 
     int fillvalue_i = 0;
     DSetCreatPropList plist_i;
     plist_i.setFillValue(PredType::NATIVE_INT,&fillvalue_i);
-    //     plist_i.setChunk(1,&csize);
-    //     plist_i.setDeflate(9);
+    plist_i.setChunk(1,&csize);
+    plist_i.setDeflate(9);
     
     csize = csize/2;
     complex_t fillvalue_c;
@@ -230,8 +241,8 @@ void Wrapper_o_hdf::close_frame()
     fillvalue_c.re = 0;
     DSetCreatPropList plist_c;
     plist_c.setFillValue(ctype,&fillvalue_c);
-    // plist_c.setChunk(1,&csize);
-    //     plist_c.setDeflate(9);
+    plist_c.setChunk(1,&csize);
+    plist_c.setDeflate(9);
 
     hsize_t dim [] = {frame_max_count_};
     DataSpace space(1,dim);
@@ -349,9 +360,9 @@ Wrapper_o_hdf::~Wrapper_o_hdf()
   
 }
 
-set<D_TYPE> Wrapper_o_hdf::get_content_tpyes() const
+const set<D_TYPE>& Wrapper_o_hdf::get_content_tpyes() const
 {
-  return set<D_TYPE>(d_types_add_);
+  return d_types_add_;
 }
 
 
@@ -366,3 +377,38 @@ string Wrapper_o_hdf::format_name(int in)const
 }
 
   
+
+void Wrapper_o_hdf::set_all_values(const particle_base* p_in)
+{
+  open_particle(p_in->get_ind());
+  for(set<D_TYPE>::const_iterator current_type = d_types_add_.begin();
+      current_type!=d_types_add_.end();++current_type)
+  {
+    set_value(*current_type,p_in);
+  }
+  close_particle();
+    
+}
+
+
+void Wrapper_o_hdf::set_value(D_TYPE type,const particle_base* p_in)
+{
+  int tmpi;
+  float tmpf;
+  complex<float> tmpc;
+  switch(v_type(type))
+  {
+  case V_INT:
+    p_in->get_value(type,tmpi);
+    set_value(type,tmpi);
+    break;
+  case V_FLOAT:
+    p_in->get_value(type,tmpf);
+    set_value(type,tmpf);
+    break;
+  case V_COMPLEX:
+    p_in->get_value(type,tmpc);
+    set_value(type,tmpc);
+    break;
+  }
+}

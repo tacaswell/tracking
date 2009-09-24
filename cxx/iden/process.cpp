@@ -45,11 +45,14 @@
 #include "particle_base.h"
 #include "hash_case.h"
 #include "tuple.h"
+#include "wrapper_o_hdf.h"
 //#include "gnuplot_i.hpp" //Gnuplot class handles POSIX-Pipe-communikation with Gnuplot
 
 using std::cout;
 using std::endl;
+
 using utilities::Wrapper_i_plu;
+using utilities::Wrapper_o_hdf;
 using utilities::Tuple;
 
 using tracking::master_box_t;
@@ -64,13 +67,13 @@ int main()
   try
   {
     
-    Params p(4,1.3,3,1,3);
+    Params p(4,1.3,3,1,4);
     p.PrintOutParameters(std::cout);
   
     Iden iden(p);
-    iden.set_fname("30um_27-2_0.tif");
+    iden.set_fname("25-0_mid_0.tif");
     Wrapper_i_plu wp(1);
-    int frame_c = 5;
+    int frame_c = 1200;
     
     iden.fill_wrapper(wp,frame_c,0);
     cout<<wp.get_num_entries(-1)<<endl;
@@ -81,12 +84,6 @@ int main()
     
     Tuple dims(1392,520);
     particle_base* pa;
-    for(int k = 0;k<50;++k)
-	{
-	  pa = box.get_particle(k);
-	  cout<<k<<" ";
-	  pa->print();
-	}
 
 //     for(int j =0;j<box.size();++j)
 //     {
@@ -110,8 +107,25 @@ int main()
  
     
     hash_case hcase(box,dims,20,frame_c);
-    hcase.print();
+    //    hcase.print();
     
+    Wrapper_o_hdf hdf_w("25-0_mid_0.h5",wp.get_data_types());
+    
+    try
+    {
+      hcase.output_to_wrapper(hdf_w);
+    }
+    catch(const char * err)
+    {
+      std::cerr<<"caught on error: ";
+      std::cerr<<err<<endl;
+    }
+    catch(...)
+    {
+      std::cerr<<"not right type"<<endl;
+    }
+    
+
     
   }
   catch(const char * err){

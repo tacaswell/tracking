@@ -40,6 +40,7 @@ class Coarse_grain_array;
 class Counted_vector;
 class Array;
 class Histogram2D;
+class Wrapper_out;
 
 
 }
@@ -128,14 +129,14 @@ public:
   ///@{
 
   ///returns the fully normalized g(r)
-  void gofr_norm(double max_d, int nbins,
-	    std::vector<double>& bin_count,std::vector<double>& bin_r) const;
+  void gofr_norm(float max_d, int nbins,
+	    std::vector<float>& bin_count,std::vector<float>& bin_r) const;
   /**
      returns the total number of particles.  The bin_c is
      normalized by area and density, but not averaged
    */
-  int gofr(double max_d, int nbins,
-	    std::vector<double>& bin_count,std::vector<double>& bin_r) const;
+  int gofr(float max_d, int nbins,
+	    std::vector<float>& bin_count,std::vector<float>& bin_r) const;
 
   /**
      returns the total number of particles.  The bin_c is
@@ -143,7 +144,7 @@ public:
      not reinitialize the data arrays
    */
 
-  double gofr(double max_d, int nbins, std::vector<double>& bin_count,int & count) const;
+  float gofr(float max_d, int nbins, std::vector<float>& bin_count,int & count) const;
   ///@}
 
   
@@ -237,7 +238,7 @@ public:
      neighbors.
    */
   void nearest_neighbor_array(utilities::Array & pos_array,
-			      utilities::Array & nn_array, double range)const;
+			      utilities::Array & nn_array, float range)const;
   
   /**
      next nn
@@ -249,7 +250,7 @@ public:
   /**
      2D gofr
    */
-  void gofr2D(double max_d, utilities::Histogram2D & gofr2 ) const;
+  void gofr2D(float max_d, utilities::Histogram2D & gofr2 ) const;
 
   /**
      Fills in the neighbor vectors for the particles in the shelf
@@ -269,7 +270,10 @@ public:
    */
   void pass_fun_to_part(void(particle_base::*fun)()const)const;
   
-  
+  /**
+     for outputting to a wrapper
+   */
+  void output_to_wrapper(utilities::Wrapper_out & wrapper) const;
   
 protected:
   //change all of this to be pointers to hash_boxes, to keep

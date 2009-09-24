@@ -60,11 +60,9 @@ public:
   void open_particle(int);
 
   
-  void set_value(utilities::D_TYPE type, float val);
-  void set_value(utilities::D_TYPE type, int val);
-  void set_value(utilities::D_TYPE type, std::complex<float> val);
+  void set_all_values(const tracking::particle_base *);
   
-  void set_values(const tracking::particle_base *);
+  void set_value(D_TYPE,const tracking::particle_base *);
   
 
   void close_particle();
@@ -76,7 +74,7 @@ public:
   void print()const;
   int  num_entries()const{return 0;};
 
-  void get_content_tpyes(std::set<D_TYPE>&) const;
+  const std::set<D_TYPE>& get_content_tpyes() const;
   
   ~Wrapper_o_hdf();
 
@@ -191,6 +189,12 @@ private:
      formats frame names
    */
   std::string format_name(int in)const;
+
+
+  
+  void set_value(utilities::D_TYPE type, float val);
+  void set_value(utilities::D_TYPE type, int val);
+  void set_value(utilities::D_TYPE type, std::complex<float> val);
   
 
   

@@ -42,7 +42,7 @@ namespace utilities{
 class Array;
 class Coarse_grain_array;
 class Histogram2D;
-class Wrapper_o;
+class Wrapper_out;
 
 }
 
@@ -115,7 +115,7 @@ public:
      @param tracks
      a track_shelf object passed in by reference.
   */
-  void link(double max_range, track_shelf& tracks);
+  void link(float max_range, track_shelf& tracks);
 
   /**
      Compute mean forward displacement for each shelf
@@ -136,8 +136,8 @@ public:
   /**
      Averages g(r) over the contained hash_shelfs 
    */
-  void gofr_norm(double max_d, int nbins,
-		 std::vector<double>& bin_count,std::vector<double>& bin_r) const;
+  void gofr_norm(float max_d, int nbins,
+		 std::vector<float>& bin_count,std::vector<float>& bin_r) const;
 
   /**
      Computes D_rr, theu two point microrhelogy correlation.
@@ -169,7 +169,7 @@ public:
      for computing the direction of the nearest neighbor
    */
   void nearest_neighbor_array(utilities::Cell & pos_cell,
-			      utilities::Cell & nn_cell, double range)const;
+			      utilities::Cell & nn_cell, float range)const;
 
   /**
      looks at the first two nn 
@@ -181,7 +181,7 @@ public:
   /**
      pass one at 2-D gofr
    */
-  void gofr2D(double max_d, utilities::Histogram2D& gofr2 ) const;
+  void gofr2D(float max_d, utilities::Histogram2D& gofr2 ) const;
 
   /**
      Passes functions all the way down the pyramid, this one for void,
@@ -221,7 +221,7 @@ public:
   /**
      outputs the hash case to the Wrapper that is passed in
    */
-  void output_to_wrapper(utilities::Wrapper_o * ) const;
+  void output_to_wrapper(utilities::Wrapper_out & ) const;
   
   ///Destructor
   ~hash_case();
@@ -246,7 +246,7 @@ protected:
      the maximum allowed displacement when looking for possible particles
   */
   void fill_pos_link_next(std::list<particle_track*>* tlist, 
-			  std::vector<hash_shelf*>::iterator in_it, double max_disp);
+			  std::vector<hash_shelf*>::iterator in_it, float max_disp);
 
   
   
@@ -283,6 +283,7 @@ void hash_case::init(master_box_t<particle> & mb,const utilities::Tuple & img_di
 
   mb.append_to_data_types(utilities::D_NEXT);
   mb.append_to_data_types(utilities::D_PREV);
+
   h_case_.resize(frames);
   h_case_.at(0) = new hash_shelf(img_dims, ppb,0);
   for(unsigned int j = 1; j<h_case_.size(); ++j){
@@ -314,8 +315,17 @@ void hash_case::init(master_box_t<particle> & mb,const utilities::Tuple & img_di
 	++current_count;
       }
       
-      (h_case_.at((int)(p->get_value(utilities::D_FRAME))))->push(p);
+      h_case_.at(cf)->push(p);
     }
+    catch(const char * e)
+    {
+      std::cout<<e<<std::endl;
+      
+      int yar = (int)p->get_value(utilities::D_FRAME);
+      std::cout<<"trying to put in to shelf: "<<yar<<std::endl;
+      return;
+    }
+    
     catch(...){
       int yar = (int)p->get_value(utilities::D_FRAME);
       std::cout<<"trying to put in to shelf: "<<yar<<std::endl;

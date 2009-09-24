@@ -34,10 +34,13 @@ FIND_LIBRARY(M_LIBRARY
 FIND_PATH(HDF_INCLUDE_DIR
   "H5Cpp.h"
   HINTS
-  "/home/tcaswell/other_source/hdf/hdf5-1.6.5/hdf5/include"
+  "/home/tcaswell/other_source/hdf/hdf5-1.8.3/hdf5/include"
+  #  "/home/tcaswell/other_source/hdf/hdf5-1.6.5/hdf5/include"
   )
 
-
+message(STATUS "${HDF_INCLUDE_DIR}")
+message(STATUS "${HDF5_LIBRARY}")
+message(STATUS "${HDF5_CPP_LIBRARY}")
 
 # This is common to UNIX and Win32:
 SET(HDF5_LIBRARIES

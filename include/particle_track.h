@@ -185,7 +185,7 @@ public:
   /**
      Returns the value of type for this particle.
    */
-  virtual double get_value(utilities::D_TYPE type) const;
+  virtual float get_value(utilities::D_TYPE type) const;
 
   /**
      Returns pointer to the shelf the particle resides in
@@ -199,7 +199,7 @@ public:
   /**
      Returns the displacement squared corrected for the net drift
    */
-  double distancesq_corrected(const particle_track* part_in)const;
+  float distancesq_corrected(const particle_track* part_in)const;
 
   /**
      Sets what shelf the particle is in
@@ -253,12 +253,12 @@ protected:
      pointer to a list of particles to be used durring the tracking
      process
    */
-  std::list<std::pair<particle_track*, double> >* n_pos_link;
+  std::list<std::pair<particle_track*, float> >* n_pos_link;
   /**h
      pointer to a list of particles to be used durring the tracking
      process
   */
-  std::list<std::pair<particle_track*, double> >* p_pos_link;
+  std::list<std::pair<particle_track*, float> >* p_pos_link;
 
   /**
      The foward displacement vector

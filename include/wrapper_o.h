@@ -33,6 +33,11 @@
 
 #include "enum_utils.h"
 
+namespace tracking
+{
+class particle_base;
+}
+
 
 namespace utilities
 {
@@ -96,7 +101,7 @@ public:
   */
   virtual void open_particle(int ind = -1)=0;
   
-  /**
+  /*
      sets the data for type to val for the currently activated
      particle in the data structure.  If the wrapper doesn't know
      about the D_TYPE type, then [[throw an exception|ignore]] )(have
@@ -107,8 +112,21 @@ public:
      @param val
      the value to set the parameter to
   */
-  virtual void set_value(D_TYPE type, float val)=0;
-  /**
+  //virtual void set_value(D_TYPE type, float val)=0;
+  /*
+     sets the data for type to val for the currently activated
+     particle in the data structure.  If the wrapper doesn't know
+     about the D_TYPE type, then [[throw an exception|ignore]] )(have
+     not decided yet)
+    
+     @param type
+     the parameter to be set
+     @param val
+     the value to set the parameter to
+  */
+  //virtual void set_value(D_TYPE type, int val)=0;
+  
+  /*
      sets data for complex numbers, see set_value
 
      @param type
@@ -116,8 +134,21 @@ public:
      @param val
      the value to set the parameter to
    */
-  virtual void set_value(D_TYPE type, std::complex<float> val)=0;
+  //virtual void set_value(D_TYPE type, std::complex<float> val)=0;
   
+  
+  /**
+     sets the value of data type type for the particle p_in with out haveing
+     to worry outside of the wrapper about the V_TYPE of the data
+   */
+  virtual void set_value(D_TYPE type, const tracking::particle_base * p_in) =0;
+  
+  /**
+     sets all of the values that the wrapper knows about by asking the particle
+   */
+  virtual void set_all_values(const tracking::particle_base *)=0;
+  
+
   /**
      'closes' a particle. 
      Throws an error if there is no particle open
@@ -149,7 +180,7 @@ public:
   /**
      Returns a set containing the D_TYPES that the wrapper can cope with
    */
-  virtual void get_content_tpyes(std::set<D_TYPE>&) const = 0;
+  virtual const std::set<D_TYPE>& get_content_tpyes() const = 0;
   
   /**
      virtual destructor

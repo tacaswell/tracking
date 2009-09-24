@@ -5,9 +5,9 @@ project(TRACKING)
 SET(CMAKE_CXX_COMPILER "/usr/bin/g++-4.1") 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
-include(FindMatlab)
-include(FindHDF5)
-find_package( HDF5)
+find_package(Matlab)
+find_package(HDF5)
+
 
 include_directories(${TRACKING_SOURCE_DIR}/include)
 include_directories(${MATLAB_INCLUDE_DIR})

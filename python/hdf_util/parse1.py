@@ -22,6 +22,7 @@ import xml.dom.minidom
 import subprocess
 import h5py
 import datetime
+import os.path
 
 def parse_attr(h5obj,dom_obj):
     if dom_obj.getAttribute("id") =="Description":
@@ -42,12 +43,49 @@ def parse_des(h5obj,des_obj):
         if len(tmp_split) ==2:
             h5obj.attrs[tmp_split[0]] = tmp_split[1].encode('ascii')
 
+def parse_params_attr(h5file,i_str):
+    ssplit = i_str.strip().split(':')
+
+    if len(ssplit)==3:
+        print ssplit
+    elif ssplit[0].strip()=='p_rad' or ssplit[0].strip()=='d_rad'or ssplit[0].strip()=='mask_rad':
+        h5file.attrs[ssplit[0].strip()] = int(float(ssplit[1].strip()))
+        print ssplit
+    elif ssplit[0].strip()=='threshold'or ssplit[0].strip()=='hwhm' or ssplit[0].strip()=='shift_cut' or ssplit[0].strip()=='rg_cut' or ssplit[0].strip()=='e_cut':
+        h5file.attrs[ssplit[0].strip()] = float(ssplit[1].strip())
+        print ssplit
+    else:
+        print ssplit[0].strip()
+
+
+def parse_params(h5file,fname):
+    f = open(fname)
+    for line in f:
+        parse_params_attr(h5file,line)
+    f.close()
+    n_fname  = fname[:(len(fname)-5)] + ".done"
+    os.rename(fname,n_fname)
+
 fname = '25-0_mid_0.tif'
-    
+fname_p = '25-0_mid_0.pram'
 out_fname  = fname[:(len(fname)-4)] + ".h5"
 
+
+
+# make sure the files exist
+if not (os.path.exists(fname) and os.path.exists(fname_p)):
+    print "files don't exist"
+    exit()
+
+
 f = h5py.File(out_fname,'w')
-g = f.create_group("frame{0:06d}".format(0))
+
+parse_params(f,fname_p)
+
+
+#changed to deal with 2.5v2.6
+#g = f.create_group("frame{0:06d}".format(0))
+g = f.create_group("frame%(#)06d"%{"#":0})
     
 
 a = subprocess.Popen(["tiffinfo","-0",fname] ,stdout=subprocess.PIPE)
@@ -64,8 +102,9 @@ for p in props:
         parse_attr(g,p)
         if p.getAttribute("id") == "acquisition-time-local":
             tmp = p.getAttribute("value")
-            initial_t  = datetime.datetime.strptime(tmp,"%Y%m%d %H:%M:%S.%f") 
+            initial_t  = datetime.datetime.strptime(tmp[:17],"%Y%m%d %H:%M:%S") 
             initial_t.replace(microsecond=int(tmp[18:])*1000)
+            
             
     elif p.parentNode.nodeName == "MetaData":
         parse_attr(f,p)
@@ -85,7 +124,9 @@ for frame in range(1,frame_count):
     dom = xml.dom.minidom.parseString(xml_str)
     props = dom.getElementsByTagName("prop")
     
-    g = f.create_group("frame{0:06d}".format(frame))
+    #g = f.create_group("frame{0:06d}".format(0))
+    #g = f.create_group("frame{0:06d}".format(frame))
+    g = f.create_group("frame%(#)06d"%{"#":frame})
     for p in props:
         if p.parentNode.nodeName == "PlaneInfo":
             parse_attr(g,p)

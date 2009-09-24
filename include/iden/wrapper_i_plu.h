@@ -66,7 +66,7 @@ public:
   
   float get_value(int, utilities::D_TYPE, int) const
   {
-    throw "depreciated";
+    throw "wrapper_i_plu: depreciated ";
     return -1;
   }
   

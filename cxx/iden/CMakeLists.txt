@@ -7,16 +7,9 @@ SET(COMMON_IDEN_SRC
   wrapper_i_plu.cpp)
 
 
-
-
-
-
-
-
-
 find_package(IPP REQUIRED)
 find_package(FreeImage REQUIRED)
-find_package(HDF5 REQUIRED)
+#find_package(HDF5 REQUIRED)
 
 include_directories(${IPP_INCLUDE_DIRS})
 include_directories(${FreeImage_INCLUDE_DIR})
@@ -48,7 +41,7 @@ set_target_properties(iden PROPERTIES
 
 
 
-add_executable(Iden process.cpp ${COMMON_IDEN_SRC} ${COMMON_TRACK_SRC} ${UTIL_SRC} ${HDF_SRC})
+add_executable(Iden process.cpp ${COMMON_IDEN_SRC} ${COMMON_SRC} ${UTIL_SRC} ${HDF_SRC})
 message(STATUS "Found IPP: ${IPP_LIBRARIES}")
 target_link_libraries(Iden ${IPP_LIBRARIES} )
 message(STATUS "Found HDF: ${HDF5_LIBRARIES}")

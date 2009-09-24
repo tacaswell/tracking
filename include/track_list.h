@@ -51,7 +51,7 @@ public:
   ///Sets up the object to start linking tracks.  The object passed in
   ///is DESTROYED (eventually), be aware of this!
   track_list(std::list<particle_track*>* first_list,
-	     double i_max_disp,track_shelf* in_tracks);
+	     float i_max_disp,track_shelf* in_tracks);
 
   ~track_list();
   
@@ -72,9 +72,9 @@ protected:
   track_shelf* tracks;
 
   ///maximum distance a particle may move
-  double max_disp;
+  float max_disp;
   ///square of the maximum distance a particle may move
-  double max_disp_sq;
+  float max_disp_sq;
 
   
   /**
@@ -103,13 +103,13 @@ protected:
 
   void recur_fnc_np(std::vector<std::pair<particle_track*, particle_track*> >* min,
 		    std::vector<std::pair<particle_track*, particle_track*> >* cur,
-		    double disp,double& min_disp,
+		    float disp,float& min_disp,
 		    std::set<particle_track*>::iterator it,
 		    const std::set<particle_track*>::iterator& itend);
 
   void recur_fnc_pn(std::vector<std::pair<particle_track*, particle_track*> >* min,
 		    std::vector<std::pair<particle_track*, particle_track*> >* cur,
-		    double disp,double & min_disp,
+		    float disp,float & min_disp,
 		    std::set<particle_track*>::iterator it,
 		    const std::set<particle_track*>::iterator& itend);
 
@@ -118,9 +118,9 @@ protected:
 };
 
 
-inline bool track_list::part_lt(particle_track* a, particle_track* b){
-  return (a->unq_id_)<(b->unq_id_);
-}
+// inline bool track_list::part_lt(particle_track* a, particle_track* b){
+//   return (a->unq_id_)<(b->unq_id_);
+//}
 }
 
 #endif

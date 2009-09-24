@@ -588,11 +588,17 @@ track_list::track_list(list<particle_track*>* first_list, float i_max_disp,
   p_list(NULL), n_list(NULL), store_list(first_list), 
   tracks(in_tracks),max_disp(i_max_disp), max_disp_sq(i_max_disp*i_max_disp)
 {
-  bool(*fn_pt)(particle_track*,particle_track*) = part_lt;
+//   bool(*fn_pt)(particle_track*,particle_track*) = part_lt;
+//   n_sub_net = 
+//     set<particle_track*,bool(*)(particle_track*,particle_track*)>(fn_pt);
+//   p_sub_net = 
+//     set<particle_track*,bool(*)(particle_track*,particle_track*)>(fn_pt);
+
   n_sub_net = 
-    set<particle_track*,bool(*)(particle_track*,particle_track*)>(fn_pt);
+    set<particle_track*,bool(*)(particle_track*,particle_track*)>;
   p_sub_net = 
-    set<particle_track*,bool(*)(particle_track*,particle_track*)>(fn_pt);
+    set<particle_track*,bool(*)(particle_track*,particle_track*)>;
+
 } 
 
 

@@ -29,9 +29,17 @@
 #include "tuple.h"
 #include "array.h"
 #include "cell.h"
+
+#include "wrapper_o.h"
+
 using namespace tracking;
-using std::list;
+
+
 using utilities::Tuple;
+
+using utilities::Wrapper_out;
+
+using std::list;
 using std::cout;
 using std::endl;
 using std::vector;
@@ -64,61 +72,6 @@ void hash_case::rehash(unsigned int ppb){
     (*it)->rehash(ppb);
 }
 
-void hash_case::link(float max_range, track_shelf& tracks){
-
-  //doing this rehash takes a long time for large data sets, better to just
-  //get it right begin with
-  //this->rehash((int)(1.2*max_range));
-
-  //  cout<<"rehashed"<<endl;
-
-  vector<hash_shelf*>::iterator it = h_case_.begin();
-
-  //generate first list
-  list<particle_track*>* t_list = (*it)->shelf_to_list();
-
-  //  cout<<"generated list 1"<<endl;
-  //fill first track pos_link_next
-  fill_pos_link_next(t_list,++it,max_range);
-  //  cout<<"get links "<<endl;
-
-  for(list<particle_track*>::iterator it2 = t_list ->begin();
-      it2!=t_list->end(); it2++)
-    tracks.add_new_track(*it2);
-  
-  //  cout<<"populated initial tracks"<<endl;
-  
-  //  tracks.print();
-  
-  //make local track_list object
-  track_list tracking(t_list, max_range,&tracks);
-  
-  int stupid_counter = 0;
-  //cout<<"here"<<endl;
-  //loop over shelves
-  while( it<(h_case_.end()-1))
-  {
-    ++stupid_counter;
-    if(stupid_counter%50==0)
-      cout<<stupid_counter<<endl;;
-    //generate next list
-    t_list = (*it)->shelf_to_list();
-    //    cout<<": "<<t_list->size()<<endl;
-    
-    //fill next list's pos_link_next
-    fill_pos_link_next(t_list,++it,max_range);
-    
-
-
-    //shove in to track_list
-    tracking.link_next(t_list);
-  
-  }
-  //make last list
-  t_list = (*it)->shelf_to_list();
-  tracking.link_next(t_list);
-  //  cout<<"here"<<endl;
-}
 
 bool lt_pair_tac(const pair<particle_track*, float> &  lh, const pair<particle_track*, float> & rh){
     return lh.second<rh.second;
@@ -219,33 +172,6 @@ void hash_case::get_cum_disp(utilities::Array & cum_disp_array, int start){
   }
 }
 
-void hash_case::D_rr(utilities::Coarse_grain_array& D)const
-{
-  for(vector<hash_shelf*>::const_iterator shelf_it = h_case_.begin();
-      shelf_it!= h_case_.end();++shelf_it)
-  {
-    (*shelf_it)->D_rr(D);
-  }
-}
-void hash_case::D_lots(utilities::Coarse_grain_array & Duu,
-		       utilities::Coarse_grain_array & DuuL,
-		       utilities::Coarse_grain_array & DuuT,
-		       utilities::Coarse_grain_array & Ddrdr,
-// 		       utilities::Coarse_grain_array & Dxx,
-// 		       utilities::Coarse_grain_array & Dyy,
-		       utilities::Coarse_grain_array & Ddudu,
-		       utilities::Counted_vector const& md 
-		       )const
-{
-  for(vector<hash_shelf*>::const_iterator shelf_it = h_case_.begin();
-      shelf_it!= h_case_.end();++shelf_it)
-  {
-//     (*shelf_it)->D_lots(Duu,DuuL,DuuT,Ddrdr,Dxx,Dyy,Ddudu,md);
-    (*shelf_it)->D_lots(Duu,DuuL,DuuT,Ddrdr,Ddudu,md);
-  }
-
-}
-
 
 void hash_case::nearest_neighbor_array(utilities::Cell & pos_cell,
 				       utilities::Cell & nn_cell, float range)const
@@ -305,48 +231,3 @@ for(vector<hash_shelf*>::const_iterator shelf_it = h_case_.begin();
 }
 
 
-void hash_case::pass_fun_to_part(void(particle_base::*fun)())
-{
-  vector<hash_shelf*>::iterator myend =  h_case_.end();
-  for(vector<hash_shelf*>::iterator it = h_case_.begin();
-      it!=myend;++it)
-  {
-    (*it)->pass_fun_to_part(fun);
-    
-  }
-}
-
-
-void hash_case::pass_fun_to_shelf(void(hash_shelf::*fun)())
-{
-  vector<hash_shelf*>::iterator myend =  h_case_.end();
-  for(vector<hash_shelf*>::iterator it = h_case_.begin();
-      it!=myend;++it)
-  {
-    ((*it)->*fun)();
-    
-  }
-}
-
-void hash_case::pass_fun_to_part(void(particle_base::*fun)()const)const
-{
-  vector<hash_shelf*>::const_iterator myend =  h_case_.end();
-  for(vector<hash_shelf*>::const_iterator it = h_case_.begin();
-      it!=myend;++it)
-  {
-    (*it)->pass_fun_to_part(fun);
-    
-  }
-}
-
-
-void hash_case::pass_fun_to_shelf(void(hash_shelf::*fun)()const)const
-{
-  vector<hash_shelf*>::const_iterator myend =  h_case_.end();
-  for(vector<hash_shelf*>::const_iterator it = h_case_.begin();
-      it!=myend;++it)
-  {
-    ((*it)->*fun)();
-    
-  }
-}

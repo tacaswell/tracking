@@ -32,6 +32,12 @@
 
 #include "enum_utils.h"
 
+namespace utilities
+{
+class Wrapper_out;
+}
+
+
 namespace tracking{
 class particle_base;
 class particle_track;
@@ -94,7 +100,7 @@ public:
   /**
      Returns a vector of the data of p_vals type for the box.
    */
-  void get_val_vec(std::vector<double> & vec, utilities::D_TYPE type);
+  void get_val_vec(std::vector<float> & vec, utilities::D_TYPE type);
 
   /**
      Returns an iterator to the front of the contents vector,
@@ -160,23 +166,23 @@ public:
    * the underlying data structures should be clever enough work out
    * how many dimensions they are in.
   */
-  int gofr(double max_d, int nbins, hash_box* points,
-	   std::vector<double>& bin_count,std::vector<double>& bin_r);
+  int gofr(float max_d, int nbins, hash_box* points,
+	   std::vector<float>& bin_count,std::vector<float>& bin_r);
 
 
   ///Same as gofr, but assumes that bin_count is properly initialized
-  int gofr(double max_d, int nbins, hash_box* points,
-	   std::vector<double>& bin_count);
+  int gofr(float max_d, int nbins, hash_box* points,
+	   std::vector<float>& bin_count);
 
   ///Same as gofr, with the bin count vector is normalized with
   ///respect to area
-  int gofr_norm_a(double max_d, unsigned int nbins, hash_box* points,
-	   std::vector<double>& bin_count,std::vector<double>& bin_r);
+  int gofr_norm_a(float max_d, unsigned int nbins, hash_box* points,
+	   std::vector<float>& bin_count,std::vector<float>& bin_r);
   
   ///Same as gofr_norm_a, with the bin count vector is normalized with
   ///respect to area and the local average density
-  int gofr_norm_an(double max_d, int nbins, 
-		   std::vector<double> & bin_count,std::vector<double>& bin_r);
+  int gofr_norm_an(float max_d, int nbins, 
+		   std::vector<float> & bin_count,std::vector<float>& bin_r);
 
 
   ///Returns g(r).  The information is returned in two vectors,
@@ -186,13 +192,13 @@ public:
   ///This function uses linearly distributed boxes.  This function
   ///uses intel code
   void gofr_ipp(unsigned int max_d, unsigned int nbins, 
-       std::vector<int> bin_count,std::vector<double> bin_r);
+       std::vector<int> bin_count,std::vector<float> bin_r);
   
   /**
      computes 2D histogram 
    */
-  int gofr2D(double max_d, int nbins, hash_box* points,
-		       std::vector<double>& bin_count);
+  int gofr2D(float max_d, int nbins, hash_box* points,
+		       std::vector<float>& bin_count);
     
   ///@}
 
@@ -207,6 +213,12 @@ public:
      functions const
    */
   void pass_fun_to_part(void(particle_base::*fun)()const)const;
+
+  /**
+     loops over particles to 
+   */
+  void output_to_wrapper(utilities::Wrapper_out & wrapper) const;
+  
   
 };
 }
