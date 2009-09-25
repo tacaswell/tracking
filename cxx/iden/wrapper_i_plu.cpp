@@ -59,28 +59,32 @@ void Wrapper_i_plu::print()const
 }
 
 
-void Wrapper_i_plu::get_value(int& out,int ind,D_TYPE type, int frame) const
+int Wrapper_i_plu::get_value(int& out,int ind,D_TYPE type, int frame) const
 {
   if(V_INT!=v_type(type))
     throw "wrong data type";
   if(type == D_FRAME)
   {
     out = frame;
-    return;
+  }
+  else
+  {
+    //  out = (int) (*(*(data_.at(frame) + ind*cols) + data_map_(type)));
+    out = (int)(data_.at(frame)[ind][data_map_(type)]);
   }
   
-  //  out = (int) (*(*(data_.at(frame) + ind*cols) + data_map_(type)));
-  out = (int)(data_.at(frame)[ind][data_map_(type)]);
+  return out;
 }
 
 
-void Wrapper_i_plu::get_value(float& out,int ind,D_TYPE type, int frame) const
+float Wrapper_i_plu::get_value(float& out,int ind,D_TYPE type, int frame) const
 {
   if(V_FLOAT!=v_type(type))
     throw "wrong data type";
-  
   //  out = (float)(*(*(data_.at(frame) + ind*cols) + data_map_(type)));
   out = (float)(data_.at(frame)[ind][data_map_(type)]);
+  return out;
+  
 }
 
 Wrapper_i_plu::~Wrapper_i_plu()
@@ -110,10 +114,6 @@ Wrapper_i_plu::Wrapper_i_plu(int frames):data_(frames,NULL),frame_count_(frames,
   data_types_ = set<D_TYPE>(tmp, tmp+10);
 }
 
-void Wrapper_i_plu::get_data_types(std::set<utilities::D_TYPE>& out) const
-{
-  out = set<D_TYPE>(data_types_);
-}
 
 int Wrapper_i_plu::get_num_entries(int j) const{
   if(j == -1)

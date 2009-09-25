@@ -23,17 +23,19 @@
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
 
-#include "particle_base.h"
-#include "params.h"
-#include "enum_utils.h"
-#include "wrapper_i.h"
+#ifndef MASTER_BOX_T
+#define MASTER_BOX_T
 
 #include <vector>
 #include <iostream>
 #include <set>
 
-#ifndef MASTER_BOX_T
-#define MASTER_BOX_T
+#include "particle_base.h"
+#include "params.h"
+#include "enum_utils.h"
+#include "wrapper_i.h"
+#include "filter.h"
+
 namespace tracking{
 /**
    Templated class to hold the master list of all particles to be processed by
@@ -91,7 +93,7 @@ public:
   /**
      initialization to take in a wrapper
    */
-  void init(const utilities::Wrapper_in & w_in);
+  void init(const utilities::Wrapper_in & w_in,utilities::Filter & filt);
   
 
   ~master_box_t();
@@ -134,7 +136,10 @@ protected:
   
   void priv_init();
 
-
+  /**
+     Filter object
+   */
+  utilities::Filter* filt_;
   
 };
 
@@ -169,7 +174,7 @@ void master_box_t<particle>::init(utilities::params* params_in){
 }
 
 template <class particle>
-void master_box_t<particle>::init(const utilities::Wrapper_in & w_in)
+void master_box_t<particle>::init(const utilities::Wrapper_in & w_in, utilities::Filter & filt )
 {
   if(in_wrapper!=NULL){
     std::cout<<"can't re-initialize"<<std::endl;
@@ -178,6 +183,8 @@ void master_box_t<particle>::init(const utilities::Wrapper_in & w_in)
   own_wrapper_ = false;
   
   in_wrapper = &w_in;
+  filt_ = &filt;
+  filt_->set_wrapper(in_wrapper);
   
   priv_init();
   
@@ -200,13 +207,19 @@ void master_box_t<particle>::priv_init()
   
 
   int num_frames = in_wrapper->get_num_frames();
+  
+  
   for(int k = 0;k<num_frames;++k)
   {
     int num_entries= in_wrapper->get_num_entries(k);
     std::cout<<"adding: "<<num_entries<<std::endl;
     
     for(int j = 0; j<num_entries; ++j){
-      particle_vec.push_back( new particle(j,k));
+      if((*filt_)(j,k))
+      {
+	particle_vec.push_back( new particle(j,k));
+      }
+      
     }
   }
 }

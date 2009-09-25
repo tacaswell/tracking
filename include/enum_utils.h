@@ -26,6 +26,8 @@
 #ifndef ENUM_UTILS
 #define ENUM_UTILS
 
+#include<string>
+
 namespace utilities
 {
 
@@ -48,17 +50,19 @@ typedef enum D_TYPE {
   D_XPOS, 
   D_YPOS, 
   D_FRAME, 
-  D_I, 
 
+  D_I, 
   D_R2, 
   D_E,
+  
   D_NEXT,
   D_PREV, 
+  
   D_DX, 
-
   D_DY, 
   D_ORGX, 
   D_ORGY, 
+  
   D_ZPOS,
   D_UNQID,
 

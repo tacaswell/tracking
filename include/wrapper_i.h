@@ -42,36 +42,36 @@ namespace utilities{
 class Wrapper_in
 {
 public:
-  /**
+  /*
      Returns the value of the type specified from the particle selected.  use the other version
    */
-  virtual float get_value(int ind,D_TYPE type, int frame = -1) const=0;
+  //  virtual float get_value(int ind,D_TYPE type, int frame = -1) const=0;
 
 
   /**
        Returns the value of the type specified from the particle selected
   */
-  virtual void get_value(int& out,int ind,D_TYPE type, int frame) const = 0;
+  virtual int get_value(int& out,
+			int ind,D_TYPE type, int frame) const = 0;
   /**
      Returns the value of the type specified from the particle selected
    */
-  virtual void get_value(std::complex<float>& out,int ind,D_TYPE type, int frame) const = 0;
+  virtual float get_value(float& out,
+			  int ind,D_TYPE type, int frame) const = 0;
   /**
      Returns the value of the type specified from the particle selected
    */
-  virtual void get_value(float& out,int ind,D_TYPE type, int frame) const = 0;
-
-
-
+  virtual std::complex<float> get_value(std::complex<float>& out,
+				   int ind,D_TYPE type, int frame) const = 0;
   /**
      Returns a set of the data types.  Use the other version
    */
   virtual std::set<D_TYPE> get_data_types() const =0;
 
-  /**
+  /*
      Returns a set of the data types.  Use the other version
    */
-  virtual void  get_data_types(std::set<D_TYPE> & out) const = 0;
+  //  virtual void  get_data_types(std::set<D_TYPE> & out) const = 0;
   
   /**
      Return the number of entries the specified frame. Frame -1 returns the total for all frames

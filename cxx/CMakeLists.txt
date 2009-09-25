@@ -8,6 +8,7 @@ SET(COMMON_SRC
  ${PROJECT_SOURCE_DIR}/cxx/tuple.cpp
  ${PROJECT_SOURCE_DIR}/cxx/data_map.cpp
  ${PROJECT_SOURCE_DIR}/cxx/enum_utils.cpp
+ ${PROJECT_SOURCE_DIR}/cxx/filter_basic.cpp
  )
 
 SET(COMMON_TRACK_SRC
@@ -39,7 +40,7 @@ SET(OTHER_WRAPPER_SRC
   )
 
 SET(HDF_SRC
-  ${PROJECT_SOURCE_DIR}/cxx/wrapper_i_hdf5.cpp
+  ${PROJECT_SOURCE_DIR}/cxx/wrapper_i_hdf.cpp
   ${PROJECT_SOURCE_DIR}/cxx/wrapper_o_hdf.cpp
   )
 

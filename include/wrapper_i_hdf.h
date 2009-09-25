@@ -31,8 +31,9 @@
 #include <string>
 #include <vector>
 #include <map>
-#include "wrapper_i.h"
 
+#include "wrapper_i.h"
+#include "data_map.h"
 namespace tracking
 {
 template <class T>
@@ -47,38 +48,42 @@ namespace utilities{
 class Params_hdf5;
 
 /**
-   Wrapper class for eating data from hdf files
+   Wrapper class for eating data from hdf files, take 2
 */
-class Wrapper_i_hdf5:public Wrapper_in{
+class Wrapper_i_hdf:public Wrapper_in{
 private:
   /**
      name for the data file
   */
   std::string file_name_;
   
-  H5::H5File * file_;
-  mutable H5::Group * current_group_;
-  mutable int current_frame_;
-  bool file_open_;
-  
   static std::string format_name(int in);
   
-  void check_group(int frame) const;
-
   std::set<utilities::D_TYPE> data_types_;
+  
+  Data_map d_mapi_;
+  Data_map d_mapf_;
+  Data_map d_mapc_;
+  
+  std::vector<std::vector<int*> > data_i_;
+  std::vector<std::vector<float*> > data_f_;
+  std::vector<std::vector<std::complex<float>*> > data_c_;
+
+  std::vector<int> frame_c_;
+  int  frame_count_;
   
 protected:
 
   void init();
 public:
 
-  int get_value(int& out,
-		int ind,D_TYPE type, int frame) const ;
-  float get_value(float& out,
-		  int ind,D_TYPE type, int frame) const ;
+  int                 get_value(int& out,
+				int ind,D_TYPE type, int frame) const ;
+  float               get_value(float& out,
+				int ind,D_TYPE type, int frame) const ;
   std::complex<float> get_value(std::complex<float>& out,
 				int ind,D_TYPE type, int frame) const ;
-  std::set<D_TYPE>get_data_types() const ;
+  std::set<D_TYPE>    get_data_types() const ;
 
 
 
@@ -91,13 +96,11 @@ public:
 
 
   
-  ~Wrapper_i_hdf5();
+  ~Wrapper_i_hdf();
   
-  Wrapper_i_hdf5(std::string fname,std::set<utilities::D_TYPE> dtypes);
+  Wrapper_i_hdf(std::string fname,std::set<utilities::D_TYPE> dtypes);
 
-  void open_file();
-  
-  void close_file();
+
   
 
   

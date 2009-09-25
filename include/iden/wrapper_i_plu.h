@@ -70,9 +70,9 @@ public:
     return -1;
   }
   
-  void get_value(int& out,int ind,D_TYPE type, int frame) const;
-  void get_value(float &out,int ind, utilities::D_TYPE type,int frame )const;
-  void get_value(std::complex<float> &out,int ind, utilities::D_TYPE type,int frame )const
+  int get_value(int& out,int ind,D_TYPE type, int frame) const;
+  float get_value(float &out,int ind, utilities::D_TYPE type,int frame )const;
+  std::complex<float> get_value(std::complex<float> &out,int ind, utilities::D_TYPE type,int frame )const
   {throw "wrapper_i_plu:wrapper has no complex support";}
 
   
@@ -81,12 +81,12 @@ public:
   
   
 
-  void get_data_types(std::set<utilities::D_TYPE>& ) const;
+  
   bool contains_type(utilities::D_TYPE) const;
   
   int get_num_frames()const
   {
-    return frame_count_.size();
+  
   }
   
   std::set<utilities::D_TYPE> get_data_types() const

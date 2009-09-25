@@ -46,14 +46,21 @@
 #include "hash_case.h"
 #include "tuple.h"
 #include "wrapper_o_hdf.h"
+#include "wrapper_i_hdf5.h"
+#include "filter.h"
 //#include "gnuplot_i.hpp" //Gnuplot class handles POSIX-Pipe-communikation with Gnuplot
 
 using std::cout;
 using std::endl;
+using std::set;
+using std::string;
 
 using utilities::Wrapper_i_plu;
 using utilities::Wrapper_o_hdf;
+using utilities::Wrapper_i_hdf5;
 using utilities::Tuple;
+using utilities::Filter_basic;
+using utilities::D_TYPE;
 
 using tracking::master_box_t;
 using tracking::particle_base;
@@ -66,64 +73,68 @@ int main()
 {
   try
   {
+
+
     
-    Params p(4,1.3,3,1,4);
-    p.PrintOutParameters(std::cout);
+//     Params p(4,1.3,3,1,4);
+//     p.PrintOutParameters(std::cout);
   
-    Iden iden(p);
-    iden.set_fname("25-0_mid_0.tif");
-    Wrapper_i_plu wp(1);
-    int frame_c = 1200;
+//     Iden iden(p);
+//     iden.set_fname("25-0_mid_0.tif");
+//     Wrapper_i_plu wp(1);
+//     int frame_c = 1200;
+//     iden.fill_wrapper(wp,frame_c,0);
+//     cout<<wp.get_num_entries(-1)<<endl;
+
+     
+    D_TYPE tmp[] = {utilities::D_XPOS,utilities::D_YPOS,utilities::D_DX,utilities::D_DY,utilities::D_I,utilities::D_R2,utilities::D_MULT,utilities::D_E,utilities::D_FRAME};
+    set<D_TYPE> data_types = set<D_TYPE>(tmp, tmp+10);
+    string fname = "25-0_mid_0.h5";
+  
     
-    iden.fill_wrapper(wp,frame_c,0);
-    cout<<wp.get_num_entries(-1)<<endl;
+    Wrapper_i_hdf5 wh(fname,data_types);
+    wh.open_file();
+    
+
     master_box_t<particle_base> box;
-    box.init(wp);
+    Filter_basic filt(fname);
+    //    box.init(wp,filt);
+    box.init(wh,filt);
+
     
     cout<<"total number of particles is: "<<box.size()<<endl;;
     
-    Tuple dims(1392,520);
-    particle_base* pa;
 
-//     for(int j =0;j<box.size();++j)
-//     {
-//       particle_base* p = box.get_particle(j);
-//       const Tuple pos = p->get_position();
-      
-//       if(pos[1]>dims[1]||pos[0]>dims[0])
-//       {
-// 	cout<<"-------------------------"<<endl;
-// 	for(int k = -5;k<6;++k)
-// 	{
-// 	  p = box.get_particle(j+k);
-// 	  cout<<k<<" ";
-// 	  p->print();
-// 	}
-	
-//       }
-      
-//     }
+
+
     
- 
+    for(int j =0;j<20;++j)
+    {
+      particle_base* p = box.get_particle(j);
+      p->print();
+    }
     
+    int frame_c = 10;
+    
+    Tuple dims(1392,520);
     hash_case hcase(box,dims,20,frame_c);
     //    hcase.print();
     
-    Wrapper_o_hdf hdf_w("25-0_mid_0.h5",wp.get_data_types());
+    //    Wrapper_o_hdf hdf_w("25-0_mid_0.h5",wp.get_data_types());
     
-    try
-    {
-      hcase.output_to_wrapper(hdf_w);
-    }
-    catch(const char * err)
-    {
-      std::cerr<<"caught on error: ";
-      std::cerr<<err<<endl;
-    }
-    catch(...)
-    {
-      std::cerr<<"not right type"<<endl;
-    }
+//     try
+//     {
+//       hcase.output_to_wrapper(hdf_w);
+//     }
+//     catch(const char * err)
+//     {
+//       std::cerr<<"caught on error: ";
+//       std::cerr<<err<<endl;
+//     }
+//     catch(...)
+//     {
+//       std::cerr<<"not right type"<<endl;
+//     }
     
 
     
