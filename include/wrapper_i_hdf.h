@@ -65,13 +65,19 @@ private:
   Data_map d_mapf_;
   Data_map d_mapc_;
   
+
   std::vector<std::vector<int*> > data_i_;
   std::vector<std::vector<float*> > data_f_;
   std::vector<std::vector<std::complex<float>*> > data_c_;
 
   std::vector<int> frame_c_;
   int  frame_count_;
+
+  int total_part_count_;
   
+  void clean_data();
+  
+
 protected:
 
   void init();
@@ -83,6 +89,8 @@ public:
 				int ind,D_TYPE type, int frame) const ;
   std::complex<float> get_value(std::complex<float>& out,
 				int ind,D_TYPE type, int frame) const ;
+
+
   std::set<D_TYPE>    get_data_types() const ;
 
 

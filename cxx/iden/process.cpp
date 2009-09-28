@@ -46,7 +46,7 @@
 #include "hash_case.h"
 #include "tuple.h"
 #include "wrapper_o_hdf.h"
-#include "wrapper_i_hdf5.h"
+#include "wrapper_i_hdf.h"
 #include "filter.h"
 //#include "gnuplot_i.hpp" //Gnuplot class handles POSIX-Pipe-communikation with Gnuplot
 
@@ -57,7 +57,8 @@ using std::string;
 
 using utilities::Wrapper_i_plu;
 using utilities::Wrapper_o_hdf;
-using utilities::Wrapper_i_hdf5;
+using utilities::Wrapper_i_hdf;
+
 using utilities::Tuple;
 using utilities::Filter_basic;
 using utilities::D_TYPE;
@@ -87,13 +88,21 @@ int main()
 //     cout<<wp.get_num_entries(-1)<<endl;
 
      
-    D_TYPE tmp[] = {utilities::D_XPOS,utilities::D_YPOS,utilities::D_DX,utilities::D_DY,utilities::D_I,utilities::D_R2,utilities::D_MULT,utilities::D_E,utilities::D_FRAME};
-    set<D_TYPE> data_types = set<D_TYPE>(tmp, tmp+10);
+    D_TYPE tmp[] = {utilities::D_XPOS,
+		    utilities::D_YPOS,
+		    utilities::D_DX,
+		    utilities::D_DY,
+		    utilities::D_I,
+		    utilities::D_R2,
+		    utilities::D_MULT,
+		    utilities::D_E,
+		    utilities::D_FRAME};
+    set<D_TYPE> data_types = set<D_TYPE>(tmp, tmp+9);
     string fname = "25-0_mid_0.h5";
   
     
-    Wrapper_i_hdf5 wh(fname,data_types);
-    wh.open_file();
+    Wrapper_i_hdf wh(fname,data_types);
+
     
 
     master_box_t<particle_base> box;
@@ -114,27 +123,27 @@ int main()
       p->print();
     }
     
-    int frame_c = 10;
+    int frame_c = 1200;
     
     Tuple dims(1392,520);
     hash_case hcase(box,dims,20,frame_c);
     //    hcase.print();
     
-    //    Wrapper_o_hdf hdf_w("25-0_mid_0.h5",wp.get_data_types());
+    Wrapper_o_hdf hdf_w("25-0_mid_0_trim.h5",wh.get_data_types());
     
-//     try
-//     {
-//       hcase.output_to_wrapper(hdf_w);
-//     }
-//     catch(const char * err)
-//     {
-//       std::cerr<<"caught on error: ";
-//       std::cerr<<err<<endl;
-//     }
-//     catch(...)
-//     {
-//       std::cerr<<"not right type"<<endl;
-//     }
+    try
+    {
+      hcase.output_to_wrapper(hdf_w);
+    }
+    catch(const char * err)
+    {
+      std::cerr<<"caught on error: ";
+      std::cerr<<err<<endl;
+    }
+    catch(...)
+    {
+      std::cerr<<"not right type"<<endl;
+    }
     
 
     

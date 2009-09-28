@@ -110,8 +110,16 @@ Wrapper_i_plu::Wrapper_i_plu(int frames):data_(frames,NULL),frame_count_(frames,
   data_map_.set_lookup(D_MULT,7);
   data_map_.set_lookup(D_E   ,8);
  
-  D_TYPE tmp[] = {D_XPOS,D_YPOS,D_DX,D_DY,D_I,D_R2,D_MULT,D_E,D_FRAME};
-  data_types_ = set<D_TYPE>(tmp, tmp+10);
+  D_TYPE tmp[] = {D_XPOS,
+		  D_YPOS,
+		  D_DX,
+		  D_DY,
+		  D_I,
+		  D_R2,
+		  D_MULT,
+		  D_E,
+		  D_FRAME};
+  data_types_ = set<D_TYPE>(tmp, tmp+9);
 }
 
 

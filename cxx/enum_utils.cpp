@@ -55,7 +55,7 @@ std::string DT2str_s(D_TYPE in)
     out = std::string("R2") ; 
     return out; 
   case D_E: 
-    out = std::string("eccentricty") ; 
+    out = std::string("eccentricity") ; 
     return out;
   case D_NEXT: 
     out = std::string("next_part") ; 

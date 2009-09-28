@@ -64,18 +64,13 @@ Wrapper_o_hdf::Wrapper_o_hdf(const string& file_name,set<D_TYPE> d_add):
   d_types_add_(d_add),d_types_check_(),d_types_already_(), 
   float_data_(),int_data_(),complex_data_()
 {
-  // open file
-  // open frame000000
-  // loop through the data sets and extract the types of data they already have
-  // close file
+
+
+  // erase frames from the data to add, there is no good reason to
+  // record information that is in the structure
   
-  // logic to make sure that there is no over lap between the add and
-  // contains sets
-
-  // actions depend on settings of the bools 
-
-  // make sure that all of the types in check are in file already
-
+  d_types_add_.erase(D_FRAME);
+  
 }
 
 
