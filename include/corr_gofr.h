@@ -30,51 +30,64 @@
 //this Program grant you additional permission to convey the resulting
 //work.
 
-#ifndef CORR_
-#define CORR_
+#ifndef CORR_GOFR
+#define CORR_GOFR
 
-namespace utilities
-{
-class Generic_wrapper_base;
-}
+#include <vector>
 
+#include "corr.h"
 
 
 
 
 namespace tracking
 {
-class particle_base;
-class particle_track;
-
 /**
-   An ABC of objects that can be handed into hash_case and calculates
-   correlation functions.  Both types of function need to be defined.
+   simple g(r) computation
  */
-class Corr
+class Corr_gofr:public Corr
 {
 public:
+  // basic inherited stuff
+  void compute(const particle_base *) ;
+  void compute(const particle_track *);
+  void out_to_wrapper(utilities::Generic_wrapper_base & ) const ;
+
+  // special stuff
   /**
-     takes in a particle_base object.  For correlations that need the
-     tracking information this should throw an error or something
-     clever like that
+     normalize G(r) to the average
    */
-  virtual void compute(const particle_base *) = 0;
+  void normalize(std::vector<float> & gofr,float avg_den) const;
+  
   /**
-     Computes the correlation for the particle_track object in is handed.
-     For non-track dependent correlations this should cast to a particle_base
-     pointer and call the other compute function.
+     constructor.  The maximum range is taken from particle_base::max_neighborhood_range_.
+     The bins are spaced linearly.  
    */
-  virtual void compute(const particle_track *)=0;
+  Corr_gofr(int bins,float max);
+  
+private:
+  // this could be done using a single histogram object, but 
   /**
-     outputs the result of the computation to the wrapper
+     gives the number entries in the bin
    */
-  virtual void out_to_wrapper(utilities::Generic_wrapper_base & ) const =0;
+  std::vector<int> bin_count_;
+  /**
+     gives the value of the bottom edge of the bin
+   */
+  std::vector<float> bin_edges_;
+  /**
+     number of bins
+   */
+  int n_bins_;
+  /**
+     maximum range
+   */
+  float max_range_;
   
 };
 
-
 }
+
 
 
 #endif

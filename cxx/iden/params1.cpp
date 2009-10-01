@@ -97,11 +97,11 @@ const Params &Params::operator =(const Params &Parameters)
 
 void Params::PrintOutParameters(std::ostream &out) const
 {
-  out<<"feature_radius_" <<get_feature_radius() <<std::endl;
-  out<<"hwhm_length_"    <<get_hwhm_length()    <<std::endl;
-  out<<"dilation_radius_"<<get_dilation_radius()<<std::endl;
-  out<<"pctle_threshold_"<<get_pctle_threshold()<<std::endl;
-  out<<"mask_radius_"    <<get_mask_radius()    <<std::endl;
+  out<<"feature_radius_: " <<get_feature_radius() <<std::endl;
+  out<<"hwhm_length_: "    <<get_hwhm_length()    <<std::endl;
+  out<<"dilation_radius_: "<<get_dilation_radius()<<std::endl;
+  out<<"pctle_threshold_: "<<get_pctle_threshold()<<std::endl;
+  out<<"mask_radius_: "    <<get_mask_radius()    <<std::endl;
 }
 
   

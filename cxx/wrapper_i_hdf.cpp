@@ -97,13 +97,19 @@ Wrapper_i_hdf::Wrapper_i_hdf(std::string fname,std::set<utilities::D_TYPE> dtype
     
     // fill in data
     // assume that the frames run from 0 to frame_count_
+    frame_count_ = 10;
+    
     for(int j = 0; j<frame_count_;++j)
     {
       string frame_name = format_name(j);
       Group * frame = new Group(file->openGroup(frame_name));
+
+      
       for(set<D_TYPE>::iterator it = data_types_.begin();
 	  it != data_types_.end();++it)
       {
+
+	
 	DataSet * dset = new DataSet(frame->openDataSet(DT2str_s(*it)));
 	DataSpace dspace = dset-> getSpace();
 	dspace.selectAll();

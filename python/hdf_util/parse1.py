@@ -14,19 +14,18 @@
 #
 #You should have received a copy of the GNU General Public License
 #along with this program; if not, see <http://www.gnu.org/licenses>.
-#
-#Additional permission under GNU GPL version 3 section 7
-#
+
 
 import xml.dom.minidom
 import subprocess
 import h5py
 import datetime
 import os.path
+import re
 
-def parse_attr(h5obj,dom_obj):
+def _parse_attr(h5obj,dom_obj):
     if dom_obj.getAttribute("id") =="Description":
-        parse_des(h5obj,dom_obj)
+        _parse_des(h5obj,dom_obj)
     elif dom_obj.getAttribute("type") =="int":
         h5obj.attrs[dom_obj.getAttribute("id")] = int(dom_obj.getAttribute("value"))
     elif  dom_obj.getAttribute("type") =="float":
@@ -34,7 +33,7 @@ def parse_attr(h5obj,dom_obj):
     else: 
         h5obj.attrs[dom_obj.getAttribute("id")] =  dom_obj.getAttribute("value").encode('ascii')
 
-def parse_des(h5obj,des_obj):
+def _parse_des(h5obj,des_obj):
     des_string = des_obj.getAttribute("value")
     des_split = des_string.split("&#13;&#10;")
 
@@ -43,7 +42,7 @@ def parse_des(h5obj,des_obj):
         if len(tmp_split) ==2:
             h5obj.attrs[tmp_split[0]] = tmp_split[1].encode('ascii')
 
-def parse_params_attr(h5file,i_str):
+def _parse_params_attr(h5file,i_str):
     ssplit = i_str.strip().split(':')
 
     if len(ssplit)==3:
@@ -58,86 +57,96 @@ def parse_params_attr(h5file,i_str):
         print ssplit[0].strip()
 
 
-def parse_params(h5file,fname):
+def _parse_params(h5file,fname):
     f = open(fname)
     for line in f:
-        parse_params_attr(h5file,line)
+        _parse_params_attr(h5file,line)
     f.close()
     n_fname  = fname[:(len(fname)-5)] + ".done"
     os.rename(fname,n_fname)
 
-fname = '25-0_mid_0.tif'
-fname_p = '25-0_mid_0.pram'
-out_fname  = fname[:(len(fname)-4)] + ".h5"
+def _parse_temp(h5obj,fname):
+    rexp = re.compile('\d\d-\d')
+    ma = rexp.findall(fname)
+    if(len(ma)>=1):
+        h5obj.attrs['probe_temp'] = float('.'.join(ma[0].split('-')))
+    if(len(ma)==2):
+        h5obj.attrs['lens_temp'] = float('.'.join(ma[0].split('-')))
+
+def make_h5(fname_in,d_path,p_path):
+    fname = d_path + fname_in + '.tif'
+    fname_p = d_path + fname_in + '.pram'
+    out_fname  = p_path + fname_in + '.h5'
 
 
 
-# make sure the files exist
-if not (os.path.exists(fname) and os.path.exists(fname_p)):
-    print "files don't exist"
-    exit()
+    # make sure the files exist
+    if not (os.path.exists(fname) and os.path.exists(fname_p)):
+        print "files don't exist"
+        exit()
 
 
-f = h5py.File(out_fname,'w')
-
-parse_params(f,fname_p)
-
-
-#changed to deal with 2.5v2.6
-#g = f.create_group("frame{0:06d}".format(0))
-g = f.create_group("frame%(#)06d"%{"#":0})
+    f = h5py.File(out_fname,'w')
     
-
-a = subprocess.Popen(["tiffinfo","-0",fname] ,stdout=subprocess.PIPE)
-tiff_string = (a.stdout).readlines();
-tiff_string = "".join(tiff_string)
-
-xml_str = tiff_string[(tiff_string.find("<MetaData>")):(10 + tiff_string.rfind("MetaData>"))]
-dom = xml.dom.minidom.parseString(xml_str)
-
-props = dom.getElementsByTagName("prop")
-
-for p in props:
-    if p.parentNode.nodeName == "PlaneInfo":
-        parse_attr(g,p)
-        if p.getAttribute("id") == "acquisition-time-local":
-            tmp = p.getAttribute("value")
-            initial_t  = datetime.datetime.strptime(tmp[:17],"%Y%m%d %H:%M:%S") 
-            initial_t.replace(microsecond=int(tmp[18:])*1000)
-            
-            
-    elif p.parentNode.nodeName == "MetaData":
-        parse_attr(f,p)
-    elif p.parentNode.nodeName == "SetInfo":
-        parse_attr(f,p)
-        if p.getAttribute("id") == "number-of-planes":
-            frame_count = int(p.getAttribute("value"))
-g.attrs["dtime"] = 0.0
+    _parse_temp(f,fname_in)
+    _parse_params(f,fname_p)
 
 
+    #changed to deal with 2.5v2.6
+    #g = f.create_group("frame{0:06d}".format(0))
+    g = f.create_group("frame%(#)06d"%{"#":0})
 
-for frame in range(1,frame_count):
-    a = subprocess.Popen(["tiffinfo","-"+str(frame),fname] ,stdout=subprocess.PIPE)
+
+    a = subprocess.Popen(["tiffinfo","-0",fname] ,stdout=subprocess.PIPE)
     tiff_string = (a.stdout).readlines();
     tiff_string = "".join(tiff_string)
+
     xml_str = tiff_string[(tiff_string.find("<MetaData>")):(10 + tiff_string.rfind("MetaData>"))]
     dom = xml.dom.minidom.parseString(xml_str)
+
     props = dom.getElementsByTagName("prop")
-    
-    #g = f.create_group("frame{0:06d}".format(0))
-    #g = f.create_group("frame{0:06d}".format(frame))
-    g = f.create_group("frame%(#)06d"%{"#":frame})
+
     for p in props:
         if p.parentNode.nodeName == "PlaneInfo":
-            parse_attr(g,p)
+            _parse_attr(g,p)
             if p.getAttribute("id") == "acquisition-time-local":
                 tmp = p.getAttribute("value")
-                current_t = datetime.datetime.strptime(tmp[:17],"%Y%m%d %H:%M:%S") 
-                current_t = current_t.replace(microsecond=int(tmp[18:])*1000)
-    dt = current_t - initial_t
-    g.attrs["dtime"] = dt.seconds + dt.microseconds/(pow(10.,6))
-    initial_t = current_t
+                initial_t  = datetime.datetime.strptime(tmp[:17],"%Y%m%d %H:%M:%S") 
+                initial_t.replace(microsecond=int(tmp[18:])*1000)
 
-f.close()
+
+        elif p.parentNode.nodeName == "MetaData":
+            _parse_attr(f,p)
+        elif p.parentNode.nodeName == "SetInfo":
+            _parse_attr(f,p)
+            if p.getAttribute("id") == "number-of-planes":
+                frame_count = int(p.getAttribute("value"))
+    g.attrs["dtime"] = 0.0
+
+    f.attrs["frame_count"] = frame_count
+
+    for frame in range(1,frame_count):
+        a = subprocess.Popen(["tiffinfo","-"+str(frame),fname] ,stdout=subprocess.PIPE)
+        tiff_string = (a.stdout).readlines();
+        tiff_string = "".join(tiff_string)
+        xml_str = tiff_string[(tiff_string.find("<MetaData>")):(10 + tiff_string.rfind("MetaData>"))]
+        dom = xml.dom.minidom.parseString(xml_str)
+        props = dom.getElementsByTagName("prop")
+
+        #g = f.create_group("frame{0:06d}".format(0))
+        #g = f.create_group("frame{0:06d}".format(frame))
+        g = f.create_group("frame%(#)06d"%{"#":frame})
+        for p in props:
+            if p.parentNode.nodeName == "PlaneInfo":
+                _parse_attr(g,p)
+                if p.getAttribute("id") == "acquisition-time-local":
+                    tmp = p.getAttribute("value")
+                    current_t = datetime.datetime.strptime(tmp[:17],"%Y%m%d %H:%M:%S") 
+                    current_t = current_t.replace(microsecond=int(tmp[18:])*1000)
+        dt = current_t - initial_t
+        g.attrs["dtime"] = dt.seconds + dt.microseconds/(pow(10.,6))
+        initial_t = current_t
+
+    f.close()
 
 

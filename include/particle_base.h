@@ -190,13 +190,22 @@ public:
   {
     return s_order_parameter_;
   }
-  
+  /**
+     returns the number of particles with in max_neighborhood_range_
+     of the particle (assuming that these have been initialized
+   */
   int get_neighborhood_size()const
   {
     return neighborhood_.size();
   }
+  /**
+     returns the neighborhood vector
+   */
+  const std::vector<const particle_base*> get_neighborhood() const
+  {
+    return neighborhood_;
+  }
   
-
 
   
 
@@ -210,14 +219,22 @@ public:
    */
   static void intialize_data_types(std::set<utilities::D_TYPE>*  data_types);
   /**
-     Sets the maximum neighborhood range
+     Sets the maximum neighborhood range, there needs to be something to make
+     sure that this doesn't get changed with out updating the 
    */
   static void set_neighborhood_range(float in)
   {
     max_neighborhood_range_ = in;
   }
+  /**
+     returns the range of the neighborhood
+   */
+  static float get_neighborhood_range()
+  {
+    return max_neighborhood_range_;
+  }
   
-
+  
 
 protected:
   //A running total of all particles created 

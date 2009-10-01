@@ -88,6 +88,10 @@ void Iden::fill_wrapper(Wrapper_i_plu & wrapper, int frames,int start)
   }
   else if(start + frames > img_frames)
   {
+    cout<<"start "<<start<<endl;
+    cout<<"frames "<<frames<<endl;
+    cout<<"img_frames"<<img_frames<<endl;
+    
     src.close(0);
     throw "Iden: asking for more frames than the stack has";
   }
@@ -114,26 +118,6 @@ void Iden::fill_wrapper(Wrapper_i_plu & wrapper, int frames,int start)
     int cols = image.getWidth();
 
 
-    
-//     for(int k = 0;k < 20;++k)
-//     {
-//       cout<<*(data_ptr +k)<<endl;
-//     }
-  
-//     cout<<"-----------------"<<endl;
-  
-//     cout<<scan_step<<endl;
-    
-//     for(int k = 0;k < 20;++k)
-//     {
-//       for(int m =0;m<20;++m)
-//       {
-// 	cout<<*(data_ptr+k*scan_step/2 +m)<<'\t';
-//       }
-//       cout<<endl;
-      
-//     }
-    
     
 
 
@@ -174,9 +158,9 @@ void Iden::fill_wrapper(Wrapper_i_plu & wrapper, int frames,int start)
     
     RecenterImage(image_bpass_thresh);
     // image_in.display_image();
-//     image_bpass.display_image();
-//     image_bpass_thresh.display_image();
-//    image_localmax.display_image();
+    //     image_bpass.display_image();
+    //     image_bpass_thresh.display_image();
+    //    image_localmax.display_image();
     // get out massive nx9 array
     int counter;
     Ipp32f (*particledata)[9] =
@@ -188,9 +172,9 @@ void Iden::fill_wrapper(Wrapper_i_plu & wrapper, int frames,int start)
     
     // put it in a wrapper
     
-//     cout<<"---------------"<<endl;
-//     cout<<counter<<endl;
-//     cout<<"---------------"<<endl;
+    //     cout<<"---------------"<<endl;
+    //     cout<<counter<<endl;
+    //     cout<<"---------------"<<endl;
     
     wrapper.add_frame_data(particledata,j-start,counter);
     //    cout<<j<<endl;

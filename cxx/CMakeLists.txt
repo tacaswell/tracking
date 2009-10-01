@@ -28,6 +28,9 @@ SET(UTIL_SRC
   ${PROJECT_SOURCE_DIR}/cxx/histogram.cpp
 )
 
+SET(CORR_SRC
+  ${PROJECT_SOURCE_DIR}/cxx/corr_gofr.cpp
+)
 SET(MATLAB_WRAPPER_SRC
 
 )
@@ -116,3 +119,4 @@ endforeach(app)
 
 
 add_subdirectory(iden)
+add_subdirectory(apps)

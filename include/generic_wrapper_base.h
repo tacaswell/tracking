@@ -59,7 +59,7 @@ public:
      This may write directly in to the underlying data
      structure, or it may buffer the data until a finalize call
    */
-  virtual void append_to_row(double data_in) = 0;
+  virtual void append_to_row(float data_in) = 0;
   /**
      finishes the row and sets it to the underlying strucutre
    */

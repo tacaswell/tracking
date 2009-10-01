@@ -37,10 +37,6 @@
 //this Program grant you additional permission to convey the resulting
 #include <iostream>
 
-#include "iden/wrapper_i_plu.h"
-#include "iden/iden.h"
-#include "iden/params1.h"
-
 #include "master_box_t.h"
 #include "particle_base.h"
 #include "hash_case.h"
@@ -48,17 +44,14 @@
 #include "wrapper_o_hdf.h"
 #include "wrapper_i_hdf.h"
 #include "filter.h"
-
-#include "H5Cpp.h"
 //#include "gnuplot_i.hpp" //Gnuplot class handles POSIX-Pipe-communikation with Gnuplot
 
 using std::cout;
-using std::cerr;
 using std::endl;
 using std::set;
 using std::string;
 
-using utilities::Wrapper_i_plu;
+
 using utilities::Wrapper_o_hdf;
 using utilities::Wrapper_i_hdf;
 
@@ -71,147 +64,74 @@ using tracking::master_box_t;
 using tracking::particle_base;
 using tracking::hash_case;
 
-using iden::Iden;
-using iden::Params;
-
-using H5::H5File;
-using H5::Group;
-using H5::Attribute;
-using H5::PredType;
-
-static string base_data_path = "/home/tcaswell/colloids/data/";
-static string base_proc_path = "/home/tcaswell/colloids/processed/";
 
 
-int main(int argc, const char * argv[])
+int main()
 {
-
-  if(argc != 3)
-  {
-    cerr<< "wrong number of args args"<<endl;
-    return 0;
-  }
-  
-  
-  string file_path = string(argv[1]);
-  string file_name = string(argv[2]);
-  
-  string data_file = base_data_path + file_path + file_name + ".tif";
-  string proc_file = base_proc_path + file_path + file_name + ".h5";
-
-  cout<<data_file<<endl;
-  cout<<proc_file<<endl;
-
-
-
-
-
-
   try
   {
+    int frame_c = 1200;
 
-    float hwhm,thresh;
-    int feature_rad,dilation_rad, mask_rad,frame_c;
-    {
-      
-      H5File * file = new H5File(proc_file,H5F_ACC_RDONLY);
-      Group * group = new Group(file->openGroup("/"));
-
-      Attribute * tmpa =  new Attribute(group->openAttribute("frame_count"));
-      tmpa->read(PredType::NATIVE_INT,&frame_c);
-      delete tmpa;
-    
-      tmpa = new Attribute(group->openAttribute("threshold"));
-      tmpa->read(PredType::NATIVE_FLOAT,&thresh);
-      delete tmpa;
-
-      tmpa = new Attribute(group->openAttribute("p_rad"));
-      tmpa->read(PredType::NATIVE_INT,&feature_rad);
-      delete tmpa;
-
-      tmpa = new Attribute(group->openAttribute("hwhm"));
-      tmpa->read(PredType::NATIVE_FLOAT,&hwhm);
-      delete tmpa;
-
-      tmpa = new Attribute(group->openAttribute("d_rad"));
-      tmpa->read(PredType::NATIVE_INT,&dilation_rad);
-      delete tmpa;
-    
-      tmpa = new Attribute(group->openAttribute("mask_rad"));
-      tmpa->read(PredType::NATIVE_INT,&mask_rad);
-      delete tmpa;
-
-      delete file;
-      delete group;
-      file= NULL;
-      group=NULL;
-      tmpa=NULL;
-    }
-    
-
-
-    // replace these by reading the proc file
-    
-    Params p(feature_rad,hwhm,dilation_rad,thresh,mask_rad);
-    p.PrintOutParameters(std::cout);
-    cout<<frame_c<<endl;
-    
-
+     
+    D_TYPE tmp[] = {utilities::D_XPOS,
+		    utilities::D_YPOS,
+		    utilities::D_DX,
+		    utilities::D_DY,
+		    utilities::D_I,
+		    utilities::D_R2,
+		    utilities::D_MULT,
+		    utilities::D_E
+		    };
+    set<D_TYPE> data_types = set<D_TYPE>(tmp, tmp+8);
+    string fname = "25-0_mid_0.h5";
   
     
+     Wrapper_i_hdf wh(fname,data_types);
 
-    Iden iden(p);
-    iden.set_fname(data_file);
-    Wrapper_i_plu wp(1);
-    
-    iden.fill_wrapper(wp,frame_c,0);
-    cout<<"number of entries in wrapper: "<<wp.get_num_entries(-1)<<endl;
     
 
     master_box_t<particle_base> box;
-    //Filter_basic filt("25-0_mid_0.h5");
+    //    Filter_basic filt("25-0_mid_0.h5");
     Filter_trivial filt;
     
-    box.init(wp,filt);
-    //box.init(wh,filt);
+
+    box.init(wh,filt);
 
 
     
     cout<<"total number of particles is: "<<box.size()<<endl;;
     
 
-
-
-    
+        
     for(int j =0;j<20;++j)
     {
       particle_base* p = box.get_particle(j);
       p->print();
     }
-    
+
 
     
     Tuple dims(1392,520);
-    hash_case hcase(box,dims,20,frame_c);
+    //    hash_case hcase(box,dims,20,frame_c);
     //    hcase.print();
     
-    //Wrapper_o_hdf hdf_w("25-0_mid_0.h5",wh.get_data_types());
-    Wrapper_o_hdf hdf_w(proc_file,wp.get_data_types());
+//     Wrapper_o_hdf hdf_w("25-0_mid_0_out.h5",wh.get_data_types());
     
-    try
-    {
-      hcase.output_to_wrapper(hdf_w);
-    }
-    catch(const char * err)
-    {
-      std::cerr<<"caught on error: ";
-      std::cerr<<err<<endl;
-    }
-    catch(...)
-    {
-      std::cerr<<"not right type"<<endl;
-    }
     
+//     try
+//     {
+//       hcase.output_to_wrapper(hdf_w);
+//     }
+//     catch(const char * err)
+//     {
+//       std::cerr<<"caught on error: ";
+//       std::cerr<<err<<endl;
+//     }
+//     catch(...)
+//     {
+//       std::cerr<<"not right type"<<endl;
+//     }
+
 
     
   }

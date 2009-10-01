@@ -187,6 +187,7 @@ void master_box_t<particle>::init(const utilities::Wrapper_in & w_in, utilities:
   filt_->set_wrapper(in_wrapper);
   
   priv_init();
+  std::cout<<"finished init of box"<<std::endl;
   
 }
 
@@ -208,19 +209,25 @@ void master_box_t<particle>::priv_init()
 
   int num_frames = in_wrapper->get_num_frames();
   
+  std::cout<<"numebr of frames: "<<num_frames<<std::endl;
+  
   
   for(int k = 0;k<num_frames;++k)
   {
     int num_entries= in_wrapper->get_num_entries(k);
-    std::cout<<"adding: "<<num_entries<<std::endl;
+    std::cout<<"adding: "<<num_entries<<" to frame: "<<k<< std::endl;
+    int count = 0;
     
-    for(int j = 0; j<num_entries; ++j){
+    for(int j = 0; j<num_entries; ++j)
+    {
       if((*filt_)(j,k))
       {
 	particle_vec.push_back( new particle(j,k));
+	++count;
       }
-      
     }
+    std::cout<<"added: "<<count<<" total count: "<<particle_vec.size()<<std::endl;
+    
   }
 }
 

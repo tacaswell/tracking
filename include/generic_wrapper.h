@@ -23,39 +23,52 @@
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
 
-#ifndef GWRAPPER_MATLAB
-#define GWRAPPER_MATLAB
-#include "generic_wrapper_base.h"
+#ifndef GWRAPPER_BASE2 
+#define GWRAPPER_BASE2
 
-#include "mex.h"
+#include "enum_utils.h"
+
 namespace utilities{
-class Generic_parameters_matlab;
-
 /**
-   Class for handling output to matlab
+   Try two at a generic wrapper function.  This is based much more on the
+   capabilities of hdf files, not shoving stuff back to matlab
+
+   This is an abstract base class 
 */
 
-class Generic_wrapper_matlab:public Generic_wrapper_base{
+
+
+class Generic_wrapper{
 public:
 
+  /**
+     Initializes the wrapper
+   */
+  virtual void open_wrapper() =0;
+  /**
+     closes and cleans up the wrapper
+   */
+  virtual void close_wrapper() = 0;
 
-  virtual void start_new_row() ;
-  virtual void append_to_row(float data_in);
-  virtual void finish_row();
-  virtual void initialize_wrapper ();
-  virtual void finalize_wrapper () ;
+  /**
+     Opens a group in the wrapper, ie a group in hdf or a cell in matlab
+   */
+  virtual void open_group(const std::string & name = "none")=0;
+  /**
+     closes the current group
+   */
+  virtual void close_group()=0;
+  /**
+     Adds data to the wrapper, must be the right size and type specified.
+     data will be written safely with in the wrapper during this call so it
+     can be safely freed outside if needed
+   */
+  virtual void add_dset(int rank, int * dims, V_TYPE , const void *,const std::string & name ="none" )=0;
 
   
   
-  virtual ~Generic_wrapper_matlab(){};
-  Generic_wrapper_matlab(Generic_parameters_matlab* param);
-private:
-  double* data_ptr_;
-  int rows_;
-  int cols_;
-  int row_indx_;
-  int col_indx_;
-  mxArray** mx_ptr_ptr_;
+  
+ 
 };
 }
 #endif

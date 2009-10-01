@@ -30,51 +30,73 @@
 //this Program grant you additional permission to convey the resulting
 //work.
 
-#ifndef CORR_
-#define CORR_
+#include "corr_gofr.h"
+#include "particle_base.h"
+#include "particle_track.h"
+#include "generic_wrapper_base.h"
 
-namespace utilities
+
+
+
+using std::vector;
+
+using utilities::Generic_wrapper_base;
+
+
+using tracking::Corr_gofr;
+using tracking::particle_base;
+
+
+
+
+
+
+void Corr_gofr::compute(const particle_base * p_in)
 {
-class Generic_wrapper_base;
-}
-
-
-
-
-
-namespace tracking
-{
-class particle_base;
-class particle_track;
-
-/**
-   An ABC of objects that can be handed into hash_case and calculates
-   correlation functions.  Both types of function need to be defined.
- */
-class Corr
-{
-public:
-  /**
-     takes in a particle_base object.  For correlations that need the
-     tracking information this should throw an error or something
-     clever like that
-   */
-  virtual void compute(const particle_base *) = 0;
-  /**
-     Computes the correlation for the particle_track object in is handed.
-     For non-track dependent correlations this should cast to a particle_base
-     pointer and call the other compute function.
-   */
-  virtual void compute(const particle_track *)=0;
-  /**
-     outputs the result of the computation to the wrapper
-   */
-  virtual void out_to_wrapper(utilities::Generic_wrapper_base & ) const =0;
+  float max_sq = max_range_*max_range_;
   
-};
 
+  const vector<const particle_base*> nhood = p_in->get_neighborhood();
+  vector<const particle_base*>::const_iterator p_end = nhood.end();
+  for(vector<const particle_base*>::const_iterator cur_part = nhood.begin();
+      cur_part!=p_end;++cur_part)
+  {
+    float tmp_d = p_in->distancesq(*cur_part);
+    if(tmp_d<max_sq)
+    {
+      int ind = (int)(n_bins_*sqrt(tmp_d)/max_range_);
+      ++(bin_count_.at(ind));
+      
+    }
+    
+  }
+  
 
 }
 
+void Corr_gofr::compute(const particle_track * p_in)
+{
+  compute(static_cast<const particle_base*>(p_in));
+}
 
-#endif
+Corr_gofr::Corr_gofr(int bins,float max):
+  bin_count_(bins),bin_edges_(bins),n_bins_(bins),
+  max_range_(max)
+{
+  if(bins <1)
+    throw "number of bins must be greater than 0";
+  
+  if(max_range_>particle_base::get_neighborhood_range())
+    throw "maximum range past what particles know about";
+  
+  float bin_sz = max_range_/bins;
+  for( int j= 0;j<bins;++j)
+  {
+    bin_count_.at(j) = 0;
+    bin_edges_.at(j) = j*bin_sz;
+  }
+}
+
+void Corr_gofr::out_to_wrapper(Generic_wrapper_base & in)const
+{
+}

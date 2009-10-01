@@ -86,7 +86,7 @@ public:
   
   int get_num_frames()const
   {
-  
+    return frame_count_.size();
   }
   
   std::set<utilities::D_TYPE> get_data_types() const

@@ -40,7 +40,7 @@
 //work.
 
 //copied form https://plutarc.svn.sourceforge.net/svnroot/plutarc/trunk/matlab_wrapper rev9
-// Modified by Thomas Caswell tcaswell@uchicago.edu 09/2009-
+// Modified by Thomas A Caswell tcaswell@uchicago.edu 09/2009-
 #include "ipp.h"
 #include "mex.h"
 

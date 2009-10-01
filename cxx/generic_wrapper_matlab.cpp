@@ -66,14 +66,14 @@ void Generic_wrapper_matlab::start_new_row() {
 //   cout<<row_indx_<<"\t"<<col_indx_<<endl;
 }
 
-void Generic_wrapper_matlab::append_to_row(double data_in){
+void Generic_wrapper_matlab::append_to_row(float data_in){
   if(!row_open_){
     throw "row not open";
   }
   if((++col_indx_ == cols_)||(col_indx_<0)){
     throw "past last col";
   }
-  *(data_ptr_ + row_indx_ + rows_ * col_indx_) = data_in;
+  *(data_ptr_ + row_indx_ + rows_ * col_indx_) =(double) data_in;
   
 //   cout<<row_indx_<<"\t"<<col_indx_<<endl;
 }
