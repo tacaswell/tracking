@@ -44,9 +44,11 @@ class Coarse_grain_array;
 class Histogram2D;
 class Wrapper_out;
 
+
 }
 
 namespace tracking{
+class Corr;
 /**
    Class to hold sets of hash_shelf.  This is used as a structure to organize
    the hash tables by time frame.  
@@ -223,6 +225,21 @@ public:
    */
   void output_to_wrapper(utilities::Wrapper_out & ) const;
   
+  /**
+     passes a Corr object down the pyramid
+   */
+  void compute_corr(tracking::Corr &) const ;
+
+  /**
+     fills in the neighborhoods for all of the particles
+   */
+  void fill_in_neighborhood();
+
+  /**
+     average density
+   */
+  float average_density() const;
+  
   ///Destructor
   ~hash_case();
 protected:
@@ -280,7 +297,8 @@ void hash_case::init(master_box_t<particle> & mb,const utilities::Tuple & img_di
     return;
   }
     
-
+  std::cout<<"this is a test"<<std::endl;
+  
   mb.append_to_data_types(utilities::D_NEXT);
   mb.append_to_data_types(utilities::D_PREV);
 
@@ -290,7 +308,7 @@ void hash_case::init(master_box_t<particle> & mb,const utilities::Tuple & img_di
     h_case_[j] = new hash_shelf(img_dims, ppb,j);
     h_case_[j-1]->set_next_shelf(h_case_[j]);
   }
-  // cout<<
+
   particle *p;
   int max_sz = mb.size();
   

@@ -44,7 +44,10 @@
 #include "wrapper_o_hdf.h"
 #include "wrapper_i_hdf.h"
 #include "filter.h"
-//#include "gnuplot_i.hpp" //Gnuplot class handles POSIX-Pipe-communikation with Gnuplot
+
+#include "generic_wrapper_hdf.h"
+#include "corr_gofr.h"
+//#include "gnuplot_i.hpp" //Gnuplot class handles POSIX-Pipe-communication with Gnuplot
 
 using std::cout;
 using std::endl;
@@ -59,10 +62,13 @@ using utilities::Tuple;
 using utilities::Filter_basic;
 using utilities::Filter_trivial;
 using utilities::D_TYPE;
+using utilities::Generic_wrapper_hdf;
+
 
 using tracking::master_box_t;
 using tracking::particle_base;
 using tracking::hash_case;
+using tracking::Corr_gofr;
 
 
 
@@ -70,7 +76,7 @@ int main()
 {
   try
   {
-    int frame_c = 1200;
+    int frame_c = 5;
 
      
     D_TYPE tmp[] = {utilities::D_XPOS,
@@ -86,13 +92,13 @@ int main()
     string fname = "25-0_mid_0.h5";
   
     
-     Wrapper_i_hdf wh(fname,data_types);
+    Wrapper_i_hdf wh(fname,data_types,0,frame_c);
 
     
 
     master_box_t<particle_base> box;
-    //    Filter_basic filt("25-0_mid_0.h5");
-    Filter_trivial filt;
+    Filter_basic filt("25-0_mid_0.h5");
+    //    Filter_trivial filt;
     
 
     box.init(wh,filt);
@@ -112,8 +118,21 @@ int main()
 
     
     Tuple dims(1392,520);
-    //    hash_case hcase(box,dims,20,frame_c);
-    //    hcase.print();
+    hash_case hcase(box,dims,20,frame_c);
+
+    particle_base::set_neighborhood_range(20);
+    hcase.fill_in_neighborhood();
+    
+    
+    //hcase.print();
+    string gname = "test";
+    
+    Corr_gofr gofr(200,(float)19.0,gname);
+    
+
+    hcase.compute_corr(gofr);
+    
+    gofr.display();
     
 //     Wrapper_o_hdf hdf_w("25-0_mid_0_out.h5",wh.get_data_types());
     

@@ -33,14 +33,15 @@
 #include "corr_gofr.h"
 #include "particle_base.h"
 #include "particle_track.h"
-#include "generic_wrapper_base.h"
+#include "generic_wrapper.h"
 
-
+#include "gnuplot_i.hpp"
 
 
 using std::vector;
+using std::string;
 
-using utilities::Generic_wrapper_base;
+using utilities::Generic_wrapper;
 
 
 using tracking::Corr_gofr;
@@ -48,14 +49,17 @@ using tracking::particle_base;
 
 
 
-
-
+void Corr_gofr::compute(const particle_track * p_in)
+{
+  compute(static_cast<const particle_base*>(p_in));
+}
 
 void Corr_gofr::compute(const particle_base * p_in)
 {
   float max_sq = max_range_*max_range_;
   
-
+  
+  
   const vector<const particle_base*> nhood = p_in->get_neighborhood();
   vector<const particle_base*>::const_iterator p_end = nhood.end();
   for(vector<const particle_base*>::const_iterator cur_part = nhood.begin();
@@ -74,14 +78,11 @@ void Corr_gofr::compute(const particle_base * p_in)
 
 }
 
-void Corr_gofr::compute(const particle_track * p_in)
-{
-  compute(static_cast<const particle_base*>(p_in));
-}
 
-Corr_gofr::Corr_gofr(int bins,float max):
+
+Corr_gofr::Corr_gofr(int bins,float max,string& name):
   bin_count_(bins),bin_edges_(bins),n_bins_(bins),
-  max_range_(max)
+  max_range_(max),name_(name)
 {
   if(bins <1)
     throw "number of bins must be greater than 0";
@@ -97,6 +98,44 @@ Corr_gofr::Corr_gofr(int bins,float max):
   }
 }
 
-void Corr_gofr::out_to_wrapper(Generic_wrapper_base & in)const
+void Corr_gofr::out_to_wrapper(Generic_wrapper & in)const
 {
+
+  in.open_wrapper();
+  in.open_group(name_);
+  //in.add_metadata();
+  
+  in.add_dset(1,&n_bins_,utilities::V_FLOAT,&bin_count_[0],"bin_count");
+  in.add_dset(1,&n_bins_,utilities::V_FLOAT,&bin_edges_[0],"bin_edges");
+
+  in.close_wrapper();
+  
 }
+
+
+void Corr_gofr::display(float avg)const
+{
+
+  vector<float> tmp;
+  normalize(tmp,avg);
+  
+  Gnuplot g(bin_edges_,tmp,"g(r)","steps");
+  wait_for_key();
+  
+
+
+}
+
+void Corr_gofr::normalize(vector<float> & out)const
+{
+  out.resize(n_bins_);
+  
+  out[0] = bin_count_[0]/((bin_edges_[1]*bin_edges_[1]*3.14159)*avg);
+  
+  for(int j = 1;j<(n_bins_-1);++j)
+  {
+    out[j] = bin_count_[j]/(avg * 3.14159*(bin_edges_[j+1]*bin_edges_[j+1] - bin_edges_[j]*bin_edges_[j]));
+  }
+  out[n_bins_-1] = bin_count_[n_bins_-1]/(avg * 3.14159*(max_range_*max_range_ - bin_edges_[n_bins_-1]*bin_edges_[n_bins_-1]));
+}
+

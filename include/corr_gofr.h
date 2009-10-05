@@ -34,9 +34,9 @@
 #define CORR_GOFR
 
 #include <vector>
-
+#include <string>
 #include "corr.h"
-
+#include "generic_wrapper.h"
 
 
 
@@ -51,7 +51,7 @@ public:
   // basic inherited stuff
   void compute(const particle_base *) ;
   void compute(const particle_track *);
-  void out_to_wrapper(utilities::Generic_wrapper_base & ) const ;
+  void out_to_wrapper(utilities::Generic_wrapper & ) const ;
 
   // special stuff
   /**
@@ -63,7 +63,10 @@ public:
      constructor.  The maximum range is taken from particle_base::max_neighborhood_range_.
      The bins are spaced linearly.  
    */
-  Corr_gofr(int bins,float max);
+  Corr_gofr(int bins,float max,std::string &);
+  
+  void display(int avg = 1) const;
+  
   
 private:
   // this could be done using a single histogram object, but 
@@ -83,7 +86,18 @@ private:
      maximum range
    */
   float max_range_;
+
+  /**
+     name of group for writing out to a wrapper
+   */
+  std::string name_;
+
+  /**
+     count of the number of particles added
+   */
+  int part_added_;
   
+
 };
 
 }

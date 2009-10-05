@@ -35,13 +35,15 @@
 namespace utilities
 {
 class Wrapper_out;
+
+
 }
 
 
 namespace tracking{
 class particle_base;
 class particle_track;
-
+class Corr;
 /**
    Class for storing particles in the hash table.  This class will
    hold a list of any  generation of particles.  The primary purpose
@@ -218,7 +220,13 @@ public:
      loops over particles to 
    */
   void output_to_wrapper(utilities::Wrapper_out & wrapper) const;
-  
+
+    
+  /**
+     passes a Corr object down the pyramid
+   */
+  void compute_corr(tracking::Corr &) const ;
+
   
 };
 }

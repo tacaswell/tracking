@@ -63,9 +63,12 @@ public:
      data will be written safely with in the wrapper during this call so it
      can be safely freed outside if needed
    */
-  virtual void add_dset(int rank, int * dims, V_TYPE , const void *,const std::string & name ="none" )=0;
+  virtual void add_dset(int rank,const  int * dims, V_TYPE , const void *,const std::string & name ="none" )=0;
 
-  
+  /*
+     Add metadata to the open group
+   */
+  //virtual void add_metadata(std::string, const void * , V_TYPE) = 0;
   
   
  

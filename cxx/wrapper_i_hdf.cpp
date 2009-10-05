@@ -57,6 +57,22 @@ using tracking::particle_base;
 Wrapper_i_hdf::Wrapper_i_hdf(std::string fname,std::set<utilities::D_TYPE> dtypes)
   :  file_name_(fname),data_types_(dtypes),total_part_count_(0)
 {
+  priv_init();
+  
+}
+
+Wrapper_i_hdf::Wrapper_i_hdf(std::string fname,std::set<utilities::D_TYPE> dtypes,int start,int f_count)
+  :  file_name_(fname),data_types_(dtypes),total_part_count_(0)
+{
+  priv_init(f_count,start);
+  
+}
+
+
+void Wrapper_i_hdf::priv_init(int f_count,int start)
+{
+  if (start <0)
+    throw "wrapper_i_hdf: start must be positive";
   
   
    try
@@ -65,6 +81,16 @@ Wrapper_i_hdf::Wrapper_i_hdf(std::string fname,std::set<utilities::D_TYPE> dtype
 
     // assumes that there are no none-frame objects 
     frame_count_ = file->getNumObjs();
+
+    if(f_count != 0)
+    {
+      if(f_count + start > frame_count_)
+	throw "wrapper_i_hdf: asking for too many frames";
+      frame_count_ = f_count;
+      
+    }
+    
+    
     
     // logic to set up data maps and data storage
     int i_count =0;
@@ -90,18 +116,17 @@ Wrapper_i_hdf::Wrapper_i_hdf(std::string fname,std::set<utilities::D_TYPE> dtype
 	  break;
 	}
     }
-    
 
     frame_c_.reserve(frame_count_);
     
     
     // fill in data
     // assume that the frames run from 0 to frame_count_
-    frame_count_ = 10;
+
     
     for(int j = 0; j<frame_count_;++j)
     {
-      string frame_name = format_name(j);
+      string frame_name = format_name(j+start);
       Group * frame = new Group(file->openGroup(frame_name));
 
       
@@ -218,6 +243,10 @@ void Wrapper_i_hdf::clean_data()
 int Wrapper_i_hdf::get_value(int& out,
 			     int ind,D_TYPE type, int frame) const 
 {
+  if(!contains_type(type))
+    throw "wrapper_i_hdf: wrapper does not contain this type";
+  
+  
   if(v_type(type) != V_INT)
     throw "wrapper_i_hdf: wrong data type, not int";
   out = data_i_.at(d_mapi_(type)).at(frame)[ind]    ;
@@ -229,6 +258,9 @@ int Wrapper_i_hdf::get_value(int& out,
 float Wrapper_i_hdf::get_value(float& out,
 			       int ind,D_TYPE type, int frame) const 
 {
+  if(!contains_type(type))
+    throw "wrapper_i_hdf: wrapper does not contain this type";
+  
   if(v_type(type) != V_FLOAT)
     throw "wrapper_i_hdf: wrong data type, not float";
   out = data_f_.at(d_mapf_(type)).at(frame)[ind]    ;
@@ -240,6 +272,9 @@ float Wrapper_i_hdf::get_value(float& out,
 std::complex<float> Wrapper_i_hdf::get_value(std::complex<float>& out,
 					     int ind,D_TYPE type, int frame) const 
 {
+  if(!contains_type(type))
+    throw "wrapper_i_hdf: wrapper does not contain this type";
+  
   if(v_type(type) != V_COMPLEX)
     throw "wrapper_i_hdf: wrong data type, not complex";
   out = data_c_.at(d_mapc_(type)).at(frame)[ind]    ;

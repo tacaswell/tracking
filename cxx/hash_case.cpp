@@ -32,6 +32,8 @@
 
 #include "wrapper_o.h"
 
+#include "corr.h"
+
 using namespace tracking;
 
 
@@ -223,11 +225,29 @@ void hash_case::next_nearest_neighbor_array(utilities::Cell & pos_cell,
 void hash_case::gofr2D(float max_d, utilities::Histogram2D& gofr2 ) const
 {
   
-for(vector<hash_shelf*>::const_iterator shelf_it = h_case_.begin();
+  for(vector<hash_shelf*>::const_iterator shelf_it = h_case_.begin();
       shelf_it!= h_case_.end();++shelf_it)
   {
     (*shelf_it)->gofr2D(max_d,gofr2);
   }
 }
+
+
+
+float hash_case::average_density() const
+{
+  float average;
+  vector<hash_shelf>::const_iterator h_end= h_case_.end();
+  
+  for(vector<hash_shelf>::const_iterator in= h_case_.begin();
+      it!=h_end;++it)
+  {
+    average += (*it)->get_particle_count();
+  }
+  average/=h_case_.size();
+  
+
+
+
 
 

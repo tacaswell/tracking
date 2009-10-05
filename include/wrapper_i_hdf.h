@@ -76,6 +76,8 @@ private:
   int total_part_count_;
   
   void clean_data();
+
+  void priv_init(int f_count =0, int start = 0);
   
 
 protected:
@@ -107,6 +109,7 @@ public:
   ~Wrapper_i_hdf();
   
   Wrapper_i_hdf(std::string fname,std::set<utilities::D_TYPE> dtypes);
+  Wrapper_i_hdf(std::string fname,std::set<utilities::D_TYPE> dtypes,int,int);
 
 
   

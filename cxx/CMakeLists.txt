@@ -56,6 +56,9 @@ SET(MATLAB_UTIL_SRC
   ${PROJECT_SOURCE_DIR}/cxx/wrapper_o_matlab.cpp
   )
 
+SET(GNU_PLOT_SRC
+  /home/tcaswell/other_source/gnuplot-cpp-read-only/gun_plot_i.cpp
+)
 
 
 message( ${PROJECT_BINARY_DIR})
@@ -116,7 +119,7 @@ foreach(app ${APPS})
     )
 endforeach(app)
 
-
+include_directories(/home/tcaswell/other_source/gnuplot-cpp-read-only)
 
 add_subdirectory(iden)
 add_subdirectory(apps)

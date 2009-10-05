@@ -35,7 +35,7 @@
 
 namespace utilities
 {
-class Generic_wrapper_base;
+class Generic_wrapper;
 }
 
 
@@ -69,7 +69,7 @@ public:
   /**
      outputs the result of the computation to the wrapper
    */
-  virtual void out_to_wrapper(utilities::Generic_wrapper_base & ) const =0;
+  virtual void out_to_wrapper(utilities::Generic_wrapper & ) const =0;
   
 };
 

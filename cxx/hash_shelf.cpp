@@ -40,6 +40,7 @@
 #include "particle_base.h"
 #include "particle_track.h"
 
+#include "corr.h"
 
 using namespace tracking;
 
@@ -49,6 +50,9 @@ using utilities::Tuple;
 using utilities::Null_field;
 using utilities::Ll_range_error;
 using utilities::Wrapper_out;
+
+using tracking::Corr;
+
 
 using std::list;
 using std::cout;

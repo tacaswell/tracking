@@ -43,9 +43,11 @@ class Histogram2D;
 class Wrapper_out;
 
 
+
 }
 
 namespace tracking{
+class Corr;
 /**
    Class to implemnt the hash table
  */
@@ -274,6 +276,18 @@ public:
      for outputting to a wrapper
    */
   void output_to_wrapper(utilities::Wrapper_out & wrapper) const;
+  
+  
+  /**
+     passes a Corr object down the pyramid
+   */
+  void compute_corr(tracking::Corr &) const ;
+
+  /**
+     returns the average density of a region a distance buffer away from the edges
+   */
+  unsigned int get_density()const;
+  
   
 protected:
   //change all of this to be pointers to hash_boxes, to keep

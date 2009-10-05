@@ -113,6 +113,9 @@ float particle_base::get_value(utilities::D_TYPE type) const{
   switch(utilities::v_type(type))
   {
   case utilities::V_INT:
+    if(type == utilities::D_FRAME)
+      return (float) frame_;
+    
     wrapper_in_->get_value(tmpi,ind_,type,frame_);
     return (float) tmpi;
   case utilities::V_FLOAT:
@@ -129,7 +132,7 @@ float particle_base::get_value(utilities::D_TYPE type,float & data_io ) const
 {
   if(v_type(type) != utilities::V_FLOAT)
     throw "particle_base: wrong V_TYPE";
-  
+  // add special cases for stuff the particle knows about
   wrapper_in_->get_value(data_io,ind_,type,frame_);
   return data_io;
 }
@@ -139,7 +142,11 @@ int particle_base::get_value(utilities::D_TYPE type,int & data_io  ) const
   if(v_type(type) != utilities::V_INT)
     throw "particle_base: wrong V_TYPE";
   
-  wrapper_in_->get_value(data_io,ind_,type,frame_);
+  if(type ==utilities::D_FRAME)
+    data_io = frame_;
+  else
+    wrapper_in_->get_value(data_io,ind_,type,frame_);
+
   return data_io;
 }
 
@@ -256,6 +263,9 @@ bool particle_base::add_to_neighborhood(const particle_base* in)
   {
     return false;
   }
+  if(in ==this)
+    return false;
+  
   if(distancesq(in)<(max_neighborhood_range_*max_neighborhood_range_))
   {
     neighborhood_.push_back(in);

@@ -23,6 +23,7 @@
 #include "hash_box.h"
 #include "particle_base.h"
 #include "wrapper_o.h"
+#include "corr.h"
 
 using tracking::hash_box;
 using tracking::hash_shelf;
@@ -30,6 +31,7 @@ using tracking::hash_case;
 using tracking::particle_base;
 
 using utilities::Wrapper_out;
+using tracking::Corr;
 
 using std::set;
 using std::vector;
@@ -171,6 +173,54 @@ void hash_case::pass_fun_to_shelf(void(hash_shelf::*fun)()const)const
   {
     ((*it)->*fun)();
     
+  }
+}
+
+
+
+
+
+void hash_case::compute_corr(Corr & in) const
+{
+  
+  for(vector<hash_shelf*>::const_iterator shelf_it = h_case_.begin();
+      shelf_it!= h_case_.end();++shelf_it)
+  {
+    (*shelf_it)->compute_corr(in);
+  }
+}
+
+void hash_shelf::compute_corr(Corr & in)const
+{
+  vector<hash_box*>::const_iterator myend =  hash_.end();
+  for(vector<hash_box*>::const_iterator it = hash_.begin();
+      it!=myend;++it)
+  {
+    (*it)->compute_corr(in);
+    
+  }
+}
+void hash_box::compute_corr(Corr & in )const
+{
+  vector<particle_base*>::const_iterator myend = contents_.end();
+  for(vector<particle_base*>::const_iterator it = contents_.begin();
+      it!=myend;++it)
+  {
+    in.compute(*it);
+    
+  }
+}
+
+
+
+
+void hash_case::fill_in_neighborhood() 
+{
+  
+  for(vector<hash_shelf*>::iterator shelf_it = h_case_.begin();
+      shelf_it!= h_case_.end();++shelf_it)
+  {
+    (*shelf_it)->fill_in_neighborhood();
   }
 }
 
