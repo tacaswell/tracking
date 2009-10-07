@@ -169,8 +169,10 @@ void Wrapper_i_hdf::priv_init(int f_count,int start)
       
     }
     
+    delete file;
+    
+   }
    
-  }
   
   catch(Exception & e)
   {

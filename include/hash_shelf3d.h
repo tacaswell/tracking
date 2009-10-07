@@ -34,9 +34,9 @@ class hash_shelf3d :public hash_shelf{
 public:
   unsigned int hash_function(particle_base* p){
     return 
-      (((int)p->get_value(wrapper::d_zpos))/ppb)*((int)(hash_dims_[0]*hash_dims_[1]))+
-      (((int)p->get_value(wrapper::D_YPOS))/ppb)*((int)hash_dims_[1])+
-      (((int)p->get_value(wrapper::D_XPOS))/ppb);
+      (((int)p->get_value(wrapper::d_zpos))/ppb_)*((int)(hash_dims_[0]*hash_dims_[1]))+
+      (((int)p->get_value(wrapper::D_YPOS))/ppb_)*((int)hash_dims_[1])+
+      (((int)p->get_value(wrapper::D_XPOS))/ppb_);
   }
 
   hash_shelf3d(vector<int> imgsz, unsigned int ippb, int i_frame):

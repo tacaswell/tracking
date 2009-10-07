@@ -110,7 +110,6 @@ public:
   */
   void get_region( int n,  int m, 
 		  hash_box* box, int range=1) const;
-
   void get_region( int n,
 		   hash_box* box, int range=1) const;
   virtual void get_region( particle_base* n,
@@ -120,6 +119,12 @@ public:
   void get_region( int n,
 		   std::list<particle_base*>& in_list, int range=1) const;
 
+  void get_region( int n, int m,
+		   std::vector<const particle_base*> & out,int range) const;
+  void get_region( int n,
+		   std::vector<const particle_base*> & out,int range) const;
+  
+  
   int get_plane_num() const
   {
     return plane_number_;
@@ -313,7 +318,7 @@ protected:
 
   
   ///number of pixels per side of the gridboxes
-  unsigned int ppb;
+  unsigned int ppb_;
   //@}
   ///stores the plane number of the shelf
   int plane_number_;
@@ -361,7 +366,7 @@ private:
 
 template <class particle>
 hash_shelf::hash_shelf(master_box_t<particle> & mb, int imsz1, 
-		       int imsz2, unsigned int PPB): ppb(PPB){
+		       int imsz2, unsigned int PPB): ppb_(PPB){
   img_dims_[0] = imsz1;
   img_dims_[1] = imsz2;
   std::cout<<img_dims_[0]<<std::endl
@@ -381,10 +386,10 @@ inline unsigned int hash_shelf::hash_function(particle_base* p) const{
   utilities::Tuple cur_pos = p->get_position();
   
   return (unsigned int)
-    (((unsigned int)cur_pos[1]/ppb)*hash_dims_[0] + cur_pos[0]/ppb);
+    (((unsigned int)cur_pos[1]/ppb_)*hash_dims_[0] + cur_pos[0]/ppb_);
 //   return (unsigned int)
 //     (((unsigned int)p->get_value(wrapper::D_YPOS)/ppb)*hash_dims[0] +
-//        p->get_value(wrapper::D_XPOS)/ppb);
+//        p->get_value(wrapper::D_XPOS)/ppb_);
 }
 }
 #endif

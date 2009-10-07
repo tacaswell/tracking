@@ -233,21 +233,3 @@ void hash_case::gofr2D(float max_d, utilities::Histogram2D& gofr2 ) const
 }
 
 
-
-float hash_case::average_density() const
-{
-  float average;
-  vector<hash_shelf>::const_iterator h_end= h_case_.end();
-  
-  for(vector<hash_shelf>::const_iterator in= h_case_.begin();
-      it!=h_end;++it)
-  {
-    average += (*it)->get_particle_count();
-  }
-  average/=h_case_.size();
-  
-
-
-
-
-

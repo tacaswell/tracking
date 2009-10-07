@@ -17,6 +17,7 @@
 //
 //see website for additional permissions under GNU GPL version 3 section 7
 #include<iostream>
+#include<cmath>
 
 #include "hash_case.h"
 #include "hash_shelf.h"
@@ -37,6 +38,7 @@ using std::set;
 using std::vector;
 using std::cout;
 using std::endl;
+using std::ceil;
 
 
 
@@ -192,22 +194,47 @@ void hash_case::compute_corr(Corr & in) const
 
 void hash_shelf::compute_corr(Corr & in)const
 {
-  vector<hash_box*>::const_iterator myend =  hash_.end();
-  for(vector<hash_box*>::const_iterator it = hash_.begin();
-      it!=myend;++it)
-  {
-    (*it)->compute_corr(in);
-    
+
+  float range = in.get_max_range();
+  unsigned int buffer = (unsigned int)((int)range%(int)ppb_==0?range/ppb_:(1+range/ppb_));
+  
+  // the hack to have asymmetric buffers is here
+  for(unsigned int x = buffer; x<(hash_dims_[0]-buffer-1);++x){
+    for(unsigned int y = buffer; y<(hash_dims_[1]-buffer-1);++y){
+      get_box(x,y)->compute_corr(in);
+      
+    }
   }
+
 }
 void hash_box::compute_corr(Corr & in )const
 {
-  vector<particle_base*>::const_iterator myend = contents_.end();
-  for(vector<particle_base*>::const_iterator it = contents_.begin();
-      it!=myend;++it)
+
+  if(in.get_max_range()<particle_base::get_neighborhood_range())
   {
-    in.compute(*it);
+    vector<particle_base*>::const_iterator myend = contents_.end();
+    for(vector<particle_base*>::const_iterator it = contents_.begin();
+	it!=myend;++it)
+    {
+      in.compute(*it,(*it)->get_neighborhood () );
+    }
+  }
+  else
+  {
+    if(shelf_ ==NULL || hash_indx_ == -1)
+      throw "hash_box: box not part of a shelf";
+
+    vector <const particle_base *> nhood;
+    shelf_->get_region(hash_indx_,nhood,(int)ceil(in.get_max_range()));
+    int max_j = contents_.size();
     
+    // vector<particle_base*>::const_iterator myend = contents_.end();
+//     for(vector<particle_base*>::const_iterator it = contents_.begin();
+// 	it!=myend;++it)
+    for(int j = 0; j<max_j;++j)
+    {
+      in.compute(contents_[j],nhood);
+    }
   }
 }
 

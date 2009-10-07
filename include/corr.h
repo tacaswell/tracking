@@ -33,6 +33,8 @@
 #ifndef CORR_
 #define CORR_
 
+#include <vector>
+
 namespace utilities
 {
 class Generic_wrapper;
@@ -59,17 +61,22 @@ public:
      tracking information this should throw an error or something
      clever like that
    */
-  virtual void compute(const particle_base *) = 0;
+  virtual void compute(const particle_base *,const std::vector<const particle_base*> & ) = 0;
   /**
      Computes the correlation for the particle_track object in is handed.
      For non-track dependent correlations this should cast to a particle_base
      pointer and call the other compute function.
    */
-  virtual void compute(const particle_track *)=0;
+  virtual void compute(const particle_track *,const std::vector<const particle_track*> & )=0;
   /**
      outputs the result of the computation to the wrapper
    */
   virtual void out_to_wrapper(utilities::Generic_wrapper & ) const =0;
+  /**
+     returns the maximum range that the Corr object looks out to.  This is needed so
+     that the hash_shelf can properly limit the particles that it hands in
+   */
+  virtual float get_max_range() const = 0;
   
 };
 

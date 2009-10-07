@@ -49,31 +49,33 @@ using tracking::particle_base;
 
 
 
-void Corr_gofr::compute(const particle_track * p_in)
+void Corr_gofr::compute(const particle_track * p_in,const vector<const particle_track*> & )
 {
-  compute(static_cast<const particle_base*>(p_in));
+  throw "Corr_gofr: not implemnted yet:void Corr_gofr::compute(const particle_track * p_in,const vector<const particle_track*> & )";
+  
+  //  compute(static_cast<const particle_base*>(p_in));
 }
 
-void Corr_gofr::compute(const particle_base * p_in)
+void Corr_gofr::compute(const particle_base * p_in,const vector<const particle_base*> & nhood)
 {
   float max_sq = max_range_*max_range_;
   
+  int max_j = nhood.size();
   
-  
-  const vector<const particle_base*> nhood = p_in->get_neighborhood();
-  vector<const particle_base*>::const_iterator p_end = nhood.end();
-  for(vector<const particle_base*>::const_iterator cur_part = nhood.begin();
-      cur_part!=p_end;++cur_part)
+//   vector<const particle_base*>::const_iterator p_end = nhood.end();
+//   for(vector<const particle_base*>::const_iterator cur_part = nhood.begin();
+//       cur_part!=p_end;++cur_part)
+  for(int j = 0; j<max_j;++j)
   {
-    float tmp_d = p_in->distancesq(*cur_part);
+    float tmp_d = p_in->distancesq(nhood[j]);
     if(tmp_d<max_sq)
     {
       int ind = (int)(n_bins_*sqrt(tmp_d)/max_range_);
       ++(bin_count_.at(ind));
-      
     }
-    
   }
+  
+  ++parts_added_;
   
 
 }
@@ -82,13 +84,13 @@ void Corr_gofr::compute(const particle_base * p_in)
 
 Corr_gofr::Corr_gofr(int bins,float max,string& name):
   bin_count_(bins),bin_edges_(bins),n_bins_(bins),
-  max_range_(max),name_(name)
+  max_range_(max),name_(name),parts_added_(0)
 {
   if(bins <1)
     throw "number of bins must be greater than 0";
   
-  if(max_range_>particle_base::get_neighborhood_range())
-    throw "maximum range past what particles know about";
+//   if(max_range_>particle_base::get_neighborhood_range())
+//     throw "maximum range past what particles know about";
   
   float bin_sz = max_range_/bins;
   for( int j= 0;j<bins;++j)
@@ -100,12 +102,14 @@ Corr_gofr::Corr_gofr(int bins,float max,string& name):
 
 void Corr_gofr::out_to_wrapper(Generic_wrapper & in)const
 {
-
+  vector<float> tmp;
+  normalize(tmp);
+  
   in.open_wrapper();
   in.open_group(name_);
   //in.add_metadata();
   
-  in.add_dset(1,&n_bins_,utilities::V_FLOAT,&bin_count_[0],"bin_count");
+  in.add_dset(1,&n_bins_,utilities::V_FLOAT,&tmp[0],"bin_count");
   in.add_dset(1,&n_bins_,utilities::V_FLOAT,&bin_edges_[0],"bin_edges");
 
   in.close_wrapper();
@@ -113,13 +117,14 @@ void Corr_gofr::out_to_wrapper(Generic_wrapper & in)const
 }
 
 
-void Corr_gofr::display(float avg)const
+void Corr_gofr::display()const
 {
 
   vector<float> tmp;
-  normalize(tmp,avg);
+  normalize(tmp);
   
   Gnuplot g(bin_edges_,tmp,"g(r)","steps");
+  g.set_grid();
   wait_for_key();
   
 
@@ -128,14 +133,25 @@ void Corr_gofr::display(float avg)const
 
 void Corr_gofr::normalize(vector<float> & out)const
 {
+
+  int count_sum = 0;
+  for(int j = 0; j<n_bins_;++j)
+    count_sum += bin_count_[j];
+  
+  // this does not need to be averaged by the number of particles
+  // added because in the normalization the average is multiplied by
+  // the number of particles added so it cancels out
+  float avg = (count_sum)/(3.14159*max_range_*max_range_);
+  
+  
+
   out.resize(n_bins_);
   
   out[0] = bin_count_[0]/((bin_edges_[1]*bin_edges_[1]*3.14159)*avg);
   
   for(int j = 1;j<(n_bins_-1);++j)
   {
-    out[j] = bin_count_[j]/(avg * 3.14159*(bin_edges_[j+1]*bin_edges_[j+1] - bin_edges_[j]*bin_edges_[j]));
+    out[j] = bin_count_[j]/( avg * 3.14159*(bin_edges_[j+1]*bin_edges_[j+1] - bin_edges_[j]*bin_edges_[j]));
   }
-  out[n_bins_-1] = bin_count_[n_bins_-1]/(avg * 3.14159*(max_range_*max_range_ - bin_edges_[n_bins_-1]*bin_edges_[n_bins_-1]));
+  out[n_bins_-1] = bin_count_[n_bins_-1]/( avg * 3.14159*(max_range_*max_range_ - bin_edges_[n_bins_-1]*bin_edges_[n_bins_-1]));
 }
-

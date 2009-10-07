@@ -108,26 +108,20 @@ int main()
     cout<<"total number of particles is: "<<box.size()<<endl;;
     
 
-        
-    for(int j =0;j<20;++j)
-    {
-      particle_base* p = box.get_particle(j);
-      p->print();
-    }
 
 
     
     Tuple dims(1392,520);
     hash_case hcase(box,dims,20,frame_c);
 
-    particle_base::set_neighborhood_range(20);
-    hcase.fill_in_neighborhood();
+//     particle_base::set_neighborhood_range(101);
+//     hcase.fill_in_neighborhood();
     
     
     //hcase.print();
     string gname = "test";
     
-    Corr_gofr gofr(200,(float)19.0,gname);
+    Corr_gofr gofr(2000,(float)100,gname);
     
 
     hcase.compute_corr(gofr);

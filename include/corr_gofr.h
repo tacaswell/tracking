@@ -49,15 +49,15 @@ class Corr_gofr:public Corr
 {
 public:
   // basic inherited stuff
-  void compute(const particle_base *) ;
-  void compute(const particle_track *);
+  void compute(const particle_base *,const std::vector<const particle_base*> & ) ;
+  void compute(const particle_track *,const std::vector<const particle_track*> & );
   void out_to_wrapper(utilities::Generic_wrapper & ) const ;
 
   // special stuff
   /**
      normalize G(r) to the average
    */
-  void normalize(std::vector<float> & gofr,float avg_den) const;
+  void normalize(std::vector<float> & gofr) const;
   
   /**
      constructor.  The maximum range is taken from particle_base::max_neighborhood_range_.
@@ -65,9 +65,14 @@ public:
    */
   Corr_gofr(int bins,float max,std::string &);
   
-  void display(int avg = 1) const;
+  void display() const;
   
+  float get_max_range()const
+  {
+    return max_range_;
+  }
   
+
 private:
   // this could be done using a single histogram object, but 
   /**
@@ -95,7 +100,7 @@ private:
   /**
      count of the number of particles added
    */
-  int part_added_;
+  int parts_added_;
   
 
 };

@@ -42,9 +42,9 @@ void hash_shelf3d::print(){
 
 void hash_shelf3d::get_region( particle_base* p,
 		   hash_box* box, int range){
-  get_region((int)(p->get_value(wrapper::D_XPOS)/ppb),
-	     (int)(p->get_value(wrapper::D_YPOS)/ppb),
-	     (int)(p->get_value(wrapper::d_zpos)/ppb),
+  get_region((int)(p->get_value(wrapper::D_XPOS)/ppb_),
+	     (int)(p->get_value(wrapper::D_YPOS)/ppb_),
+	     (int)(p->get_value(wrapper::d_zpos)/ppb_),
 	     box,range);
 
 }

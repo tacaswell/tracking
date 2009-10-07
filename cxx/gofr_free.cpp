@@ -243,7 +243,7 @@ float hash_shelf::gofr(float max_d, int nbins, vector<float>& bin_count,
   //this needs some extra code to cope with edge cases between this
   // and making the hash table something better needs to be done about
   // how the size mismatch for the image and the hash table are handled
-  unsigned int buffer = (unsigned int)((int)max_d%(int)ppb==0?max_d/ppb:(1+max_d/ppb));
+  unsigned int buffer = (unsigned int)((int)max_d%(int)ppb_==0?max_d/ppb_:(1+max_d/ppb_));
   int local_count = 0;
   
   hash_box*  working_box;
@@ -278,7 +278,7 @@ float hash_shelf::gofr(float max_d, int nbins, vector<float>& bin_count,
 
   count += local_count;
   //  cout<<count<<endl;
-  return local_count /(float)(ppb*ppb*(hash_dims_[0]-2*buffer -1)*(hash_dims_[1]-2*buffer-1));
+  return local_count /(float)(ppb_*ppb_*(hash_dims_[0]-2*buffer -1)*(hash_dims_[1]-2*buffer-1));
 
 
 
@@ -324,7 +324,7 @@ int hash_box::gofr(float max_d, int nbins, hash_box* points,
 	     
 void hash_shelf::gofr2D(float max_d, utilities::Histogram2D & gofr2 ) const
 {
-  int buffer = (int)ceil(max_d/ppb);
+  int buffer = (int)ceil(max_d/ppb_);
   
 
   

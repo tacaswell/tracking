@@ -118,7 +118,7 @@ void hash_shelf::push(particle_track * p){
 
 hash_shelf::hash_shelf(unsigned int imsz1, 
 		       unsigned int imsz2, unsigned int PPB,
-		       int i_frame):  ppb(PPB), plane_number_(i_frame),
+		       int i_frame):  ppb_(PPB), plane_number_(i_frame),
 				      next_(NULL),particle_count_(0)
 {
   img_dims_[0] = (imsz1);
@@ -128,7 +128,7 @@ hash_shelf::hash_shelf(unsigned int imsz1,
 
 hash_shelf::hash_shelf(utilities::Tuple imgsz, 
 		       unsigned int ippb, 
-		       int i_frame):img_dims_(imgsz),  ppb(ippb),  
+		       int i_frame):img_dims_(imgsz),  ppb_(ippb),  
 				    plane_number_(i_frame), 
 				    next_(NULL),particle_count_(0)
 {  
@@ -143,10 +143,10 @@ void hash_shelf::init2(){
 
   for(int j = 0; j<k;++j)
     {
-      hash_dims_[j] = (((int)(img_dims_[j]))%ppb==0?((int)img_dims_[j])/ppb:(((int)img_dims_[j])/ppb)+1);
+      hash_dims_[j] = (((int)(img_dims_[j]))%ppb_==0?((int)img_dims_[j])/ppb_:(((int)img_dims_[j])/ppb_)+1);
     }
   // tac 2009-03-11
-  // hash_dims.push_back((*it)%ppb==0?(*it)/ppb:(1+(*it)/ppb)+1);
+  // hash_dims.push_back((*it)%ppb_==0?(*it)/ppb_:(1+(*it)/ppb_)+1);
 
 
   int tmp_prod = (int) hash_dims_.prod();
@@ -154,7 +154,7 @@ void hash_shelf::init2(){
 
   hash_.reserve(tmp_prod);
   for(int j = 0; j<tmp_prod;j++)
-    hash_.push_back(new hash_box());
+    hash_.push_back(new hash_box(this,j));
 }
 
 
@@ -205,6 +205,53 @@ void hash_shelf::get_region( int n, int m,
 }
 
 
+void hash_shelf::get_region( int n, int m,
+			     vector<const particle_base*> & out,int range) const {
+  
+  if(n<0||m<0||range<0)
+    throw "hash_shelf::get_region: nonsensical arugements";
+  
+
+  
+  int x_bot = (((n-range)>=0)?(n-range):0);
+  int x_top = ((n+range)<((int)hash_dims_[0]-1)?(n+range):((int)hash_dims_[0]-1));
+  int y_bot = ((m-range)>0?(m-range):0);
+  int y_top = ((m+range)<((int)hash_dims_[1]-1)?(m+range):((int)hash_dims_[1]-1));
+  
+  int nsize= 0;
+  for( int x = x_bot; x<=x_top;++x)
+    for( int y = y_bot; y<=y_top;++y)
+      nsize += (hash_.at(x+int(hash_dims_[0])*y))->get_size();
+
+  out.clear();
+  out.reserve(nsize);
+  
+  for( int x = x_bot; x<=x_top;++x)
+  {
+    for( int y = y_bot; y<=y_top;++y)
+    {
+      hash_box* cur_box = (hash_.at(x+int(hash_dims_[0])*y));
+      vector<particle_base *>::const_iterator it_end = cur_box->end();
+      for(vector<particle_base *>::const_iterator it = cur_box->begin();
+	  it!=it_end;++it)
+      {
+	out.push_back(*it);
+      }
+      
+    }
+  }
+}
+
+
+
+void hash_shelf::get_region( int n, 
+			     vector<const particle_base*> & out ,int range) const
+{
+  get_region(n%int(hash_dims_[0]), n/int(hash_dims_[0]), out, range);
+
+}
+
+
 
 void hash_shelf::get_region( int n, 
 			     hash_box* box,int range) const
@@ -248,7 +295,7 @@ void hash_shelf::get_region( int n,
 void hash_shelf::rehash(unsigned int PPB){
   list<particle_track*> *tmp = shelf_to_list();
 
-  ppb = PPB;
+  ppb_ = PPB;
   //rebuilds the hash table
   init2();
   for(list<particle_track*>::iterator it = tmp->begin(); it!=tmp->end(); ++it)
@@ -539,7 +586,7 @@ void hash_shelf::fill_in_neighborhood()
   
   for(int j = 0; j<(int)hash_.size(); ++j)
   {
-    int buffer = (int)ceil(particle_base::get_max_range()/ppb);
+    int buffer = (int)ceil(particle_base::get_max_range()/ppb_);
     if(buffer<1)
     {
       buffer = 1;

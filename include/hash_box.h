@@ -44,6 +44,8 @@ namespace tracking{
 class particle_base;
 class particle_track;
 class Corr;
+class hash_shelf;
+
 /**
    Class for storing particles in the hash table.  This class will
    hold a list of any  generation of particles.  The primary purpose
@@ -55,16 +57,32 @@ class hash_box{
 protected:
   ///Contents of the box
   std::vector<particle_base*> contents_;
+  
+  /**
+     pointer to the hash_shelf that contains this box
+   */
+  const hash_shelf  * shelf_;
+  
+  /**
+     position in hash shelf 
+   */
+  int hash_indx_;
+  
 public:
   
   ///@name over all control
   ///Constructors, destructor, and clear all data
   //@{ 
 
-  ///Empty Constructor
- hash_box():contents_(){
+  ///constructor with hash_shelf information
+  hash_box(const hash_shelf* in,int hash_indx):contents_(),shelf_(in),hash_indx_(hash_indx){
 
   }
+  /**
+     empty constructor
+   */
+  hash_box():contents_(),shelf_(NULL),hash_indx_(-1){
+    }
 
   ///Destructor.  Clears all the pointers to try and avoid stale pointers
   ~hash_box(){
@@ -111,6 +129,12 @@ public:
      figure out who uses this function is used and make private or kill
    */
   std::vector<particle_base*>::iterator begin(){
+    return contents_.begin();
+  }
+  /**
+     a very const version
+   */
+  std::vector<particle_base*>::const_iterator begin()const{
     return contents_.begin();
   }
   /**
@@ -226,7 +250,6 @@ public:
      passes a Corr object down the pyramid
    */
   void compute_corr(tracking::Corr &) const ;
-
   
 };
 }
