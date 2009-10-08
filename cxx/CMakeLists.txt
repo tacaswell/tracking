@@ -45,6 +45,7 @@ SET(OTHER_WRAPPER_SRC
 SET(HDF_SRC
   ${PROJECT_SOURCE_DIR}/cxx/wrapper_i_hdf.cpp
   ${PROJECT_SOURCE_DIR}/cxx/wrapper_o_hdf.cpp
+  ${PROJECT_SOURCE_DIR}/cxx/generic_wrapper_hdf.cpp
   )
 
 SET(MATLAB_UTIL_SRC

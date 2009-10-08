@@ -126,7 +126,15 @@ int main()
 
     hcase.compute_corr(gofr);
     
-    gofr.display();
+    //    gofr.display();
+
+      
+    Generic_wrapper_hdf hdf_out("gofr_test.h5",false);
+    
+
+
+    gofr.out_to_wrapper(hdf_out);
+    
     
 //     Wrapper_o_hdf hdf_w("25-0_mid_0_out.h5",wh.get_data_types());
     

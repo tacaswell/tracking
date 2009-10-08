@@ -230,6 +230,19 @@ Tuple::Tuple(const Tuple& y){
     data_[j] = y.data_[j];
 }
 
+// tac 2009-10-07
+// added because the constructors and destructors of Tuples are taking ~5% of run time
+float Tuple::dist_sqr(const Tuple& y)const
+{
+  float out =0;
+  
+  for(int j = 0;j<length_;++j)
+  {
+    out += (data_[j]-y.data_[j])*(data_[j]-y.data_[j]);
+  }
+  return out;
+}
+
 
 Tuple::~Tuple(){
   //  std::cout<<"died"<< std::endl;

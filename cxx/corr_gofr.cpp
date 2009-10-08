@@ -67,7 +67,13 @@ void Corr_gofr::compute(const particle_base * p_in,const vector<const particle_b
 //       cur_part!=p_end;++cur_part)
   for(int j = 0; j<max_j;++j)
   {
-    float tmp_d = p_in->distancesq(nhood[j]);
+    //    const particle_base* part_ptr= *curr_part;
+    const particle_base* part_ptr= nhood[j];
+    //    if(p_in == nhood[j])
+    if(p_in == part_ptr)
+      continue;
+    
+    float tmp_d = p_in->distancesq(part_ptr);
     if(tmp_d<max_sq)
     {
       int ind = (int)(n_bins_*sqrt(tmp_d)/max_range_);
@@ -109,8 +115,11 @@ void Corr_gofr::out_to_wrapper(Generic_wrapper & in)const
   in.open_group(name_);
   //in.add_metadata();
   
-  in.add_dset(1,&n_bins_,utilities::V_FLOAT,&tmp[0],"bin_count");
-  in.add_dset(1,&n_bins_,utilities::V_FLOAT,&bin_edges_[0],"bin_edges");
+  const float * yar = &tmp.front();
+  
+  in.add_dset(1,&n_bins_,utilities::V_FLOAT,yar,"bin_count");
+  yar = &bin_edges_.front();
+  in.add_dset(1,&n_bins_,utilities::V_FLOAT,yar,"bin_edges");
 
   in.close_wrapper();
   

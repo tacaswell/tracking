@@ -189,6 +189,7 @@ void hash_case::compute_corr(Corr & in) const
       shelf_it!= h_case_.end();++shelf_it)
   {
     (*shelf_it)->compute_corr(in);
+    cout<<"finished shelf"<<endl;
   }
 }
 
@@ -221,16 +222,20 @@ void hash_box::compute_corr(Corr & in )const
   }
   else
   {
+    
+    
+
     if(shelf_ ==NULL || hash_indx_ == -1)
       throw "hash_box: box not part of a shelf";
 
     vector <const particle_base *> nhood;
     shelf_->get_region(hash_indx_,nhood,(int)ceil(in.get_max_range()));
-    int max_j = contents_.size();
+
     
     // vector<particle_base*>::const_iterator myend = contents_.end();
-//     for(vector<particle_base*>::const_iterator it = contents_.begin();
-// 	it!=myend;++it)
+    //     for(vector<particle_base*>::const_iterator it = contents_.begin();
+    // 	it!=myend;++it)
+    int max_j = contents_.size();
     for(int j = 0; j<max_j;++j)
     {
       in.compute(contents_[j],nhood);

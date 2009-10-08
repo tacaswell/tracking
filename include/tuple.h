@@ -182,7 +182,13 @@ public:
      Copy constructor
    */
   Tuple(const Tuple & y);
+
+  /**
+     returns the distance squared between two points
+   */
+  float dist_sqr(const Tuple& y)const;
   
+
   /**
      Destructor
    */

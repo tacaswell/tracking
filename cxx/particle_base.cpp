@@ -91,16 +91,10 @@ void particle_base::fill_position(){
 
 // public functions
 
-float particle_base::distancesq(const particle_base* part_in)const{
-
-  
-  //  return (position_ - (part_in->get_position())).magnitude_sqr();
-  return (position_ - (part_in->position_ )).magnitude_sqr();
-
-  //   float X =get_value(utilities::D_XPOS) - part_in->get_value(utilities::D_XPOS);
-  //   float Y =get_value(utilities::D_YPOS) - part_in->get_value(utilities::D_YPOS);
-  //   //  float Z =get_value(utilities::d_zpos) - part_in->get_value(utilities::d_zpos);
-  //   return X*X + Y*Y ;//+ Z*Z;
+float particle_base::distancesq(const particle_base* part_in)const
+{
+  //return (position_ - (part_in->position_ )).magnitude_sqr();
+  return position_.dist_sqr(part_in->position_ );
 }
 
 
