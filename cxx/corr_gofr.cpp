@@ -142,8 +142,9 @@ void Corr_gofr::display()const
 
 void Corr_gofr::normalize(vector<float> & out)const
 {
-
-  int count_sum = 0;
+  // tac 2009-10-09
+  // changed to float to prevent 
+  float count_sum = 0;
   for(int j = 0; j<n_bins_;++j)
     count_sum += bin_count_[j];
   

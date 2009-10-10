@@ -53,6 +53,7 @@ using std::cout;
 using std::endl;
 using std::set;
 using std::string;
+using std::cerr;
 
 
 using utilities::Wrapper_o_hdf;
@@ -70,13 +71,30 @@ using tracking::particle_base;
 using tracking::hash_case;
 using tracking::Corr_gofr;
 
+static string base_proc_path = "/home/tcaswell/colloids/processed/";
 
-
-int main()
+int main(int argc, const char * argv[])
 {
+
+  if(argc != 3)
+  {
+    cerr<< "wrong number of args args"<<endl;
+    return 0;
+  }
+  
+  
+  string file_path = string(argv[1]);
+  string file_name = string(argv[2]);
+  
+
+  string proc_file = base_proc_path + file_path + file_name + ".h5";
+  string out_file = base_proc_path + file_path + "gofr" + ".h5";
+  cout<<"file to read in: "<<proc_file<<endl;
+  cout<<"file that will be written to: "<<out_file<<endl;
+
   try
   {
-    int frame_c = 5;
+
 
      
     D_TYPE tmp[] = {utilities::D_XPOS,
@@ -89,15 +107,15 @@ int main()
 		    utilities::D_E
 		    };
     set<D_TYPE> data_types = set<D_TYPE>(tmp, tmp+8);
-    string fname = "25-0_mid_0.h5";
+
   
     
-    Wrapper_i_hdf wh(fname,data_types,0,frame_c);
+    Wrapper_i_hdf wh(proc_file,data_types);
 
     
 
     master_box_t<particle_base> box;
-    Filter_basic filt("25-0_mid_0.h5");
+    Filter_basic filt(proc_file);
     //    Filter_trivial filt;
     
 
@@ -112,29 +130,27 @@ int main()
 
     
     Tuple dims(1392,520);
-    hash_case hcase(box,dims,20,frame_c);
+    hash_case hcase(box,dims,20,wh.get_num_frames());
 
+    cout<<"hash case filled"<<endl;
+    
 //     particle_base::set_neighborhood_range(101);
 //     hcase.fill_in_neighborhood();
     
     
     //hcase.print();
-    string gname = "test";
-    
-    Corr_gofr gofr(2000,(float)100,gname);
-    
 
+    
+    Corr_gofr gofr(2000,(float)100,file_name);
     hcase.compute_corr(gofr);
+    cout<<"computed g(r)"<<endl;
     
     //    gofr.display();
 
       
-    Generic_wrapper_hdf hdf_out("gofr_test.h5",false);
-    
-
-
+    Generic_wrapper_hdf hdf_out(out_file,true);
     gofr.out_to_wrapper(hdf_out);
-    
+    cout<<"wrote out g(r)"<<endl;
     
 //     Wrapper_o_hdf hdf_w("25-0_mid_0_out.h5",wh.get_data_types());
     

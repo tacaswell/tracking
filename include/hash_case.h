@@ -297,7 +297,7 @@ void hash_case::init(master_box_t<particle> & mb,const utilities::Tuple & img_di
     return;
   }
     
-  std::cout<<"this is a test"<<std::endl;
+
   
   mb.append_to_data_types(utilities::D_NEXT);
   mb.append_to_data_types(utilities::D_PREV);
@@ -324,7 +324,7 @@ void hash_case::init(master_box_t<particle> & mb,const utilities::Tuple & img_di
       int cf = (int)(p->get_value(utilities::D_FRAME));
       if(cf != current_frame)
       {
-	std::cout<<"frame "<<current_frame<<": "<<current_count<<std::endl;
+	//	std::cout<<"frame "<<current_frame<<": "<<current_count<<std::endl;
 	current_frame = cf;
 	current_count = 1;
       }
@@ -351,7 +351,7 @@ void hash_case::init(master_box_t<particle> & mb,const utilities::Tuple & img_di
     }
   
   }
-  std::cout<<"frame "<<current_frame<<": "<<current_count<<std::endl;
+  //  std::cout<<"frame "<<current_frame<<": "<<current_count<<std::endl;
 
   inited = true;
 }

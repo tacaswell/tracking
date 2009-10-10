@@ -189,7 +189,7 @@ void hash_case::compute_corr(Corr & in) const
       shelf_it!= h_case_.end();++shelf_it)
   {
     (*shelf_it)->compute_corr(in);
-    cout<<"finished shelf"<<endl;
+    //    cout<<"finished shelf"<<endl;
   }
 }
 

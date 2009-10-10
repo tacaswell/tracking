@@ -109,7 +109,7 @@ public:
   ~Wrapper_i_hdf();
   
   Wrapper_i_hdf(std::string fname,std::set<utilities::D_TYPE> dtypes);
-  Wrapper_i_hdf(std::string fname,std::set<utilities::D_TYPE> dtypes,int,int);
+  Wrapper_i_hdf(std::string fname,std::set<utilities::D_TYPE> dtypes,int start,int frames);
 
 
   
