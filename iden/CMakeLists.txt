@@ -9,11 +9,11 @@ SET(COMMON_IDEN_SRC
 
 find_package(IPP REQUIRED)
 find_package(FreeImage REQUIRED)
-#find_package(HDF5 REQUIRED)
+find_package(HDF5 REQUIRED)
 
 include_directories(${IPP_INCLUDE_DIRS})
 include_directories(${FreeImage_INCLUDE_DIR})
-include_directories("/home/tcaswell/other_source/gnuplot-cpp-read-only/")
+
 #set(LIBS ${LIBS} ${IPPI_LIB})
 #set(LIBS ${LIBS} ${IPPS_LIB})
 #set(LIBS ${LIBS} ${IPPV_LIB})
