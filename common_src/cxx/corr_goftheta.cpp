@@ -30,38 +30,45 @@
 //this Program grant you additional permission to convey the resulting
 //work.
 
-#include "corr_gofr.h"
+#include "corr_goftheta.h"
 #include "particle_base.h"
 #include "particle_track.h"
 #include "generic_wrapper.h"
+
+#include "tuple.h"
 
 #include "gnuplot_i.hpp"
 
 
 using std::vector;
 using std::string;
+using std::cout;
+using std::endl;
 
 using utilities::Generic_wrapper;
+using utilities::Tuple;
 
 
-using tracking::Corr_gofr;
+using tracking::Corr_goftheta;
 using tracking::particle_base;
-
 
 const float pi = acos(-1);
 
-void Corr_gofr::compute(const particle_track * p_in,const vector<const particle_track*> & )
+
+void Corr_goftheta::compute(const particle_track * p_in,const vector<const particle_track*> & )
 {
-  throw "Corr_gofr: not implemnted yet:void Corr_gofr::compute(const particle_track * p_in,const vector<const particle_track*> & )";
+  throw "Corr_goftheta: not implemnted yet:void Corr_goftheta::compute(const particle_track * p_in,const vector<const particle_track*> & )";
   
   //  compute(static_cast<const particle_base*>(p_in));
 }
 
-void Corr_gofr::compute(const particle_base * p_in,const vector<const particle_base*> & nhood)
+void Corr_goftheta::compute(const particle_base * p_in,const vector<const particle_base*> & nhood)
 {
-  float max_sq = max_range_*max_range_;
+  
   
   int max_j = nhood.size();
+  
+  Tuple p_in_pos = p_in->get_position();
   
 //   vector<const particle_base*>::const_iterator p_end = nhood.end();
 //   for(vector<const particle_base*>::const_iterator cur_part = nhood.begin();
@@ -70,16 +77,19 @@ void Corr_gofr::compute(const particle_base * p_in,const vector<const particle_b
   {
     //    const particle_base* part_ptr= *curr_part;
     const particle_base* part_ptr= nhood[j];
-    //    if(p_in == nhood[j])
+    
+    // skip self
     if(p_in == part_ptr)
       continue;
+  
+    // assume the nhood is the right size
+    float theta = part_ptr->get_theta(p_in_pos) ;
+    int ind = floor(n_bins_ * (theta + pi)/(2*pi));
+    if(ind ==n_bins_)
+      ind = 0;
+    ++(bin_count_.at(ind));
     
-    float tmp_d = p_in->distancesq(part_ptr);
-    if(tmp_d<max_sq)
-    {
-      int ind = (int)(n_bins_*sqrt(tmp_d)/max_range_);
-      ++(bin_count_.at(ind));
-    }
+    
   }
   
   ++parts_added_;
@@ -89,7 +99,7 @@ void Corr_gofr::compute(const particle_base * p_in,const vector<const particle_b
 
 
 
-Corr_gofr::Corr_gofr(int bins,float max,string& name):
+Corr_goftheta::Corr_goftheta(int bins,float max,string& name):
   bin_count_(bins),bin_edges_(bins),n_bins_(bins),
   max_range_(max),name_(name),parts_added_(0)
 {
@@ -99,15 +109,15 @@ Corr_gofr::Corr_gofr(int bins,float max,string& name):
 //   if(max_range_>particle_base::get_neighborhood_range())
 //     throw "maximum range past what particles know about";
   
-  float bin_sz = max_range_/bins;
+  float bin_sz = 2*pi/bins;
   for( int j= 0;j<bins;++j)
   {
     bin_count_.at(j) = 0;
-    bin_edges_.at(j) = j*bin_sz;
+    bin_edges_.at(j) = j*bin_sz * 180/pi;
   }
 }
 
-void Corr_gofr::out_to_wrapper(Generic_wrapper & in)const
+void Corr_goftheta::out_to_wrapper(Generic_wrapper & in)const
 {
   vector<float> tmp;
   normalize(tmp);
@@ -127,21 +137,21 @@ void Corr_gofr::out_to_wrapper(Generic_wrapper & in)const
 }
 
 
-void Corr_gofr::display()const
+void Corr_goftheta::display()const
 {
 
   vector<float> tmp;
   normalize(tmp);
   
-  Gnuplot g(bin_edges_,tmp,"g(r)","steps");
-  g.set_grid();
+  Gnuplot g(bin_edges_,tmp,"g(theta)","steps");
+  g.set_grid().replot();
   wait_for_key();
   
 
 
 }
 
-void Corr_gofr::normalize(vector<float> & out)const
+void Corr_goftheta::normalize(std::vector<float> & out) const
 {
   // tac 2009-10-09
   // changed to float to prevent integer over flow
@@ -152,17 +162,16 @@ void Corr_gofr::normalize(vector<float> & out)const
   // this does not need to be averaged by the number of particles
   // added because in the normalization the average is multiplied by
   // the number of particles added so it cancels out
-  float avg = (count_sum)/(pi*max_range_*max_range_);
-  
+  float avg = (count_sum)/n_bins_;
   
 
+
   out.resize(n_bins_);
-  
-  out[0] = bin_count_[0]/((bin_edges_[1]*bin_edges_[1]*3.14159)*avg);
-  
-  for(int j = 1;j<(n_bins_-1);++j)
+  for(int j = 1;j<(n_bins_);++j)
   {
-    out[j] = bin_count_[j]/( avg * 3.14159*(bin_edges_[j+1]*bin_edges_[j+1] - bin_edges_[j]*bin_edges_[j]));
+    out[j] = bin_count_[j]/avg;
+    
   }
-  out[n_bins_-1] = bin_count_[n_bins_-1]/( avg * 3.14159*(max_range_*max_range_ - bin_edges_[n_bins_-1]*bin_edges_[n_bins_-1]));
+
+
 }

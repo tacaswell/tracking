@@ -43,6 +43,7 @@ SET(UTIL_SRC
 
 SET(CORR_SRC
   ${COMMON_SRC_PATH}/corr_gofr.cpp
+  ${COMMON_SRC_PATH}/corr_goftheta.cpp
 )
 SET(MATLAB_WRAPPER_SRC
 
