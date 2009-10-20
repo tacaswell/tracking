@@ -164,14 +164,17 @@ public:
      G(r) filling in a more sensible object
   */
   void gofr(utilities::Coarse_grain_array G,int& particle_count) const;
-  /*
+  /**
      Generates and returns a pointer to all the particles in
      this shelf in a list form.  This makes new objects on the
      heap, be aware of this for memory leaks.
 
+     \todo 
+     remove, but this version can not be removed until the tracking code is overhauled to 
+
      see the other version
    */
-  //  std::list<particle_track*> * shelf_to_list() const;
+  std::list<particle_track*> * shelf_to_list() const;
 
   /**
      Converts the whole shelf to a list of const pointers

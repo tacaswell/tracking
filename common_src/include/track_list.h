@@ -37,6 +37,10 @@ class track_shelf;
    List wrapper class for us in the track linking portion of the code.
    It is a list of particle_track pointers and functions to do the looping
    needed in the track locatign algorithm
+
+   \todo
+   need to overhaul to use list objets so that the pointer returning code in hash_shelf
+   can be removed
 */
 
 class track_list{

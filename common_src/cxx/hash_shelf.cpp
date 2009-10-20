@@ -305,20 +305,20 @@ void hash_shelf::rehash(unsigned int PPB){
       push(*it);
 }
 
-// list<particle_track*> * hash_shelf::shelf_to_list() const{
-//   list<particle_track*>* tmp = new list<particle_track*>;
-//   for( vector<hash_box* >::const_iterator cur_box = hash_.begin(); cur_box<hash_.end(); ++cur_box)
-//     {
+list<particle_track*> * hash_shelf::shelf_to_list() const{
+  list<particle_track*>* tmp = new list<particle_track*>;
+  for( vector<hash_box* >::const_iterator cur_box = hash_.begin(); cur_box<hash_.end(); ++cur_box)
+    {
       
-//       for(vector<particle*>::iterator cur_part = (*cur_box)->begin();
-// 	  cur_part!=(*cur_box)->end(); ++cur_part)
-// 	{
-// 	  tmp->push_back(static_cast<particle_track*>(*cur_part));
-// 	}
-//     }
+      for(vector<particle*>::iterator cur_part = (*cur_box)->begin();
+	  cur_part!=(*cur_box)->end(); ++cur_part)
+	{
+	  tmp->push_back(static_cast<particle_track*>(*cur_part));
+	}
+    }
 
-//   return tmp;
-// }
+  return tmp;
+}
 
 
 void hash_shelf::shelf_to_list(std::list<particle*> &tmp) const{
