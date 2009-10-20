@@ -117,7 +117,8 @@ protected:
   
 };
 
-
+// tac 2009-10-19
+// took this out in September because I got rid of the unq_id
 // inline bool track_list::part_lt(particle_track* a, particle_track* b){
 //   return (a->unq_id_)<(b->unq_id_);
 //}

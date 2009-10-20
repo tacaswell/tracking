@@ -23,9 +23,9 @@
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
 #include "particle_base.h"
-#include "tuple.h"
-#include <utility>
 
+#include <utility>
+#include <list>
 // namespace utilities{
 // class Tuple;
 // }
@@ -182,10 +182,12 @@ public:
      Retruns the identifer of the track_box the particle is in
    */
   int get_track_id()const;
-  /**
+  /*
      Returns the value of type for this particle.
    */
-  virtual float get_value(utilities::D_TYPE type) const;
+//   virtual float get_value(utilities::D_TYPE type,float) const;
+//   virtual int                 get_value(utilities::D_TYPE type,int &          ) const;
+//   virtual std::complex<float> get_value(utilities::D_TYPE type,std::complex<float>&) const;
 
   /**
      Returns pointer to the shelf the particle resides in

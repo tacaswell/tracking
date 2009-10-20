@@ -35,8 +35,8 @@
 #include "particle_track.h"
 #include "generic_wrapper.h"
 
-#include "tuple.h"
-
+#include "pair.h"
+#include "triple.h"
 #include "gnuplot_i.hpp"
 
 
@@ -50,19 +50,12 @@ using utilities::Tuple;
 
 
 using tracking::Corr_goftheta;
-using tracking::particle_base;
+using tracking::particle;
 
 const float pi = acos(-1);
 
 
-void Corr_goftheta::compute(const particle_track * p_in,const vector<const particle_track*> & )
-{
-  throw "Corr_goftheta: not implemnted yet:void Corr_goftheta::compute(const particle_track * p_in,const vector<const particle_track*> & )";
-  
-  //  compute(static_cast<const particle_base*>(p_in));
-}
-
-void Corr_goftheta::compute(const particle_base * p_in,const vector<const particle_base*> & nhood)
+void Corr_goftheta::compute(const particle * p_in,const vector<const particle*> & nhood)
 {
   
   
@@ -70,13 +63,13 @@ void Corr_goftheta::compute(const particle_base * p_in,const vector<const partic
   
   Tuple p_in_pos = p_in->get_position();
   
-//   vector<const particle_base*>::const_iterator p_end = nhood.end();
-//   for(vector<const particle_base*>::const_iterator cur_part = nhood.begin();
+//   vector<const particle*>::const_iterator p_end = nhood.end();
+//   for(vector<const particle*>::const_iterator cur_part = nhood.begin();
 //       cur_part!=p_end;++cur_part)
   for(int j = 0; j<max_j;++j)
   {
-    //    const particle_base* part_ptr= *curr_part;
-    const particle_base* part_ptr= nhood[j];
+    //    const particle* part_ptr= *curr_part;
+    const particle* part_ptr= nhood[j];
     
     // skip self
     if(p_in == part_ptr)
@@ -106,7 +99,7 @@ Corr_goftheta::Corr_goftheta(int bins,float max,string& name):
   if(bins <1)
     throw "number of bins must be greater than 0";
   
-//   if(max_range_>particle_base::get_neighborhood_range())
+//   if(max_range_>particle::get_neighborhood_range())
 //     throw "maximum range past what particles know about";
   
   float bin_sz = 2*pi/bins;

@@ -49,7 +49,7 @@ hash_case3d::hash_case3d(master_box_t<particle> & mb,vector<int> img_dims,
     h_case.at(j) = new hash_shelf3d(img_dims, ppb,j);
   }
   // cout<<
-  particle_base *p;
+  particle *p;
   for(unsigned int j = 0; j<mb.size(); j++){
     p = mb.get_particle(j);
     (h_case.at((int)(p->get_value(wrapper::D_FRAME))))->push(p);

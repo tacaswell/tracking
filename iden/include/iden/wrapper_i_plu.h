@@ -34,10 +34,6 @@
 #include "enum_utils.h"
 #include "data_map.h"
 #include "ipp.h"
-namespace tracking
-{
-class particle_track;
-}
 
 namespace utilities{
 

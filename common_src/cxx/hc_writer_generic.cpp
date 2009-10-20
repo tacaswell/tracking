@@ -37,7 +37,7 @@ using std::list;
 using std::complex;
 using tracking::hash_case;
 using tracking::hash_shelf;
-using tracking::particle_base;
+using tracking::particle;
 
 
 void Hash_case_writer_generic::write_hash_case(const hash_case&  hc)const
@@ -45,17 +45,17 @@ void Hash_case_writer_generic::write_hash_case(const hash_case&  hc)const
   output_wrapper_->initialize_wrapper();
   
   const hash_shelf* current_shelf;
-  const particle_base* current_partcle;
+  const particle* current_partcle;
   
   int frames = hc ->get_num_frames();
   for(int j = 0; j<frames;++j)
   {
     current_shelf = hc->return_shelf(j);
-    list<const particle_base*> cs_list;
+    list<const particle*> cs_list;
     current_shelf->shelf_to_list(cs_list);
-    list<const particle_base*>::const_iterator myend = cs_list.end();
+    list<const particle*>::const_iterator myend = cs_list.end();
     
-    for(list<const particle_base*>::const_iterator it = cs_list.begin();
+    for(list<const particle*>::const_iterator it = cs_list.begin();
 	it!=myend;++it)
     {
       current_partcle = *it;

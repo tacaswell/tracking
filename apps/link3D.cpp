@@ -35,6 +35,8 @@
 //containing parts covered by the terms of End User License Agreement
 //for FreeImage Public License, the licensors of
 //this Program grant you additional permission to convey the resulting
+
+
 #include <iostream>
 
 #include "master_box_t.h"
@@ -48,7 +50,7 @@
 
 #include "generic_wrapper_hdf.h"
 #include "corr_gofr.h"
-//#include "gnuplot_i.hpp" //Gnuplot class handles POSIX-Pipe-communication with Gnuplot
+#include "gnuplot_i.hpp" //Gnuplot class handles POSIX-Pipe-communication with Gnuplot
 
 using std::cout;
 using std::endl;
@@ -89,15 +91,15 @@ int main(int argc, const char * argv[])
   
 
   string proc_file = base_proc_path + file_path + file_name + ".h5";
-  string out_file = base_proc_path + file_path + "gofr" + ".h5";
+  string out_file = base_proc_path + file_path + "" + ".h5";
   cout<<"file to read in: "<<proc_file<<endl;
   cout<<"file that will be written to: "<<out_file<<endl;
 
   try
   {
-
-
-     
+   
+    
+    // set up data types to import form the input
     D_TYPE tmp[] = {utilities::D_XPOS,
 		    utilities::D_YPOS,
 		    utilities::D_DX,
@@ -110,56 +112,26 @@ int main(int argc, const char * argv[])
     set<D_TYPE> data_types = set<D_TYPE>(tmp, tmp+8);
 
   
+    // set up the input wrapper
+    Wrapper_i_hdf wh(proc_file,data_types);
     
-    Wrapper_i_hdf wh(proc_file,data_types,0,15);
 
-    
-
+    // fill the master_box
     master_box_t box;
     Filter_basic filt(proc_file);
     //    Filter_trivial filt;
-    
-
     box.init(wh,filt);
     
 
-    
-    cout<<"total number of particles is: "<<box.size()<<endl;;
-    
-
-
-
-    
-    Pair dims(1392,520);
-    hash_case hcase(box,dims,20,wh.get_num_frames());
-
-    cout<<"hash case filled"<<endl;
-    
-//     particle::set_neighborhood_range(101);
-//     hcase.fill_in_neighborhood();
-    
-    
-    //hcase.print();
-
-    
-    Corr_gofr gofr(2000,(float)100,file_name);
-    hcase.compute_corr(gofr);
-    cout<<"computed g(r)"<<endl;
-    
-    gofr.display();
-
-      
-//     Generic_wrapper_hdf hdf_out(out_file,true);
-//     gofr.out_to_wrapper(hdf_out);
-//     cout<<"wrote out g(r)"<<endl;
-
-    
+ 
   }
   catch(const char * err){
     std::cerr<<"caught on error: ";
     std::cerr<<err<<endl;
   } 
-  
-  return 0;
-}
 
+
+  return 0;
+  
+
+}

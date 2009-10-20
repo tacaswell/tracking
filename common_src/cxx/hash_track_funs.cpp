@@ -17,6 +17,137 @@
 //
 //see website for additional permissions under GNU GPL version 3 section 7
 
+#include "hash_case.h"
+#include <stdexcept> // out_of_range exception
+#include <iostream>
+#include <vector>
+#include "pair.h"
+#include "triple.h"
+#include "array.h"
+#include "cell.h"
+
+#include "wrapper_o.h"
+
+#include "corr.h"
+
+#include "master_box_t.h"
+#include "particle_track.h"
+
+#include "hash_box.h"
+#include "hash_shelf.h"
+#include "hash_case.h"
+
+#include "track_box.h"
+#include "track_shelf.h"
+#include "track_list.h"
+
+#include "counted_vector.h"
+#include "coarse_grain_array.h"
+
+#include "exception.h"
+using namespace tracking;
+
+
+using utilities::Tuple;
+using utilities::Counted_vector;
+using utilities::Coarse_grain_array;
+using utilities::Ll_range_error;
+
+using utilities::Wrapper_out;
+
+using std::list;
+using std::cout;
+using std::endl;
+using std::vector;
+using std::pair;
+
+
+
+// void master_box_t::clean_pos_link()
+// {
+//   for(unsigned int j = 0; j<particle_vec_.size();j++){
+//     delete particle_vec_.at(j)->pos_link;
+//     particle_vec_.at(j)->pos_link = NULL;
+//   }
+// }
+
+
+
+
+
+bool lt_pair_tac(const pair<particle_track*, float> &  lh, const pair<particle_track*, float> & rh){
+    return lh.second<rh.second;
+  }
+
+void hash_case::fill_pos_link_next(list<particle_track*>* tlist, 
+			vector<hash_shelf*>::iterator in_it, float max_disp)
+{
+  hash_box tmp_box;
+  float distsq;
+  list<particle_track*> tmp_list;
+  particle_track* tmp_particle1 = NULL;
+  particle_track* tmp_particle2 = NULL;
+  
+  //square the maximum dispalcement to save having to take square roots later
+  max_disp = max_disp*max_disp;
+
+  
+  //loop over partciles in handed in list
+  for(list<particle_track*>::iterator it = tlist->begin();
+            it != tlist->end(); it++)
+    {
+    
+      tmp_particle1 = (*it);
+      tmp_box.clear();
+      
+      (*in_it)->get_region(*it,&tmp_box, 1);
+
+      //      cout<<"box size: "<<tmp_box.get_size()<<endl;
+      
+      //allocates a list
+      tmp_box.box_to_list(tmp_list);
+      
+
+      //loop over the list to be added to the current particle to add
+      //the the current particle as a previous to each of them and
+      //remove the ones that are too far away
+      for(list<particle_track*>::iterator it2 = tmp_list.begin();
+	  it2!=tmp_list.end();it2++){
+
+	tmp_particle2 = (*it2);
+	distsq = (tmp_particle1->distancesq(tmp_particle2));
+	//if the particles are with in the maximum dispalacement of eachother
+	if(distsq<max_disp){
+	  
+	  //make sure the lists exist
+	  if(tmp_particle2->p_pos_link==NULL){
+	    tmp_particle2->p_pos_link = new list<pair<particle_track*,float> >;
+	  }
+	  if(tmp_particle1->n_pos_link==NULL){
+	    tmp_particle1->n_pos_link = new list<pair<particle_track*,float> >;
+	  }
+	 
+	  //add pairing to list
+	  (tmp_particle2->p_pos_link)->
+	    push_back(pair<particle_track*, float>(tmp_particle1,distsq));
+	  (tmp_particle1->n_pos_link)->
+	    push_back(pair<particle_track*, float>(tmp_particle2,distsq));
+	  
+	}
+      }
+
+      
+      if(tmp_particle1->n_pos_link!=NULL)
+	(tmp_particle1->n_pos_link)->sort(lt_pair_tac);
+
+
+
+    }
+  //  cout<<"finished loops"<<endl;
+}
+
+
+
 
 void hash_case::D_lots(utilities::Coarse_grain_array & Duu,
 		       utilities::Coarse_grain_array & DuuL,
@@ -57,7 +188,7 @@ void hash_shelf::D_lots(utilities::Coarse_grain_array & Duu,
   list<particle_track*> current_region;
   
   int max_r_int = (int) ceil(Duu.get_r_max());
-  int buffer = (max_r_int%ppb == 0)?(max_r_int/ppb):(max_r_int/ppb + 1);
+  int buffer = (max_r_int%ppb_ == 0)?(max_r_int/ppb_):(max_r_int/ppb_ + 1);
   int max_tau = Duu.get_d_bins();
   float max_sep = Duu.get_r_max();
   float min_sep = Duu.get_r_min();
@@ -235,7 +366,7 @@ void hash_shelf::D_rr(utilities::Coarse_grain_array & Drr)const
   list<particle_track*> current_region;
   Tuple center;
   int max_r_int = (int) ceil(Drr.get_r_max());
-  int buffer = (max_r_int%ppb == 0)?(max_r_int/ppb):(max_r_int/ppb + 1);
+  int buffer = (max_r_int%ppb_ == 0)?(max_r_int/ppb_):(max_r_int/ppb_ + 1);
   int max_tau = Drr.get_d_bins();
   float max_sep = Drr.get_r_max();
   float min_sep = Drr.get_r_min();

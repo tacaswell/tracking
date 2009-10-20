@@ -37,12 +37,12 @@ master_box::master_box(params_file* params_in,params_file* params_out ){
   
   contents.reserve(in_wrapper->num_entries());
   
-  particle_base::intialize_wrapper_in(in_wrapper);
-  particle_base::intialize_wrapper_out(out_wrapper);
-  particle_base::intialize_data_types(&data_types);
+  particle::intialize_wrapper_in(in_wrapper);
+  particle::intialize_wrapper_out(out_wrapper);
+  particle::intialize_data_types(&data_types);
 
   for(int j = 0; j<in_wrapper->num_entries(); ++j){
-    contents.push_back( new particle_base(j));
+    contents.push_back( new particle(j));
   }
 
 }
@@ -55,9 +55,9 @@ master_box::master_box(params_file* params_in,params_file* params_out, int n ){
   data_types = in_wrapper->get_data_types();
   data_types.insert(wrapper::D_UNQID);
 
-  particle_base::intialize_wrapper_in(in_wrapper);
-  particle_base::intialize_wrapper_out(out_wrapper);
-  particle_base::intialize_data_types(&data_types);
+  particle::intialize_wrapper_in(in_wrapper);
+  particle::intialize_wrapper_out(out_wrapper);
+  particle::intialize_data_types(&data_types);
 
   contents.reserve(in_wrapper->num_entries());
   for(int j = 0; j<in_wrapper->num_entries(); ++j){

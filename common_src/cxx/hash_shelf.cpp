@@ -31,14 +31,18 @@
 #include <vector>
 
 #include "hash_shelf.h"
+#include "hash_box.h"
 #include "track_box.h"
 #include "coarse_grain_array.h"
 #include "counted_vector.h"
 #include "array.h"
 #include "wrapper_o.h"
 
+#include "master_box_t.h"
 #include "particle_base.h"
 #include "particle_track.h"
+#include "pair.h"
+#include "triple.h"
 
 #include "corr.h"
 
@@ -60,14 +64,43 @@ using std::endl;
 using std::vector;
 
 
-void hash_shelf::push(particle_base * p){
+unsigned int hash_shelf::hash_function(const particle* p) const
+{
+  utilities::Tuple cur_pos = p->get_position();
+  
+  return (unsigned int)
+    (((unsigned int)cur_pos[1]/ppb_)*hash_dims_[0] + cur_pos[0]/ppb_);
+  //   return (unsigned int)
+  //     (((unsigned int)p->get_value(wrapper::D_YPOS)/ppb)*hash_dims[0] +
+  //        p->get_value(wrapper::D_XPOS)/ppb_);
+}
+
+hash_shelf::hash_shelf(master_box_t& mb, int imsz1, 
+		       int imsz2, unsigned int PPB): ppb_(PPB)
+{
+  img_dims_[0] = imsz1;
+  img_dims_[1] = imsz2;
+  std::cout<<img_dims_[0]<<std::endl
+	   <<img_dims_[1]<<std::endl;
+  init2();
+  for(unsigned int j = 0; j<mb.size();j++)
+  {
+    particle* p = mb.get_particle(j);
+    push(p);
+  }
+}
+
+
+void hash_shelf::push(particle * p){
   try{
     (hash_.at(hash_function(p)))->push(p);
   }
   catch (std::exception& e)    {
     cout << e.what() << endl;
-    std::cout<<hash_function(p)<<"\t"<<hash_.size()<<std::endl;
-    std::cout<<p->get_value(utilities::D_YPOS)<<"\t"<<p->get_value(utilities::D_XPOS)<<std::endl;
+    float tmp;
+    
+    std::cout<<"hash value: "<<hash_function(p)<<"\t"<<"hash table size "<<hash_.size()<<std::endl;
+    std::cout<<p->get_value(utilities::D_YPOS,tmp)<<"\t"<<p->get_value(utilities::D_XPOS,tmp)<<std::endl;
     p->print();
     throw;
 
@@ -85,32 +118,6 @@ void hash_shelf::push(particle_base * p){
 //   cout<<"hash_box: "<<hash_function(p)<<endl;
 }
 
-
-void hash_shelf::push(particle_track * p){
-  try{
-    (hash_.at(hash_function(p)))->push(p);
-  }
-  catch (std::exception& e)    {
-    cout << e.what() << endl;
-    std::cout<<hash_function(p)<<"\t"<<hash_.size()<<std::endl;
-    std::cout<<p->get_value(utilities::D_YPOS)<<"\t"<<p->get_value(utilities::D_XPOS)<<std::endl;
-    p->print();
-    throw;
-
-  }
-  catch(...){
-    std::cout<<"the problem is here"<<std::endl;
-
-    return;
-  }    
-  ++particle_count_;
-
-  
-  p->set_shelf(this);
-//   cout<<"particle: "<<endl;
-//   p->print();
-//   cout<<"hash_box: "<<hash_function(p)<<endl;
-}
 
 
 
@@ -206,7 +213,7 @@ void hash_shelf::get_region( int n, int m,
 
 
 void hash_shelf::get_region( int n, int m,
-			     vector<const particle_base*> & out,int range) const {
+			     vector<const particle*> & out,int range) const {
   
   if(n<0||m<0||range<0)
     throw "hash_shelf::get_region: nonsensical arugements";
@@ -231,8 +238,8 @@ void hash_shelf::get_region( int n, int m,
     for( int y = y_bot; y<=y_top;++y)
     {
       hash_box* cur_box = (hash_.at(x+int(hash_dims_[0])*y));
-      vector<particle_base *>::const_iterator it_end = cur_box->end();
-      for(vector<particle_base *>::const_iterator it = cur_box->begin();
+      vector<particle *>::const_iterator it_end = cur_box->end();
+      for(vector<particle *>::const_iterator it = cur_box->begin();
 	  it!=it_end;++it)
       {
 	out.push_back(*it);
@@ -245,7 +252,7 @@ void hash_shelf::get_region( int n, int m,
 
 
 void hash_shelf::get_region( int n, 
-			     vector<const particle_base*> & out ,int range) const
+			     vector<const particle*> & out ,int range) const
 {
   get_region(n%int(hash_dims_[0]), n/int(hash_dims_[0]), out, range);
 
@@ -260,7 +267,7 @@ void hash_shelf::get_region( int n,
 
 }
 
-void hash_shelf::get_region( particle_base* n,
+void hash_shelf::get_region( particle* n,
 			     hash_box* box, int range) const
 {
   get_region(hash_function(n),box,range);
@@ -268,7 +275,7 @@ void hash_shelf::get_region( particle_base* n,
 }
 
 void hash_shelf::get_region( int n,
-			     std::list<particle_track*>& in_list, 
+			     std::list<particle*>& in_list, 
 			     int range) const
 {
   hash_box tmp;
@@ -276,14 +283,7 @@ void hash_shelf::get_region( int n,
   tmp.box_to_list(in_list);
 }
 
-void hash_shelf::get_region( int n,
-			     std::list<particle_base*>& in_list, 
-			     int range) const
-{
-  hash_box tmp;
-  get_region(n,&tmp,range);
-  tmp.box_to_list(in_list);
-}
+
 
 
   /**
@@ -293,53 +293,53 @@ void hash_shelf::get_region( int n,
      new pixel per box value
    */
 void hash_shelf::rehash(unsigned int PPB){
-  list<particle_track*> *tmp = shelf_to_list();
+  list<particle*> tmp;
+  shelf_to_list(tmp);
 
   ppb_ = PPB;
   //rebuilds the hash table
   init2();
-  for(list<particle_track*>::iterator it = tmp->begin(); it!=tmp->end(); ++it)
-      push(*it);
+  list< particle*>::iterator myEnd = tmp.end();
   
-  delete tmp;
-
+  for(list<particle*>::iterator it = tmp.begin(); it!=myEnd; ++it)
+      push(*it);
 }
 
-list<particle_track*> * hash_shelf::shelf_to_list() const{
-  list<particle_track*>* tmp = new list<particle_track*>;
-  for( vector<hash_box* >::const_iterator cur_box = hash_.begin(); cur_box<hash_.end(); ++cur_box)
-    {
+// list<particle_track*> * hash_shelf::shelf_to_list() const{
+//   list<particle_track*>* tmp = new list<particle_track*>;
+//   for( vector<hash_box* >::const_iterator cur_box = hash_.begin(); cur_box<hash_.end(); ++cur_box)
+//     {
       
-      for(vector<particle_base*>::iterator cur_part = (*cur_box)->begin();
-	  cur_part!=(*cur_box)->end(); ++cur_part)
-	{
-	  tmp->push_back(static_cast<particle_track*>(*cur_part));
-	}
-    }
+//       for(vector<particle*>::iterator cur_part = (*cur_box)->begin();
+// 	  cur_part!=(*cur_box)->end(); ++cur_part)
+// 	{
+// 	  tmp->push_back(static_cast<particle_track*>(*cur_part));
+// 	}
+//     }
 
-  return tmp;
-}
+//   return tmp;
+// }
 
 
-void hash_shelf::shelf_to_list(std::list<particle_track*> &tmp) const{
+void hash_shelf::shelf_to_list(std::list<particle*> &tmp) const{
   tmp.clear();
   for(vector<hash_box*>::const_iterator cur_box = hash_.begin(); cur_box<hash_.end(); ++cur_box)
     {
       
-      for(vector<particle_base*>::iterator cur_part = (*cur_box)->begin();
+      for(vector<particle*>::iterator cur_part = (*cur_box)->begin();
 	  cur_part!=(*cur_box)->end(); ++cur_part)
 	{
-	  tmp.push_back(static_cast<particle_track*>(*cur_part));
+	  tmp.push_back(*cur_part);
 	}
     }
 }
 
-void hash_shelf::shelf_to_list(std::list<const particle_base*> &tmp) const{
+void hash_shelf::shelf_to_list(std::list<const particle*> &tmp) const{
   tmp.clear();
   for(vector<hash_box*>::const_iterator cur_box = hash_.begin(); cur_box<hash_.end(); ++cur_box)
     {
       
-      for(vector<particle_base*>::const_iterator cur_part = (*cur_box)->begin();
+      for(vector<particle*>::const_iterator cur_part = (*cur_box)->begin();
 	  cur_part!=(*cur_box)->end(); ++cur_part)
 	{
 	  tmp.push_back(*cur_part);
@@ -355,7 +355,7 @@ void hash_shelf::compute_mean_forward_disp(utilities::Tuple & cum_disp_in){
   const particle_track* current_part = NULL;
   for(vector<hash_box*>::iterator cur_box = hash_.begin(); 
       cur_box<hash_.end(); ++cur_box){
-    for(vector<particle_base*>::iterator cur_part = (*cur_box)->begin();
+    for(vector<particle*>::iterator cur_part = (*cur_box)->begin();
 	cur_part!=(*cur_box)->end(); ++cur_part) {
       current_part = static_cast<particle_track*>(*cur_part);
       if(current_part->get_next() != NULL){
@@ -433,8 +433,8 @@ void hash_shelf::nearest_neighbor_array(utilities::Array & pos_array,
 
   
     
-  list<particle_base*> current_box;
-  list<particle_base*> current_region;
+  list<particle*> current_box;
+  list<particle*> current_region;
   
   for(int j = 0; j<(int)hash_.size(); ++j)
   {
@@ -454,18 +454,18 @@ void hash_shelf::nearest_neighbor_array(utilities::Array & pos_array,
       get_region(j,current_region,buffer);
     }
     
-    for(list<particle_base*>::const_iterator box_part = current_box.begin();
+    for(list<particle*>::const_iterator box_part = current_box.begin();
 	box_part != current_box.end();++box_part)
     {
-      const particle_base* box_part_ptr = *box_part;
-      const particle_base* nn_prtcle = current_region.front();
+      const particle* box_part_ptr = *box_part;
+      const particle* nn_prtcle = current_region.front();
       float min_r= 999999999;
       
       
-      for(list<particle_base*>::const_iterator region_part = ++(current_region.begin());
+      for(list<particle*>::const_iterator region_part = ++(current_region.begin());
 	  region_part!= current_region.end();++region_part)
       {
-	const particle_base* region_part_ptr = *region_part;
+	const particle* region_part_ptr = *region_part;
 	if(region_part_ptr == box_part_ptr)
 	{
 	  continue;
@@ -503,8 +503,8 @@ void hash_shelf::next_nearest_neighbor_array(utilities::Array & pos_array,
 
   
     
-  list<particle_base*> current_box;
-  list<particle_base*> current_region;
+  list<particle*> current_box;
+  list<particle*> current_region;
   
   for(int j = 0; j<(int)hash_.size(); ++j)
   {
@@ -524,19 +524,19 @@ void hash_shelf::next_nearest_neighbor_array(utilities::Array & pos_array,
       get_region(j,current_region,buffer);
     }
     
-    for(list<particle_base*>::const_iterator box_part = current_box.begin();
+    for(list<particle*>::const_iterator box_part = current_box.begin();
 	box_part != current_box.end();++box_part)
     {
-      const particle_base* box_part_ptr = *box_part;
-      const particle_base* nn_prtcle = current_region.front();
-      const particle_base* nnn_prtcle = current_region.front();
+      const particle* box_part_ptr = *box_part;
+      const particle* nn_prtcle = current_region.front();
+      const particle* nnn_prtcle = current_region.front();
       float nn_r= 999999999;
       float nnn_r= 999999999;
       
-      for(list<particle_base*>::const_iterator region_part = ++(current_region.begin());
+      for(list<particle*>::const_iterator region_part = ++(current_region.begin());
 	  region_part!= current_region.end();++region_part)
       {
-	const particle_base* region_part_ptr = *region_part;
+	const particle* region_part_ptr = *region_part;
 	if(region_part_ptr == box_part_ptr)
 	{
 	  continue;
@@ -581,12 +581,12 @@ void hash_shelf::fill_in_neighborhood()
 {
   //  cout<<"particle_count_"<<particle_count_<<endl;
   
-  list<particle_base*> current_box;
-  list<particle_base*> current_region;
+  list<particle*> current_box;
+  list<particle*> current_region;
   
   for(int j = 0; j<(int)hash_.size(); ++j)
   {
-    int buffer = (int)ceil(particle_base::get_max_range()/ppb_);
+    int buffer = (int)ceil(particle::get_max_range()/ppb_);
     if(buffer<1)
     {
       buffer = 1;
@@ -600,14 +600,14 @@ void hash_shelf::fill_in_neighborhood()
     
     get_region(j,current_region,buffer);
 
-    for(list<particle_base*>::iterator box_part = current_box.begin();
+    for(list<particle*>::iterator box_part = current_box.begin();
 	box_part != current_box.end();++box_part)
     {
-      particle_base* box_part_ptr = *box_part;
-      for(list<particle_base*>::const_iterator region_part = ++(current_region.begin());
+      particle* box_part_ptr = *box_part;
+      for(list<particle*>::const_iterator region_part = ++(current_region.begin());
 	  region_part!= current_region.end();++region_part)
       {
-	const particle_base* region_part_ptr = *region_part;
+	const particle* region_part_ptr = *region_part;
 	box_part_ptr->add_to_neighborhood(region_part_ptr);
 	
       }

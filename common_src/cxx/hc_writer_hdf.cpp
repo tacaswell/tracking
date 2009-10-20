@@ -37,7 +37,7 @@ using std::list;
 using std::complex;
 using tracking::hash_case;
 using tracking::hash_shelf;
-using tracking::particle_base;
+using tracking::particle;
 
 void Hash_case_writer_hdf::write_hash_case(const hash_case* hc)
 {

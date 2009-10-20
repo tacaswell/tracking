@@ -83,7 +83,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
     /**
        \todo add checks on input types
     */
-    utilities::Tuple dims;	
+    utilities::Pair dims;	
     dims[0] = (int)mxGetScalar(prhs[1]);
     dims[1] = (int)mxGetScalar(prhs[2]);
     int frames = (int)mxGetScalar(prhs[3]);
@@ -119,7 +119,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
     contents.insert(pair<utilities::D_TYPE, int>(wrapper::D_TRACKID,5));
 
 
-    master_box_t<particle_track>bt(&p_in);
+    master_box_t<particle>bt(&p_in);
     
     track_shelf tracks;
     cout<<"total number of particles is: "<<bt.size()<<endl;

@@ -18,10 +18,12 @@ SET(COMMON_SRC
  ${COMMON_SRC_PATH}/hash_shelf.cpp
  ${COMMON_SRC_PATH}/particle_base.cpp
  ${COMMON_SRC_PATH}/function_cascades.cpp
- ${COMMON_SRC_PATH}/tuple.cpp
+ ${COMMON_SRC_PATH}/triple.cpp
+ ${COMMON_SRC_PATH}/pair.cpp
  ${COMMON_SRC_PATH}/data_map.cpp
  ${COMMON_SRC_PATH}/enum_utils.cpp
  ${COMMON_SRC_PATH}/filter_basic.cpp
+ ${COMMON_SRC_PATH}/master_box_t.cpp
  )
 
 SET(COMMON_TRACK_SRC

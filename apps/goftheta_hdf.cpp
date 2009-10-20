@@ -40,10 +40,13 @@
 #include "master_box_t.h"
 #include "particle_base.h"
 #include "hash_case.h"
-#include "tuple.h"
+#include "triple.h"
+#include "pair.h"
 #include "wrapper_o_hdf.h"
 #include "wrapper_i_hdf.h"
 #include "filter.h"
+
+#include "master_box_t.h"
 
 #include "generic_wrapper_hdf.h"
 #include "corr_goftheta.h"
@@ -60,6 +63,7 @@ using utilities::Wrapper_o_hdf;
 using utilities::Wrapper_i_hdf;
 
 using utilities::Tuple;
+using utilities::Pair;
 using utilities::Filter_basic;
 using utilities::Filter_trivial;
 using utilities::D_TYPE;
@@ -67,7 +71,7 @@ using utilities::Generic_wrapper_hdf;
 
 
 using tracking::master_box_t;
-using tracking::particle_base;
+using tracking::particle;
 using tracking::hash_case;
 using tracking::Corr_goftheta;
 
@@ -114,7 +118,7 @@ int main(int argc, const char * argv[])
 
     
 
-    master_box_t<particle_base> box;
+    master_box_t box;
     Filter_basic filt(proc_file);
     //    Filter_trivial filt;
     
@@ -129,12 +133,12 @@ int main(int argc, const char * argv[])
 
 
     
-    Tuple dims(1392,520);
+    Pair dims(1392,520);
     hash_case hcase(box,dims,20,wh.get_num_frames());
 
     cout<<"hash case filled"<<endl;
     
-    particle_base::set_neighborhood_range(14);
+    particle::set_neighborhood_range(14);
     hcase.fill_in_neighborhood();
     
     

@@ -23,13 +23,14 @@
 #include "hash_shelf.h"
 #include "hash_box.h"
 #include "particle_base.h"
+#include "particle_track.h"
 #include "wrapper_o.h"
 #include "corr.h"
 
 using tracking::hash_box;
 using tracking::hash_shelf;
 using tracking::hash_case;
-using tracking::particle_base;
+using tracking::particle;
 
 using utilities::Wrapper_out;
 using tracking::Corr;
@@ -72,7 +73,7 @@ void hash_shelf::output_to_wrapper(Wrapper_out & wrapper) const
 void hash_box::output_to_wrapper(Wrapper_out & wrapper) const
 {
 
-  for(vector<particle_base*>::const_iterator current_part = contents_.begin();
+  for(vector<particle*>::const_iterator current_part = contents_.begin();
       current_part!=contents_.end();++current_part)
   {
     wrapper.set_all_values(*current_part);
@@ -85,7 +86,7 @@ void hash_box::output_to_wrapper(Wrapper_out & wrapper) const
 
 
 
-void hash_case::pass_fun_to_part(void(particle_base::*fun)())
+void hash_case::pass_fun_to_part(void(particle::*fun)())
 {
   vector<hash_shelf*>::iterator myend =  h_case_.end();
   for(vector<hash_shelf*>::iterator it = h_case_.begin();
@@ -95,7 +96,7 @@ void hash_case::pass_fun_to_part(void(particle_base::*fun)())
     
   }
 }
-void hash_shelf::pass_fun_to_part(void(particle_base::*fun)())
+void hash_shelf::pass_fun_to_part(void(particle::*fun)())
 {
   vector<hash_box*>::iterator myend =  hash_.end();
   for(vector<hash_box*>::iterator it = hash_.begin();
@@ -105,10 +106,10 @@ void hash_shelf::pass_fun_to_part(void(particle_base::*fun)())
     
   }
 }
-void hash_box::pass_fun_to_part(void(particle_base::*fun)())
+void hash_box::pass_fun_to_part(void(particle::*fun)())
 {
-  vector<particle_base*>::iterator myend = contents_.end();
-  for(vector<particle_base*>::iterator it = contents_.begin();
+  vector<particle*>::iterator myend = contents_.end();
+  for(vector<particle*>::iterator it = contents_.begin();
       it!=myend;++it)
   {
     ((*it)->*fun)();
@@ -122,7 +123,7 @@ void hash_box::pass_fun_to_part(void(particle_base::*fun)())
 
 
 
-void hash_case::pass_fun_to_part(void(particle_base::*fun)()const)const
+void hash_case::pass_fun_to_part(void(particle::*fun)()const)const
 {
   vector<hash_shelf*>::const_iterator myend =  h_case_.end();
   for(vector<hash_shelf*>::const_iterator it = h_case_.begin();
@@ -132,7 +133,7 @@ void hash_case::pass_fun_to_part(void(particle_base::*fun)()const)const
     
   }
 }
-void hash_shelf::pass_fun_to_part(void(particle_base::*fun)()const)const
+void hash_shelf::pass_fun_to_part(void(particle::*fun)()const)const
 {
   vector<hash_box*>::const_iterator myend =  hash_.end();
   for(vector<hash_box*>::const_iterator it = hash_.begin();
@@ -142,10 +143,10 @@ void hash_shelf::pass_fun_to_part(void(particle_base::*fun)()const)const
     
   }
 }
-void hash_box::pass_fun_to_part(void(particle_base::*fun)()const)const
+void hash_box::pass_fun_to_part(void(particle::*fun)()const)const
 {
-  vector<particle_base*>::const_iterator myend = contents_.end();
-  for(vector<particle_base*>::const_iterator it = contents_.begin();
+  vector<particle*>::const_iterator myend = contents_.end();
+  for(vector<particle*>::const_iterator it = contents_.begin();
       it!=myend;++it)
   {
     ((*it)->*fun)();
@@ -211,10 +212,10 @@ void hash_shelf::compute_corr(Corr & in)const
 void hash_box::compute_corr(Corr & in )const
 {
 
-  if(in.get_max_range()<particle_base::get_neighborhood_range())
+  if(in.get_max_range()<particle::get_neighborhood_range())
   {
-    vector<particle_base*>::const_iterator myend = contents_.end();
-    for(vector<particle_base*>::const_iterator it = contents_.begin();
+    vector<particle*>::const_iterator myend = contents_.end();
+    for(vector<particle*>::const_iterator it = contents_.begin();
 	it!=myend;++it)
     {
       in.compute(*it,(*it)->get_neighborhood () );
@@ -228,12 +229,12 @@ void hash_box::compute_corr(Corr & in )const
     if(shelf_ ==NULL || hash_indx_ == -1)
       throw "hash_box: box not part of a shelf";
 
-    vector <const particle_base *> nhood;
+    vector <const particle *> nhood;
     shelf_->get_region(hash_indx_,nhood,(int)ceil(in.get_max_range()));
 
     
-    // vector<particle_base*>::const_iterator myend = contents_.end();
-    //     for(vector<particle_base*>::const_iterator it = contents_.begin();
+    // vector<particle*>::const_iterator myend = contents_.end();
+    //     for(vector<particle*>::const_iterator it = contents_.begin();
     // 	it!=myend;++it)
     int max_j = contents_.size();
     for(int j = 0; j<max_j;++j)

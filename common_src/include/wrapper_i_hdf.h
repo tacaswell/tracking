@@ -34,11 +34,13 @@
 
 #include "wrapper_i.h"
 #include "data_map.h"
+#include "part_def.h"
+
 namespace tracking
 {
-template <class T>
+
 class master_box_t;
-class particle_base;
+
 
 }
 

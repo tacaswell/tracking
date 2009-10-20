@@ -75,7 +75,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
   try{
 
       
-    utilities::Tuple dims;	
+    utilities::Pair dims;	
     dims[0] = (int)mxGetScalar(prhs[1]);
     dims[1] = (int)mxGetScalar(prhs[2]);
     int frames = (int)mxGetScalar(prhs[3]);
@@ -110,7 +110,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
     
 
     
-    master_box_t<particle_base>master_box(&p_in);
+    master_box_t<particle>master_box(&p_in);
     cout<<"total number of particles is: "<<master_box.size()<<endl;;
     
     
@@ -119,11 +119,11 @@ void mexFunction( int nlhs, mxArray *plhs[],
     
 //     h_case.print();
     
-    particle_base::set_neighborhood_range(neighbor_range);
+    particle::set_neighborhood_range(neighbor_range);
     
     h_case.pass_fun_to_shelf(&hash_shelf::fill_in_neighborhood);
-    h_case.pass_fun_to_part(&particle_base::fill_phi_6);
-//     h_case.pass_fun_to_part(&particle_base::print);
+    h_case.pass_fun_to_part(&particle::fill_phi_6);
+//     h_case.pass_fun_to_part(&particle::print);
 
     Generic_parameters_matlab arr_parm2(master_box.size(),6,plhs);
     Generic_wrapper_base * ow = arr_parm2.make_wrapper();

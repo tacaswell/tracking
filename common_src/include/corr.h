@@ -35,6 +35,8 @@
 
 #include <vector>
 
+#include "part_def.h"
+
 namespace utilities
 {
 class Generic_wrapper;
@@ -46,8 +48,8 @@ class Generic_wrapper;
 
 namespace tracking
 {
-class particle_base;
-class particle_track;
+
+
 
 /**
    An ABC of objects that can be handed into hash_case and calculates
@@ -61,13 +63,8 @@ public:
      tracking information this should throw an error or something
      clever like that
    */
-  virtual void compute(const particle_base *,const std::vector<const particle_base*> & ) = 0;
-  /**
-     Computes the correlation for the particle_track object in is handed.
-     For non-track dependent correlations this should cast to a particle_base
-     pointer and call the other compute function.
-   */
-  virtual void compute(const particle_track *,const std::vector<const particle_track*> & )=0;
+  virtual void compute(const particle *,const std::vector<const particle*> & ) = 0;
+
   /**
      outputs the result of the computation to the wrapper
    */

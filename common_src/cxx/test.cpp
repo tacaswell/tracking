@@ -210,13 +210,13 @@ int main(){
 //   Wrapper_in * in_wrapper = p_in.make_wrapper_in();
   
 
-//   particle_base::intialize_wrapper_in(in_wrapper);
+//   particle::intialize_wrapper_in(in_wrapper);
 //   std::set<utilities::D_TYPE> data_types = in_wrapper->get_data_types();
 //   data_types.insert(wrapper::D_UNQID);
 
 
 
-//   particle_base::intialize_data_types(&data_types);
+//   particle::intialize_data_types(&data_types);
   
 //   vector<particle_track*> working_vec(100,NULL);
   

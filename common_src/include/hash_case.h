@@ -27,27 +27,31 @@
 #define HASH_CASE
 #include <vector>
 #include <list>
-#include "hash_shelf.h"
-#include "particle_base.h"
-#include "master_box_t.h"
 
-#include "track_list.h"
-#include "track_shelf.h"
+#include "part_def.h"
 
 
 
-#include "tuple.h"
+
+
 
 namespace utilities{
 class Array;
 class Coarse_grain_array;
 class Histogram2D;
 class Wrapper_out;
+class Cell;
+class Counted_vector;
 
 
 }
 
 namespace tracking{
+class track_shelf;
+class hash_shelf;
+class track_list;
+class master_box_t;
+
 class Corr;
 /**
    Class to hold sets of hash_shelf.  This is used as a structure to organize
@@ -62,18 +66,18 @@ public:
     return h_case_.at(n);
   }
 
-  ///Templated constructor
+  //Templated constructor
   //assumse that incoming data has frames labeled sequentially
   //starting from 0
   //   template <class particle>
   //   hash_case(master_box_t<particle> & mb,unsigned int imsz1, 
   // 	     unsigned int imsz2, unsigned int ppb, int frames);
-  template <class particle>
-  hash_case(master_box_t<particle> & mb,unsigned int imsz1, 
-	    unsigned int imsz2, unsigned int ppb, int frames);
 
-  /**Templated constructor based on what type of particle is being
-     used in the master_box the case is based off of.
+//   hash_case(master_box_t & mb,unsigned int imsz1, 
+// 	    unsigned int imsz2, unsigned int ppb, int frames);
+
+  /**
+     constructor
      @param mb
      master_bos that the hash_case is based off of
      @param img_dims
@@ -84,10 +88,11 @@ public:
      the number of frames.  It is assumed that the frames are numbered [0-frames)
 
   */
-  template <class particle>
-  hash_case(master_box_t<particle> & mb,const utilities::Tuple & img_dims, 
+  hash_case(master_box_t & mb,const utilities::Tuple & dims, 
 	    unsigned int ppb, int frames);
-  hash_case();
+
+  
+  //  hash_case();
 
   /**
      constructor for an empty hash case
@@ -189,13 +194,13 @@ public:
      Passes functions all the way down the pyramid, this one for void,
      argument-less functions, non-const
   */
-  void pass_fun_to_part(void(particle_base::*fun)());
+  void pass_fun_to_part(void(particle::*fun)());
 
   /**
      Passes functions all the way down the pyramid, this one for void,
      argument-less functions, const
   */
-  void pass_fun_to_part(void(particle_base::*fun)() const)const;
+  void pass_fun_to_part(void(particle::*fun)() const)const;
 
 
 
@@ -272,89 +277,13 @@ protected:
 	    
 	    
   
-  template <class particle>
-  void  init(master_box_t<particle> & mb,const utilities::Tuple & img_dims, 
-	    unsigned int ppb, int frames);
+
+  void  init(master_box_t & mb,const utilities::Tuple & dims, 
+	     unsigned int ppb, int frames);
   
 
 };
 
-template <class particle>
-hash_case::hash_case(master_box_t<particle> & mb,const utilities::Tuple & img_dims, 
-		     unsigned int ppb, int frames):inited(false){
-  init(mb,img_dims,ppb,frames);
-
-}
-  
-
-
-template<class particle>
-void hash_case::init(master_box_t<particle> & mb,const utilities::Tuple & img_dims, 
-		     unsigned int ppb, int frames){
-
-  if(inited){
-    std::cout<<"can't re init"<<std::endl;
-    return;
-  }
-    
-
-  
-  mb.append_to_data_types(utilities::D_NEXT);
-  mb.append_to_data_types(utilities::D_PREV);
-
-  h_case_.resize(frames);
-  h_case_.at(0) = new hash_shelf(img_dims, ppb,0);
-  for(unsigned int j = 1; j<h_case_.size(); ++j){
-    h_case_[j] = new hash_shelf(img_dims, ppb,j);
-    h_case_[j-1]->set_next_shelf(h_case_[j]);
-  }
-
-  particle *p;
-  int max_sz = mb.size();
-  
-
-  int current_frame =-1;
-  int current_count = 0;
-  
-
-
-  for( int j = 0; j<max_sz; ++j){
-    p = mb.get_particle(j);
-    try{
-      int cf = (int)(p->get_value(utilities::D_FRAME));
-      if(cf != current_frame)
-      {
-	//	std::cout<<"frame "<<current_frame<<": "<<current_count<<std::endl;
-	current_frame = cf;
-	current_count = 1;
-      }
-      else
-      {
-	++current_count;
-      }
-      
-      h_case_.at(cf)->push(p);
-    }
-    catch(const char * e)
-    {
-      std::cout<<e<<std::endl;
-      
-      int yar = (int)p->get_value(utilities::D_FRAME);
-      std::cout<<"trying to put in to shelf: "<<yar<<std::endl;
-      return;
-    }
-    
-    catch(...){
-      int yar = (int)p->get_value(utilities::D_FRAME);
-      std::cout<<"trying to put in to shelf: "<<yar<<std::endl;
-      return;
-    }
-  
-  }
-  //  std::cout<<"frame "<<current_frame<<": "<<current_count<<std::endl;
-
-  inited = true;
-}
 
 }
 

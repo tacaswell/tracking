@@ -23,11 +23,12 @@
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
 #include "particle_base.h"
+#include "particle_track.h"
 #include "wrapper_i.h"
 
 #include <algorithm>
 #include <cmath>
-
+#include <list>
 using namespace tracking;
  
 using std::vector;
@@ -39,7 +40,7 @@ using std::complex;
 
 using utilities::Tuple;
 using utilities::Wrapper_in;
-//int particle_base::running_total_ = 0;
+//int particle_base
 float particle_base::max_neighborhood_range_ = 0;
 
 // static initialization
@@ -234,11 +235,11 @@ void particle_base::sort_neighborhood()
 
 bool particle_base::no_neighborhood_repeats() const
 {
-  vector<const particle_base*>::const_iterator myend = neighborhood_.end();
+  vector<const particle*>::const_iterator myend = neighborhood_.end();
   
-  for(vector<const particle_base*>::const_iterator outer = neighborhood_.begin(); outer!= myend;++outer)
+  for(vector<const particle*>::const_iterator outer = neighborhood_.begin(); outer!= myend;++outer)
   {
-    vector<const particle_base*>::const_iterator inner = outer;
+    vector<const particle*>::const_iterator inner = outer;
     ++inner;
     for(; inner!= myend;++inner)
     {
@@ -251,7 +252,7 @@ bool particle_base::no_neighborhood_repeats() const
   return true;
 }
 
-bool particle_base::add_to_neighborhood(const particle_base* in)
+bool particle_base::add_to_neighborhood(const particle* in)
 {
   if(in->frame_ != frame_)
   {
@@ -294,9 +295,9 @@ complex<float> particle_base::compute_phi_6()const
   complex<float> phi6(0,0);
   complex<float> i(0,1);
   
-  vector<const particle_base*>::const_iterator myend = neighborhood_.end();
+  vector<const particle*>::const_iterator myend = neighborhood_.end();
   
-  for(vector<const particle_base*>::const_iterator cur_nei = neighborhood_.begin();
+  for(vector<const particle*>::const_iterator cur_nei = neighborhood_.begin();
       cur_nei!=myend;++cur_nei)
   {
     Tuple tmp = (*cur_nei)->get_position()-position_;

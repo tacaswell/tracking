@@ -25,7 +25,8 @@
 
 #include "wrapper_i_hdf.h"
 #include "master_box_t.h"
-#include "tuple.h"
+#include "pair.h"
+#include "triple.h"
 #include "particle_base.h"
 #include "enum_utils.h"
 
@@ -52,7 +53,7 @@ using std::vector;
 using std::complex;
 
 
-using tracking::particle_base;
+using tracking::particle;
 
 Wrapper_i_hdf::Wrapper_i_hdf(std::string fname,std::set<utilities::D_TYPE> dtypes)
   :  file_name_(fname),data_types_(dtypes),total_part_count_(0)

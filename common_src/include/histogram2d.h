@@ -29,10 +29,12 @@
 #include <exception>
 #include <iostream>
 
+#include "part_def.h"
+
 namespace utilities{
 //forward declare
 class Generic_wrapper_base;
-class Tuple;
+
 /**
    Base class for historgram objects.
    Implements a linearly spaced histogram.
@@ -87,7 +89,7 @@ public:
   
   ~Histogram2D(){};
 
-  void add_data_point(const utilities::Tuple & in );
+  void add_data_point(const utilities::Pair & in );
   
 protected:
   /**

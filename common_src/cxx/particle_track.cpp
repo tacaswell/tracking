@@ -28,7 +28,8 @@
 #include <typeinfo>
 #include <iostream>
 #include "exception.h"
-#include "tuple.h"
+#include "pair.h"
+#include "triple.h"
 #include "hash_shelf.h"
 using namespace tracking;
 using std::set;
@@ -38,7 +39,7 @@ using utilities::Null_field;
 particle_track::particle_track(Wrapper_in * i_data, 
 			       Wrapper_out* o_out, int i_ind, 
 			       track_box* i_track)
-  :particle_base(i_data,  o_out,i_ind),next(NULL),prev(NULL),track(i_track)
+  :particle(i_data,  o_out,i_ind),next(NULL),prev(NULL),track(i_track)
   ,n_pos_link(NULL),p_pos_link(NULL){
 
 
@@ -211,49 +212,49 @@ particle_track::~particle_track(){
 }
 
 
-float particle_track::get_value(utilities::D_TYPE type) const{
-  if(type == utilities::D_NEXT){
-    if(next_==NULL)
-      return -1;
-    //    return next->get_value(utilities::D_UNQID);
-    return next_->get_value(utilities::D_INDEX);
-  }
-  if(type == utilities::D_PREV){
-    if(prev_==NULL)
-      return -1;
-    // tac 2009-04-10
-    // changed to match the other one
-    return prev_->get_value(utilities::D_INDEX);
-  }
-  if(type ==utilities::D_TRACKID)
-    {
+// float particle_track::get_value(utilities::D_TYPE type) const{
+//   if(type == utilities::D_NEXT){
+//     if(next_==NULL)
+//       return -1;
+//     //    return next->get_value(utilities::D_UNQID);
+//     return next_->get_value(utilities::D_INDEX);
+//   }
+//   if(type == utilities::D_PREV){
+//     if(prev_==NULL)
+//       return -1;
+//     // tac 2009-04-10
+//     // changed to match the other one
+//     return prev_->get_value(utilities::D_INDEX);
+//   }
+//   if(type ==utilities::D_TRACKID)
+//     {
 
-      if(track==NULL)
-	return -1;
-      return track->get_id() ;
+//       if(track==NULL)
+// 	return -1;
+//       return track->get_id() ;
       
-    }
+//     }
   
-  // tac 2009-07-17
-  // added special cases to avoid call to wrappers
-  if(type ==utilities::D_XPOS)
-  {
-    return position_[0];
-  }
-  if(type == utilities::D_YPOS)
-  {
-    return position_[1];
-  }
-  if(type == utilities::D_FRAME)
-  {
-    return frame_;
-  }
-  else
-  {
-    return particle_base::get_value(type);
-  }
+//   // tac 2009-07-17
+//   // added special cases to avoid call to wrappers
+//   if(type ==utilities::D_XPOS)
+//   {
+//     return position_[0];
+//   }
+//   if(type == utilities::D_YPOS)
+//   {
+//     return position_[1];
+//   }
+//   if(type == utilities::D_FRAME)
+//   {
+//     return frame_;
+//   }
+//   else
+//   {
+//     return particle_base::get_value(type);
+//   }
   
-}
+// }
 
 
 float particle_track::distancesq_corrected(const particle_track* part_in)const{

@@ -22,7 +22,7 @@
 //containing parts covered by the terms of MATLAB User License, the
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
-#include "tuple.h"
+#include "pair.h"
 #include<iostream>
 
 #include <math.h>
@@ -30,100 +30,100 @@
 
 using namespace utilities;
 
-const int Tuple::length_ ;
-//bool Tuple::allow_dim_change_ = false;
+const int Pair::length_ ;
+//bool Pair::allow_dim_change_ = false;
 
-void Tuple::operator= (const Tuple& y){
+void Pair::operator= (const Pair& y){
   for(int j = 0;j<length_; ++j)
     data_[j] = y.data_[j];
 }
-float& Tuple::operator[] (int i){
+float& Pair::operator[] (int i){
   if(i<0 || i>= length_)
-    throw "Tuple range error"; 		// place holder for proper error handling
+    throw "Pair range error"; 		// place holder for proper error handling
   return data_[i];
 }
-const float& Tuple::operator[] (int i) const{
+const float& Pair::operator[] (int i) const{
   if(i<0 || i>= length_)
-    throw "Tuple range error"; 		// place holder for proper error handeling
+    throw "Pair range error"; 		// place holder for proper error handeling
   return data_[i];
 }
 
-Tuple Tuple::operator- (){
-  Tuple tmp;
+Pair Pair::operator- (){
+  Pair tmp;
   for(int j = 0;j<length_; ++j)
     tmp.data_[j] = -data_[j];
   return tmp;
 }
 
 
-Tuple Tuple::operator+ (const Tuple& y) const{
-  Tuple tmp;
+Pair Pair::operator+ (const Pair& y) const{
+  Pair tmp;
   for(int j = 0;j<length_; ++j)
     tmp.data_[j] = y.data_[j] + data_[j];
   return tmp;
 }
-Tuple Tuple::operator+ (const float y)const{
-  Tuple tmp;
+Pair Pair::operator+ (const float y)const{
+  Pair tmp;
   for(int j = 0;j<length_; ++j)
     tmp.data_[j] = y + data_[j];
   return tmp;
 }
-void Tuple::operator+= (const Tuple& y){
+void Pair::operator+= (const Pair& y){
   for(int j = 0;j<length_; ++j)
     data_[j] += y.data_[j] ;
 
 }
  
-void Tuple::operator+= (const float y){
+void Pair::operator+= (const float y){
   for(int j = 0;j<length_; ++j)
     data_[j] += y ;
 
 }
 
 
-Tuple Tuple::operator- (const Tuple& y) const{
-  Tuple tmp;
+Pair Pair::operator- (const Pair& y) const{
+  Pair tmp;
   for(int j = 0;j<length_; ++j)
     tmp.data_[j] = -y.data_[j] + data_[j];
   return tmp;
 }
-Tuple Tuple::operator- (const float y) const{
-  Tuple tmp;
+Pair Pair::operator- (const float y) const{
+  Pair tmp;
   for(int j = 0;j<length_; ++j)
     tmp.data_[j] = -y + data_[j];
   return tmp;
 }
-void Tuple::operator-= (const Tuple& y){
+void Pair::operator-= (const Pair& y){
   for(int j = 0;j<length_; ++j)
     data_[j] -= y.data_[j] ;
 
 }
-void Tuple::operator-= (const float y){
+void Pair::operator-= (const float y){
   for(int j = 0;j<length_; ++j)
     data_[j] -= y ;
 }
 
 
 
-Tuple Tuple::operator* (const Tuple& y) const{
-  Tuple tmp;
+Pair Pair::operator* (const Pair& y) const{
+  Pair tmp;
   for(int j = 0;j<length_; ++j){
     tmp.data_[j] = data_[j]*y.data_[j] ;
   }
   return tmp;
 }
-Tuple Tuple::operator* (const float y) const{
-  Tuple tmp;
+Pair Pair::operator* (const float y) const{
+  Pair tmp;
   for(int j = 0;j<length_; ++j){
     tmp.data_[j] = data_[j] * y ;
   }
   return tmp;
 }
-void Tuple::operator*= (const Tuple& y){
+void Pair::operator*= (const Pair& y){
   for(int j = 0;j<length_; ++j)
     data_[j] *= y.data_[j] ;
 }
-void Tuple::operator*= (const float y){
+void Pair::operator*= (const float y){
   for(int j = 0;j<length_; ++j)
     data_[j] *= y ;
 }
@@ -131,17 +131,17 @@ void Tuple::operator*= (const float y){
 
 
 
-void Tuple::operator/= (const Tuple& y){
+void Pair::operator/= (const Pair& y){
   for(int j = 0;j<length_; ++j)
     data_[j] /= y.data_[j] ;
 
 }
-void Tuple::operator/= (const float y){
+void Pair::operator/= (const float y){
   for(int j = 0;j<length_; ++j)
     data_[j] /= y ;
 }
-Tuple Tuple::operator/ (const Tuple& y) const{
-  Tuple tmp;
+Pair Pair::operator/ (const Pair& y) const{
+  Pair tmp;
   for(int j = 0;j<length_; ++j)
     tmp.data_[j] = data_[j]/y.data_[j] ;
   return tmp;
@@ -151,7 +151,7 @@ Tuple Tuple::operator/ (const Tuple& y) const{
 
 
 
-void Tuple::print() const{
+void Pair::print() const{
   using std::cout;
   using std::endl;
   for(int j = 0;j<length_; ++j)
@@ -160,19 +160,19 @@ void Tuple::print() const{
 }
 
 
-float Tuple::magnitude_sqr() const{
+float Pair::magnitude_sqr() const{
   float tmp = 0;
   for(int j = 0;j<length_; ++j)
     tmp += data_[j]*data_[j] ;
   return tmp;
 }
 
-float Tuple::magnitude() const
+float Pair::magnitude() const
 {
   return sqrt(magnitude_sqr());
 }
 
-float Tuple::dot(const Tuple & y) const
+float Pair::dot(const Pair & y) const
 {
   float tmp = 0;
   for(int j = 0;j<length_; ++j)
@@ -181,7 +181,7 @@ float Tuple::dot(const Tuple & y) const
 }
 
 
-float Tuple::prod()const
+float Pair::prod()const
 {
   float tmp = 1;
   for(int j = 0;j<length_; ++j)
@@ -189,7 +189,7 @@ float Tuple::prod()const
   return tmp;
   
 }
-float Tuple::sum()const
+float Pair::sum()const
 {
   float tmp = 0;
   for(int j = 0;j<length_; ++j)
@@ -197,25 +197,25 @@ float Tuple::sum()const
   return tmp;
 } 
 
-void Tuple::make_unit(){
+void Pair::make_unit(){
   float tmp = magnitude();
   for(int j = 0;j<length_; ++j)
     data_[j] /= tmp ;
 }
 
-Tuple Tuple::direction() const{
-  Tuple tmp = (*this);
+Pair Pair::direction() const{
+  Pair tmp = (*this);
   tmp.make_unit();
   return tmp;
 
 }
 
-void Tuple::clear(){
+void Pair::clear(){
   for(int j = 0;j<length_; ++j)
     data_[j] =0 ;
 }
 
-Tuple::Tuple(){
+Pair::Pair(){
   //  data_= (float*) new float[length_];
   for(int j = 0;j<length_; ++j)
     data_[j] = 0;
@@ -225,14 +225,14 @@ Tuple::Tuple(){
 
 // tac 2009-07-17
 // added 
-Tuple::Tuple(const Tuple& y){
+Pair::Pair(const Pair& y){
   for(int j = 0;j<length_; ++j)
     data_[j] = y.data_[j];
 }
 
 // tac 2009-10-07
-// added because the constructors and destructors of Tuples are taking ~5% of run time
-float Tuple::dist_sqr(const Tuple& y)const
+// added because the constructors and destructors of Pairs are taking ~5% of run time
+float Pair::dist_sqr(const Pair& y)const
 {
   float out =0;
   
@@ -244,15 +244,14 @@ float Tuple::dist_sqr(const Tuple& y)const
 }
 
 
-Tuple::~Tuple(){
+Pair::~Pair(){
   //  std::cout<<"died"<< std::endl;
   // delete[] data_;
 //   data_ = NULL;
 }
 
-Tuple::Tuple(float x,float y)
+Pair::Pair(float x,float y)
 {
   data_[0] = x;
   data_[1] = y;
-  
 }

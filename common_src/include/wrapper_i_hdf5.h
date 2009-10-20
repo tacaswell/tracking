@@ -37,7 +37,7 @@ namespace tracking
 {
 template <class T>
 class master_box_t;
-class particle_base;
+class particle;
 
 }
 

@@ -49,13 +49,13 @@ class Corr_goftheta:public Corr
 {
 public:
   // basic inherited stuff
-  void compute(const particle_base *,const std::vector<const particle_base*> & ) ;
-  void compute(const particle_track *,const std::vector<const particle_track*> & );
+  void compute(const particle *,const std::vector<const particle*> & ) ;
+  
   void out_to_wrapper(utilities::Generic_wrapper & ) const ;
 
   
   /**
-     constructor.  The maximum range is taken from particle_base::max_neighborhood_range_.
+     constructor.  The maximum range is taken from particle::max_neighborhood_range_.
      The bins are spaced linearly.  
    */
   Corr_goftheta(int bins,float max,std::string &);

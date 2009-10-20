@@ -25,23 +25,23 @@
 
 #ifndef WRAPPER_O_HDF
 #define WRAPPER_O_HDF
-#include "enum_utils.h"
-#include "wrapper_o.h"
-#include "data_map.h"
+
 #include <string>
 #include <vector>
 #include <set>
+
+
+#include "enum_utils.h"
+#include "wrapper_o.h"
+#include "data_map.h"
+#include "part_def.h"
+
 
 namespace H5
 {
 class H5File;
 class Group;
 class DataSet;
-}
-
-namespace tracking
-{
-class particle_base;
 }
 
 
@@ -60,9 +60,9 @@ public:
   void open_particle(int);
 
   
-  void set_all_values(const tracking::particle_base *);
+  void set_all_values(const tracking::particle *);
   
-  void set_value(D_TYPE,const tracking::particle_base *);
+  void set_value(D_TYPE,const tracking::particle *);
   
 
   void close_particle();

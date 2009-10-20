@@ -49,7 +49,7 @@ using std::string;
 using std::set;
 
 using tracking::master_box_t;
-using tracking::particle_base;
+using tracking::particle;
 
 
 const int BUFF_LEN = 50;
@@ -218,12 +218,12 @@ Wrapper_i_hdf5::~Wrapper_i_hdf5()
 
 
 
-// void Wrapper_i_hdf5::fill_master_box(master_box_t<particle_base> & master_box) const
+// void Wrapper_i_hdf5::fill_master_box(master_box_t<particle> & master_box) const
 // {
 //   std::set<utilities::D_TYPE> data_type_tmp = this->get_data_types();
   
-//   particle_base::intialize_wrapper_in(this);
-//   particle_base::intialize_data_types(&data_type_tmp);
+//   particle::intialize_wrapper_in(this);
+//   particle::intialize_data_types(&data_type_tmp);
 //   // open file
 //   H5File* file = new H5File( file_name_, H5F_ACC_RDONLY );
 
@@ -261,7 +261,7 @@ Wrapper_i_hdf5::~Wrapper_i_hdf5()
 //       data_x->read(&x, PredType::NATIVE_FLOAT,mspace,fspace);
 //       data_y->read(&y, PredType::NATIVE_FLOAT,mspace,fspace);
 
-//       master_box.push(new particle_base(i,Tuple(x,y),j));
+//       master_box.push(new particle(i,Tuple(x,y),j));
       
 
 //       //      read (void *buf, const DataType &mem_type, const DataSpace &mem_space=DataSpace::ALL, const DataSpace &file_space=DataSpace::ALL, const DSetMemXferPropList &xfer_plist=DSetMemXferPropList::DEFAULT) const

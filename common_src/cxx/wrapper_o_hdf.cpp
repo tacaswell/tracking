@@ -29,6 +29,7 @@
 #include "wrapper_o_hdf.h"
 #include "H5Cpp.h"
 #include "particle_base.h"
+#include "particle_track.h"
 
 //using namespace H5;
 
@@ -54,7 +55,7 @@ using H5::DSetCreatPropList;
 
 using utilities::D_TYPE;
 
-using tracking::particle_base;
+using tracking::particle;
 
 
 Wrapper_o_hdf::Wrapper_o_hdf(const string& file_name,set<D_TYPE> d_add):
@@ -373,7 +374,7 @@ string Wrapper_o_hdf::format_name(int in)const
 
   
 
-void Wrapper_o_hdf::set_all_values(const particle_base* p_in)
+void Wrapper_o_hdf::set_all_values(const particle* p_in)
 {
   open_particle(p_in->get_ind());
   for(set<D_TYPE>::const_iterator current_type = d_types_add_.begin();
@@ -386,7 +387,7 @@ void Wrapper_o_hdf::set_all_values(const particle_base* p_in)
 }
 
 
-void Wrapper_o_hdf::set_value(D_TYPE type,const particle_base* p_in)
+void Wrapper_o_hdf::set_value(D_TYPE type,const particle* p_in)
 {
   int tmpi;
   float tmpf;

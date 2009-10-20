@@ -462,7 +462,7 @@ void track_list::trivial_bonds(){
       it!=n_list->end();it++)
     {
       tmp_next_particle = *it;
-      //if a particle_base.has no possible previous links than it must be a new track
+      //if a particle.has no possible previous links than it must be a new track
       //as far as the algorithm is concerned
       if((tmp_next_particle->p_pos_link)==NULL){
 	  tracks->add_new_track(tmp_next_particle);
@@ -594,10 +594,11 @@ track_list::track_list(list<particle_track*>* first_list, float i_max_disp,
 //   p_sub_net = 
 //     set<particle_track*,bool(*)(particle_track*,particle_track*)>(fn_pt);
 
-  n_sub_net = 
-    set<particle_track*,bool(*)(particle_track*,particle_track*)>;
-  p_sub_net = 
-    set<particle_track*,bool(*)(particle_track*,particle_track*)>;
+// tac 2009-10-19
+// took out beacuse with out the bool, this is just a boring default constructor
+
+//   n_sub_net = set<particle_track*>;
+//   p_sub_net = set<particle_track*>;
 
 } 
 

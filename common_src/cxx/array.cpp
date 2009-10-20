@@ -24,8 +24,10 @@
 //the resulting work.
 #include <iostream>
 
+#include "pair.h"
+#include "triple.h"
 #include "array.h"
-#include "tuple.h"
+
 #include "generic_wrapper_base.h"
 
 using namespace utilities;

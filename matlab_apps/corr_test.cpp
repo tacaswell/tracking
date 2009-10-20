@@ -85,7 +85,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
   }
   try{
 
-    utilities::Tuple dims;	
+    utilities::Pair dims;	
     dims[0] = (int)mxGetScalar(prhs[1]);
     dims[1] = (int)mxGetScalar(prhs[2]);
     int frames = (int)mxGetScalar(prhs[3]);
@@ -148,7 +148,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
 
     // start actual computation
-    master_box_t<particle_track>bt(&p_in,&p_out);
+    master_box_t<particle>bt(&p_in,&p_out);
 
     track_shelf tracks;
     cout<<"total number of particles is: "<<bt.size()<<endl;;

@@ -68,7 +68,7 @@ using utilities::Filter_trivial;
 using utilities::D_TYPE;
 
 using tracking::master_box_t;
-using tracking::particle_base;
+using tracking::particle;
 using tracking::hash_case;
 
 using iden::Iden;
@@ -168,7 +168,7 @@ int main(int argc, const char * argv[])
     cout<<"number of entries in wrapper: "<<wp.get_num_entries(-1)<<endl;
     
 
-    master_box_t<particle_base> box;
+    master_box_t<particle> box;
     //Filter_basic filt("25-0_mid_0.h5");
     Filter_trivial filt;
     
@@ -185,13 +185,13 @@ int main(int argc, const char * argv[])
     
     for(int j =0;j<20;++j)
     {
-      particle_base* p = box.get_particle(j);
+      particle* p = box.get_particle(j);
       p->print();
     }
     
 
     
-    Tuple dims(1392,520);
+    Pair dims(1392,520);
     hash_case hcase(box,dims,20,frame_c);
     //    hcase.print();
     

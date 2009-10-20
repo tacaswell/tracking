@@ -31,7 +31,7 @@ using std::list;
 using std::vector;
 void hash_box::append(hash_box* next){
   
-  vector<particle_base *>::iterator it;
+  vector<particle *>::iterator it;
   for (it = next->contents_.begin(); it!=next->contents_.end(); it++)
     contents_.push_back(*it);
 
@@ -39,51 +39,43 @@ void hash_box::append(hash_box* next){
 
 void hash_box::print(){
   
-  vector<particle_base *>::iterator it;
+  vector<particle *>::iterator it;
   for (it = contents_.begin(); it!=contents_.end(); it++)
     (*it)->print();
 
 }
 
-void hash_box::get_val_vec(vector<float> & vec, utilities::D_TYPE type){
+// void hash_box::get_val_vec(vector<float> & vec, utilities::D_TYPE type){
   
-  vec.reserve(contents_.size());
-  vector<particle_base *>::iterator it;
+//   vec.reserve(contents_.size());
+//   vector<particle *>::iterator it;
   
-  for (it = contents_.begin(); it!=contents_.end(); ++it)
-  {
-    vec.push_back((float)(*it)->get_value(type));
-  }
-}
+//   float tmp;
+  
+//   for (it = contents_.begin(); it!=contents_.end(); ++it)
+//   {
+//     vec.push_back((float)(*it)->get_value(type,tmp));
+//   }
+// }
 
-list<particle_track*>* hash_box::box_to_list() const{
-  // this should be cleaned up
-  list<particle_track*>* tmp = new list<particle_track*>;
-  
-  for(vector<particle_base*>::const_iterator it = contents_.begin();
-      it!=contents_.end(); ++it)
-  {
-    tmp->push_back(static_cast<particle_track*>(*it));
-  }
-  return tmp;
-}
 
-void  hash_box::box_to_list(std::list<particle_track*>& p_list) const
+// list<particle_track*>* hash_box::box_to_list() const{
+//   // this should be cleaned up
+//   list<particle_track*>* tmp = new list<particle_track*>;
+  
+//   for(vector<particle*>::const_iterator it = contents_.begin();
+//       it!=contents_.end(); ++it)
+//   {
+//     tmp->push_back(static_cast<particle_track*>(*it));
+//   }
+//   return tmp;
+// }
+
+void  hash_box::box_to_list(std::list<particle*>& p_list) const
 {
   p_list.clear();
   
-  for(vector<particle_base*>::const_iterator it = contents_.begin();
-      it!=contents_.end(); ++it)
-  {
-    p_list.push_back(static_cast<particle_track*>(*it));
-  }
-}
-
-void  hash_box::box_to_list(std::list<particle_base*>& p_list) const
-{
-  p_list.clear();
-  
-  for(vector<particle_base*>::const_iterator it = contents_.begin();
+  for(vector<particle*>::const_iterator it = contents_.begin();
       it!=contents_.end(); ++it)
   {
     p_list.push_back(*it);

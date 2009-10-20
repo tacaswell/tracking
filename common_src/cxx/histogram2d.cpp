@@ -25,7 +25,9 @@
 #include "histogram2d.h"
 #include <iostream>
 #include "generic_wrapper_base.h"
-#include "tuple.h"
+#include "triple.h"
+#include "pair.h"
+
 using namespace utilities;
 
 using std::cout;
@@ -76,8 +78,10 @@ vectori Histogram2D::get_bin_values(){
 }
 
 
-void Histogram2D::add_data_point(const  utilities::Tuple& in )
+void Histogram2D::add_data_point(const  utilities::Pair& in )
 {
+  in[1];
+  
   add_data_point(in[0],in[1]);
 }
 

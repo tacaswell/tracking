@@ -26,6 +26,8 @@
 #include "hash_box.h"
 #include "hash_shelf.h"
 #include "hash_case.h"
+#include "particle_base.h"
+#include "particle_track.h"
 #include <algorithm>
 #include "math.h"
 #include <list>
@@ -293,7 +295,7 @@ int hash_box::gofr(float max_d, int nbins, hash_box* points,
   float max_d_sqr = max_d * max_d;
   float tmp_dist = 0;
 
-  vector<particle_base*>::iterator box_it, points_it;
+  vector<particle*>::iterator box_it, points_it;
 
   for(box_it = contents_.begin(); box_it!=contents_.end(); ++box_it)
     {
@@ -328,8 +330,8 @@ void hash_shelf::gofr2D(float max_d, utilities::Histogram2D & gofr2 ) const
   
 
   
-  list<particle_base*> current_box;
-  list<particle_base*> current_region;
+  list<particle*> current_box;
+  list<particle*> current_region;
 
   max_d *=max_d;
   
@@ -349,14 +351,14 @@ void hash_shelf::gofr2D(float max_d, utilities::Histogram2D & gofr2 ) const
 	continue;
       }
       
-      for(list<particle_base*>::const_iterator box_part = current_box.begin();
+      for(list<particle*>::const_iterator box_part = current_box.begin();
 	  box_part != current_box.end();++box_part)
       {
-	const particle_base* box_part_ptr = *box_part;
-	for(list<particle_base*>::const_iterator region_part = ++(current_region.begin());
+	const particle* box_part_ptr = *box_part;
+	for(list<particle*>::const_iterator region_part = ++(current_region.begin());
 	    region_part!= current_region.end();++region_part)
 	{
-	  const particle_base* region_part_ptr = *region_part;
+	  const particle* region_part_ptr = *region_part;
 	  if(region_part_ptr == box_part_ptr)
 	  {
 	    continue;

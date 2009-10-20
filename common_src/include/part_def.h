@@ -1,4 +1,4 @@
-//Copyright 2008,2009 Thomas A Caswell
+//Copyright 2009 Thomas A Caswell
 //tcaswell@uchicago.edu
 //http://jfi.uchicago.edu/~tcaswell
 //
@@ -22,39 +22,44 @@
 //containing parts covered by the terms of MATLAB User License, the
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
-#include "hash_shelf.h"
-
-#ifndef HASH_SHELF_3D
-#define HASH_SHELF_3D
-namespace tracking{
-  /**
-     Derived class from hash_shelf to deal with three dimensions
-   */
-class hash_shelf3d :public hash_shelf{
-public:
-  unsigned int hash_function(particle* p){
-    return 
-      (((int)p->get_value(wrapper::d_zpos))/ppb_)*((int)(hash_dims_[0]*hash_dims_[1]))+
-      (((int)p->get_value(wrapper::D_YPOS))/ppb_)*((int)hash_dims_[1])+
-      (((int)p->get_value(wrapper::D_XPOS))/ppb_);
-  }
-
-  hash_shelf3d(vector<int> imgsz, unsigned int ippb, int i_frame):
-    hash_shelf(imgsz, ippb, i_frame){};
-  void print();
-  void get_region( particle* p,
-		   hash_box* box, int range=1);
-  void get_region( int n,  int m, int s,
-		  hash_box* box, int range=1);
-
-  ~hash_shelf3d(){}
-protected:
 
 
-private:
-};
+#ifndef DEFINE_PARTICLE_TYPE
+#define DEFINE_PARTICLE_TYPE
+
+namespace tracking
+{
+class particle_base;
+class particle_track;
+
+
+
+#if PTYPE == 0
+typedef particle_base particle;
+#elif PTYPE == 1
+typedef particle_track particle;
+#endif
 }
-  
+#endif
+
+
+#ifndef DEFINE_DIMENSION_COUNT
+#define DEFINE_DIMENSION_COUNT
+
+namespace utilities
+{
+class Triple;
+class Pair;
+
+
+
+
+#if DIM_COUNT == 2
+typedef Pair Tuple;
+#elif DIM_COUNT == 3
+typedef Triple Tuple;
+#endif
+}
 
 
 #endif

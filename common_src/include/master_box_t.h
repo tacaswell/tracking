@@ -30,11 +30,18 @@
 #include <iostream>
 #include <set>
 
-#include "particle_base.h"
-#include "params.h"
+
 #include "enum_utils.h"
-#include "wrapper_i.h"
-#include "filter.h"
+#include "part_def.h"
+
+namespace utilities
+{
+class Wrapper_in;
+class params;
+class Filter;
+
+}
+
 
 namespace tracking{
 /**
@@ -43,7 +50,7 @@ namespace tracking{
  
 */
 
-template <class particle>
+
 class master_box_t{
   
 public:
@@ -54,12 +61,12 @@ public:
     
   ///add next particle
   void push(particle* next){
-    particle_vec.push_back(next);
+    particle_vec_.push_back(next);
   };
 
   ///return a pointer to particle in the location
   particle * get_particle(int n){
-    return particle_vec.at(n);
+    return particle_vec_.at(n);
   }
 
   /**
@@ -79,7 +86,7 @@ public:
     
   ///Returns the total number of particles contained in the
   ///master_box_t.
-  unsigned int size(){ return particle_vec.size();}
+  unsigned int size(){ return particle_vec_.size();}
 
   ///Cleans up hanging lists from the tracking procedure
   void clean_pos_link();
@@ -107,7 +114,7 @@ protected:
      polymorphism.  This class is responcible to creating and destroying
      all of the particle objects.
   */
-  std::vector<particle*> particle_vec;
+  std::vector<particle*> particle_vec_;
   
   /**
      Pointer to wrapper to take care of particle location
@@ -117,7 +124,7 @@ protected:
      exact type of wrapper that is made will be determined by the
      parameter object.
   */
-  const utilities::Wrapper_in * in_wrapper;
+  const utilities::Wrapper_in * in_wrapper_;
   
   //imlement this
   unsigned int  imagesz1;
@@ -142,128 +149,8 @@ protected:
   utilities::Filter* filt_;
   
 };
-
-
-
-template <class particle>
-master_box_t<particle>::master_box_t(utilities::params* params_in )
-  :in_wrapper(NULL),own_wrapper_(false){
-  
-  init(params_in);
-
 }
 
-template <class particle>
-master_box_t<particle>::master_box_t()
-  :in_wrapper(NULL),own_wrapper_(false){
-  
-
-}
-
-template <class particle>
-void master_box_t<particle>::init(utilities::params* params_in){
-  if(in_wrapper!=NULL){
-    std::cout<<"can't re-initialize"<<std::endl;
-    return;
-  }
-  own_wrapper_ = true;
-  
-  in_wrapper = params_in->make_wrapper_in();
-  
-  priv_init();
-}
-
-template <class particle>
-void master_box_t<particle>::init(const utilities::Wrapper_in & w_in, utilities::Filter & filt )
-{
-  if(in_wrapper!=NULL){
-    std::cout<<"can't re-initialize"<<std::endl;
-    return;
-  }
-  own_wrapper_ = false;
-  
-  in_wrapper = &w_in;
-  filt_ = &filt;
-  filt_->set_wrapper(in_wrapper);
-  
-  priv_init();
-  std::cout<<"finished init of box"<<std::endl;
-  
-}
-
-template <class particle>
-void master_box_t<particle>::priv_init()
-{
-  
-  
-  data_types = in_wrapper->get_data_types();
-  data_types.insert(utilities::D_UNQID);
-
-  
-  particle_base::intialize_wrapper_in(in_wrapper);
-  particle_base::intialize_data_types(&data_types);
-
-  int total_entries= in_wrapper->get_num_entries(-1);
-  particle_vec.reserve(total_entries);
-  
-
-  int num_frames = in_wrapper->get_num_frames();
-  
-  std::cout<<"number of frames: "<<num_frames<<std::endl;
-  
-  
-  for(int k = 0;k<num_frames;++k)
-  {
-    int num_entries= in_wrapper->get_num_entries(k);
-    //    std::cout<<"adding: "<<num_entries<<" to frame: "<<k<< std::endl;
-    int count = 0;
-    
-    for(int j = 0; j<num_entries; ++j)
-    {
-      if((*filt_)(j,k))
-      {
-	particle_vec.push_back( new particle(j,k));
-	++count;
-      }
-    }
-    //    std::cout<<"added: "<<count<<" total count: "<<particle_vec.size()<<std::endl;
-    
-  }
-}
-
-
-template <class particle>
-void master_box_t<particle>::print(){
-  for(unsigned int j = 0; j<particle_vec.size();++j)
-    particle_vec.at(j)->print();
-}
-
-template <class particle>
-master_box_t<particle>::~master_box_t(){
-  //deletes the particles it made
-  for(unsigned int j = 0; j<particle_vec.size();++j)
-    {
-      delete particle_vec.at(j);
-    }
-  //deletes the wrapper objects
-  if(own_wrapper_)
-  {
-    delete in_wrapper;
-  }
-  
-  
-//   std::cout<<"mb dead"<<std::endl;
-}
-
-
-template <class particle>
-void master_box_t<particle>::clean_pos_link(){
-  for(unsigned int j = 0; j<particle_vec.size();j++){
-    delete particle_vec.at(j)->pos_link;
-    particle_vec.at(j)->pos_link = NULL;
-  }
-}
-}
 
 
 #endif

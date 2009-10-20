@@ -30,7 +30,9 @@
 #include <vector>
 #include <list>
 
+#include "part_def.h"
 #include "enum_utils.h"
+#include "part_def.h"
 
 namespace utilities
 {
@@ -41,8 +43,7 @@ class Wrapper_out;
 
 
 namespace tracking{
-class particle_base;
-class particle_track;
+
 class Corr;
 class hash_shelf;
 
@@ -56,7 +57,7 @@ class hash_shelf;
 class hash_box{
 protected:
   ///Contents of the box
-  std::vector<particle_base*> contents_;
+  std::vector<particle*> contents_;
   
   /**
      pointer to the hash_shelf that contains this box
@@ -97,7 +98,7 @@ public:
   
 
   ///add next particle
-  void push(particle_base* next){
+  void push(particle* next){
     contents_.push_back(next);
   };
 
@@ -128,13 +129,13 @@ public:
 
      figure out who uses this function is used and make private or kill
    */
-  std::vector<particle_base*>::iterator begin(){
+  std::vector<particle*>::iterator begin(){
     return contents_.begin();
   }
   /**
      a very const version
    */
-  std::vector<particle_base*>::const_iterator begin()const{
+  std::vector<particle*>::const_iterator begin()const{
     return contents_.begin();
   }
   /**
@@ -143,27 +144,27 @@ public:
      
      figure out who uses this function is used and make private or kill
    */
-  std::vector<particle_base*>::iterator end(){
+  std::vector<particle*>::iterator end(){
     return contents_.end();
   }
 
-  /**
-     Returns a pointer to a new list of the particle_track* pointers
+  /*
+     Returns a pointer to a new list of the pa rticle_track* pointers
      for dealing with tracking.  This always returns a valid pointer
      to a list.  If the box is empty then a pointer to an empty list
      is returned.  This function allocates heap that needs to be cleaned
      up!
    */
-  std::list<particle_track*>* box_to_list() const;
+  //  std::list<par ticle_track*>* box_to_list() const;
 
+  /*
+     A safer version of converting a hash_box to a list
+   */
+  //void  box_to_list(std::list<part icle_track*>& p_list) const;
   /**
      A safer version of converting a hash_box to a list
    */
-  void  box_to_list(std::list<particle_track*>& p_list) const;
-  /**
-     A safer version of converting a hash_box to a list
-   */
-  void  box_to_list(std::list<particle_base*>& p_list) const;
+  void  box_to_list(std::list<particle*>& p_list) const;
   
   //lots more of these along different components, likely reason to extend
   //these critters, however I haven't decided the most effective method of
@@ -232,13 +233,13 @@ public:
      Passes functions down the pyramid, this one for void, argument-less
      functions noncosnst
    */
-  void pass_fun_to_part(void(particle_base::*fun)());
+  void pass_fun_to_part(void(particle::*fun)());
   /**
 
      Passes functions down the pyramid, this one for void, argument-less
      functions const
    */
-  void pass_fun_to_part(void(particle_base::*fun)()const)const;
+  void pass_fun_to_part(void(particle::*fun)()const)const;
 
   /**
      loops over particles to 

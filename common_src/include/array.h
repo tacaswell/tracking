@@ -26,10 +26,11 @@
 #define ARRAY_T
 
 #include <vector>
+#include "part_def.h"
 
 namespace utilities{
 class Generic_wrapper_base;
-class Tuple;
+
 /**
    Class to accumulate tuples into.
  */

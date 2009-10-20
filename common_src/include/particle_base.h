@@ -29,13 +29,15 @@
 #include <vector>
 #include <iostream>
 #include <set>
-#include <list>
+
 
 #include <complex>
 
 //local includes
+#include "part_def.h"
 
-#include "tuple.h"
+#include "pair.h"
+#include "triple.h"
 #include "enum_utils.h"
 
 
@@ -158,7 +160,7 @@ public:
      adds a particle to the neighborhood if it is close enough
      returns true if the particle is added, false otherwise
    */
-  bool add_to_neighborhood(const particle_base* in);
+  bool add_to_neighborhood(const particle* in);
   /**
      returns the maximum neighborhood range
    */
@@ -201,7 +203,7 @@ public:
   /**
      returns the neighborhood vector
    */
-  const std::vector<const particle_base*> get_neighborhood() const
+  const std::vector<const particle*> get_neighborhood() const
   {
     return neighborhood_;
   }
@@ -265,7 +267,7 @@ protected:
      Vector of the particles with in max_range_ in the hash_shelf_ of
      the particle.
    */
-  std::vector<const particle_base*> neighborhood_;
+  std::vector<const particle*> neighborhood_;
   
   /**
      Maximum distance to be part of the neighborhood

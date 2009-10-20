@@ -32,12 +32,7 @@
 #include <set>
 
 #include "enum_utils.h"
-
-namespace tracking
-{
-class particle_base;
-}
-
+#include "part_def.h"
 
 namespace utilities
 {
@@ -141,12 +136,12 @@ public:
      sets the value of data type type for the particle p_in with out haveing
      to worry outside of the wrapper about the V_TYPE of the data
    */
-  virtual void set_value(D_TYPE type, const tracking::particle_base * p_in) =0;
+  virtual void set_value(D_TYPE type, const tracking::particle * p_in) =0;
   
   /**
      sets all of the values that the wrapper knows about by asking the particle
    */
-  virtual void set_all_values(const tracking::particle_base *)=0;
+  virtual void set_all_values(const tracking::particle *)=0;
   
 
   /**

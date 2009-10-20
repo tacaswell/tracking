@@ -45,31 +45,24 @@ using utilities::Generic_wrapper;
 
 
 using tracking::Corr_gofr;
-using tracking::particle_base;
+using tracking::particle;
 
 
 const float pi = acos(-1);
 
-void Corr_gofr::compute(const particle_track * p_in,const vector<const particle_track*> & )
-{
-  throw "Corr_gofr: not implemnted yet:void Corr_gofr::compute(const particle_track * p_in,const vector<const particle_track*> & )";
-  
-  //  compute(static_cast<const particle_base*>(p_in));
-}
-
-void Corr_gofr::compute(const particle_base * p_in,const vector<const particle_base*> & nhood)
+void Corr_gofr::compute(const particle * p_in,const vector<const particle*> & nhood)
 {
   float max_sq = max_range_*max_range_;
   
   int max_j = nhood.size();
   
-//   vector<const particle_base*>::const_iterator p_end = nhood.end();
-//   for(vector<const particle_base*>::const_iterator cur_part = nhood.begin();
+//   vector<const particle*>::const_iterator p_end = nhood.end();
+//   for(vector<const particle*>::const_iterator cur_part = nhood.begin();
 //       cur_part!=p_end;++cur_part)
   for(int j = 0; j<max_j;++j)
   {
-    //    const particle_base* part_ptr= *curr_part;
-    const particle_base* part_ptr= nhood[j];
+    //    const particle* part_ptr= *curr_part;
+    const particle* part_ptr= nhood[j];
     //    if(p_in == nhood[j])
     if(p_in == part_ptr)
       continue;
@@ -96,7 +89,7 @@ Corr_gofr::Corr_gofr(int bins,float max,string& name):
   if(bins <1)
     throw "number of bins must be greater than 0";
   
-//   if(max_range_>particle_base::get_neighborhood_range())
+//   if(max_range_>particle::get_neighborhood_range())
 //     throw "maximum range past what particles know about";
   
   float bin_sz = max_range_/bins;

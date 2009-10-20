@@ -98,7 +98,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
   try{
 
     
-    utilities::Tuple dims;	
+    utilities::Pair dims;	
     dims[0] = (int)mxGetScalar(prhs[1]);
     dims[1] = (int)mxGetScalar(prhs[2]);
     int frames = (int)mxGetScalar(prhs[3]);
@@ -133,10 +133,10 @@ void mexFunction( int nlhs, mxArray *plhs[],
     params_matlab p_out = params_matlab(plhs,contents,mxGetM(*prhs),
  					contents.size());
 
-    master_box_t<particle_base>bt(&p_in,&p_out);
+    master_box_t<particle>bt(&p_in,&p_out);
     cout<<"total number of particles is: "<<bt.size()<<endl;;
   
-//     particle_base *p;
+//     particle *p;
 //     int max_sz = bt.size();
 //     int cur_frame = -1;
     

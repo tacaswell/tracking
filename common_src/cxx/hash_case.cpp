@@ -23,10 +23,17 @@
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
 #include "hash_case.h"
+#include "hash_shelf.h"
+
 #include <stdexcept> // out_of_range exception
 #include <iostream>
 #include <vector>
-#include "tuple.h"
+
+#include "master_box_t.h"
+#include "particle_base.h"
+#include "particle_track.h"
+#include "pair.h"
+#include "triple.h"
 #include "array.h"
 #include "cell.h"
 
@@ -55,10 +62,93 @@ void hash_case::print() const{
 }
 
 
-hash_case::hash_case()
-  :inited(false){
+// hash_case::hash_case()
+//   :inited(false){
+
+// }
+
+
+hash_case::hash_case(master_box_t & mb,const utilities::Tuple & dims, 
+		     unsigned int ppb, int frames):inited(false){
+  init(mb,dims,ppb,frames);
 
 }
+  
+
+
+
+void hash_case::init(master_box_t & mb,const utilities::Tuple & dims, 
+		     unsigned int ppb, int frames){
+
+  if(inited){
+    std::cout<<"can't re init"<<std::endl;
+    return;
+  }
+    
+
+  
+  mb.append_to_data_types(utilities::D_NEXT);
+  mb.append_to_data_types(utilities::D_PREV);
+  
+  
+  h_case_.resize(frames);
+  h_case_.at(0) = new hash_shelf(dims, ppb,0);
+  for(unsigned int j = 1; j<h_case_.size(); ++j){
+    h_case_[j] = new hash_shelf(dims, ppb,j);
+    h_case_[j-1]->set_next_shelf(h_case_[j]);
+  }
+
+  particle *p;
+  int max_sz = mb.size();
+  
+
+  int current_frame =-1;
+  int current_count = 0;
+  
+
+
+  for( int j = 0; j<max_sz; ++j){
+    p = mb.get_particle(j);
+    try{
+      int cf;
+      (p->get_value(utilities::D_FRAME,cf));
+      if(cf != current_frame)
+      {
+	//	std::cout<<"frame "<<current_frame<<": "<<current_count<<std::endl;
+	current_frame = cf;
+	current_count = 1;
+      }
+      else
+      {
+	++current_count;
+      }
+      
+      h_case_.at(cf)->push(p);
+    }
+    catch(const char * e)
+    {
+      std::cout<<e<<std::endl;
+      
+      int yar;
+      (int)p->get_value(utilities::D_FRAME,yar);
+      std::cout<<"trying to put in to shelf: "<<yar<<std::endl;
+      return;
+    }
+    
+    catch(...){
+      
+      int yar ;
+      (int)p->get_value(utilities::D_FRAME,yar);
+      std::cout<<"trying to put in to shelf: "<<yar<<std::endl;
+      return;
+    }
+  
+  }
+  //  std::cout<<"frame "<<current_frame<<": "<<current_count<<std::endl;
+
+  inited = true;
+}
+
 
 
 hash_case::~hash_case(){
@@ -74,78 +164,6 @@ void hash_case::rehash(unsigned int ppb){
     (*it)->rehash(ppb);
 }
 
-
-bool lt_pair_tac(const pair<particle_track*, float> &  lh, const pair<particle_track*, float> & rh){
-    return lh.second<rh.second;
-  }
-
-void hash_case::fill_pos_link_next(list<particle_track*>* tlist, 
-			vector<hash_shelf*>::iterator in_it, float max_disp)
-{
-  hash_box tmp_box;
-  float distsq;
-  list<particle_track*>* tmp_list = NULL;
-  particle_track* tmp_particle1 = NULL;
-  particle_track* tmp_particle2 = NULL;
-  
-  //square the maximum dispalcement to save having to take square roots later
-  max_disp = max_disp*max_disp;
-
-  
-  //loop over partciles in handed in list
-  for(list<particle_track*>::iterator it = tlist->begin();
-            it != tlist->end(); it++)
-    {
-    
-      tmp_particle1 = (*it);
-      tmp_box.clear();
-      
-      (*in_it)->get_region(*it,&tmp_box, 1);
-
-      //      cout<<"box size: "<<tmp_box.get_size()<<endl;
-      
-      //allocates a list
-      tmp_list = tmp_box.box_to_list();
-      
-
-      //loop over the list to be added to the current particle to add
-      //the the current particle as a previous to each of them and
-      //remove the ones that are too far away
-      for(list<particle_track*>::iterator it2 = tmp_list->begin();
-	  it2!=tmp_list->end();it2++){
-
-	tmp_particle2 = (*it2);
-	distsq = (tmp_particle1->distancesq(tmp_particle2));
-	//if the particles are with in the maximum dispalacement of eachother
-	if(distsq<max_disp){
-	  
-	  //make sure the lists exist
-	  if(tmp_particle2->p_pos_link==NULL){
-	    tmp_particle2->p_pos_link = new list<pair<particle_track*,float> >;
-	  }
-	  if(tmp_particle1->n_pos_link==NULL){
-	    tmp_particle1->n_pos_link = new list<pair<particle_track*,float> >;
-	  }
-	 
-	  //add pairing to list
-	  (tmp_particle2->p_pos_link)->
-	    push_back(pair<particle_track*, float>(tmp_particle1,distsq));
-	  (tmp_particle1->n_pos_link)->
-	    push_back(pair<particle_track*, float>(tmp_particle2,distsq));
-	  
-	}
-      }
-
-      
-      if(tmp_particle1->n_pos_link!=NULL)
-	(tmp_particle1->n_pos_link)->sort(lt_pair_tac);
-      //deletes the list
-      delete tmp_list;
-      tmp_list = NULL;
-
-    }
-  //  cout<<"finished loops"<<endl;
-}
 
 void hash_case:: compute_mean_disp(){
   Tuple cum_disp;

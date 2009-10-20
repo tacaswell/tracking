@@ -34,16 +34,16 @@ namespace utilities{
    will be millions of these objects.  Also to make some specfic
    matlab like functions simpler to implement
  */
-class Tuple{
+class Triple{
 public:
  /**
      Over loads for copying
    */
-  void operator= (const Tuple& y);
+  void operator= (const Triple& y);
   /**
      Over loads for negation
    */
-  Tuple operator- ( );
+  Triple operator- ( );
 
   /**
      Overides random access
@@ -57,17 +57,17 @@ public:
   /**
      Over loads for element-wise addition
    */
-  Tuple operator+ (const Tuple& y) const;
+  Triple operator+ (const Triple& y) const;
   /**
      Over loads for constant addition
    */
-  Tuple operator+ (const float y)const;
+  Triple operator+ (const float y)const;
   /**
-     adds Tuple to the current Tuple
+     adds Triple to the current Triple
    */
-  void operator+= (const Tuple& y);
+  void operator+= (const Triple& y);
   /**
-     adds constant to the current Tuple
+     adds constant to the current Triple
    */
   void operator+= (const float y);
 
@@ -76,17 +76,17 @@ public:
   /**
      Over loads for element-wise subtraction
    */
-  Tuple operator- ( const Tuple& y)const;
+  Triple operator- ( const Triple& y)const;
   /**
      Over loads for constant subtraction
    */
-  Tuple operator- ( const float y)const;
+  Triple operator- ( const float y)const;
   /**
-     subtracts Tuple to the current Tuple
+     subtracts Triple to the current Triple
    */
-  void operator-= (const Tuple& y);
+  void operator-= (const Triple& y);
   /**
-     subtracts constant to the current Tuple
+     subtracts constant to the current Triple
    */
   void operator-= (const float y);
 
@@ -95,17 +95,17 @@ public:
   /**
      Over loads for constant multilplication
    */
-  Tuple operator* (const float y) const;
+  Triple operator* (const float y) const;
   /**
      Over loads for elementwise mustiplication
    */
-  Tuple operator* (const Tuple& y) const;
+  Triple operator* (const Triple& y) const;
   /**
-     element wise multilication of the current Tuple
+     element wise multilication of the current Triple
    */
-  void operator*= (const Tuple& y);
+  void operator*= (const Triple& y);
   /**
-     multiplies current Tuple by a constant
+     multiplies current Triple by a constant
    */
   void operator*= (const float y);
 
@@ -114,32 +114,32 @@ public:
   /**
      Over loads for element-wise division
    */
-  Tuple operator/ ( const Tuple& y) const;
+  Triple operator/ ( const Triple& y) const;
   /**
-     element wise division of the current Tuple
+     element wise division of the current Triple
    */
-  void operator/= (const Tuple& y);
+  void operator/= (const Triple& y);
   /**
-     devides current Tuple by a constant
+     devides current Triple by a constant
    */
   void operator/= (const float y);
 
 
 
   /**
-     square of the magnitude of the Tuple assuming euclidian space
+     square of the magnitude of the Triple assuming euclidian space
    */
   float magnitude_sqr () const;
 
   /**
-     magnitude of the Tuple assuming euclidian space
+     magnitude of the Triple assuming euclidian space
    */
   float magnitude () const;
 
   /**
      take the dot product between two tuple
    */
-  float dot(const Tuple & y) const;
+  float dot(const Triple & y) const;
    
   /**
      Ruturns the product of the elements
@@ -160,7 +160,7 @@ public:
   /**
      makes a tuple a unit vector
    */
-  Tuple direction() const;
+  Triple direction() const;
 
   /**
      prints the data
@@ -176,34 +176,34 @@ public:
   /**
      empty constructor
    */
-  Tuple();
+  Triple();
 
   /**
      Copy constructor
    */
-  Tuple(const Tuple & y);
+  Triple(const Triple & y);
 
   /**
      returns the distance squared between two points
    */
-  float dist_sqr(const Tuple& y)const;
+  float dist_sqr(const Triple& y)const;
   
 
   /**
      Destructor
    */
-  ~Tuple();
+  ~Triple();
 
   /**
      The length of tuple.  This should match the dimenion of the tracking.
      Exactly how this will all fit together will be seen.
   */
-  const static int length_ =2;
+  const static int length_ =3;
   
   /**
-     hard coded 2-D constructor 
+     hard coded 3-D constructor 
    */
-  Tuple(float x,float y);
+  Triple(float x,float y,float z =0);
 
 protected:
   /**
@@ -221,7 +221,7 @@ private:
   */
   template<typename _CharT, class _Traits>
   std::basic_ostream<_CharT, _Traits>&
-  operator<<(std::basic_ostream<_CharT, _Traits>& __os, const Tuple& in)
+  operator<<(std::basic_ostream<_CharT, _Traits>& __os, const Triple& in)
   {
 
     
@@ -233,7 +233,7 @@ private:
     
     s << '(' ;
     s<< in[0]  ;
-    for(int j = 1;j<(Tuple::length_);++j)
+    for(int j = 1;j<(Triple::length_);++j)
       s<< ','<<in[j]  ;
     s << ')';
 

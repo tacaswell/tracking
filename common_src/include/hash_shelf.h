@@ -26,11 +26,12 @@
 #include <list>
 #include <vector>
 
-#include "hash_box.h"
 
-#include "master_box_t.h"
 
-#include "tuple.h"
+
+#include "part_def.h"
+#include "pair.h"
+#include "triple.h"
 
 
 #ifndef HASH_SHELF
@@ -47,6 +48,9 @@ class Wrapper_out;
 }
 
 namespace tracking{
+class hash_box;
+class master_box_t;
+
 class Corr;
 /**
    Class to implemnt the hash table
@@ -58,18 +62,17 @@ public:
      add the particle_base to the hash_shelf
      @param p pointer to the particle to add
   */
-  void push(particle_base * p);
+  void push(particle * p);
 
-  /**
-     add the particle_track to the hash_shelf
-     @param p pointer to the particle to add
-  */
-  void push(particle_track * p);
+//   /*
+//      add the particle_track to the hash_shelf
+//      @param p pointer to the particle to add
+//   */
+//   void push(particle_track * p);
 
 
-  ///Templated constructor for dealing with templated master_box_t objects
-  template <class particle>
-  hash_shelf(master_box_t<particle> & mb, int imsz1, 
+  ///constructor for eating a master_box_t
+  hash_shelf(master_box_t & mb, int imsz1, 
 	      int imsz2, unsigned int ppb);
 
   ///Constructor that makes an empty hash_shelf
@@ -83,7 +86,7 @@ public:
   void rehash(unsigned int PPB);
   
   ///Generates the hash value based on a pointer to a particle object
-  virtual unsigned int hash_function(particle_base* p) const;
+  virtual unsigned int hash_function(const particle* p) const;
 
   ///Destructor
   virtual ~hash_shelf();
@@ -112,17 +115,17 @@ public:
 		  hash_box* box, int range=1) const;
   void get_region( int n,
 		   hash_box* box, int range=1) const;
-  virtual void get_region( particle_base* n,
+  virtual void get_region( particle* n,
 		   hash_box* box, int range=1) const;
+
+  
   void get_region( int n,
-		   std::list<particle_track*>& in_list, int range=1) const;
-  void get_region( int n,
-		   std::list<particle_base*>& in_list, int range=1) const;
+		   std::list<particle*>& in_list, int range=1) const;
 
   void get_region( int n, int m,
-		   std::vector<const particle_base*> & out,int range) const;
+		   std::vector<const particle*> & out,int range) const;
   void get_region( int n,
-		   std::vector<const particle_base*> & out,int range) const;
+		   std::vector<const particle*> & out,int range) const;
   
   
   int get_plane_num() const
@@ -161,24 +164,24 @@ public:
      G(r) filling in a more sensible object
   */
   void gofr(utilities::Coarse_grain_array G,int& particle_count) const;
-  /**
+  /*
      Generates and returns a pointer to all the particles in
      this shelf in a list form.  This makes new objects on the
      heap, be aware of this for memory leaks.
 
      see the other version
    */
-  std::list<particle_track*> * shelf_to_list() const;
+  //  std::list<particle_track*> * shelf_to_list() const;
 
   /**
      Converts the whole shelf to a list of const pointers
    */
-  void shelf_to_list(std::list<const particle_base*> &tmp) const;
+  void shelf_to_list(std::list<const particle*> &tmp) const;
   
   /**
      Converts the whole shelf to a list
    */
-  void shelf_to_list(std::list<particle_track*> &tmp) const;
+  void shelf_to_list(std::list<particle*> &tmp) const;
   
   /**
      Computes the mean displacement of a frame.  This is done to deal
@@ -268,14 +271,14 @@ public:
      Passes functions down the pyramid, this one for void, argument-less
      functions non-const
    */
-  void pass_fun_to_part(void(particle_base::*fun)());
+  void pass_fun_to_part(void(particle::*fun)());
   
 
   /**
      Passes functions down the pyramid, this one for void, argument-less
      functions, const
    */
-  void pass_fun_to_part(void(particle_base::*fun)()const)const;
+  void pass_fun_to_part(void(particle::*fun)()const)const;
   
   /**
      for outputting to a wrapper
@@ -364,32 +367,6 @@ private:
 
 };
 
-template <class particle>
-hash_shelf::hash_shelf(master_box_t<particle> & mb, int imsz1, 
-		       int imsz2, unsigned int PPB): ppb_(PPB){
-  img_dims_[0] = imsz1;
-  img_dims_[1] = imsz2;
-  std::cout<<img_dims_[0]<<std::endl
-      <<img_dims_[1]<<std::endl;
-  init2();
-  for(unsigned int j = 0; j<mb.size();j++)
-    {
-      particle* p = mb.get_particle(j);
-      push(p);
-    }
-  
-  
 
-}
-
-inline unsigned int hash_shelf::hash_function(particle_base* p) const{
-  utilities::Tuple cur_pos = p->get_position();
-  
-  return (unsigned int)
-    (((unsigned int)cur_pos[1]/ppb_)*hash_dims_[0] + cur_pos[0]/ppb_);
-//   return (unsigned int)
-//     (((unsigned int)p->get_value(wrapper::D_YPOS)/ppb)*hash_dims[0] +
-//        p->get_value(wrapper::D_XPOS)/ppb_);
-}
 }
 #endif
