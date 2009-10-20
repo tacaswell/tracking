@@ -122,6 +122,9 @@ int main(int argc, const char * argv[])
     //    Filter_trivial filt;
     box.init(wh,filt);
     
+ 
+    Pair dims(1392,520);
+    
 
  
   }

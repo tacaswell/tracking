@@ -32,12 +32,15 @@
 #ifndef WRAPPER_I_BASE
 #define WRAPPER_I_BASE
 #include "enum_utils.h"
+#include "part_def.h"
 
 #include <set>
 #include <complex>
 namespace utilities{
 /**
    ABC for input wrappers
+
+
 */
 class Wrapper_in
 {
@@ -87,6 +90,12 @@ public:
      Returns if the wrapper contains the specified data type
    */
   virtual bool contains_type(D_TYPE type) const = 0;
+
+
+  /**
+     Returns the dimension of each 'frame' of the data in the wrapper
+   */
+  virtual Tuple get_dims() const = 0;
   
 };
 

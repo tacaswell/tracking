@@ -104,7 +104,8 @@ public:
   int get_num_frames() const ;
 
   bool contains_type(D_TYPE type) const ;
-  
+
+  Tuple get_dims() const;
 
 
   

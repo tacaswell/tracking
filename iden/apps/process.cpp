@@ -109,7 +109,7 @@ int main(int argc, const char * argv[])
 
   try
   {
-
+    Pair 
     float hwhm,thresh;
     int feature_rad,dilation_rad, mask_rad,frame_c;
     {
@@ -117,7 +117,7 @@ int main(int argc, const char * argv[])
       H5File * file = new H5File(proc_file,H5F_ACC_RDONLY);
       Group * group = new Group(file->openGroup("/"));
 
-      Attribute * tmpa =  new Attribute(group->openAttribute("frame_count"));
+      Attribute * tmpa =  new Attribute(group->openAttribute("number-of-planes"));
       tmpa->read(PredType::NATIVE_INT,&frame_c);
       delete tmpa;
     
@@ -141,11 +141,20 @@ int main(int argc, const char * argv[])
       tmpa->read(PredType::NATIVE_INT,&mask_rad);
       delete tmpa;
 
-      delete file;
       delete group;
-      file= NULL;
       group=NULL;
+      
+      tmpa = new Attribute(group->openAttribute("mask_rad"));
+      tmpa->read(PredType::NATIVE_INT,&mask_rad);
+      delete tmpa;
+
       tmpa=NULL;
+      
+      delete file;
+      file= NULL;
+
+
+
     }
     
 

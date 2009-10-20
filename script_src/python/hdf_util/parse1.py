@@ -123,7 +123,7 @@ def make_h5(fname_in,d_path,p_path):
                 frame_count = int(p.getAttribute("value"))
     g.attrs["dtime"] = 0.0
 
-    f.attrs["frame_count"] = frame_count
+
 
     for frame in range(1,frame_count):
         a = subprocess.Popen(["tiffinfo","-"+str(frame),fname] ,stdout=subprocess.PIPE)
