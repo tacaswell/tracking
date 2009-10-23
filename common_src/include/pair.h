@@ -201,10 +201,14 @@ public:
   const static int length_ =2;
   
   /**
-     hard coded 3-D constructor 
+     hard coded 2-D constructor 
    */
   Pair(float x,float y);
-
+  /**
+     Takes at an array, assumes it is the length_ length_
+   */
+  Pair(const float * );
+  
 protected:
   /**
      pointer to data

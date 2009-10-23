@@ -257,3 +257,9 @@ Triple::Triple(float x,float y,float z)
   data_[2] = z;
   
 }
+
+Triple::Triple(const float * in )
+{
+  for( int j = 0;j<length_;++j)
+    data_[j] = in[j];
+}

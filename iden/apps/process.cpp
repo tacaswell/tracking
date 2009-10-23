@@ -112,6 +112,8 @@ int main(int argc, const char * argv[])
     Pair 
     float hwhm,thresh;
     int feature_rad,dilation_rad, mask_rad,frame_c;
+    Pair dims;
+    
     {
       
       H5File * file = new H5File(proc_file,H5F_ACC_RDONLY);
@@ -140,26 +142,30 @@ int main(int argc, const char * argv[])
       tmpa = new Attribute(group->openAttribute("mask_rad"));
       tmpa->read(PredType::NATIVE_INT,&mask_rad);
       delete tmpa;
+    
+      tmpa =  new Attribute(group->openAttribute("dims"));
+      float tmp[Tuple::length_] ;
+      tmpa->read(PredType::NATIVE_FLOAT,tmp);
+      
+      dims = Pair(tmp);
 
+      delete tmpa;
+      tmpa=NULL;
+      
       delete group;
       group=NULL;
       
-      tmpa = new Attribute(group->openAttribute("mask_rad"));
-      tmpa->read(PredType::NATIVE_INT,&mask_rad);
-      delete tmpa;
-
-      tmpa=NULL;
-      
       delete file;
       file= NULL;
-
+      
+      //this may be messed up
 
 
     }
     
 
 
-    // replace these by reading the proc file
+
     
     Params p(feature_rad,hwhm,dilation_rad,thresh,mask_rad);
     p.PrintOutParameters(std::cout);
@@ -200,7 +206,7 @@ int main(int argc, const char * argv[])
     
 
     
-    Pair dims(1392,520);
+    
     hash_case hcase(box,dims,20,frame_c);
     //    hcase.print();
     

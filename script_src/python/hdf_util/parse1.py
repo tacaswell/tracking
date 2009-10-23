@@ -23,6 +23,7 @@ import datetime
 import os.path
 import re
 
+# parses the attributes from the xml tree
 def _parse_attr(h5obj,dom_obj):
     if dom_obj.getAttribute("id") =="Description":
         _parse_des(h5obj,dom_obj)
@@ -33,12 +34,15 @@ def _parse_attr(h5obj,dom_obj):
     else: 
         h5obj.attrs[dom_obj.getAttribute("id")] =  dom_obj.getAttribute("value").encode('ascii')
 
+# parses the long string that isn't really part of the xml structure,
+# but has lots of interesting information in it
 def _parse_des(h5obj,des_obj):
     des_string = des_obj.getAttribute("value")
     des_split = des_string.split("&#13;&#10;")
 
     for x in des_split:
         tmp_split = x.split(":")
+        # /todo add parsing to proper data types
         if len(tmp_split) ==2:
             h5obj.attrs[tmp_split[0]] = tmp_split[1].encode('ascii')
 
@@ -71,7 +75,11 @@ def _parse_temp(h5obj,fname):
     if(len(ma)>=1):
         h5obj.attrs['probe_temp'] = float('.'.join(ma[0].split('-')))
     if(len(ma)==2):
-        h5obj.attrs['lens_temp'] = float('.'.join(ma[0].split('-')))
+        h5obj.attrs['lens_temp'] = float('.'.join(ma[1].split('-')))
+
+def _add_name(f,fname):
+
+    f.attrs['image_name'] = fname
 
 def make_h5(fname_in,d_path,p_path):
     fname = d_path + fname_in + '.tif'
@@ -87,7 +95,8 @@ def make_h5(fname_in,d_path,p_path):
 
 
     f = h5py.File(out_fname,'w')
-    
+
+    _add_name(f,fname)
     _parse_temp(f,fname_in)
     _parse_params(f,fname_p)
 

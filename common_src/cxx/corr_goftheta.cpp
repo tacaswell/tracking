@@ -39,11 +39,14 @@
 #include "triple.h"
 #include "gnuplot_i.hpp"
 
+#include <cmath>
 
 using std::vector;
 using std::string;
 using std::cout;
 using std::endl;
+using std::acos;
+
 
 using utilities::Generic_wrapper;
 using utilities::Tuple;
@@ -59,6 +62,7 @@ void Corr_goftheta::compute(const particle * p_in,const vector<const particle*> 
 {
   
   
+  
   int max_j = nhood.size();
   
   Tuple p_in_pos = p_in->get_position();
@@ -69,18 +73,59 @@ void Corr_goftheta::compute(const particle * p_in,const vector<const particle*> 
   for(int j = 0; j<max_j;++j)
   {
     //    const particle* part_ptr= *curr_part;
-    const particle* part_ptr= nhood[j];
+    const particle* part_ptr_outer= nhood[j];
     
     // skip self
-    if(p_in == part_ptr)
+    if(p_in == part_ptr_outer)
       continue;
-  
-    // assume the nhood is the right size
-    float theta = part_ptr->get_theta(p_in_pos) ;
-    int ind = floor(n_bins_ * (theta + pi)/(2*pi));
-    if(ind ==n_bins_)
-      ind = 0;
-    ++(bin_count_.at(ind));
+    
+    Tuple p_outer_pos = p_in_pos - part_ptr_outer->get_position();
+    p_outer_pos.make_unit();
+    
+    for(int k = j+1;k<(max_j-1);++k)
+    {
+      //    const particle* part_ptr= *curr_part;
+      const particle* part_ptr_inner= nhood[k];
+      
+      // skip self inside the loop too
+      if(p_in == part_ptr_inner)
+	continue;
+      
+      Tuple p_inner_pos = (p_in_pos - part_ptr_inner->get_position());
+      
+      p_inner_pos.make_unit();
+      
+      
+      float  dotp = p_inner_pos.dot(p_outer_pos);
+      if(dotp < -1)
+	dotp = -1;
+      if(dotp >1)
+	dotp = 1;
+      
+      float theta = acos(dotp);
+      
+      
+      
+      // assume the nhood is the right size
+      
+      int ind = floor(n_bins_ * (theta)/(2*pi));
+      if(ind ==n_bins_)
+	ind = 0;
+      try
+      {
+	
+	++(bin_count_.at(ind));
+      }
+      catch(...)
+      {
+	cout<<"ind "<<ind<<endl;
+	cout<<"theta "<<theta<<endl;
+	cout<<p_inner_pos.dot(p_outer_pos);
+	throw "stupidity";
+	
+      }
+      
+    }
     
     
   }
@@ -108,6 +153,8 @@ Corr_goftheta::Corr_goftheta(int bins,float max,string& name):
     bin_count_.at(j) = 0;
     bin_edges_.at(j) = j*bin_sz * 180/pi;
   }
+  std::cout<<n_bins_<<std::endl;
+  
 }
 
 void Corr_goftheta::out_to_wrapper(Generic_wrapper & in)const

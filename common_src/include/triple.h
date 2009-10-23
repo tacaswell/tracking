@@ -203,8 +203,12 @@ public:
   /**
      hard coded 3-D constructor 
    */
-  Triple(float x,float y,float z =0);
-
+  Triple(float x,float y,float z );
+  /**
+     Takes at an array, assumes it is the length_ length_
+   */
+  Triple(const float * );
+  
 protected:
   /**
      pointer to data

@@ -114,7 +114,7 @@ int main(int argc, const char * argv[])
 
   
     
-    Wrapper_i_hdf wh(proc_file,data_types,0,500);
+    Wrapper_i_hdf wh(proc_file,data_types,0,5);
 
     
 
@@ -133,19 +133,23 @@ int main(int argc, const char * argv[])
 
 
     
-    Pair dims(1392,520);
+    Pair dims = wh.get_dims();
     hash_case hcase(box,dims,20,wh.get_num_frames());
 
     cout<<"hash case filled"<<endl;
     
-    particle::set_neighborhood_range(14);
-    hcase.fill_in_neighborhood();
-    
+   particle::set_neighborhood_range(14);
+   hcase.fill_in_neighborhood();
+   
+   cout<<"neighborhood filled"<<endl;
+   
     
     //hcase.print();
 
     
     Corr_goftheta goft(2000,(float)13.9,file_name);
+    cout<<"made corr obj"<<endl;
+    
     hcase.compute_corr(goft);
     cout<<"computed g(theta)"<<endl;
     

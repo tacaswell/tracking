@@ -113,7 +113,7 @@ int main(int argc, const char * argv[])
 
   
     // set up the input wrapper
-    Wrapper_i_hdf wh(proc_file,data_types);
+    Wrapper_i_hdf wh(proc_file,data_types,0,10);
     
 
     // fill the master_box
@@ -123,7 +123,8 @@ int main(int argc, const char * argv[])
     box.init(wh,filt);
     
  
-    Pair dims(1392,520);
+    Pair dims = wh.get_dims();
+    cout<<dims<<endl;
     
 
  

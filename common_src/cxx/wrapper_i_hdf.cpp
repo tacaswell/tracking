@@ -39,6 +39,8 @@ using H5::Group;
 using H5::DataSet;
 using H5::DataSpace;
 using H5::PredType;
+using H5::Attribute;
+using H5::Group;
 
 using utilities::Tuple;
 using utilities::Wrapper_i_hdf;
@@ -79,9 +81,11 @@ void Wrapper_i_hdf::priv_init(int f_count,int start)
    try
    {
     H5File * file = new H5File( file_name_, H5F_ACC_RDONLY );  
+    Group * group = new Group(file->openGroup("/"));
+    Attribute * tmpa =  new Attribute(group->openAttribute("number-of-planes"));
+    tmpa->read(PredType::NATIVE_INT,&frame_count_);
+    delete tmpa;
 
-    // assumes that there are no none-frame objects 
-    frame_count_ = file->getNumObjs();
 
     if(f_count != 0)
     {
@@ -325,4 +329,19 @@ string Wrapper_i_hdf::format_name(int in)
   o.fill('0');
   o<<std::right<<in;
   return  "frame" + o.str();
+}
+
+
+Tuple Wrapper_i_hdf::get_dims()const
+{
+  H5File * file = new H5File( file_name_, H5F_ACC_RDONLY );  
+  Group * group = new Group(file->openGroup("/"));
+  Attribute * tmpa =  new Attribute(group->openAttribute("dims"));
+  float tmp[Tuple::length_] ;
+  
+  tmpa->read(PredType::NATIVE_FLOAT,tmp);
+  delete tmpa;
+
+  return Tuple(tmp);
+  
 }

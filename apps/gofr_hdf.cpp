@@ -129,9 +129,12 @@ int main(int argc, const char * argv[])
 
 
 
+
+    int max_range = 100;
     
-    Pair dims(1392,520);
-    hash_case hcase(box,dims,20,wh.get_num_frames());
+    
+    Pair dims = wh.get_dims();
+    hash_case hcase(box,dims,max_range,wh.get_num_frames());
 
     cout<<"hash case filled"<<endl;
     
@@ -142,7 +145,7 @@ int main(int argc, const char * argv[])
     //hcase.print();
 
     
-    Corr_gofr gofr(2000,(float)100,file_name);
+    Corr_gofr gofr(2000,(float)max_range,file_name);
     hcase.compute_corr(gofr);
     cout<<"computed g(r)"<<endl;
     

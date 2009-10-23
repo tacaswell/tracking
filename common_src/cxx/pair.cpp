@@ -255,3 +255,13 @@ Pair::Pair(float x,float y)
   data_[0] = x;
   data_[1] = y;
 }
+
+
+Pair::Pair(const float * in )
+{
+  for( int j = 0;j<length_;++j)
+    data_[j] = in[j];
+}
+
+    
+  
