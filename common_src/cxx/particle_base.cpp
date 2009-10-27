@@ -49,7 +49,7 @@ std::set<utilities::D_TYPE>* particle_base::data_types_ = NULL;
 
 
 // constructors 
-particle_base::particle_base( int i_ind,int frame):frame_(frame),ind_(i_ind){
+particle_base::particle_base( int i_ind,int frame):ind_(i_ind),frame_(frame){
   priv_init();
   fill_position();
   

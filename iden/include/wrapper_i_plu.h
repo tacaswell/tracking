@@ -34,6 +34,7 @@
 #include "enum_utils.h"
 #include "data_map.h"
 #include "ipp.h"
+#include "pair.h"
 
 namespace utilities{
 
@@ -72,7 +73,7 @@ public:
   {throw "wrapper_i_plu:wrapper has no complex support";}
 
   
-  Wrapper_i_plu(int);  
+  Wrapper_i_plu(int,utilities::Pair);  
   virtual ~Wrapper_i_plu();
   
   
@@ -90,7 +91,7 @@ public:
     return std::set<D_TYPE>(data_types_);
   }
   
-    
+  Tuple get_dims() const;
   
 private:
   /**
@@ -121,6 +122,10 @@ protected:
      count of particles added
    */
   int count_;
+  /**
+     dimensions of the images being shoved in
+   */
+  utilities::Pair dims_;
   
 };
 

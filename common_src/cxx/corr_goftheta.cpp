@@ -67,6 +67,8 @@ void Corr_goftheta::compute(const particle * p_in,const vector<const particle*> 
   
   Tuple p_in_pos = p_in->get_position();
   
+
+  
 //   vector<const particle*>::const_iterator p_end = nhood.end();
 //   for(vector<const particle*>::const_iterator cur_part = nhood.begin();
 //       cur_part!=p_end;++cur_part)
@@ -80,6 +82,9 @@ void Corr_goftheta::compute(const particle * p_in,const vector<const particle*> 
       continue;
     
     Tuple p_outer_pos = p_in_pos - part_ptr_outer->get_position();
+    if(p_outer_pos.magnitude() ==0 )
+      continue;
+    
     p_outer_pos.make_unit();
     
     for(int k = j+1;k<(max_j-1);++k)
@@ -92,6 +97,8 @@ void Corr_goftheta::compute(const particle * p_in,const vector<const particle*> 
 	continue;
       
       Tuple p_inner_pos = (p_in_pos - part_ptr_inner->get_position());
+      if(p_inner_pos.magnitude() == 0)
+	continue;
       
       p_inner_pos.make_unit();
       
@@ -108,7 +115,7 @@ void Corr_goftheta::compute(const particle * p_in,const vector<const particle*> 
       
       // assume the nhood is the right size
       
-      int ind = floor(n_bins_ * (theta)/(2*pi));
+      int ind = floor(n_bins_ * (theta)/(pi));
       if(ind ==n_bins_)
 	ind = 0;
       try
@@ -120,7 +127,12 @@ void Corr_goftheta::compute(const particle * p_in,const vector<const particle*> 
       {
 	cout<<"ind "<<ind<<endl;
 	cout<<"theta "<<theta<<endl;
-	cout<<p_inner_pos.dot(p_outer_pos);
+	cout<<"p inner "<<p_inner_pos<<endl;
+	cout<<"p outer "<<p_outer_pos<<endl;
+	cout<<"p outer_basic " <<part_ptr_outer->get_position()<<endl;
+	cout<<"p_in_put "<<p_in_pos<<endl;
+	
+	cout<<"dot prod "<<  dotp<<endl;
 	throw "stupidity";
 	
       }
@@ -147,11 +159,11 @@ Corr_goftheta::Corr_goftheta(int bins,float max,string& name):
 //   if(max_range_>particle::get_neighborhood_range())
 //     throw "maximum range past what particles know about";
   
-  float bin_sz = 2*pi/bins;
+  float bin_sz = pi/bins;
   for( int j= 0;j<bins;++j)
   {
     bin_count_.at(j) = 0;
-    bin_edges_.at(j) = j*bin_sz * 180/pi;
+    bin_edges_.at(j) = j*bin_sz;
   }
   std::cout<<n_bins_<<std::endl;
   

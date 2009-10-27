@@ -40,6 +40,7 @@ using std::vector;
 using std::cout;
 using std::endl;
 using std::ceil;
+using std::list;
 
 
 
@@ -212,7 +213,7 @@ void hash_shelf::compute_corr(Corr & in)const
 void hash_box::compute_corr(Corr & in )const
 {
 
-  if(in.get_max_range()<particle::get_neighborhood_range())
+  if(in.get_max_range()<=particle::get_neighborhood_range())
   {
     vector<particle*>::const_iterator myend = contents_.end();
     for(vector<particle*>::const_iterator it = contents_.begin();
@@ -230,8 +231,10 @@ void hash_box::compute_corr(Corr & in )const
       throw "hash_box: box not part of a shelf";
 
     vector <const particle *> nhood;
-    shelf_->get_region(hash_indx_,nhood,(int)ceil(in.get_max_range()));
+    shelf_->get_region_px(hash_indx_,nhood,(int)(in.get_max_range()));
 
+    
+    
     
     // vector<particle*>::const_iterator myend = contents_.end();
     //     for(vector<particle*>::const_iterator it = contents_.begin();
@@ -254,6 +257,47 @@ void hash_case::fill_in_neighborhood()
       shelf_it!= h_case_.end();++shelf_it)
   {
     (*shelf_it)->fill_in_neighborhood();
+  }
+}
+
+
+void hash_shelf::fill_in_neighborhood()
+{
+  //  cout<<"particle_count_"<<particle_count_<<endl;
+  
+  list<particle*> current_box;
+  list<particle*> current_region;
+  
+  for(int j = 0; j<(int)hash_.size(); ++j)
+  {
+    int buffer = (int)ceil(particle::get_max_range()/ppb_);
+    if(buffer<1)
+    {
+      buffer = 1;
+    }
+    
+    hash_[j]->box_to_list(current_box);
+    if(current_box.empty())
+    {
+      continue;
+    }
+    
+    get_region(j,current_region,buffer);
+
+    for(list<particle*>::iterator box_part = current_box.begin();
+	box_part != current_box.end();++box_part)
+    {
+      particle* box_part_ptr = *box_part;
+      for(list<particle*>::const_iterator region_part = ++(current_region.begin());
+	  region_part!= current_region.end();++region_part)
+      {
+	const particle* region_part_ptr = *region_part;
+	box_part_ptr->add_to_neighborhood(region_part_ptr);
+	
+      }
+      box_part_ptr->sort_neighborhood();
+      
+    }
   }
 }
 

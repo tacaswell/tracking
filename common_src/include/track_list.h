@@ -69,10 +69,11 @@ protected:
   std::list<particle_track*>* store_list;
   
   ///List for the 'previous' particles in the subnetwork
-  std::set<particle_track*,bool(*)(particle_track*,particle_track*)> p_sub_net;
+  //std::set<particle_track*,bool(*)(particle_track*,particle_track*)> p_sub_net;
+  std::set<particle_track*> p_sub_net;
   ///list for the 'next' particles in the subnetworks
-  std::set<particle_track*,bool(*)(particle_track*,particle_track*)> n_sub_net;
-
+  //std::set<particle_track*,bool(*)(particle_track*,particle_track*)> n_sub_net;
+  std::set<particle_track*> n_sub_net;
   track_shelf* tracks;
 
   ///maximum distance a particle may move

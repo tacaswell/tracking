@@ -42,8 +42,11 @@
 //copied form https://plutarc.svn.sourceforge.net/svnroot/plutarc/trunk/matlab_wrapper rev9
 // Modified by Thomas Caswell tcaswell@uchicago.edu 09/2009-
 
-#include "iden/params1.h"
+#include "params1.h"
+#if COMPILE_MEX
 #include "mex.h"
+#endif 
+
 #include <stdlib.h>
 #include <string>
 

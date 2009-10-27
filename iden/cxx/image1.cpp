@@ -42,14 +42,17 @@
 //copied form https://plutarc.svn.sourceforge.net/svnroot/plutarc/trunk/matlab_wrapper rev9
 // Modified by Thomas A Caswell tcaswell@uchicago.edu 09/2009-
 #include "ipp.h"
+#if COMPILE_MEX
 #include "mex.h"
+#endif 
+
 
 #include <fstream>
 #include <iostream>
 #include <math.h>
 // tac 2009-09-15
 // 
-#include "iden/image1.h"
+#include "image1.h"
 
 // tac 2009-09-15
 // 
@@ -59,7 +62,7 @@ using std::endl;
 
 // tac 2009-09-21
 // added displaying functionality
-#include "gnuplot_i.hpp" //Gnuplot class handles POSIX-Pipe-communikation with Gnuplot
+//#include "gnuplot_i.hpp" //Gnuplot class handles POSIX-Pipe-communikation with Gnuplot
 
 
 /* modified 6/08
@@ -142,36 +145,36 @@ void Image2D::set_data(const WORD * data_in, int rows, int cols,WORD in_step)
 
 void wait_for_key();
  
-void Image2D::display_image() const
-{
-  Gnuplot g;
-  cout << "displaying image data" << endl;
-   const int iWidth  = width_;
-   const int iHeight = height_;
-//  const int iWidth  = 500;
-//  const int iHeight = 200;
+// void Image2D::display_image() const
+// {
+//   Gnuplot g;
+//   cout << "displaying image data" << endl;
+//    const int iWidth  = width_;
+//    const int iHeight = height_;
+// //  const int iWidth  = 500;
+// //  const int iHeight = 200;
   
-  g.set_xrange(0,iWidth).set_yrange(0,iHeight).set_cbrange(0,255);
+//   g.set_xrange(0,iWidth).set_yrange(0,iHeight).set_cbrange(0,255);
 
-  g.cmd("set palette gray");
-  unsigned char ucPicBuf[iWidth*iHeight];
-  // generate a greyscale image
-  Ipp32f max = -1;
-  ippiMax_32f_C1R(imagedata_,stepsize_,ROIfull_,&max);
-  cout<<"Max: "<<max<<endl;
-  for(int oIndex = 0; oIndex < iHeight; oIndex++)
-  {
-    for(int iIndex = 0;iIndex<iWidth;++iIndex)
-    {
-      *(ucPicBuf + iIndex +iWidth*oIndex) =
-	(unsigned char)(((*(imagedata_ +iIndex +stepsize_/sizeof(Ipp32f) * oIndex))/max)*255);
-    }
-  }
-  g.plot_image(ucPicBuf,iWidth,iHeight,"greyscale");
-  wait_for_key();
-  g.remove_tmpfiles();
+//   g.cmd("set palette gray");
+//   unsigned char ucPicBuf[iWidth*iHeight];
+//   // generate a greyscale image
+//   Ipp32f max = -1;
+//   ippiMax_32f_C1R(imagedata_,stepsize_,ROIfull_,&max);
+//   cout<<"Max: "<<max<<endl;
+//   for(int oIndex = 0; oIndex < iHeight; oIndex++)
+//   {
+//     for(int iIndex = 0;iIndex<iWidth;++iIndex)
+//     {
+//       *(ucPicBuf + iIndex +iWidth*oIndex) =
+// 	(unsigned char)(((*(imagedata_ +iIndex +stepsize_/sizeof(Ipp32f) * oIndex))/max)*255);
+//     }
+//   }
+//   g.plot_image(ucPicBuf,iWidth,iHeight,"greyscale");
+//   wait_for_key();
+//   g.remove_tmpfiles();
   
-}
+// }
 
 
 void wait_for_key ()

@@ -64,6 +64,7 @@ using std::endl;
 using std::vector;
 
 
+
 unsigned int hash_shelf::hash_function(const particle* p) const
 {
   utilities::Tuple cur_pos = p->get_position();
@@ -250,9 +251,19 @@ void hash_shelf::get_region( int n, int m,
 }
 
 
+void hash_shelf::get_region_px( int n, 
+				vector<const particle*> & out ,
+				int range_in_px) const
+{
+  get_region(n,out,ceil(range_in_px/ppb_));
+  
+}
+
+
 
 void hash_shelf::get_region( int n, 
-			     vector<const particle*> & out ,int range) const
+			     vector<const particle*> & out ,
+			     int range) const
 {
   get_region(n%int(hash_dims_[0]), n/int(hash_dims_[0]), out, range);
 
@@ -421,6 +432,8 @@ bool hash_shelf::step_forwards(int n, const hash_shelf* & dest)const{
     dest = this;
     return true;
   }
+  return step_forwards(--n,dest);
+  
 }
 
 void hash_shelf::nearest_neighbor_array(utilities::Array & pos_array,
@@ -576,44 +589,4 @@ void hash_shelf::next_nearest_neighbor_array(utilities::Array & pos_array,
   }
 }
 
-
-void hash_shelf::fill_in_neighborhood()
-{
-  //  cout<<"particle_count_"<<particle_count_<<endl;
-  
-  list<particle*> current_box;
-  list<particle*> current_region;
-  
-  for(int j = 0; j<(int)hash_.size(); ++j)
-  {
-    int buffer = (int)ceil(particle::get_max_range()/ppb_);
-    if(buffer<1)
-    {
-      buffer = 1;
-    }
-    
-    hash_[j]->box_to_list(current_box);
-    if(current_box.empty())
-    {
-      continue;
-    }
-    
-    get_region(j,current_region,buffer);
-
-    for(list<particle*>::iterator box_part = current_box.begin();
-	box_part != current_box.end();++box_part)
-    {
-      particle* box_part_ptr = *box_part;
-      for(list<particle*>::const_iterator region_part = ++(current_region.begin());
-	  region_part!= current_region.end();++region_part)
-      {
-	const particle* region_part_ptr = *region_part;
-	box_part_ptr->add_to_neighborhood(region_part_ptr);
-	
-      }
-      box_part_ptr->sort_neighborhood();
-      
-    }
-  }
-}
 

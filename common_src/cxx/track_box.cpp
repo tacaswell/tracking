@@ -25,6 +25,8 @@
 #include "track_box.h"
 #include "particle_track.h"
 #include "array.h"
+
+#include "gnuplot_i.hpp"
 using namespace tracking;
 using utilities::Array;
 int track_box::running_count = 0;
@@ -114,4 +116,26 @@ track_box::~track_box(){
       cur_part-> clear_track_data();
       cur_part = next_part;
     }
+}
+
+
+void track_box::plot_intensity() const
+{
+  std::vector<float> inten_data(length_);
+  
+  const particle_track * cur_part = t_first_;
+  for(int j = 0; j< length_;++j)
+  {
+    cur_part->get_value(utilities::D_I,inten_data[j]);
+    cur_part = cur_part->get_next();
+  }
+  
+  
+  Gnuplot g(inten_data);
+  g.set_smooth().set_grid().replot();
+  wait_for_key();
+  g.remove_tmpfiles();
+  
+      
+
 }

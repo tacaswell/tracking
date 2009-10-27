@@ -49,7 +49,9 @@
 // will try for cross compatibility
 
 #include "FreeImage.h"
+#if COMPILE_MEX
 #include "mex.h"
+#endif 
 /*#include <string>*/
 
 /*  tac 2009-09-17
@@ -83,10 +85,12 @@ public:
   int gety(const int index1D);	/*//given the index of image data, returns y-position in pixels*/
   int get1Dindex(const int x, const int y);	/*//given x and y, return 1-dim index of image*/
 
+#if COMPILE_MEX
   /**
      fill the image with data from matlab
    */
   void set_data(const mxArray *data);
+#endif
   /**
      Fill the image with data form a pointer to unsigned ints (16bit)
    */
@@ -132,14 +136,14 @@ private:
   
 };
 
-/**
-   kill this off, functionality merged into object
- */
-Image2D mat_to_IPP(const mxArray *data);
-/**
-   kill this off, functionality merged into object
- */
-IppStatus IPP_to_mat(mxArray *data, Image2D &image_out);
+// /**
+//    kill this off, functionality merged into object
+//  */
+// Image2D mat_to_IPP(const mxArray *data);
+// /**
+//    kill this off, functionality merged into object
+//  */
+// IppStatus IPP_to_mat(mxArray *data, Image2D &image_out);
 }
 
 #endif

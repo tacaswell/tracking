@@ -110,6 +110,13 @@ public:
   {
     return length_;
   };
+  
+  /**
+     plots the intensity as a function of position along the track
+   */
+  void plot_intensity() const;
+  
+  
 protected:
   ///Pointer to first particle in track
   particle_track * t_first_;

@@ -36,15 +36,16 @@
 //for FreeImage Public License, the licensors of
 //this Program grant you additional permission to convey the resulting
 #include <iostream>
+#include "part_def.h"
 
-#include "iden/wrapper_i_plu.h"
-#include "iden/iden.h"
-#include "iden/params1.h"
+#include "wrapper_i_plu.h"
+#include "iden.h"
+#include "params1.h"
 
 #include "master_box_t.h"
 #include "particle_base.h"
 #include "hash_case.h"
-#include "tuple.h"
+#include "pair.h"
 #include "wrapper_o_hdf.h"
 #include "wrapper_i_hdf.h"
 #include "filter.h"
@@ -62,7 +63,8 @@ using utilities::Wrapper_i_plu;
 using utilities::Wrapper_o_hdf;
 using utilities::Wrapper_i_hdf;
 
-using utilities::Tuple;
+using utilities::Pair;
+
 using utilities::Filter_basic;
 using utilities::Filter_trivial;
 using utilities::D_TYPE;
@@ -109,7 +111,7 @@ int main(int argc, const char * argv[])
 
   try
   {
-    Pair 
+    
     float hwhm,thresh;
     int feature_rad,dilation_rad, mask_rad,frame_c;
     Pair dims;
@@ -144,9 +146,8 @@ int main(int argc, const char * argv[])
       delete tmpa;
     
       tmpa =  new Attribute(group->openAttribute("dims"));
-      float tmp[Tuple::length_] ;
+      float tmp[Pair::length_] ;
       tmpa->read(PredType::NATIVE_FLOAT,tmp);
-      
       dims = Pair(tmp);
 
       delete tmpa;
@@ -177,13 +178,13 @@ int main(int argc, const char * argv[])
 
     Iden iden(p);
     iden.set_fname(data_file);
-    Wrapper_i_plu wp(1);
+    Wrapper_i_plu wp(1,dims);
     
-    iden.fill_wrapper(wp,frame_c,0);
+    iden.fill_wrapper(wp,dims,frame_c,0);
     cout<<"number of entries in wrapper: "<<wp.get_num_entries(-1)<<endl;
     
 
-    master_box_t<particle> box;
+    master_box_t box;
     //Filter_basic filt("25-0_mid_0.h5");
     Filter_trivial filt;
     

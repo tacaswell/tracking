@@ -50,7 +50,7 @@
  
 #include "ipp.h"
 
-#include "iden/kernel1.h"
+#include "kernel1.h"
 
 using std::cout;
 using std::endl;

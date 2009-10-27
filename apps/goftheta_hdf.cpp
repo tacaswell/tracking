@@ -52,6 +52,7 @@
 #include "corr_goftheta.h"
 
 
+
 using std::cout;
 using std::endl;
 using std::set;
@@ -75,6 +76,7 @@ using tracking::particle;
 using tracking::hash_case;
 using tracking::Corr_goftheta;
 
+
 static string base_proc_path = "/home/tcaswell/colloids/processed/";
 
 int main(int argc, const char * argv[])
@@ -82,19 +84,25 @@ int main(int argc, const char * argv[])
 
   if(argc != 3)
   {
-    cerr<< "wrong number of args args"<<endl;
+    cerr<< "wrong number of args "<<argc<<endl;
     return 0;
   }
   
   
   string file_path = string(argv[1]);
   string file_name = string(argv[2]);
+  string out_name = string(argv[0]);
+  unsigned int slash_index = out_name.find_last_of("/");
+  if(slash_index < out_name.size())
+    out_name = out_name.substr(1+slash_index);
+  
+			     
   
 
   string proc_file = base_proc_path + file_path + file_name + ".h5";
-  string out_file = base_proc_path + file_path + "gofr" + ".h5";
+  string out_file = base_proc_path + file_path + out_name + ".h5";
   cout<<"file to read in: "<<proc_file<<endl;
-  //  cout<<"file that will be written to: "<<out_file<<endl;
+  cout<<"file that will be written to: "<<out_file<<endl;
 
   try
   {
@@ -114,7 +122,7 @@ int main(int argc, const char * argv[])
 
   
     
-    Wrapper_i_hdf wh(proc_file,data_types,0,5);
+    Wrapper_i_hdf wh(proc_file,data_types);
 
     
 
@@ -134,31 +142,31 @@ int main(int argc, const char * argv[])
 
     
     Pair dims = wh.get_dims();
-    hash_case hcase(box,dims,20,wh.get_num_frames());
+    hash_case hcase(box,dims,10,wh.get_num_frames());
 
     cout<<"hash case filled"<<endl;
     
-   particle::set_neighborhood_range(14);
-   hcase.fill_in_neighborhood();
+//    particle::set_neighborhood_range(14);
+//    hcase.fill_in_neighborhood();
    
-   cout<<"neighborhood filled"<<endl;
+//    cout<<"neighborhood filled"<<endl;
    
     
     //hcase.print();
 
     
-    Corr_goftheta goft(2000,(float)13.9,file_name);
+    Corr_goftheta goft(2000,(float)10,file_name);
     cout<<"made corr obj"<<endl;
     
     hcase.compute_corr(goft);
     cout<<"computed g(theta)"<<endl;
     
-    goft.display();
+//     goft.display();
 
-      
-    // Generic_wrapper_hdf hdf_out(out_file,true);
-//     gofr.out_to_wrapper(hdf_out);
-//     cout<<"wrote out g(r)"<<endl;
+     
+    Generic_wrapper_hdf hdf_out(out_file,true);
+    goft.out_to_wrapper(hdf_out);
+    cout<<"wrote out g(theta)"<<endl;
     
     
   }

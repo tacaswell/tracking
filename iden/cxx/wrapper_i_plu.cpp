@@ -27,10 +27,13 @@
 
 #include "ipp.h"
 
-#include "iden/wrapper_i_plu.h"
+#include "wrapper_i_plu.h"
+#include "part_def.h"
 
 using utilities::Wrapper_i_plu;
 
+using utilities::Tuple;
+using utilities::Pair;
 using std::cout;
 using std::endl;
 
@@ -97,7 +100,7 @@ Wrapper_i_plu::~Wrapper_i_plu()
 }
 
 
-Wrapper_i_plu::Wrapper_i_plu(int frames):data_(frames,NULL),frame_count_(frames,0),count_ (0)
+Wrapper_i_plu::Wrapper_i_plu(int frames,Pair dims):data_(frames,NULL),frame_count_(frames,0),count_ (0),dims_(dims)
 {
   cout<<"data_ size: "<<data_.size()<<endl;
   
@@ -135,4 +138,9 @@ bool Wrapper_i_plu::contains_type(utilities::D_TYPE in) const
 {
   set<D_TYPE>::iterator it = data_types_.find(in);
   return it != data_types_.end();
+}
+
+Tuple Wrapper_i_plu::get_dims() const
+{
+  return Pair(dims_);
 }

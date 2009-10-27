@@ -27,6 +27,7 @@ import re
 def _parse_attr(h5obj,dom_obj):
     if dom_obj.getAttribute("id") =="Description":
         _parse_des(h5obj,dom_obj)
+        _parse_region(h5obj)
     elif dom_obj.getAttribute("type") =="int":
         h5obj.attrs[dom_obj.getAttribute("id")] = int(dom_obj.getAttribute("value"))
     elif  dom_obj.getAttribute("type") =="float":
@@ -80,6 +81,17 @@ def _parse_temp(h5obj,fname):
 def _add_name(f,fname):
 
     f.attrs['image_name'] = fname
+
+        
+def _parse_region(h5obj):
+    r_str =  h5obj.attrs['Region'].strip().split(' ')
+
+    dim = [int(r_str[0].strip(',')) ,int(r_str[2].strip(',')) ]
+    h5obj.attrs['dim_count'] = 2
+    h5obj.attrs['dim_unit'] = 'px'
+    h5obj.attrs['dims'] = dim
+    
+
 
 def make_h5(fname_in,d_path,p_path):
     fname = d_path + fname_in + '.tif'

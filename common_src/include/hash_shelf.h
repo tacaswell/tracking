@@ -112,11 +112,15 @@ public:
      need to keep track of this them selves
   */
   void get_region( int n,  int m, 
-		  hash_box* box, int range=1) const;
+		   hash_box* box, int range=1) const;
+  void get_region_px( int n, 
+		      std::vector<const particle*> & out ,
+		      int range_in_px) const;
+  
   void get_region( int n,
 		   hash_box* box, int range=1) const;
   virtual void get_region( particle* n,
-		   hash_box* box, int range=1) const;
+			   hash_box* box, int range=1) const;
 
   
   void get_region( int n,

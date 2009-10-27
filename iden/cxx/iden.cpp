@@ -38,10 +38,10 @@
 //work.
 
 
-#include "iden/iden.h"
-#include "iden/wrapper_i_plu.h"
-#include "iden/image1.h"
-#include "iden/data_proc1.h"
+#include "iden.h"
+#include "wrapper_i_plu.h"
+#include "image1.h"
+#include "data_proc1.h"
 
 #include "ipp.h"
 #include "FreeImagePlus.h"
@@ -59,10 +59,11 @@ using iden::Iden;
 using iden::Image2D;
 
 using utilities::Wrapper_i_plu;
+using utilities::Pair;
 
 
 
-void Iden::fill_wrapper(Wrapper_i_plu & wrapper, int frames,int start)
+void Iden::fill_wrapper(Wrapper_i_plu & wrapper, Pair dims,int frames,int start)
 {
 
 
@@ -98,7 +99,7 @@ void Iden::fill_wrapper(Wrapper_i_plu & wrapper, int frames,int start)
   
   
   // replace the wrapper with an entirely new one
-  wrapper = Wrapper_i_plu(frames);
+  wrapper = Wrapper_i_plu(frames,dims);
 
   fipImage image;
   

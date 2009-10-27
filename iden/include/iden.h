@@ -42,17 +42,18 @@
 #define IDEN_OBJ
 #include <string>
 
-#include "iden/params1.h"
+#include "params1.h"
 namespace tracking
 {
 class hash_case;
-template <class T>
 class master_box_t;
 
 }
 namespace utilities
 {
 class Wrapper_i_plu;
+class Pair;
+
 }
 
 
@@ -73,7 +74,7 @@ public:
   void set_fname(const std::string &);
   void set_params(const Params& param_in);
   
-  void fill_wrapper(utilities::Wrapper_i_plu &,int frames=0,int start=0);
+  void fill_wrapper(utilities::Wrapper_i_plu &,utilities::Pair,int frames=0,int start=0);
   
 private:
   /**

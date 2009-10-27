@@ -1,10 +1,6 @@
 cmake_minimum_required (VERSION 2.8) 
 project(TRACKING)
 
-MESSAGE( STATUS "test")
-
-set(COMPILE_BASIC 1)
-
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
 set(COMMON_SRC_PATH ${PROJECT_SOURCE_DIR}/common_src/cxx)
@@ -70,6 +66,11 @@ find_package(HDF5 REQUIRED)
 include_directories(${HDF_INCLUDE_DIR})
 include_directories(${TRACKING_SOURCE_DIR}/common_src/include)
 
+SET(CMAKE_CXX_FLAGS "-ansi -D_GNU_SOURCE -fPIC -fno-omit-frame-pointer -pthread -Wall ")
+
+if( (NOT COMPILE_MEX) AND (NOT  COMPILE_IDEN ))
+  set(COMPILE_BASIC 1)
+endif( (NOT COMPILE_MEX)  AND (NOT  COMPILE_IDEN ))
 
 if(COMPILE_MEX)
   MESSAGE(STATUS "making the mex files")
@@ -81,7 +82,6 @@ endif(COMPILE_MEX)
 
 if(COMPILE_BASIC)
   MESSAGE(STATUS "making basic functionality")
-  
   add_subdirectory(apps)
 endif(COMPILE_BASIC)
 
@@ -107,7 +107,8 @@ endif(COMPILE_IDEN)
 # set(MATLAB_MEXFILE_EXT mexa64)
 
 # set(CMAKE_SHARED_LINKER_FLAGS  "-pthread  -Wl,--no-undefined")
-# SET(CMAKE_CXX_FLAGS "-ansi -D_GNU_SOURCE -fPIC -fno-omit-frame-pointer -pthread ")
+
+
 # SET(CMAKE_C_FLAGS "-ansi -D_GNU_SOURCE -fexceptions -fPIC -fno-omit-frame-pointer -pthread ")
 
 

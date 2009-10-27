@@ -45,11 +45,11 @@
 #include "ipp.h"
 
 
-#include "iden/image1.h"
-#include "iden/params1.h"
-#include "iden/data_proc1.h"
-#include "iden/kernel1.h"
-#include "iden/fileops1.h"
+#include "image1.h"
+#include "params1.h"
+#include "data_proc1.h"
+#include "kernel1.h"
+#include "fileops1.h"
 
 /*//header files for Intel and TIFF code*/
 

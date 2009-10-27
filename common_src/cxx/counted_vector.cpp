@@ -67,7 +67,7 @@ void Counted_vector::output_to_wrapper(Generic_wrapper_base * data_out_wrapper,
 			 Generic_wrapper_base * count_out_wrapper) const{
   data_out_wrapper->initialize_wrapper();
   data_out_wrapper->start_new_row();
-  for(int k = 0;k<data_array_.size();++k)
+  for(unsigned int k = 0;k<data_array_.size();++k)
   {
     data_out_wrapper->append_to_row(data_array_[k]);
   }
@@ -77,7 +77,7 @@ void Counted_vector::output_to_wrapper(Generic_wrapper_base * data_out_wrapper,
 
   count_out_wrapper->initialize_wrapper();
   count_out_wrapper->start_new_row();
-  for(int k = 0;k<count_array_.size();++k)
+  for(unsigned int k = 0;k<count_array_.size();++k)
   {
     count_out_wrapper->append_to_row(count_array_[k]);
   }

@@ -73,13 +73,18 @@ private:
   std::vector<std::vector<std::complex<float>*> > data_c_;
 
   std::vector<int> frame_c_;
-  int  frame_count_;
+  unsigned int  frame_count_;
 
-  int total_part_count_;
+  unsigned int total_part_count_;
   
   void clean_data();
-
-  void priv_init(int f_count =0, int start = 0);
+  
+  void priv_init(int f_count =0, unsigned int start = 0);
+  
+  bool two_d_data_;
+  
+  std::vector<float> frame_zdata_;
+  
   
 
 protected:
@@ -111,8 +116,8 @@ public:
   
   ~Wrapper_i_hdf();
   
-  Wrapper_i_hdf(std::string fname,std::set<utilities::D_TYPE> dtypes);
-  Wrapper_i_hdf(std::string fname,std::set<utilities::D_TYPE> dtypes,int start,int frames);
+ 
+  Wrapper_i_hdf(std::string fname,std::set<utilities::D_TYPE> dtypes,int start=0,int frames =0);
 
 
   

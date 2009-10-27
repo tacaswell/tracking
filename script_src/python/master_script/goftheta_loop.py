@@ -15,32 +15,33 @@
 #You should have received a copy of the GNU General Public License
 #along with this program; if not, see <http://www.gnu.org/licenses>.
 
-import parse1
 import os
 import os.path
 import subprocess
+import h5py
 
-path_name = 'polyNIPAM_batch_12/20090730/jammed/z/'
+path_name = 'polyNIPAM_batch_12/20090820/2/t/'
 base_data_path = "/home/tcaswell/colloids/data/"
 base_proc_path = "/home/tcaswell/colloids/processed/"
 
-prog_path = "/home/tcaswell/misc_builds/Iden/iden/apps/"
-prog_name = "Iden"
+prog_path = "/home/tcaswell/misc_builds/prco3D/apps/"
 
 contents = os.listdir(base_data_path +path_name)
 to_process = []
 for c in contents:
     tmp = c.split('.')
-    if tmp[-1]=='pram':
+    if tmp[-1]=='done':
         to_process = to_process+[c]
 
 print to_process
-if not os.path.exists(base_proc_path + path_name):
-    os.makedirs(base_proc_path + path_name,0751)
+
+
+# make sure there is a  file
+f = h5py.File(base_proc_path + path_name +"goftheta.h5",'w')
+f.close()
 
 for f in to_process:
     tmp = f.split('.')
     base_name = ''.join(tmp[:-1])
     print base_name
-    parse1.make_h5(base_name,base_data_path +path_name,base_proc_path+path_name)
-    subprocess.call(["time",prog_path + prog_name,path_name,base_name])
+    subprocess.call([prog_path + "goftheta_hdf",path_name,base_name])

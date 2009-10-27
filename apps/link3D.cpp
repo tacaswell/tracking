@@ -50,7 +50,12 @@
 
 #include "generic_wrapper_hdf.h"
 #include "corr_gofr.h"
+
+
 #include "gnuplot_i.hpp" //Gnuplot class handles POSIX-Pipe-communication with Gnuplot
+
+#include "track_shelf.h"
+#include "track_box.h"
 
 using std::cout;
 using std::endl;
@@ -73,7 +78,7 @@ using tracking::master_box_t;
 using tracking::particle;
 using tracking::hash_case;
 using tracking::Corr_gofr;
-
+using tracking::track_shelf;
 static string base_proc_path = "/home/tcaswell/colloids/processed/";
 
 int main(int argc, const char * argv[])
@@ -107,9 +112,10 @@ int main(int argc, const char * argv[])
 		    utilities::D_I,
 		    utilities::D_R2,
 		    utilities::D_MULT,
-		    utilities::D_E
+		    utilities::D_E,
+		    utilities::D_ZPOS
 		    };
-    set<D_TYPE> data_types = set<D_TYPE>(tmp, tmp+8);
+    set<D_TYPE> data_types = set<D_TYPE>(tmp, tmp+9);
 
   
     // set up the input wrapper
@@ -125,8 +131,24 @@ int main(int argc, const char * argv[])
  
     Pair dims = wh.get_dims();
     cout<<dims<<endl;
-    
 
+    int pixel_per_box= 5;
+    
+    hash_case hcase(box,dims,pixel_per_box,wh.get_num_frames());
+    cout<<"hash case filled"<<endl;
+    
+    track_shelf tracks;
+    
+    hcase.link(pixel_per_box,tracks);
+    int min_track_length = 5;
+    
+    tracks.remove_short_tracks(min_track_length);
+    
+    for(int j= 0;j<tracks.get_track_count();++j)
+    {
+      tracks.get_track(j)->plot_intensity();
+    }
+    
  
   }
   catch(const char * err){

@@ -57,29 +57,22 @@ using std::complex;
 
 using tracking::particle;
 
-Wrapper_i_hdf::Wrapper_i_hdf(std::string fname,std::set<utilities::D_TYPE> dtypes)
-  :  file_name_(fname),data_types_(dtypes),total_part_count_(0)
-{
-  priv_init();
-  
-}
-
 Wrapper_i_hdf::Wrapper_i_hdf(std::string fname,std::set<utilities::D_TYPE> dtypes,int start,int f_count)
-  :  file_name_(fname),data_types_(dtypes),total_part_count_(0)
+  :  file_name_(fname),data_types_(dtypes),total_part_count_(0),two_d_data_(true)
 {
   priv_init(f_count,start);
   
 }
 
 
-void Wrapper_i_hdf::priv_init(int f_count,int start)
+void Wrapper_i_hdf::priv_init(int f_count,unsigned int start)
 {
   if (start <0)
     throw "wrapper_i_hdf: start must be positive";
   
   
-   try
-   {
+  try
+  {
     H5File * file = new H5File( file_name_, H5F_ACC_RDONLY );  
     Group * group = new Group(file->openGroup("/"));
     Attribute * tmpa =  new Attribute(group->openAttribute("number-of-planes"));
@@ -107,38 +100,53 @@ void Wrapper_i_hdf::priv_init(int f_count,int start)
     {
       switch(v_type(*it))
       {
-	case V_INT:
-	  data_i_.push_back(vector<int*>(frame_count_));
-	  d_mapi_.set_lookup(*it,i_count++);
-	  break;
-	case V_FLOAT:
-	  data_f_.push_back(vector<float*>(frame_count_));
-	  d_mapf_.set_lookup(*it,f_count++);
-	  break;
-	case V_COMPLEX:
-	  data_c_.push_back(vector<complex<float>*>(frame_count_));
-	  d_mapc_.set_lookup(*it,c_count++);
-	  break;
-	}
+      case V_INT:
+	data_i_.push_back(vector<int*>(frame_count_));
+	d_mapi_.set_lookup(*it,i_count++);
+	break;
+      case V_FLOAT:
+	data_f_.push_back(vector<float*>(frame_count_));
+	d_mapf_.set_lookup(*it,f_count++);
+	break;
+      case V_COMPLEX:
+	data_c_.push_back(vector<complex<float>*>(frame_count_));
+	d_mapc_.set_lookup(*it,c_count++);
+	break;
+      case V_ERROR:
+	throw "wrapper_i_hdf: I have no idea why the type was error";
+	break;
+	
+      }
     }
 
     frame_c_.reserve(frame_count_);
+    if(two_d_data_)
+      frame_zdata_.resize(frame_count_);
     
     
     // fill in data
     // assume that the frames run from 0 to frame_count_
 
     
-    for(int j = 0; j<frame_count_;++j)
+    for(unsigned int j = 0; j<frame_count_;++j)
     {
       string frame_name = format_name(j+start);
       Group * frame = new Group(file->openGroup(frame_name));
-
+      
+      if(two_d_data_)
+      {
+	Attribute * tmpa =  new Attribute(frame->openAttribute("z-position"));
+	tmpa->read(PredType::NATIVE_FLOAT,&frame_zdata_[j]);
+	delete tmpa;
+      }
+      
       
       for(set<D_TYPE>::iterator it = data_types_.begin();
 	  it != data_types_.end();++it)
       {
-
+	
+	if(two_d_data_ && (*it)==utilities::D_ZPOS)
+	  continue;
 	
 	DataSet * dset = new DataSet(frame->openDataSet(DT2str_s(*it)));
 	DataSpace dspace = dset-> getSpace();
@@ -166,6 +174,9 @@ void Wrapper_i_hdf::priv_init(int f_count,int start)
 	  throw "not implemented yet";
 	  
 	  break;
+	case V_ERROR:
+	  throw "wrapper_i_hdf: I have no idea why the type was error";
+	  break;
 	}
 	// clean up hdf stuff
 	delete dset;
@@ -175,10 +186,19 @@ void Wrapper_i_hdf::priv_init(int f_count,int start)
     }
     
     delete file;
+
+    // shift all of the z by the minimum to start at zero
+    if(two_d_data_)
+    {
+      float min = frame_zdata_[0];
+      for(unsigned int j = 0; j<frame_count_;++j)
+	if(frame_zdata_[j]<min)
+	  min = frame_zdata_[j];
+      for(unsigned int j = 0; j<frame_count_;++j)
+	frame_zdata_[j] -= min ;
+    }
     
-   }
-   
-  
+  }
   catch(Exception & e)
   {
     // clean up data if it died
@@ -188,7 +208,7 @@ void Wrapper_i_hdf::priv_init(int f_count,int start)
     
   }
   
-  for(int j= 0; j<frame_count_;++j)
+  for(unsigned int j= 0; j<frame_count_;++j)
     total_part_count_ += frame_c_.at(j);
 }
 
@@ -270,7 +290,18 @@ float Wrapper_i_hdf::get_value(float& out,
   
   if(v_type(type) != V_FLOAT)
     throw "wrapper_i_hdf: wrong data type, not float";
-  out = data_f_.at(d_mapf_(type)).at(frame)[ind]    ;
+
+
+  
+  if(type == utilities::D_ZPOS && two_d_data_)
+  {
+    out = frame_zdata_.at(frame);
+  }
+  
+  else
+  {
+    out = data_f_.at(d_mapf_(type)).at(frame)[ind]    ;
+  }
   
 
   return out;
