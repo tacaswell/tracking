@@ -35,6 +35,8 @@ struct Svector;
 class Cell;
 class Counted_vector;
 class Generic_wrapper_base;
+class Wrapper_out;
+
 }
 
 namespace tracking{
@@ -166,6 +168,15 @@ public:
   void corrected_tracks_out(utilities::Cell & output, utilities::Generic_wrapper_base * data_out_wrapper)const;
   
 
+  /**
+     Pass a function to all of the track_box objects contained
+   */
+  void pass_fun_to_track(void(track_box::*fun)()const)const;
+  /**
+     Outputs the particles in a track-centric format
+   */
+  void output_to_wrapper(utilities::Wrapper_out & wrapper) const;
+  
   ///Constructor
   track_shelf(){};
   ///Destructor.  Destroys all of the tracks contained in the shelf
@@ -187,6 +198,14 @@ protected:
      internal private function to do track removal to make maintianign code simpler
    */
   void remove_track_internal_(  std::map<int,track_box*>::iterator it);
+  
+  /**
+     re-indexes the track numbers.  I do not think this will break anything, but
+     I am not sure.
+     tac 2009-10-27
+  */
+  void re_index_tracks_();
+  
 };
 }
 

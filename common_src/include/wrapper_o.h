@@ -80,9 +80,9 @@ public:
 
 
   /**
-     Opens a frame to put particles into
+     Opens a group to put particles into
    */
-  virtual void open_frame(int frame = 0,int p_count=0) = 0;
+  virtual void open_group(int group = 0,int p_count=0) = 0;
   
 
   /**
@@ -150,10 +150,10 @@ public:
    */
   virtual void close_particle()=0;
   /**
-     Closes the currently open frame.
-     Throws an error if there is no open frame.
+     Closes the currently open group.
+     Throws an error if there is no open group.
   */
-  virtual void close_frame()=0;
+  virtual void close_group()=0;
   
   /**
      Performs any clean up.

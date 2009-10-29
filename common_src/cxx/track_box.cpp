@@ -26,16 +26,22 @@
 #include "particle_track.h"
 #include "array.h"
 
+#include "part_def.h"
+
+#include "pair.h"
+
 #include "gnuplot_i.hpp"
 using namespace tracking;
 using utilities::Array;
-int track_box::running_count = 0;
+using utilities::Tuple;
+
+int track_box::running_count_ = 0;
 
 track_box::track_box(particle_track * first){
   t_first_ = first;
   t_last_ = first;
 
-  id = running_count++;
+  id_ = running_count_++;
   if(first != NULL){
     first->set_track(this);
     length_ = 1;
@@ -122,20 +128,45 @@ track_box::~track_box(){
 void track_box::plot_intensity() const
 {
   std::vector<float> inten_data(length_);
-  
+  std::vector<float> x_data(length_);
+  std::vector<float> y_data(length_);
+  std::vector<float> z_data(length_);
   const particle_track * cur_part = t_first_;
+  float x_mean =0,y_mean=0;
   for(int j = 0; j< length_;++j)
   {
     cur_part->get_value(utilities::D_I,inten_data[j]);
+    cur_part->get_value(utilities::D_ZPOS,z_data[j]);
+    Tuple pos = cur_part->get_position();
     cur_part = cur_part->get_next();
+    x_data[j] = pos[0];
+    y_data[j] = pos[1];
+
+    
+    y_mean +=y_data[j];
+    x_mean +=x_data[j];
+  }
+  y_mean/=length_;
+  x_mean/=length_;
+  
+    
+  for(int j =0;j<length_;++j)
+  {
+    x_data[j] -= x_mean;
+    y_data[j] -= y_mean;
+
   }
   
   
-  Gnuplot g(inten_data);
-  g.set_smooth().set_grid().replot();
+  Gnuplot g(z_data,inten_data,"intensity","linespoints","z","I");
+  g.set_grid().replot();
+  
+  Gnuplot g2(x_data,y_data,"position", "linespoints");
+  g2.set_grid().replot();
+  
   wait_for_key();
   g.remove_tmpfiles();
-  
+  g2.remove_tmpfiles();
       
 
 }

@@ -53,10 +53,10 @@ namespace utilities{
 class Wrapper_o_hdf:public Wrapper_out{
 public:  
     
-  Wrapper_o_hdf(const std::string& file_name,std::set<D_TYPE> d_add);
+  Wrapper_o_hdf(const std::string& file_name,std::set<D_TYPE> d_add,const std::string& group_prefix = "frame",bool over_write = false);
   
   void initialize_wrapper();
-  void open_frame(int,int);
+  void open_group(int,int);
   void open_particle(int);
 
   
@@ -66,7 +66,7 @@ public:
   
 
   void close_particle();
-  void close_frame();
+  void close_group();
   void finalize_wrapper();
 
   void reset_wrapper(params * param);
@@ -76,6 +76,10 @@ public:
 
   const std::set<D_TYPE>& get_content_tpyes() const;
   
+
+  void set_compress(bool in){compress_ = in;}
+  
+
   ~Wrapper_o_hdf();
 
 private:
@@ -90,22 +94,22 @@ private:
   bool wrapper_open_;
   
   /**
-     if there is a 'open' frame
+     if there is a 'open' group
    */
-  bool frame_open_;
+  bool group_open_;
   
   ///index of current open particle
   int part_index_;
   
   /**
-     maximum number of particles in current frame
+     maximum number of particles in current group
    */
-  int frame_max_count_;
+  int group_max_count_;
   
   /**
-     index of current open frame
+     index of current open group
    */
-  int frame_index_;
+  int group_index_;
 
   /**
      if the data is being put back into a hdf file, or is a new hdf file
@@ -184,19 +188,32 @@ private:
   Data_map complex_map_;
 
   
+  /**
+     prefix for use in formatting the group name
+   */
+  std::string group_prefix_;
   
   /**
-     formats frame names
+     the number if digits in the formatted group name
+   */
+  static const int format_padding_ = 6;
+  
+  
+  /**
+     formats group names
    */
   std::string format_name(int in)const;
-
 
   
   void set_value(utilities::D_TYPE type, float val);
   void set_value(utilities::D_TYPE type, int val);
   void set_value(utilities::D_TYPE type, std::complex<float> val);
   
-
+  /**
+     set if the datasets should be compressed
+   */
+  bool compress_;
+  
   
 };
 

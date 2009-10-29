@@ -29,6 +29,8 @@
 #define TRACK_BOX
 namespace utilities{
 class Array;
+class Wrapper_out;
+
 }
 
 namespace tracking{
@@ -91,7 +93,7 @@ public:
 
   int get_id() const
   {
-    return id;
+    return id_;
   }
 
   virtual ~track_box();
@@ -115,8 +117,26 @@ public:
      plots the intensity as a function of position along the track
    */
   void plot_intensity() const;
+  /**
+     Outputs the particles in a track-centric format
+   */
+  void output_to_wrapper(utilities::Wrapper_out & wrapper) const;
+
+  /**
+     Splits the track at the given index and adds the new track to the track shelf pointed to
+   */
+  void split_track(int indx, track_shelf * shelf);
   
-  
+  /**
+     Trims the track it include only the particles between the indexes
+     given, the final track contains the particles (ind_start -
+     (ind_end -1)).  This is to stay with in the frame work of all the
+     standard library stuff which gives the end value as
+     'one-past-the-end'.
+     @param ind_start first particle to keep
+     @param ind_end first particle not to keep
+   */
+  void trim_track(int ind_start, int ind_end)
 protected:
   ///Pointer to first particle in track
   particle_track * t_first_;
@@ -125,9 +145,9 @@ protected:
   ///length of path
   int length_;
   ///the number of tracks identified used for unique id's
-  static int running_count;
+  static int running_count_;
   ///unique ID of the track
-  int id;
+  unsigned int id_;
 
 };
 }

@@ -79,6 +79,7 @@ using tracking::particle;
 using tracking::hash_case;
 using tracking::Corr_gofr;
 using tracking::track_shelf;
+using tracking::track_box;
 static string base_proc_path = "/home/tcaswell/colloids/processed/";
 
 int main(int argc, const char * argv[])
@@ -96,7 +97,7 @@ int main(int argc, const char * argv[])
   
 
   string proc_file = base_proc_path + file_path + file_name + ".h5";
-  string out_file = base_proc_path + file_path + "" + ".h5";
+  string out_file = base_proc_path + file_path + file_name + "_tracks_mid_part" + ".h5";
   cout<<"file to read in: "<<proc_file<<endl;
   cout<<"file that will be written to: "<<out_file<<endl;
 
@@ -119,7 +120,7 @@ int main(int argc, const char * argv[])
 
   
     // set up the input wrapper
-    Wrapper_i_hdf wh(proc_file,data_types,0,10);
+    Wrapper_i_hdf wh(proc_file,data_types,0,20);
     
 
     // fill the master_box
@@ -132,7 +133,7 @@ int main(int argc, const char * argv[])
     Pair dims = wh.get_dims();
     cout<<dims<<endl;
 
-    int pixel_per_box= 5;
+    int pixel_per_box= 2;
     
     hash_case hcase(box,dims,pixel_per_box,wh.get_num_frames());
     cout<<"hash case filled"<<endl;
@@ -140,14 +141,24 @@ int main(int argc, const char * argv[])
     track_shelf tracks;
     
     hcase.link(pixel_per_box,tracks);
-    int min_track_length = 5;
+    int min_track_length = 4;
     
     tracks.remove_short_tracks(min_track_length);
     
-    for(int j= 0;j<tracks.get_track_count();++j)
-    {
-      tracks.get_track(j)->plot_intensity();
-    }
+    cout<<tracks.get_track_count()<<endl;
+    
+    D_TYPE tmp2[] = {utilities::D_XPOS,
+		     utilities::D_YPOS,
+		     utilities::D_I,
+		     utilities::D_ZPOS
+    };
+    set<D_TYPE> data_types2 = set<D_TYPE>(tmp2, tmp2+4);
+
+    //tracks.pass_fun_to_track(&track_box::plot_intensity);
+    Wrapper_o_hdf hdf_w(out_file,data_types2,"track",true);
+    hdf_w.set_compress(false);
+    
+    tracks.output_to_wrapper(hdf_w);
     
  
   }

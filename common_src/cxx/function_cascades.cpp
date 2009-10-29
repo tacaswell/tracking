@@ -22,15 +22,22 @@
 #include "hash_case.h"
 #include "hash_shelf.h"
 #include "hash_box.h"
+#include "track_shelf.h"
+#include "track_box.h"
 #include "particle_base.h"
 #include "particle_track.h"
 #include "wrapper_o.h"
 #include "corr.h"
 
+
 using tracking::hash_box;
 using tracking::hash_shelf;
 using tracking::hash_case;
 using tracking::particle;
+
+using tracking::track_shelf;
+using tracking::track_box;
+
 
 using utilities::Wrapper_out;
 using tracking::Corr;
@@ -41,9 +48,11 @@ using std::cout;
 using std::endl;
 using std::ceil;
 using std::list;
+using std::map;
 
 
 
+// hash output chain
 void hash_case::output_to_wrapper(Wrapper_out & wrapper) const
 {
 
@@ -63,14 +72,15 @@ void hash_shelf::output_to_wrapper(Wrapper_out & wrapper) const
   
   cout<<particle_count_<<"particles"<<endl;
   
-  wrapper.open_frame(plane_number_,particle_count_);
+  wrapper.open_group(plane_number_,particle_count_);
   for(vector<hash_box*>::const_iterator current_box = hash_.begin();
       current_box != hash_.end();++current_box)
   {
     (*current_box)->output_to_wrapper(wrapper);
   }
-  wrapper.close_frame();
+  wrapper.close_group();
 }
+
 void hash_box::output_to_wrapper(Wrapper_out & wrapper) const
 {
 
@@ -82,6 +92,33 @@ void hash_box::output_to_wrapper(Wrapper_out & wrapper) const
 }
 
 
+
+
+// track output chain
+void track_shelf::output_to_wrapper(Wrapper_out & wrapper) const
+{
+  wrapper.initialize_wrapper();
+  map<int,track_box*>::const_iterator myend =  track_map.end();
+  for(map<int,track_box*>::const_iterator it = track_map.begin();it!=myend;++it)
+  {
+    track_box * cur_box = (it->second);
+    cur_box->output_to_wrapper(wrapper);
+  }
+  wrapper.finalize_wrapper();
+}
+
+void track_box::output_to_wrapper(Wrapper_out & wrapper) const
+{
+  wrapper.open_group(id_,length_);
+  particle_track * cur_part = t_first_;
+  for(int j = 0; j< length_;++j)
+  {
+    wrapper.set_all_values(cur_part);
+    cur_part = cur_part->get_next();
+  }
+  wrapper.close_group();
+}
+    
 
 
 

@@ -105,7 +105,8 @@ void track_shelf::remove_short_tracks(int min_length){
 	it++;
       }
   }
-
+  
+  
 }
 
 void track_shelf::print(){
@@ -377,7 +378,7 @@ void track_shelf::msd_corrected(utilities::Counted_vector & md,
 void track_shelf::msd_hist(int time_step ,utilities::Histogram & in) const
 {
   const particle_track* current = NULL;
-  const particle_track* next = NULL;
+  //const particle_track* next = NULL;
   if(time_step<1)
   {
     throw "nonsense input";
@@ -479,3 +480,17 @@ void track_shelf::corrected_tracks_out(Cell & output, utilities::Generic_wrapper
 
 
 }
+
+
+
+void track_shelf::pass_fun_to_track(void(track_box::*fun)()const)const
+{
+  map<int,track_box*>::const_iterator myend =  track_map.end();
+  for(map<int,track_box*>::const_iterator it = track_map.begin();
+      it!=myend;++it)
+  {
+    ((it->second)->*fun)();
+  }
+}
+
+  

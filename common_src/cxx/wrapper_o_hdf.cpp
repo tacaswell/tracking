@@ -58,12 +58,12 @@ using utilities::D_TYPE;
 using tracking::particle;
 
 
-Wrapper_o_hdf::Wrapper_o_hdf(const string& file_name,set<D_TYPE> d_add):
-  part_count_(0),part_open_(false), wrapper_open_(false), frame_open_(false),
-  part_index_(-1), frame_max_count_(-1), frame_index_(-1), new_hdf_(true),over_write_(true),
+Wrapper_o_hdf::Wrapper_o_hdf(const string& file_name,set<D_TYPE> d_add,const string & group_prefix,bool over_write):
+  part_count_(0),part_open_(false), wrapper_open_(false), group_open_(false),
+  part_index_(-1), group_max_count_(-1), group_index_(-1), new_hdf_(true),over_write_(over_write),
   file_(NULL), file_name_(file_name),
   d_types_add_(d_add),d_types_check_(),d_types_already_(), 
-  float_data_(),int_data_(),complex_data_()
+  float_data_(),int_data_(),complex_data_(),group_prefix_(group_prefix),compress_(true)
 {
 
 
@@ -78,19 +78,22 @@ Wrapper_o_hdf::Wrapper_o_hdf(const string& file_name,set<D_TYPE> d_add):
 void Wrapper_o_hdf::initialize_wrapper()
 {
 
-  
-  file_ = new H5File(file_name_,H5F_ACC_RDWR);
+  if(over_write_)
+    file_ = new H5File(file_name_,H5F_ACC_TRUNC);
+  else
+    file_ = new H5File(file_name_,H5F_ACC_RDONLY);
+
   wrapper_open_ = true;
 }
 
-void Wrapper_o_hdf::open_frame(int frame,int count)
+void Wrapper_o_hdf::open_group(int group,int count)
 {
   if(!wrapper_open_)
     throw "wrapper not open";
   
  
-  frame_index_ = frame;
-  frame_max_count_ = count;
+  group_index_ = group;
+  group_max_count_ = count;
   int_map_   = Data_map();
   float_map_ = Data_map();
   complex_map_=Data_map();
@@ -105,15 +108,15 @@ void Wrapper_o_hdf::open_frame(int frame,int count)
     switch(v_type(*it))
     {
     case V_INT:
-      int_data_.push_back(new int[frame_max_count_]);
+      int_data_.push_back(new int[group_max_count_]);
       int_map_.set_lookup(*it,i_c++);
       break;
     case V_FLOAT:
-      float_data_.push_back(new float[frame_max_count_]);
+      float_data_.push_back(new float[group_max_count_]);
       float_map_.set_lookup(*it,f_c++);
       break;
     case V_COMPLEX:
-      complex_data_.push_back(new complex_t[frame_max_count_]);
+      complex_data_.push_back(new complex_t[group_max_count_]);
       complex_map_.set_lookup(*it,c_c++);
       break;
     case V_ERROR:
@@ -127,13 +130,13 @@ void Wrapper_o_hdf::open_frame(int frame,int count)
   part_count_ = 0;
   
 
-  frame_open_ = true;  
+  group_open_ = true;  
 }
 
 void Wrapper_o_hdf::open_particle(int ind)
 {
-  if(!frame_open_)
-    throw "frame not open";
+  if(!group_open_)
+    throw "group not open";
   if(part_open_)
     throw "particle already open";
   
@@ -147,11 +150,11 @@ void Wrapper_o_hdf::open_particle(int ind)
     part_count_++;
   }
   
-  if((part_count_>frame_max_count_))
+  if((part_count_>group_max_count_))
   {
     cout<<"part_count_ "<<part_count_<<'\t';
-    cout<<"frame_max_count_ "<<frame_max_count_<<endl;
-    throw "wrapper_o_hdf: trying to add too many particles to frame";
+    cout<<"group_max_count_ "<<group_max_count_<<endl;
+    throw "wrapper_o_hdf: trying to add too many particles to group";
   }
   
   part_open_ = true;
@@ -192,21 +195,27 @@ void Wrapper_o_hdf::close_particle()
   part_open_ = false;
 }
 
-void Wrapper_o_hdf::close_frame()
+void Wrapper_o_hdf::close_group()
 {
   // make sure the particle is closed
-  if(frame_open_)
+  if(group_open_)
   {
     if(part_open_)
     {
       close_particle();
     }
-    if(part_count_ != frame_max_count_)
+    if(part_count_ != group_max_count_)
       throw "not enough particles added";
     
     
-    string frame_name_ = format_name(frame_index_);
-    Group* group_ = new Group(file_->openGroup(frame_name_));
+    string group_name_ = format_name(group_index_);
+    Group* group_;
+    
+    if(over_write_)
+      group_ = new Group(file_->createGroup(group_name_));
+    else
+      group_ = new Group(file_->openGroup(group_name_));
+  
     
     // shove into file
     
@@ -221,15 +230,21 @@ void Wrapper_o_hdf::close_frame()
     float fillvalue_f = 0;
     DSetCreatPropList plist_f;
     plist_f.setFillValue(PredType::NATIVE_FLOAT,&fillvalue_f);
-    plist_f.setChunk(1,&csize);
-    plist_f.setDeflate(9);
+    if(compress_)
+    {
+      plist_f.setChunk(1,&csize);
+      plist_f.setDeflate(9);
+    }
     
 
     int fillvalue_i = 0;
     DSetCreatPropList plist_i;
     plist_i.setFillValue(PredType::NATIVE_INT,&fillvalue_i);
-    plist_i.setChunk(1,&csize);
-    plist_i.setDeflate(9);
+    if(compress_)
+    {
+      plist_i.setChunk(1,&csize);
+      plist_i.setDeflate(9);
+    }
     
     csize = csize/2;
     complex_t fillvalue_c;
@@ -237,10 +252,13 @@ void Wrapper_o_hdf::close_frame()
     fillvalue_c.re = 0;
     DSetCreatPropList plist_c;
     plist_c.setFillValue(ctype,&fillvalue_c);
-    plist_c.setChunk(1,&csize);
-    plist_c.setDeflate(9);
-
-    hsize_t dim [] = {frame_max_count_};
+    if(compress_)
+    {
+      plist_c.setChunk(1,&csize);
+      plist_c.setDeflate(9);
+    }
+	
+    hsize_t dim [] = {group_max_count_};
     DataSpace space(1,dim);
     
     
@@ -259,7 +277,7 @@ void Wrapper_o_hdf::close_frame()
 	// 	cout<<int_map_(*it)<<endl;
 	// 	cout<<int_data_.size()<<endl;
 	// 	tmp_ptr_i = int_data_.at(int_map_(*it));
-	// 	for(int j = 0;j<frame_max_count_;++j)
+	// 	for(int j = 0;j<group_max_count_;++j)
 	// 	  cout<<tmp_ptr_i[j]<<'\t';
 	// 	cout<<endl;
 
@@ -272,7 +290,7 @@ void Wrapper_o_hdf::close_frame()
 	// 	cout<<float_map_(*it)<<endl;
 	// 	cout<<float_data_.size()<<endl;
 	//  	tmp_ptr_f = float_data_.at(float_map_(*it));
-	//  	for(int j = 0;j<frame_max_count_;++j)
+	//  	for(int j = 0;j<group_max_count_;++j)
 	//  	  cout<<tmp_ptr_f[j]<<'\t';
 	//  	cout<<endl;
 	
@@ -315,7 +333,7 @@ void Wrapper_o_hdf::close_frame()
     complex_data_.clear();
     
     
-    frame_open_ = false;
+    group_open_ = false;
 
     
   }
@@ -326,9 +344,9 @@ void Wrapper_o_hdf::finalize_wrapper()
 {
   if(wrapper_open_)
   {
-    if(frame_open_)
+    if(group_open_)
     {
-      close_frame();
+      close_group();
     }
     delete file_;
     file_ = NULL;
@@ -366,10 +384,10 @@ const set<D_TYPE>& Wrapper_o_hdf::get_content_tpyes() const
 string Wrapper_o_hdf::format_name(int in)const
 {
   std::ostringstream o;
-  o.width(6);
+  o.width(format_padding_);
   o.fill('0');
   o<<std::right<<in;
-  return  "frame" + o.str();
+  return  group_prefix_ + o.str();
 }
 
   
@@ -405,6 +423,9 @@ void Wrapper_o_hdf::set_value(D_TYPE type,const particle* p_in)
   case V_COMPLEX:
     p_in->get_value(type,tmpc);
     set_value(type,tmpc);
+    break;
+  case V_ERROR:
+    throw "you have hit a type that is not defined in enum_utils::v_type";
     break;
   }
 }
