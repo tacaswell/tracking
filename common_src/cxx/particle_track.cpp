@@ -106,28 +106,28 @@ void particle_track::set_prev(particle_track* n_prev){
 }
 
 
-const particle_track* particle_track::step_forwards(int n)const{
-  if(n==0)
-    return this;
+// const particle_track* particle_track::step_forwards(int n)const{
+//   if(n==0)
+//     return this;
 
-  if (next_ == NULL)
-    throw Ll_range_error("past front");
+//   if (next_ == NULL)
+//     throw Ll_range_error("past front");
 
     
-  //check for obo bugs
-  return next_->step_forwards(--n);
-}
+//   //check for obo bugs
+//   return next_->step_forwards(--n);
+// }
 
-const particle_track* particle_track::step_backwards(int n)const{
-  if(n==0)
-    return this;
+// const particle_track* particle_track::step_backwards(int n)const{
+//   if(n==0)
+//     return this;
 
-  if (prev_ == NULL)
-    throw Ll_range_error("past back");
+//   if (prev_ == NULL)
+//     throw Ll_range_error("past back");
   
-  //check for obo bugs
-  return prev_->step_backwards(--n);
-}
+//   //check for obo bugs
+//   return prev_->step_backwards(--n);
+// }
 
 bool particle_track::step_forwards(int n, const particle_track* & dest)const{
 
@@ -164,7 +164,7 @@ bool particle_track::step_backwards(int n, const particle_track* & dest)const{
 
   if(n==1)
   {
-    dest = next_;
+    dest = prev_;
     return true;
   }
   if(n<1)
@@ -175,7 +175,7 @@ bool particle_track::step_backwards(int n, const particle_track* & dest)const{
     
   
   //check for obo bugs
-  return next_->step_backwards(--n,dest);
+  return prev_->step_backwards(--n,dest);
 }
 
 

@@ -24,7 +24,7 @@ path_name = 'polyNIPAM_batch_12/20090820/2/t/'
 base_data_path = "/home/tcaswell/colloids/data/"
 base_proc_path = "/home/tcaswell/colloids/processed/"
 
-prog_path = "/home/tcaswell/misc_builds/prco3D/apps/"
+prog_path = "/home/tcaswell/misc_builds/basic_rel/apps/"
 
 contents = os.listdir(base_data_path +path_name)
 to_process = []
@@ -37,7 +37,7 @@ print to_process
 
 
 # make sure there is a  file
-f = h5py.File(base_proc_path + path_name +"goftheta.h5",'w')
+f = h5py.File(base_proc_path + path_name +"goftheta_hdf_12.h5",'w')
 f.close()
 
 for f in to_process:

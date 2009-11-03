@@ -25,7 +25,7 @@
 #include "track_list.h"
 #include "particle_track.h"
 #include "track_shelf.h"
-
+#include "track_box.h"
 using namespace tracking;
 using std::vector;
 using std::set;
@@ -109,8 +109,12 @@ void track_list::link_pairs(vector<pair<particle_track*, particle_track*> >& in)
     
       if(tmp_prev_particle!=NULL){
 	if(tmp_next_particle !=NULL)
-	  tracks->add_to_track(tmp_prev_particle->get_track_id(),tmp_next_particle );
-
+	{
+	  //tracks->add_to_track(tmp_prev_particle->get_track_id(),tmp_next_particle );
+	  (tmp_prev_particle->get_track())->push_back(tmp_next_particle);
+	  
+	}
+	
 	delete tmp_prev_particle->n_pos_link;
 	tmp_prev_particle->n_pos_link=NULL;
 	
@@ -474,8 +478,8 @@ void track_list::trivial_bonds(){
 	  tmp_prev_particle = ((tmp_next_particle->p_pos_link)->front()).first;
 	  if((tmp_prev_particle->n_pos_link)!=NULL && (tmp_prev_particle->n_pos_link)->size()==1){
 	    //add to tracks
-	    tracks->add_to_track(tmp_prev_particle->get_track_id(), tmp_next_particle);
-
+	    //tracks->add_to_track(tmp_prev_particle->get_track_id(), tmp_next_particle);
+	    (tmp_prev_particle->get_track())->push_back(tmp_next_particle);
 	  }
 	}
       

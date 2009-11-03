@@ -100,7 +100,7 @@ int main(int argc, const char * argv[])
   
 
   string proc_file = base_proc_path + file_path + file_name + ".h5";
-  string out_file = base_proc_path + file_path + out_name + ".h5";
+  string out_file = base_proc_path + file_path + out_name + "_12.h5";
   cout<<"file to read in: "<<proc_file<<endl;
   cout<<"file that will be written to: "<<out_file<<endl;
 
@@ -142,7 +142,7 @@ int main(int argc, const char * argv[])
 
     
     Pair dims = wh.get_dims();
-    hash_case hcase(box,dims,10,wh.get_num_frames());
+    hash_case hcase(box,dims,12,wh.get_num_frames());
 
     cout<<"hash case filled"<<endl;
     
@@ -155,7 +155,7 @@ int main(int argc, const char * argv[])
     //hcase.print();
 
     
-    Corr_goftheta goft(2000,(float)10,file_name);
+    Corr_goftheta goft(2000,(float)12,file_name);
     cout<<"made corr obj"<<endl;
     
     hcase.compute_corr(goft);

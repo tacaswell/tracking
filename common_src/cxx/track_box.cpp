@@ -35,6 +35,13 @@ using namespace tracking;
 using utilities::Array;
 using utilities::Tuple;
 
+using std::vector;
+using std::pair;
+
+
+typedef unsigned int unt;
+
+
 int track_box::running_count_ = 0;
 
 track_box::track_box(particle_track * first){
@@ -55,11 +62,13 @@ void track_box::print(){
 const particle_track* track_box::at(int n)const{
   if (n>length_)
     return NULL;
+  const particle_track * tmp;
   if(n<length_/2)
-    return t_first_->step_forwards(n);
+    t_first_->step_forwards(n,tmp);
   else
-    return t_last_->step_backwards(n);
-
+    t_last_->step_backwards(length_ - n-1,tmp);
+  
+  return tmp;
 }
 
 
@@ -170,3 +179,149 @@ void track_box::plot_intensity() const
       
 
 }
+
+
+void track_box::split_to_parts(track_shelf * shelf)
+{
+
+  const int buffer = 2;
+  const int d_range = 1;
+  const bool shift_edge_max = true;
+  
+  
+  
+  // extract data from track
+  vector<float> I(length_);
+  const particle_track * cur_part = NULL;
+  
+  for(int j = 0;j<length_;++j)
+  {
+    // fill I,pos,z
+    cur_part->get_value(utilities::D_I,I[j]);
+    cur_part = cur_part->get_next();
+    
+  }
+  
+  // identify local maximum
+  int l_max_count = 0;
+  
+  int d_range_sz = d_range +1;
+  vector<float> window;
+  window.clear();
+  window.resize(d_range_sz);
+  
+  vector<bool> local_maxes;
+  local_maxes.resize(length_);
+  
+
+  // the strange bounds excludes the ends from being local maximums
+  for(int j = 1; j<(length_-1);++j)
+  {
+
+   int wind_bot = (j-d_range)<0?0:(j-d_range);
+   int wind_top = (j+d_range+1)>length_?length_:(j+d_range+1);
+   
+    // assume the current 
+    local_maxes[j] = true;
+    
+    for(int k = wind_bot;k<wind_top;++k)
+    {
+      if(k==j)
+	continue;
+      else if(I[k] > I[j])
+      {
+	local_maxes[j] = false;
+	++l_max_count;
+      }
+    }
+  }
+  vector<int> peak_indx;
+  peak_indx.reserve(l_max_count);
+  for(int j = 0;j<length_;++j)
+    if(local_maxes[j])
+      peak_indx.push_back(j);
+  
+      
+
+  // sort out which local maximum to keep
+  for(int j = 0; j<(l_max_count-1);++j)
+  {
+    // see if the next peak is too close
+    if((peak_indx[j+1] - peak_indx[j])<2*buffer)
+    {
+      // see if the next peak is to close
+      if(j<(length_-2) && ((peak_indx[j+2] - peak_indx[j+1])<2*buffer))
+      {
+	// deal with 3 peak case
+	// if the middle peak is not highest, kill it
+	if(I[peak_indx[j+1]]<I[peak_indx[j]] ||
+	   I[peak_indx[j+1]]<I[peak_indx[j+2]])
+	{
+	  local_maxes.erase(local_maxes.begin()+j+1);
+	  --l_max_count;
+	}
+	// else kill the outer two
+	else
+	{
+	  local_maxes.erase(local_maxes.begin()+j);
+	  --l_max_count;
+	  
+	  local_maxes.erase(local_maxes.begin()+j+2);
+	  --l_max_count;
+	  --j;
+	}
+      }
+      else
+      {
+	// keep peak with higher intensity
+	if(I[peak_indx[j]]>I[peak_indx[j+1]])
+	{
+	  local_maxes.erase(local_maxes.begin()+j+1);
+	  --l_max_count;
+	}
+	else
+	{
+	  local_maxes.erase(local_maxes.begin()+j);
+	  --j;
+	  --l_max_count;
+	}
+	
+      }
+    }
+      
+  }
+    
+  // set up full regions
+  vector<pair<int,int> > regions;
+  regions.resize(l_max_count);
+  for(int j= 0; j<l_max_count;++j)
+  {
+    int tmp =peak_indx[j]-buffer;
+    regions[j].first = tmp<0?0:tmp;
+
+    tmp = peak_indx[j]+buffer+1;
+    regions[j].second = tmp>length_?length_:tmp;
+    // trim regions
+    if(j>0)
+    {
+      if(regions[j-1].second == regions[j].first)
+      {
+	--regions[j-1].second;
+	++regions[j].first;
+      }
+    }
+    
+  }
+  // do actual cuts
+  for(vector<pair<int,int> >::reverse_iterator rit = regions.rbegin();
+      rit<regions.rend();++rit)
+  {
+    const pair<int,int> tmp_pair = *rit;
+    
+    track_box * tmp_bx = split_track(tmp_pair.first,shelf);
+    tmp_bx.trim(0,tmp_pair.second-tmp_pair.first);
+  }
+  
+      
+}
+

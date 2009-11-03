@@ -57,17 +57,58 @@ using tracking::particle;
 
 const float pi = acos(-1);
 
+void Corr_goftheta::trim_nhood(const particle * p_in,const vector<const particle * > & nhood_in,vector<const particle * > &nhood_out) const
+{
+  int max = nhood_in.size();
+  float max_range_sq = max_range_*max_range_;
+  
+  bool *indx = new bool[max];
+  
+  int keep_count = 0;
 
-void Corr_goftheta::compute(const particle * p_in,const vector<const particle*> & nhood)
+  for(int j =0; j<max;++j)
+  {
+    if(p_in->distancesq(nhood_in[j]) < max_range_sq)
+    {
+      indx[j] = true;
+      ++keep_count;
+    }
+    else
+    {
+      indx[j] = false;
+    }
+  }
+  nhood_out.clear();
+  nhood_out.reserve(keep_count);
+  
+
+  
+  for(int j =0; j<max;++j)
+  {
+    if(indx[j])
+    {
+      nhood_out.push_back(nhood_in[j]);
+    }
+  }
+  delete [] indx;
+  
+
+}
+
+
+void Corr_goftheta::compute(const particle * p_in,const vector<const particle*> & nhood_in)
 {
   
   
   
-  int max_j = nhood.size();
+
   
   Tuple p_in_pos = p_in->get_position();
   
-
+  vector<const particle*> nhood;
+  trim_nhood(p_in,nhood_in,nhood);
+  int max_j = nhood.size();
+  
   
 //   vector<const particle*>::const_iterator p_end = nhood.end();
 //   for(vector<const particle*>::const_iterator cur_part = nhood.begin();

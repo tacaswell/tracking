@@ -254,7 +254,10 @@ void hash_shelf::get_region( int n, int m,
 void hash_shelf::get_region_px( int n, 
 				vector<const particle*> & out ,
 				int range_in_px) const
+  
 {
+
+  
   get_region(n,out,ceil(range_in_px/ppb_));
   
 }

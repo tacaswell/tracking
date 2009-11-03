@@ -109,19 +109,19 @@ public:
   const utilities::Tuple get_corrected_forward_disp()const;
 
   
-  /**
-     returns the particle n from the current particle forward down the
-     list where n=0 is the current particle.  If the end of the track
-     is reached   throws an error.
-   */
-  const particle_track* step_forwards(int n)const;
+//   /**
+//      returns the particle n from the current particle forward down the
+//      list where n=0 is the current particle.  If the end of the track
+//      is reached   throws an error.
+//    */
+//   const particle_track* step_forwards(int n)const;
   
-  /**
-     returns the particle n from the current particle backwards up the
-     list where n=0 is the current particle.  If the front of the
-     track is reached throws an error
-   */
-  const particle_track* step_backwards(int n)const;
+//   /**
+//      returns the particle n from the current particle backwards up the
+//      list where n=0 is the current particle.  If the front of the
+//      track is reached throws an error
+//    */
+//   const particle_track* step_backwards(int n)const;
 
   
   /**
@@ -154,6 +154,10 @@ public:
   void set_track(track_box* i_track);
 
   /**
+     clears the pointer to the track, used when cutting 
+   */
+
+  /**
      Sets the pointer to the next particle.  If next isn't NULL before
      being set, then this function thows the error "nuking the list"
      to prevent accidental destruction of the track.
@@ -170,6 +174,8 @@ public:
      pointer to the particle to be set as prev
    */
   void set_prev(particle_track* n_prev);
+
+  
 
 
   /**

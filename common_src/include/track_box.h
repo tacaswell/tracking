@@ -36,6 +36,7 @@ class Wrapper_out;
 namespace tracking{
 // forward declaration
 class particle_track;
+class track_shelf;
 
 
 /**
@@ -121,22 +122,13 @@ public:
      Outputs the particles in a track-centric format
    */
   void output_to_wrapper(utilities::Wrapper_out & wrapper) const;
-
-  /**
-     Splits the track at the given index and adds the new track to the track shelf pointed to
-   */
-  void split_track(int indx, track_shelf * shelf);
   
   /**
-     Trims the track it include only the particles between the indexes
-     given, the final track contains the particles (ind_start -
-     (ind_end -1)).  This is to stay with in the frame work of all the
-     standard library stuff which gives the end value as
-     'one-past-the-end'.
-     @param ind_start first particle to keep
-     @param ind_end first particle not to keep
+     splits the track into segments that correspond to a single particle
+     sliced in z.  The resulting new tracks are stored in the self
    */
-  void trim_track(int ind_start, int ind_end)
+  void split_to_parts(track_shelf * shelf);
+  
 protected:
   ///Pointer to first particle in track
   particle_track * t_first_;
@@ -148,6 +140,24 @@ protected:
   static int running_count_;
   ///unique ID of the track
   unsigned int id_;
+
+  
+  /**
+     Splits the track at the given index and adds the new track to the track shelf pointed to
+   */
+  track_box * split_track(int indx, track_shelf * shelf);
+  
+  /**
+     Trims the track it include only the particles between the indexes
+     given, the final track contains the particles (ind_start -
+     (ind_end -1)).  This is to stay with in the frame work of all the
+     standard library stuff which gives the end value as
+     'one-past-the-end'.
+     @param ind_start first particle to keep
+     @param ind_end first particle not to keep
+   */
+  void trim_track(int ind_start, int ind_end);
+
 
 };
 }

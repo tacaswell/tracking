@@ -103,8 +103,12 @@ private:
      count of the number of particles added
    */
   int parts_added_;
-  
 
+  /**
+     trims vectors to only include particles close enough to care about them
+   */  
+  void trim_nhood(const particle * p_in,const std::vector<const particle * > & nhood_in,std::vector<const particle * > &nhood_out) const;
+  
 };
 
 }

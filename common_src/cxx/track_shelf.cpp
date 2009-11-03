@@ -68,6 +68,8 @@ void track_shelf::add_new_track(particle_track* first_part){
     throw "null particle";
   track_box * tmp_box = new track_box(first_part);
   track_map.insert(pair<int,track_box*>(tmp_box->get_id(), tmp_box));
+  ++track_count_;
+  
 
 }
 
