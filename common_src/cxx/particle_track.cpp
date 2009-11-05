@@ -31,6 +31,7 @@
 #include "pair.h"
 #include "triple.h"
 #include "hash_shelf.h"
+
 using namespace tracking;
 using std::set;
 using utilities::Ll_range_error;
@@ -38,7 +39,7 @@ using utilities::Null_field;
 /*
 particle_track::particle_track(Wrapper_in * i_data, 
 			       Wrapper_out* o_out, int i_ind, 
-			       track_box* i_track)
+			       Track_box* i_track)
   :particle(i_data,  o_out,i_ind),next(NULL),prev(NULL),track(i_track)
   ,n_pos_link(NULL),p_pos_link(NULL){
 
@@ -48,23 +49,24 @@ particle_track::particle_track(Wrapper_in * i_data,
 */
 particle_track::particle_track(int i_ind,int frame)
   :particle_base(i_ind,frame),
+   n_pos_link(NULL),
+   p_pos_link(NULL),
    next_(NULL),
    prev_(NULL),
-   track(NULL) ,
-   shelf_(NULL),
-   n_pos_link(NULL),
-   p_pos_link(NULL){
+   track_(NULL) ,
+   shelf_(NULL)
+{
 
 }
 
 particle_track::particle_track(int i_ind,utilities::Tuple pos,unsigned int frame)
   :particle_base(i_ind,pos,frame),
+   n_pos_link(NULL),
+   p_pos_link(NULL),
    next_(NULL),
    prev_(NULL),
-   track(NULL) ,
-   shelf_(NULL),
-   n_pos_link(NULL),
-   p_pos_link(NULL)
+   track_(NULL) ,
+   shelf_(NULL)
 {
 }
 
@@ -89,10 +91,6 @@ void particle_track::set_next(particle_track* n_next){
   if(next_!=NULL)
     throw "nuking the list";
   next_ = n_next;
-//   forward_disp_[0] = (n_next -> get_value(utilities::D_XPOS))
-//     - get_value(utilities::D_XPOS);
-//   forward_disp_[1] = (n_next -> get_value(utilities::D_YPOS))
-//     - get_value(utilities::D_YPOS);
   forward_disp_ = (n_next -> get_position()) - position_;
   
 
@@ -105,29 +103,6 @@ void particle_track::set_prev(particle_track* n_prev){
   prev_ = n_prev;
 }
 
-
-// const particle_track* particle_track::step_forwards(int n)const{
-//   if(n==0)
-//     return this;
-
-//   if (next_ == NULL)
-//     throw Ll_range_error("past front");
-
-    
-//   //check for obo bugs
-//   return next_->step_forwards(--n);
-// }
-
-// const particle_track* particle_track::step_backwards(int n)const{
-//   if(n==0)
-//     return this;
-
-//   if (prev_ == NULL)
-//     throw Ll_range_error("past back");
-  
-//   //check for obo bugs
-//   return prev_->step_backwards(--n);
-// }
 
 bool particle_track::step_forwards(int n, const particle_track* & dest)const{
 
@@ -142,15 +117,19 @@ bool particle_track::step_forwards(int n, const particle_track* & dest)const{
     dest = next_;
     return true;
   }
-  if(n<1)
+  if(n==0)
   {
     dest = this;
     return true;
   }
+  if(n<0)
+    throw "negative forward step";
+  else
+  {
+    //check for obo bugs
+    return next_->step_forwards(--n,dest);
+  }
   
-  
-//check for obo bugs
-  return next_->step_forwards(--n,dest);
 }
 
 
@@ -178,29 +157,82 @@ bool particle_track::step_backwards(int n, const particle_track* & dest)const{
   return prev_->step_backwards(--n,dest);
 }
 
+bool particle_track::step_forwards(int n,  particle_track* & dest){
 
-void particle_track::set_track(track_box* i_track){
-  if(track!=NULL)
+  if (next_ == NULL)
+  {
+    dest = NULL;
+    return false;
+  }
+
+  if(n==1)
+  {
+    dest = next_;
+    return true;
+  }
+  if(n==0)
+  {
+    dest = this;
+    return true;
+  }
+  if(n<0)
+    throw "negative forward step";
+  else
+  {
+    //check for obo bugs
+    return next_->step_forwards(--n,dest);
+  }
+  
+}
+
+
+bool particle_track::step_backwards(int n, particle_track* & dest){
+
+  if (next_ == NULL)
+  {
+    dest = NULL;
+    return false;
+  }
+
+  if(n==1)
+  {
+    dest = prev_;
+    return true;
+  }
+  if(n<1)
+  {
+    dest = this;
+    return true;
+  }
+    
+  
+  //check for obo bugs
+  return prev_->step_backwards(--n,dest);
+}
+
+
+void particle_track::set_track(Track_box* i_track){
+  if(track_!=NULL)
     throw "moving between lists!";
-  track = i_track;
+  track_ = i_track;
 
 }
 
-track_box* particle_track::get_track()const{
-  if(track ==NULL)
+Track_box* particle_track::get_track()const{
+  if(track_ ==NULL)
   {
     throw Null_field("Particle does not have a track");   
   }
-  return track;
+  return track_;
 }
 
 
 int particle_track::get_track_id()const{
-  if (track ==NULL)
+  if (track_ ==NULL)
   {
     throw Null_field("Particle does not have a track");   
   }
-  return track->get_id();
+  return track_->get_id();
 }
 
 particle_track::~particle_track(){
@@ -211,50 +243,16 @@ particle_track::~particle_track(){
   n_pos_link = NULL;
 }
 
-
-// float particle_track::get_value(utilities::D_TYPE type) const{
-//   if(type == utilities::D_NEXT){
-//     if(next_==NULL)
-//       return -1;
-//     //    return next->get_value(utilities::D_UNQID);
-//     return next_->get_value(utilities::D_INDEX);
-//   }
-//   if(type == utilities::D_PREV){
-//     if(prev_==NULL)
-//       return -1;
-//     // tac 2009-04-10
-//     // changed to match the other one
-//     return prev_->get_value(utilities::D_INDEX);
-//   }
-//   if(type ==utilities::D_TRACKID)
-//     {
-
-//       if(track==NULL)
-// 	return -1;
-//       return track->get_id() ;
-      
-//     }
+particle_track *  particle_track::reset_track(Track_box * i_track,int & count)
+{
+  track_ = i_track;
+  ++count;
+  if(next_!=NULL)
+    return next_->reset_track(i_track, count);
+  else
+    return this;
   
-//   // tac 2009-07-17
-//   // added special cases to avoid call to wrappers
-//   if(type ==utilities::D_XPOS)
-//   {
-//     return position_[0];
-//   }
-//   if(type == utilities::D_YPOS)
-//   {
-//     return position_[1];
-//   }
-//   if(type == utilities::D_FRAME)
-//   {
-//     return frame_;
-//   }
-//   else
-//   {
-//     return particle_base::get_value(type);
-//   }
-  
-// }
+}
 
 
 float particle_track::distancesq_corrected(const particle_track* part_in)const{
@@ -271,10 +269,6 @@ float particle_track::distancesq_corrected(const particle_track* part_in)const{
 	     (part_in->position_ )  - ((part_in->shelf_)->get_cum_forward_disp()))
 	  ).magnitude_sqr();
 
-  //   float X =get_value(utilities::D_XPOS) - part_in->get_value(utilities::D_XPOS);
-  //   float Y =get_value(utilities::D_YPOS) - part_in->get_value(utilities::D_YPOS);
-  //   //  float Z =get_value(utilities::d_zpos) - part_in->get_value(utilities::d_zpos);
-  //   return X*X + Y*Y ;//+ Z*Z;
 }
 
  const utilities::Tuple particle_track::get_corrected_forward_disp()const
@@ -290,12 +284,12 @@ float particle_track::distancesq_corrected(const particle_track* part_in)const{
 void particle_track::clear_track_data(){
   next_ = NULL;
   prev_ = NULL;
-  track = NULL;
+  track_ = NULL;
 }
 
 bool particle_track::has_track()const
 {
-  if(track == NULL)
+  if(track_ == NULL)
   {
     return false;
   }

@@ -41,7 +41,7 @@ class Wrapper_out;
 
 namespace tracking{
 //forward declare classes
-class track_box;
+class Track_box;
 class particle_track;
 
 /**
@@ -54,21 +54,18 @@ class track_shelf{
 
 public:
   /**
-     Add a track to the shelf.  Evnetually this function will be the only
-     way to add a new track
+     Add a track to the shelf starting from a particle.
      @param first_part
      The first particle in the track
    */
   void add_new_track(particle_track* first_part);
-  /**
-     Adds a particle to the end of the track specified.
-     @param track
-     the unique id of the track to add the particle to
-     @param next_particle
-     pointer to the next particle to be added 
-   */
-  void add_to_track(int track, particle_track* next_particle);
 
+  /**
+    adds a pointer to a track_box to the shelf.  The shelf takes
+    responsibility for deleting the track when done.
+   */
+  void add_track(Track_box * track);
+  
   /**Removes the track specified.  Removes and destroys the track.  Be
      aware of this and make sure there arn't any dangling refernces
      left.   However, this does not clear the pointers amoung the member
@@ -79,11 +76,11 @@ public:
   void remove_track(int track);
   
   /**
-     Returns a pointer to the track_box for the specified track
+     Returns a pointer to the Track_box for the specified track
      @param track
      unique ID of track to be removed 
    */
-  track_box* get_track(int track);
+  Track_box* get_track(int track);
 
   /**
      Removes all tracks from the shelf that are shorter than n.
@@ -169,9 +166,9 @@ public:
   
 
   /**
-     Pass a function to all of the track_box objects contained
+     Pass a function to all of the Track_box objects contained
    */
-  void pass_fun_to_track(void(track_box::*fun)()const)const;
+  void pass_fun_to_track(void(Track_box::*fun)()const)const;
   /**
      Outputs the particles in a track-centric format
    */
@@ -192,12 +189,12 @@ protected:
       coding time) by not having the extra baggage to keep track of
       everything is worth it.  
   */
-  std::map<int,track_box*> track_map;  
+  std::map<int,Track_box*> track_map;  
 
   /**
      internal private function to do track removal to make maintianign code simpler
    */
-  void remove_track_internal_(  std::map<int,track_box*>::iterator it);
+  void remove_track_internal_(  std::map<int,Track_box*>::iterator it);
 
   /**
      number of tracks in the self

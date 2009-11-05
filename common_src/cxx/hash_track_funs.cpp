@@ -223,7 +223,7 @@ void hash_shelf::D_lots(utilities::Coarse_grain_array & Duu,
     {
       if((*it)->has_track())
       {
-	track_box* cur_track = (*it)->get_track();
+	Track_box* cur_track = (*it)->get_track();
 	if ((*it) == (cur_track->get_first()))
 	{
 	  ++it;
@@ -398,7 +398,7 @@ void hash_shelf::D_rr(utilities::Coarse_grain_array & Drr)const
     {
       if((*it)->has_track())
       {
-	track_box* cur_track = (*it)->get_track();
+	Track_box* cur_track = (*it)->get_track();
 	if ((*it) == (cur_track->get_first()))
 	{
 	  ++it;
@@ -460,25 +460,22 @@ void hash_shelf::D_rr(utilities::Coarse_grain_array & Drr)const
 	{
 	  const particle_track * tmp_box_part = *box_part;
 	  const particle_track * tmp_region_part = *region_part;
-	  while (true)
+	  bool not_past_end = true;
+	  
+	  not_past_end &= tmp_region_part->step_forwards(tau,tmp_region_part);
+	  not_past_end &= tmp_box_part   ->step_forwards(tau,tmp_box_part);
+	  while (not_past_end)
 	  {
-	    try
-	    {
-	      tmp_region_part = tmp_region_part->step_forwards(tau);
-	      tmp_box_part    = tmp_box_part   ->step_forwards(tau);
-	      const Tuple displacement_correction = 
-		(tmp_box_part->get_shelf())->get_cum_forward_disp();
-	      float box_r_tau = (tmp_box_part)->
-		get_r(center + (displacement_correction - cumulative_disp_));
-	      float region_r_tau = (tmp_region_part)->get_r(center);
-	      Drr.add_to_element(sep_r,tau-1,
-				 (box_r_tau - box_r_i) * (region_r_tau - region_r_i));
-	      
-	    }
-	    catch(Ll_range_error& e)
-	    {
-	      break;
-	    }
+	    const Tuple displacement_correction = 
+	      (tmp_box_part->get_shelf())->get_cum_forward_disp();
+	    float box_r_tau = (tmp_box_part)->
+	      get_r(center + (displacement_correction - cumulative_disp_));
+	    float region_r_tau = (tmp_region_part)->get_r(center);
+	    Drr.add_to_element(sep_r,tau-1,
+			       (box_r_tau - box_r_i) * (region_r_tau - region_r_i));
+	    not_past_end &= tmp_region_part->step_forwards(tau,tmp_region_part);
+	    not_past_end &= tmp_box_part   ->step_forwards(tau,tmp_box_part);
+	    
 	  }
 	}
       }

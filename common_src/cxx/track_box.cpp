@@ -29,8 +29,10 @@
 #include "part_def.h"
 
 #include "pair.h"
+#include "track_shelf.h"
 
 #include "gnuplot_i.hpp"
+
 using namespace tracking;
 using utilities::Array;
 using utilities::Tuple;
@@ -42,24 +44,36 @@ using std::pair;
 typedef unsigned int unt;
 
 
-int track_box::running_count_ = 0;
+int Track_box::running_count_ = 0;
 
-track_box::track_box(particle_track * first){
+// Track_box::Track_box(particle_track * first){
+//   t_first_ = first;
+//   t_last_ = first;
+
+//   id_ = running_count_++;
+//   if(first != NULL){
+//     first->set_track(this);
+//     length_ = 1;
+//   }
+// }
+
+
+Track_box::Track_box(particle_track * first){
   t_first_ = first;
-  t_last_ = first;
-
+  length_ = 0;
   id_ = running_count_++;
-  if(first != NULL){
-    first->set_track(this);
-    length_ = 1;
+  if(first != NULL)
+  {
+    first->reset_track(this,length_);
   }
 }
 
-void track_box::print(){
+
+void Track_box::print(){
   t_first_->print_t(length_);
 }
 
-const particle_track* track_box::at(int n)const{
+const particle_track* Track_box::at(int n)const{
   if (n>length_)
     return NULL;
   const particle_track * tmp;
@@ -71,8 +85,20 @@ const particle_track* track_box::at(int n)const{
   return tmp;
 }
 
+particle_track* Track_box::at(int n){
+  if (n>length_)
+    return NULL;
+  particle_track * tmp;
+  if(n<length_/2)
+    t_first_->step_forwards(n,tmp);
+  else
+    t_last_->step_backwards(length_ - n-1,tmp);
+  
+  return tmp;
+}
 
-void track_box::push_back(particle_track * next){
+
+void Track_box::push_back(particle_track * next){
   if( next==NULL)
     return;
 
@@ -89,7 +115,7 @@ void track_box::push_back(particle_track * next){
 
 
 //this needs some sanity checking/error handling
-// void track_box::set_track() const{
+// void Track_box::set_track() const{
 //   const particle_track * current_particle = t_first_;
   
 //   while(current_particle !=NULL){
@@ -98,7 +124,7 @@ void track_box::push_back(particle_track * next){
 //   }
 // }
 
-void track_box::extract_raw_disp(Array & output) const{
+void Track_box::extract_raw_disp(Array & output) const{
   output.clear(length_);
   const particle_track* working_part = t_first_;
   for(int j = 0; j<length_;++j)
@@ -111,7 +137,7 @@ void track_box::extract_raw_disp(Array & output) const{
 
 
 
-void track_box::extract_corrected_disp(Array & output) const{
+void Track_box::extract_corrected_disp(Array & output) const{
   output.clear(length_);
   const particle_track* working_part = t_first_;
   for(int j = 0; j<length_;++j)
@@ -122,7 +148,7 @@ void track_box::extract_corrected_disp(Array & output) const{
   
 }
 
-track_box::~track_box(){
+Track_box::~Track_box(){
   particle_track* cur_part = t_first_;
   particle_track* next_part = NULL;
   while(cur_part != NULL)
@@ -134,7 +160,7 @@ track_box::~track_box(){
 }
 
 
-void track_box::plot_intensity() const
+void Track_box::plot_intensity() const
 {
   std::vector<float> inten_data(length_);
   std::vector<float> x_data(length_);
@@ -181,12 +207,12 @@ void track_box::plot_intensity() const
 }
 
 
-void track_box::split_to_parts(track_shelf * shelf)
+void Track_box::split_to_parts(track_shelf * shelf)
 {
 
   const int buffer = 2;
   const int d_range = 1;
-  const bool shift_edge_max = true;
+  
   
   
   
@@ -318,10 +344,64 @@ void track_box::split_to_parts(track_shelf * shelf)
   {
     const pair<int,int> tmp_pair = *rit;
     
-    track_box * tmp_bx = split_track(tmp_pair.first,shelf);
-    tmp_bx.trim(0,tmp_pair.second-tmp_pair.first);
+    Track_box * tmp_bx = split_track(tmp_pair.first);
+    tmp_bx->trim_track(0,tmp_pair.second-tmp_pair.first);
+    shelf->add_track(tmp_bx);
   }
   
       
 }
 
+Track_box* Track_box::split_track(int split_point)
+{
+  // get first particle of new track
+  particle_track * back_first = at(split_point);
+
+  // set pointer to next on last particle of first segment to null
+  back_first->get_prev()->clear_next();
+
+  // set prev pointer of first particle of second section to null
+  back_first->clear_prev();
+  
+  // reduce length_ of first track
+  length_ = split_point;
+  
+  // make second track, return
+
+  return new Track_box(back_first);
+  
+}
+
+
+// write clear_forward and clear_backwards functions in track_box
+void trim_track(int start,int length)
+{
+  // set new first
+  t_first_ = at(start);
+  // walk backwards clearing track data
+  particle_track * to_clear_cur = t_first_->get_prev();
+  t_first_->clear_prev();
+  while(to_clear_cur!=NULL)
+  {
+    particel_track * to_clear_next = to_clear_cur->get_prev();
+    to_clear_cur->clear_track_data();
+    to_clear_cur = to_clear_next;
+  }
+  // set new length
+  length_ = length;
+  
+  // get new last particle
+  t_last_ = t_first_->step_forwards(length_);
+
+  
+  
+  // walk forward from last particle clearing track data
+//   to_clear_cur = t_last_->get_next();
+//   t_first_->clear_prev();
+//   while(to_clear_cur!=NULL)
+//   {
+//     particel_track * to_clear_next = to_clear_cur->get_prev();
+//     to_clear_cur->clear_track_data();
+//     to_clear_cur = to_clear_next;
+//   }
+}

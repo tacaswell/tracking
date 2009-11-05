@@ -36,7 +36,7 @@ using tracking::hash_case;
 using tracking::particle;
 
 using tracking::track_shelf;
-using tracking::track_box;
+using tracking::Track_box;
 
 
 using utilities::Wrapper_out;
@@ -98,16 +98,16 @@ void hash_box::output_to_wrapper(Wrapper_out & wrapper) const
 void track_shelf::output_to_wrapper(Wrapper_out & wrapper) const
 {
   wrapper.initialize_wrapper();
-  map<int,track_box*>::const_iterator myend =  track_map.end();
-  for(map<int,track_box*>::const_iterator it = track_map.begin();it!=myend;++it)
+  map<int,Track_box*>::const_iterator myend =  track_map.end();
+  for(map<int,Track_box*>::const_iterator it = track_map.begin();it!=myend;++it)
   {
-    track_box * cur_box = (it->second);
+    Track_box * cur_box = (it->second);
     cur_box->output_to_wrapper(wrapper);
   }
   wrapper.finalize_wrapper();
 }
 
-void track_box::output_to_wrapper(Wrapper_out & wrapper) const
+void Track_box::output_to_wrapper(Wrapper_out & wrapper) const
 {
   wrapper.open_group(id_,length_);
   particle_track * cur_part = t_first_;

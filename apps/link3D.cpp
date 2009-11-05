@@ -79,7 +79,7 @@ using tracking::particle;
 using tracking::hash_case;
 using tracking::Corr_gofr;
 using tracking::track_shelf;
-using tracking::track_box;
+using tracking::Track_box;
 static string base_proc_path = "/home/tcaswell/colloids/processed/";
 
 int main(int argc, const char * argv[])
@@ -154,7 +154,7 @@ int main(int argc, const char * argv[])
     };
     set<D_TYPE> data_types2 = set<D_TYPE>(tmp2, tmp2+4);
 
-    //tracks.pass_fun_to_track(&track_box::plot_intensity);
+    //tracks.pass_fun_to_track(&Track_box::plot_intensity);
     Wrapper_o_hdf hdf_w(out_file,data_types2,"track",true);
     hdf_w.set_compress(false);
     

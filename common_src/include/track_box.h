@@ -43,7 +43,7 @@ class track_shelf;
    Box class for dealing with tracks.  Essentially roling my own
    linked list class
 */
-class track_box{
+class Track_box{
 public:
   ///retruns the nth particle of the track.
   ///returns null if n > length
@@ -85,7 +85,7 @@ public:
   void extract_corrected_disp(utilities::Array & output) const;
   
   ///Constructor
-  track_box(particle_track * first);
+  Track_box(particle_track * first);
     
   ///Prints outs some representation of the track
   virtual void print();
@@ -97,7 +97,7 @@ public:
     return id_;
   }
 
-  virtual ~track_box();
+  virtual ~Track_box();
   
   /**
      outputs the particles in the track to what ever output
@@ -143,9 +143,10 @@ protected:
 
   
   /**
-     Splits the track at the given index and adds the new track to the track shelf pointed to
+     Splits the track at the given index and returns a pointer to the back
+     half of the track.
    */
-  track_box * split_track(int indx, track_shelf * shelf);
+  Track_box * split_track(int indx);
   
   /**
      Trims the track it include only the particles between the indexes
@@ -158,6 +159,10 @@ protected:
    */
   void trim_track(int ind_start, int ind_end);
 
+  /**
+     non-const version of at()
+   */
+  particle_track * at(int n) ;
 
 };
 }

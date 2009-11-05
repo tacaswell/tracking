@@ -53,10 +53,10 @@ using utilities::Cell;
 
 using namespace tracking;
 
-typedef  map<int,track_box*> tr_map;
+typedef  map<int,Track_box*> tr_map;
 
 track_shelf::~track_shelf(){
-  for(map<int,track_box*>::iterator it = track_map.begin();
+  for(map<int,Track_box*>::iterator it = track_map.begin();
       it!=track_map.end(); it++)
     delete it->second;
   std::cout<<"track dead"<<std::endl;
@@ -66,29 +66,26 @@ track_shelf::~track_shelf(){
 void track_shelf::add_new_track(particle_track* first_part){
   if(first_part ==NULL)
     throw "null particle";
-  track_box * tmp_box = new track_box(first_part);
-  track_map.insert(pair<int,track_box*>(tmp_box->get_id(), tmp_box));
+  Track_box * tmp_box = new Track_box(first_part);
+  track_map.insert(pair<int,Track_box*>(tmp_box->get_id(), tmp_box));
   ++track_count_;
   
 
 }
-
-void track_shelf::add_to_track(int track, particle_track* next_particle){
-  map<int,track_box*>::iterator it = track_map.find(track);
-  if(it == track_map.end())
-    throw "not in map";
-  if(next_particle ==NULL)
-    throw "null particle";
-  (it->second)->push_back(next_particle);
+void track_shelf::add_track(Track_box * track)
+{
+  track_map.insert(pair<int,Track_box*>(track->get_id(), track));
 }
 
+
+  
 void track_shelf::remove_track(int track){
-  map<int,track_box*>::iterator it = track_map.find(track);
+  map<int,Track_box*>::iterator it = track_map.find(track);
   remove_track_internal_(it);
 }
 
-track_box* track_shelf::get_track(int track){
-  map<int,track_box*>::iterator it = track_map.find(track);
+Track_box* track_shelf::get_track(int track){
+  map<int,Track_box*>::iterator it = track_map.find(track);
   if(it == track_map.end())
     throw "not in map";
   return it->second;
@@ -97,7 +94,7 @@ track_box* track_shelf::get_track(int track){
 void track_shelf::remove_short_tracks(int min_length){
   int tmp_length;
   
-  for(map<int,track_box*>::iterator it = track_map.begin();
+  for(map<int,Track_box*>::iterator it = track_map.begin();
       it!=track_map.end(); ){
       tmp_length = ((*it).second)->get_length();
       if( tmp_length< min_length){
@@ -112,7 +109,7 @@ void track_shelf::remove_short_tracks(int min_length){
 }
 
 void track_shelf::print(){
- for(map<int,track_box*>::iterator it = track_map.begin();
+ for(map<int,Track_box*>::iterator it = track_map.begin();
      it!=track_map.end(); it++)
    {
      cout<<"track id: "<<it->first<<endl;
@@ -123,12 +120,12 @@ void track_shelf::print(){
 
 
 // void track_shelf::set_shelf(){
-//   for(map<int,track_box* >::iterator it = track_map.begin();
+//   for(map<int,Track_box* >::iterator it = track_map.begin();
 //       it!= track_map.end(); it++)
 //     ((*it).second)->set_track();
 // }
 
-void track_shelf::remove_track_internal_(  map<int,track_box*>::iterator it)
+void track_shelf::remove_track_internal_(  map<int,Track_box*>::iterator it)
 {
   if(it == track_map.end())
     throw "not in map";
@@ -138,7 +135,7 @@ void track_shelf::remove_track_internal_(  map<int,track_box*>::iterator it)
 }
 
 void track_shelf::track_length_histogram(Histogram & hist_in){
-  for(map<int,track_box*>::iterator it = track_map.begin();
+  for(map<int,Track_box*>::iterator it = track_map.begin();
       it!=track_map.end(); it++)
     hist_in.add_data_point(((*it).second)->get_length());
 }
@@ -161,7 +158,7 @@ void track_shelf::msd(Svector<double> & msd_vec,Svector<int> & entry_count)const
 
   
 
-  for(map<int,track_box*>::const_iterator working_track = track_map.begin();
+  for(map<int,Track_box*>::const_iterator working_track = track_map.begin();
       working_track!=track_map.end(); working_track++)
     {
       
@@ -173,22 +170,20 @@ void track_shelf::msd(Svector<double> & msd_vec,Svector<int> & entry_count)const
 	not_past_end = true;
 
 	current = (*working_track).second->get_first();
-	
+	not_past_end = current->step_forwards(j+1,next);
 	while(not_past_end){
-	  try{
-	    next = current->step_forwards(j+1);
-	    disp_sq_sum += current->distancesq(next);
-	    ++tmp_count;
-	    current = next;
-	  }
-	  catch(Ll_range_error & e){
-	    not_past_end = false;
-	    msd_vec.data.at(j) += disp_sq_sum/tmp_count;
-	    ++(entry_count.data.at(j));
-	  }
+	  disp_sq_sum += current->distancesq(next);
+	  ++tmp_count;
+	  
+	  current = next;
+	  not_past_end = current->step_forwards(j+1,next);
 	}
+	msd_vec.data.at(j) += disp_sq_sum/tmp_count;
+	++(entry_count.data.at(j));
+	
       }
     }
+
 
   vector<double>::iterator it = msd_vec.data.begin();
   vector<int>::iterator it2 = entry_count.data.begin();
@@ -221,7 +216,7 @@ void track_shelf::msd_corrected(Svector<double> & msd_vec,Svector<int> & entry_c
 
   
 
-  for(map<int,track_box*>::const_iterator working_track = track_map.begin();
+  for(map<int,Track_box*>::const_iterator working_track = track_map.begin();
       working_track!=track_map.end(); working_track++)
     {
       
@@ -234,26 +229,25 @@ void track_shelf::msd_corrected(Svector<double> & msd_vec,Svector<int> & entry_c
 	not_past_end = true;
 	
 	current = (*working_track).second->get_first();
-	
+	not_past_end = current->step_forwards(j+1,next);
+
 	while(not_past_end){
-	  try{
-	    next = current->step_forwards(j+1);
-	    disp_sq_sum += current->distancesq_corrected(next);
-	    ++tmp_count;
-	    current = next;
-	  }
-	  catch(Ll_range_error & e){
-	      not_past_end = false;
-	      msd_vec.data.at(j) += disp_sq_sum;
-	      (entry_count.data.at(j))+=tmp_count;
-// 	      msd_vec.data.at(j) += disp_sq_sum/tmp_count;
-// 	      ++(entry_count.data.at(j));
-	  }
+	  disp_sq_sum += current->distancesq_corrected(next);
+	  ++tmp_count;
+
+	  current = next;
+	  not_past_end = current->step_forwards(j+1,next);
 	}
+	  
+	  
+	msd_vec.data.at(j) += disp_sq_sum;
+	(entry_count.data.at(j))+=tmp_count;
+	// 	      msd_vec.data.at(j) += disp_sq_sum/tmp_count;
+	// 	      ++(entry_count.data.at(j));
       }
+      
     }
   
-
   vector<double>::iterator it = msd_vec.data.begin();
   vector<int>::iterator it2 = entry_count.data.begin();
   for(;it<msd_vec.data.end();it++, it2++)
@@ -278,7 +272,7 @@ void track_shelf::msd_corrected(utilities::Counted_vector & msd)const
   
 
   bool not_past_end = false;
-  for(map<int,track_box*>::const_iterator working_track = track_map.begin();
+  for(map<int,Track_box*>::const_iterator working_track = track_map.begin();
       working_track!=track_map.end(); working_track++)
   {
       
@@ -321,7 +315,7 @@ void track_shelf::msd_corrected(utilities::Counted_vector & md,
   
 
   bool not_past_end = false;
-  for(map<int,track_box*>::const_iterator working_track = track_map.begin();
+  for(map<int,Track_box*>::const_iterator working_track = track_map.begin();
       working_track!=track_map.end(); working_track++)
   {
       
@@ -386,7 +380,7 @@ void track_shelf::msd_hist(int time_step ,utilities::Histogram & in) const
     throw "nonsense input";
   }
   
-  for(map<int,track_box*>::const_iterator working_track = track_map.begin();
+  for(map<int,Track_box*>::const_iterator working_track = track_map.begin();
       working_track!=track_map.end(); working_track++)
   {
     current = (*working_track).second->get_first();
@@ -485,10 +479,10 @@ void track_shelf::corrected_tracks_out(Cell & output, utilities::Generic_wrapper
 
 
 
-void track_shelf::pass_fun_to_track(void(track_box::*fun)()const)const
+void track_shelf::pass_fun_to_track(void(Track_box::*fun)()const)const
 {
-  map<int,track_box*>::const_iterator myend =  track_map.end();
-  for(map<int,track_box*>::const_iterator it = track_map.begin();
+  map<int,Track_box*>::const_iterator myend =  track_map.end();
+  for(map<int,Track_box*>::const_iterator it = track_map.begin();
       it!=myend;++it)
   {
     ((it->second)->*fun)();
