@@ -51,7 +51,7 @@ namespace tracking{
 */
 
 
-class master_box_t{
+class Master_box{
   
 public:
   
@@ -77,15 +77,15 @@ public:
   }
 
   
-  ///Constructor for a master_box_t based on
+  ///Constructor for a Master_box based on
   ///data read in from a txt file
-  master_box_t(utilities::params* prams_in);
+  Master_box(utilities::params* prams_in);
 
 
-  master_box_t();
+  Master_box();
     
   ///Returns the total number of particles contained in the
-  ///master_box_t.
+  ///Master_box.
   unsigned int size(){ return particle_vec_.size();}
 
   ///Cleans up hanging lists from the tracking procedure
@@ -103,7 +103,7 @@ public:
   void init(const utilities::Wrapper_in & w_in,utilities::Filter & filt);
   
 
-  ~master_box_t();
+  ~Master_box();
 
 protected:
   /**
@@ -120,7 +120,7 @@ protected:
      Pointer to wrapper to take care of particle location
      input data.  This class is responcible for creating
      and destroying this wrapper.  This pointer will be handed
-     to every particle that is part of this master_box_t.  The
+     to every particle that is part of this Master_box.  The
      exact type of wrapper that is made will be determined by the
      parameter object.
   */

@@ -74,7 +74,7 @@ using utilities::D_TYPE;
 using utilities::Generic_wrapper_hdf;
 
 
-using tracking::master_box_t;
+using tracking::Master_box;
 using tracking::particle;
 using tracking::hash_case;
 using tracking::Corr_gofr;
@@ -124,7 +124,7 @@ int main(int argc, const char * argv[])
     
 
     // fill the master_box
-    master_box_t box;
+    Master_box box;
     Filter_basic filt(proc_file);
     //    Filter_trivial filt;
     box.init(wh,filt);
@@ -145,6 +145,9 @@ int main(int argc, const char * argv[])
     
     tracks.remove_short_tracks(min_track_length);
     
+    track_shelf final_tracks;
+    
+
     cout<<tracks.get_track_count()<<endl;
     
     D_TYPE tmp2[] = {utilities::D_XPOS,
@@ -154,9 +157,17 @@ int main(int argc, const char * argv[])
     };
     set<D_TYPE> data_types2 = set<D_TYPE>(tmp2, tmp2+4);
 
+
+
+
+
     //tracks.pass_fun_to_track(&Track_box::plot_intensity);
     Wrapper_o_hdf hdf_w(out_file,data_types2,"track",true);
+
+
     hdf_w.set_compress(false);
+
+
     
     tracks.output_to_wrapper(hdf_w);
     

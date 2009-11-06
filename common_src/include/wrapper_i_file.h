@@ -29,8 +29,8 @@
 
 #ifndef WRAPPER_FILE
 #define WRAPPER_FILE
-namespace tracking{
-class params_file;
+namespace utilities{
+
 using std::map;
 /**
    Wrapper class for dealing with data from a text file.  This
@@ -38,28 +38,51 @@ using std::map;
    data is stored in space deliniated file with one particle per
    row with the orderin [indx, x, y, I, r2,E]
 */
-class wrapper_i_file:public wrapper_i_base{
+class Wrapper_i_file:public Wrapper_in{
 private:
   ///Pointer to the first data point of the 
   double * first;
+  double get_value(int ind,  utilities::D_TYPE type)const;
+  
 protected:
   ///number of rows(particles) that the 
   int rows;
 
   int cols;
   map<utilities::D_TYPE, int> contents;
-  void fill_data(string file_name, int row, int col);
+  void fill_data(std:string file_name, int row, int col);
+  vector<int> frame_edges_;
+  
 public:
-  int num_entries() const;
 
-  //  void print(int ind);
-  void print()const;
-  double get_value(int ind, utilities::D_TYPE type)const;
   
-  ~wrapper_i_file();
-  wrapper_i_file(params_file* param);
+  int                 get_value(int& out,
+				int ind,D_TYPE type, int frame) const ;
+  float               get_value(float& out,
+				int ind,D_TYPE type, int frame) const ;
+  std::complex<float> get_value(std::complex<float>& out,
+				int ind,D_TYPE type, int frame) const ;
+
+
+  std::set<D_TYPE>    get_data_types() const ;
+
+
+
+  int get_num_entries(int frame) const ;
+
+  int get_num_frames() const ;
+
+  bool contains_type(D_TYPE type) const ;
+
+  Tuple get_dims() const;
   
-  void fill_master_box(master_box_t<particle_track>& test) const;
+  ~Wrapper_i_file();
+  Wrapper_i_file(const std::string & fname,
+		 const std::set<utilities::D_TYPE>& dtypes,
+		 int rows,
+		 const std::vector<int>& frame_edges);
+  
+
 
 
 };

@@ -173,6 +173,12 @@ public:
      Outputs the particles in a track-centric format
    */
   void output_to_wrapper(utilities::Wrapper_out & wrapper) const;
+
+  /**
+     Splits all the tracks in the self in to sections that represent single
+     particles when the tracking is linking between z-planes
+   */
+  void split_to_parts(track_shelf & out_put_shelf);
   
   ///Constructor
   track_shelf():track_count_(0){};

@@ -49,7 +49,7 @@ class Wrapper_out;
 
 namespace tracking{
 class hash_box;
-class master_box_t;
+class Master_box;
 
 class Corr;
 /**
@@ -71,8 +71,8 @@ public:
 //   void push(particle_track * p);
 
 
-  ///constructor for eating a master_box_t
-  hash_shelf(master_box_t & mb, int imsz1, 
+  ///constructor for eating a Master_box
+  hash_shelf(Master_box & mb, int imsz1, 
 	      int imsz2, unsigned int ppb);
 
   ///Constructor that makes an empty hash_shelf

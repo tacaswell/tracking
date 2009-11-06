@@ -119,7 +119,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
     contents.insert(pair<utilities::D_TYPE, int>(wrapper::D_TRACKID,5));
 
 
-    master_box_t<particle>bt(&p_in);
+    Master_box<particle>bt(&p_in);
     
     track_shelf tracks;
     cout<<"total number of particles is: "<<bt.size()<<endl;

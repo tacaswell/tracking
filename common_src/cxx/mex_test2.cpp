@@ -70,7 +70,7 @@ using utilities::Histogram;
 extern void _main();
 
 //globals :(
-master_box_t<particle_track> master_box;
+Master_box<particle_track> master_box;
 hash_case hcase;
 track_shelf tracks;
 

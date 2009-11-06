@@ -45,6 +45,7 @@
 #include "coarse_grain_array.h"
 
 #include "exception.h"
+#include "part_def.h"
 using namespace tracking;
 
 
@@ -63,7 +64,7 @@ using std::pair;
 
 
 
-// void master_box_t::clean_pos_link()
+// void Master_box::clean_pos_link()
 // {
 //   for(unsigned int j = 0; j<particle_vec_.size();j++){
 //     delete particle_vec_.at(j)->pos_link;

@@ -68,7 +68,7 @@ void hash_case::print() const{
 // }
 
 
-hash_case::hash_case(master_box_t & mb,const utilities::Tuple & dims, 
+hash_case::hash_case(Master_box & mb,const utilities::Tuple & dims, 
 		     unsigned int ppb, int frames):inited(false){
   init(mb,dims,ppb,frames);
 
@@ -77,7 +77,7 @@ hash_case::hash_case(master_box_t & mb,const utilities::Tuple & dims,
 
 
 
-void hash_case::init(master_box_t & mb,const utilities::Tuple & dims, 
+void hash_case::init(Master_box & mb,const utilities::Tuple & dims, 
 		     unsigned int ppb, int frames){
 
   if(inited){

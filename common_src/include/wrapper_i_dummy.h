@@ -23,95 +23,92 @@
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
 
-#ifndef WRAPPER_I_HDF
-#define WRAPPER_I_HDF
+#ifndef WRAPPER_I_DUMMY
+#define WRAPPER_I_DUMMY
 
-#include "H5Cpp.h"
+
 
 #include <string>
 #include <vector>
 #include <map>
 
+#include <cmath>
+
 #include "wrapper_i.h"
-#include "data_map.h"
+
 #include "part_def.h"
 
+
 namespace utilities{
-
-class Params_hdf5;
-
 /**
-   Wrapper class for eating data from hdf files, take 2
+   Wrapper class for testing purposes
 */
-class Wrapper_i_hdf:public Wrapper_in{
+class Wrapper_i_dummy:public Wrapper_in{
 private:
-  /**
-     name for the data file
-  */
-  std::string file_name_;
-  
-  static std::string format_name(int in);
-  
-  std::set<utilities::D_TYPE> data_types_;
-  
-  Data_map d_mapi_;
-  Data_map d_mapf_;
-  Data_map d_mapc_;
-  
-
-  std::vector<std::vector<int*> > data_i_;
-  std::vector<std::vector<float*> > data_f_;
-  std::vector<std::vector<std::complex<float>*> > data_c_;
-
-  std::vector<int> frame_c_;
-  unsigned int  frame_count_;
-
-  unsigned int total_part_count_;
-  
-  void clean_data();
-  
-  void priv_init(int f_count =0, unsigned int start = 0);
-  
-  bool two_d_data_;
-  
-  std::vector<float> frame_zdata_;
+  std::set<D_TYPE> d_types_;
+  int frames_;
+  int count_;
   
   
-
-protected:
-
-  void init();
 public:
 
   int                 get_value(int& out,
-				int ind,D_TYPE type, int frame) const ;
+				int ind,D_TYPE type, int frame) const {
+    out = 0;
+    return out;
+  }
+  
   float               get_value(float& out,
-				int ind,D_TYPE type, int frame) const ;
+				int ind,D_TYPE type, int frame) const 
+  {
+    int perd = 6;
+    
+    out = sin(ind*(3.14/perd))*sin((3.14/perd)*ind);
+    return out;
+  }
+  
   std::complex<float> get_value(std::complex<float>& out,
-				int ind,D_TYPE type, int frame) const ;
+				int ind,D_TYPE type, int frame) const 
+  {
+    return out;
+  }
+  
 
 
-  std::set<D_TYPE>    get_data_types() const ;
+  std::set<D_TYPE>    get_data_types() const 
+  {
+    return d_types_;
+  }
+  
 
 
 
-  int get_num_entries(int frame) const ;
+  int get_num_entries(int frame) const {return count_;};
 
-  int get_num_frames() const ;
+  int get_num_frames() const {return frames_;};
 
-  bool contains_type(D_TYPE type) const ;
+  bool contains_type(D_TYPE in) const
+  {
+    return d_types_.find(in) != d_types_.end();
+  };
 
-  Tuple get_dims() const;
+  Tuple get_dims() const
+  {
+    return Tuple();
+  }
+  
 
 
   
-  ~Wrapper_i_hdf();
+  ~Wrapper_i_dummy(){};
   
  
-  Wrapper_i_hdf(std::string fname,
-		const std::set<utilities::D_TYPE>& dtypes,
-		int start=0,
-		int frames =0);
+  Wrapper_i_dummy(const std::set<utilities::D_TYPE>& d_types,int count,int frames):
+    d_types_(d_types),frames_(frames),count_(count)
+  {
+  }
+  
+
 
 
   

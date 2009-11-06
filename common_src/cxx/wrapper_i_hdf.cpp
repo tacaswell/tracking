@@ -57,7 +57,7 @@ using std::complex;
 
 using tracking::particle;
 
-Wrapper_i_hdf::Wrapper_i_hdf(std::string fname,std::set<utilities::D_TYPE> dtypes,int start,int f_count)
+Wrapper_i_hdf::Wrapper_i_hdf(std::string fname,const std::set<utilities::D_TYPE> &dtypes,int start,int f_count)
   :  file_name_(fname),data_types_(dtypes),total_part_count_(0),two_d_data_(true)
 {
   priv_init(f_count,start);

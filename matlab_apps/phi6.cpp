@@ -110,7 +110,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
     
 
     
-    master_box_t<particle>master_box(&p_in);
+    Master_box<particle>master_box(&p_in);
     cout<<"total number of particles is: "<<master_box.size()<<endl;;
     
     

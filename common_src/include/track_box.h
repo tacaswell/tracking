@@ -64,8 +64,8 @@ public:
   }
 
 
-  ///adds the particle next the end of the track
-  void push(particle_track* next);
+
+
   /**
      Extracts the raw posistion along the track
    */
@@ -89,7 +89,7 @@ public:
     
   ///Prints outs some representation of the track
   virtual void print();
-
+  ///adds the particle next the end of the track
   void push_back(particle_track* next);
 
   int get_id() const
@@ -127,20 +127,8 @@ public:
      splits the track into segments that correspond to a single particle
      sliced in z.  The resulting new tracks are stored in the self
    */
-  void split_to_parts(track_shelf * shelf);
+  void split_to_parts(track_shelf & shelf);
   
-protected:
-  ///Pointer to first particle in track
-  particle_track * t_first_;
-  //pointer to last particle in track
-  particle_track * t_last_;
-  ///length of path
-  int length_;
-  ///the number of tracks identified used for unique id's
-  static int running_count_;
-  ///unique ID of the track
-  unsigned int id_;
-
   
   /**
      Splits the track at the given index and returns a pointer to the back
@@ -155,10 +143,24 @@ protected:
      standard library stuff which gives the end value as
      'one-past-the-end'.
      @param ind_start first particle to keep
-     @param ind_end first particle not to keep
+     @param ind_end number of particles to keep
    */
-  void trim_track(int ind_start, int ind_end);
+  void trim_track(int ind_start, int length);
 
+
+protected:
+  ///Pointer to first particle in track
+  particle_track * t_first_;
+  //pointer to last particle in track
+  particle_track * t_last_;
+  ///length of path
+  int length_;
+  ///the number of tracks identified used for unique id's
+  static int running_count_;
+  ///unique ID of the track
+  unsigned int id_;
+
+  
   /**
      non-const version of at()
    */

@@ -104,7 +104,7 @@ int main(){
   {
     
     Wrapper_i_hdf5 wrap(contents);
-    master_box_t<particle_track> master_box;
+    Master_box<particle_track> master_box;
     wrap.fill_master_box(master_box);
     
     cout<<"total number of particles is: "<<master_box.size()<<endl;;
@@ -283,7 +283,7 @@ int main(){
   
   
 
-// //   master_box_t<particle_track>bt(&p_in,&p_out);
+// //   Master_box<particle_track>bt(&p_in,&p_out);
 // //   cout<<"total number of particles is: "<<bt.size()<<endl;;
   
 // //    int x_dim = 1385;

@@ -167,16 +167,17 @@ float particle_base::get_theta(const utilities::Tuple & origin) const{
 }
 
 void particle_base::print()const{
-  cout<<'('<<frame_<<','<<ind_<<')'<<'\t';
-  cout<<position_<<"\t\t";
-  // float tmp;
-//   wrapper_in_->get_value(tmp,ind_,utilities::D_XPOS,frame_);
-//   cout<<'['<<tmp<<',';
-//   wrapper_in_->get_value(tmp,ind_,utilities::D_YPOS,frame_);
-//   cout<<tmp<<']';
-  cout<<neighborhood_.size()<<"\t";
-  cout<<s_order_parameter_<<"\t";
-  cout<<abs(s_order_parameter_);
+  float tmp;
+  cout<<'('<<frame_<<','<<ind_<<')'<<'\t'<<wrapper_in_->get_value(tmp,ind_,utilities::D_I,frame_);
+  // cout<<position_<<"\t\t";
+//   // float tmp;
+// //   wrapper_in_->get_value(tmp,ind_,utilities::D_XPOS,frame_);
+// //   cout<<'['<<tmp<<',';
+// //   wrapper_in_->get_value(tmp,ind_,utilities::D_YPOS,frame_);
+// //   cout<<tmp<<']';
+//   cout<<neighborhood_.size()<<"\t";
+//   cout<<s_order_parameter_<<"\t";
+//   cout<<abs(s_order_parameter_);
   cout<<endl;
 }
 

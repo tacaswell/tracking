@@ -34,20 +34,18 @@
 #include "master_box_t.h"
 
 
-using namespace tracking;
+
 using std::cout;
 using std::ifstream;
 using std::endl;
 using std::ios;
 
-/**
-   Implementation for wrapper_i of files.
- */
 
-
-int wrapper_i_file::num_entries() const{
+int wrapper_i_file::get_num_entries() const{
   return rows;
 }
+
+
 
 void wrapper_i_file::fill_data(string file_name, int row, int col){
   rows = row;
@@ -82,7 +80,28 @@ void wrapper_i_file::fill_data(string file_name, int row, int col){
 }
 
 
-double wrapper_i_file::get_value(int ind,  utilities::D_TYPE type)const{
+
+  int                 get_value(int& out,
+				int ind,D_TYPE type, int frame) const
+  {
+  }
+
+  float               get_value(float& out,
+				int ind,D_TYPE type, int frame) const 
+  {
+  }
+  
+  std::complex<float> get_value(std::complex<float>& out,
+				int ind,D_TYPE type, int frame) const 
+  {
+    throw "wrapper_i_file: not implemented in this wrapper";
+    
+  }
+  
+
+
+
+double wrapper_i_file::get_value(int ind,  utilities::D_TYPE type,int frame)const{
 
   
   int data_posistion = data_layout_[type];
@@ -148,4 +167,4 @@ wrapper_i_file::wrapper_i_file(params_file* param):wrapper_i_base(param->contain
       }*/
 
 
-void wrapper_i_file::fill_master_box(master_box_t<particle_track>& test)const{};
+void wrapper_i_file::fill_master_box(Master_box<particle_track>& test)const{};

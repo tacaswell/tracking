@@ -46,7 +46,7 @@ public:
   virtual ~wrapper_i_ning();
   wrapper_i_ning(params_file* param);
   wrapper_i_ning(std::map<utilities::D_TYPE,int>map_in);
-  void fill_master_box(master_box_t<particle>& test)const;
+  void fill_master_box(Master_box<particle>& test)const;
 protected:
   ///Pointer to the first data point of the 
   double * first;

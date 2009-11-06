@@ -28,7 +28,7 @@
 
 #ifndef PARAMS_FILE
 #define PARAMS_FILE
-namespace tracking{
+namespace utilities{
 /**
    Class for dealing with the parameters of file based wrapper
    objects.

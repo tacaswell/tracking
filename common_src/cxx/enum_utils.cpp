@@ -92,9 +92,11 @@ std::string DT2str_s(D_TYPE in)
     return out;
   default:
     throw("unknown type");
-    break;
+  
+    
   }
-
+  return "";
+  
   
 }
 

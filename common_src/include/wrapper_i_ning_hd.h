@@ -38,7 +38,7 @@ class wrapper_i_ning_hd:public wrapper_i_ning{
 protected:
   void fill_data(std::string file_name, int row, int col);
 public:
-  void fill_master_box(master_box_t<particle_track>& test) const;
+  void fill_master_box(Master_box<particle_track>& test) const;
   wrapper_i_ning_hd(params_file* param);
 };
 }

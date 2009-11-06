@@ -71,7 +71,7 @@ using utilities::D_TYPE;
 using utilities::Generic_wrapper_hdf;
 
 
-using tracking::master_box_t;
+using tracking::Master_box;
 using tracking::particle;
 using tracking::hash_case;
 using tracking::Corr_goftheta;
@@ -126,7 +126,7 @@ int main(int argc, const char * argv[])
 
     
 
-    master_box_t box;
+    Master_box box;
     Filter_basic filt(proc_file);
     //    Filter_trivial filt;
     

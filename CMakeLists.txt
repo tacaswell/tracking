@@ -5,30 +5,33 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
 set(COMMON_SRC_PATH ${PROJECT_SOURCE_DIR}/common_src/cxx)
 
-
-
 SET(COMMON_SRC
- ${COMMON_SRC_PATH}/gofr_free.cpp
- ${COMMON_SRC_PATH}/hash_box.cpp
- ${COMMON_SRC_PATH}/hash_case.cpp
- ${COMMON_SRC_PATH}/hash_shelf.cpp
- ${COMMON_SRC_PATH}/particle_base.cpp
- ${COMMON_SRC_PATH}/function_cascades.cpp
- ${COMMON_SRC_PATH}/triple.cpp
- ${COMMON_SRC_PATH}/pair.cpp
- ${COMMON_SRC_PATH}/data_map.cpp
- ${COMMON_SRC_PATH}/enum_utils.cpp
- ${COMMON_SRC_PATH}/filter_basic.cpp
- ${COMMON_SRC_PATH}/master_box_t.cpp
- )
+  ${COMMON_SRC_PATH}/triple.cpp
+  ${COMMON_SRC_PATH}/pair.cpp
+  ${COMMON_SRC_PATH}/particle_base.cpp
+  ${COMMON_SRC_PATH}/enum_utils.cpp
+  ${COMMON_SRC_PATH}/master_box_t.cpp
+  )
+
+SET(COMMON_HASH_SRC
+  ${COMMON_SRC_PATH}/gofr_free.cpp
+  ${COMMON_SRC_PATH}/hash_box.cpp
+  ${COMMON_SRC_PATH}/hash_case.cpp
+  ${COMMON_SRC_PATH}/hash_shelf.cpp
+  ${COMMON_SRC_PATH}/function_cascades.cpp
+  )
 
 SET(COMMON_TRACK_SRC
   ${COMMON_SRC_PATH}/particle_track.cpp
   ${COMMON_SRC_PATH}/track_box.cpp
   ${COMMON_SRC_PATH}/track_list.cpp
   ${COMMON_SRC_PATH}/track_shelf.cpp 
-  ${COMMON_SRC_PATH}/hash_track_funs.cpp 
+
   )
+
+SET(HASH_TRAKC_SRC
+    ${COMMON_SRC_PATH}/hash_track_funs.cpp 
+)
 
 SET(UTIL_SRC
   ${COMMON_SRC_PATH}/array.cpp
@@ -43,6 +46,11 @@ SET(CORR_SRC
   ${COMMON_SRC_PATH}/corr_gofr.cpp
   ${COMMON_SRC_PATH}/corr_goftheta.cpp
 )
+
+SET(COMMON_WRAPPER_SRC
+  ${COMMON_SRC_PATH}/data_map.cpp
+)
+
 SET(MATLAB_WRAPPER_SRC
 
 )
@@ -59,8 +67,8 @@ SET(HDF_SRC
   ${COMMON_SRC_PATH}/wrapper_i_hdf.cpp
   ${COMMON_SRC_PATH}/wrapper_o_hdf.cpp
   ${COMMON_SRC_PATH}/generic_wrapper_hdf.cpp
+  ${COMMON_SRC_PATH}/filter_basic.cpp
   )
-
 
 find_package(HDF5 REQUIRED)
 include_directories(${HDF_INCLUDE_DIR})
@@ -68,9 +76,9 @@ include_directories(${TRACKING_SOURCE_DIR}/common_src/include)
 
 SET(CMAKE_CXX_FLAGS "-ansi -D_GNU_SOURCE -fPIC -fno-omit-frame-pointer -pthread -Wall ")
 
-if( (NOT COMPILE_MEX) AND (NOT  COMPILE_IDEN ))
+if( (NOT COMPILE_MEX) AND (NOT  COMPILE_IDEN ) AND (NOT COMPILE_TEST))
   set(COMPILE_BASIC 1)
-endif( (NOT COMPILE_MEX)  AND (NOT  COMPILE_IDEN ))
+endif( (NOT COMPILE_MEX)  AND (NOT  COMPILE_IDEN )AND (NOT COMPILE_TEST))
 
 if(COMPILE_MEX)
   MESSAGE(STATUS "making the mex files")
@@ -91,6 +99,9 @@ if(COMPILE_IDEN)
   add_subdirectory(iden/apps)
 endif(COMPILE_IDEN)
 
+if(COMPILE_TEST)
+  add_subdirectory(testing)
+endif(COMPILE_TEST)
 
 # #SET(CMAKE_CXX_COMPILER "/usr/bin/g++") 
 # SET(CMAKE_CXX_COMPILER "/usr/bin/g++-4.1") 

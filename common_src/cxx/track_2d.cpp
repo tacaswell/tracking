@@ -107,7 +107,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
   params_matlab p_out = params_matlab(plhs,contents,mxGetM(*prhs),contents.size());
   
   //load data from matlab
-  master_box_t<particle_track>bt(&p_in,&p_out);
+  Master_box<particle_track>bt(&p_in,&p_out);
   //make hash case
   hash_case s(bt,dims,25,(int)mxGetScalar(prhs[4]));
   //link tracks

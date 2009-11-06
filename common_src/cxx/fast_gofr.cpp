@@ -80,7 +80,7 @@ int main(int argc, char* argv[]) {
 
   
   // make master box
-  master_box_t<particle>bt(&p_in,&p_in);
+  Master_box<particle>bt(&p_in,&p_in);
 
   hash_shelf table(dims, ((int) max_range), 0);
 

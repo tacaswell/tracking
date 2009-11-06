@@ -276,9 +276,21 @@ private:
   /**
      Clears all of the data associated with the tracking
    */
-  virtual void clear_track_data();
+  void clear_track_data();
 
-
+  /**
+     Clears the track data form all particles after the current particle.
+     This leaves the current particle in the track as the last particle,
+     ie t_next_ == NULL
+   */
+  void clear_data_forward();
+  
+  /**
+     Clears the track data from all particles before this particle.
+     This leave this particle as the head of the track, ie t_prev_
+     ==NULL
+   */
+  void clear_data_backward();
 };
 }
 #endif

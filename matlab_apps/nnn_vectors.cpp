@@ -133,7 +133,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
     params_matlab p_out = params_matlab(plhs,contents,mxGetM(*prhs),
  					contents.size());
 
-    master_box_t<particle>bt(&p_in,&p_out);
+    Master_box<particle>bt(&p_in,&p_out);
     cout<<"total number of particles is: "<<bt.size()<<endl;;
   
 //     particle *p;

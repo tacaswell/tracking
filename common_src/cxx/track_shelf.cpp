@@ -112,7 +112,7 @@ void track_shelf::print(){
  for(map<int,Track_box*>::iterator it = track_map.begin();
      it!=track_map.end(); it++)
    {
-     cout<<"track id: "<<it->first<<endl;
+     //     cout<<"track id: "<<it->first<<endl;
      (it->second)->print();
    }
 }
@@ -489,4 +489,20 @@ void track_shelf::pass_fun_to_track(void(Track_box::*fun)()const)const
   }
 }
 
+
+void track_shelf::split_to_parts(track_shelf & output_shelf)
+{
+
+  if(&output_shelf == this)
+    throw "need to provide a second shelf to put trimmed tracks into";
   
+
+  map<int,Track_box*>::const_iterator myend =  track_map.end();
+  for(map<int,Track_box*>::const_iterator it = track_map.begin();
+      it!=myend;++it)
+  {
+    (it->second)->split_to_parts(output_shelf);
+  }
+  
+}
+

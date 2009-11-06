@@ -50,7 +50,7 @@ namespace tracking{
 class track_shelf;
 class hash_shelf;
 class track_list;
-class master_box_t;
+class Master_box;
 
 class Corr;
 /**
@@ -70,10 +70,10 @@ public:
   //assumse that incoming data has frames labeled sequentially
   //starting from 0
   //   template <class particle>
-  //   hash_case(master_box_t<particle> & mb,unsigned int imsz1, 
+  //   hash_case(Master_box<particle> & mb,unsigned int imsz1, 
   // 	     unsigned int imsz2, unsigned int ppb, int frames);
 
-//   hash_case(master_box_t & mb,unsigned int imsz1, 
+//   hash_case(Master_box & mb,unsigned int imsz1, 
 // 	    unsigned int imsz2, unsigned int ppb, int frames);
 
   /**
@@ -88,7 +88,7 @@ public:
      the number of frames.  It is assumed that the frames are numbered [0-frames)
 
   */
-  hash_case(master_box_t & mb,const utilities::Tuple & dims, 
+  hash_case(Master_box & mb,const utilities::Tuple & dims, 
 	    unsigned int ppb, int frames);
 
   
@@ -278,7 +278,7 @@ protected:
 	    
   
 
-  void  init(master_box_t & mb,const utilities::Tuple & dims, 
+  void  init(Master_box & mb,const utilities::Tuple & dims, 
 	     unsigned int ppb, int frames);
   
 

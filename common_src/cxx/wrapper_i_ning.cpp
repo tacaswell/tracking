@@ -164,4 +164,4 @@ wrapper_i_ning::~wrapper_i_ning(){
   free(first);
 }
 
-void wrapper_i_ning::fill_master_box(master_box_t<particle_track>& test)const{};
+void wrapper_i_ning::fill_master_box(Master_box<particle_track>& test)const{};

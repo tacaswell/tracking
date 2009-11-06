@@ -90,7 +90,7 @@ public:
   virtual ~Wrapper_i_matlab();
   Wrapper_i_matlab(params_matlab* param);
   Wrapper_i_matlab();
-  //void fill_master_box(tracking::master_box_t<tracking::particle_track>& test) const{};
+  //void fill_master_box(tracking::Master_box<tracking::particle_track>& test) const{};
   std::set<utilities::D_TYPE> get_data_types() const;
   void get_data_types(std::set<utilities::D_TYPE>&) const;
   

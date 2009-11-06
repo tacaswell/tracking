@@ -46,7 +46,7 @@
 namespace tracking
 {
 class hash_case;
-class master_box_t;
+class Master_box;
 
 }
 namespace utilities

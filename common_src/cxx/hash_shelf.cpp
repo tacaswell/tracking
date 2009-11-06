@@ -76,7 +76,7 @@ unsigned int hash_shelf::hash_function(const particle* p) const
   //        p->get_value(wrapper::D_XPOS)/ppb_);
 }
 
-hash_shelf::hash_shelf(master_box_t& mb, int imsz1, 
+hash_shelf::hash_shelf(Master_box& mb, int imsz1, 
 		       int imsz2, unsigned int PPB): ppb_(PPB)
 {
   img_dims_[0] = imsz1;

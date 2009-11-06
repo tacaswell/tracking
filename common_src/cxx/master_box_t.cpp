@@ -40,7 +40,7 @@ using std::cout;
 
 
 
-master_box_t::master_box_t(utilities::params* params_in )
+Master_box::Master_box(utilities::params* params_in )
   :in_wrapper_(NULL),own_wrapper_(false){
   
   init(params_in);
@@ -48,14 +48,14 @@ master_box_t::master_box_t(utilities::params* params_in )
 }
 
 
-master_box_t::master_box_t()
+Master_box::Master_box()
   :in_wrapper_(NULL),own_wrapper_(false){
   
 
 }
 
 
-void master_box_t::init(utilities::params* params_in){
+void Master_box::init(utilities::params* params_in){
   if(in_wrapper_!=NULL){
     std::cout<<"can't re-initialize"<<std::endl;
     return;
@@ -68,7 +68,7 @@ void master_box_t::init(utilities::params* params_in){
 }
 
 
-void master_box_t::init(const utilities::Wrapper_in & w_in, utilities::Filter & filt )
+void Master_box::init(const utilities::Wrapper_in & w_in, utilities::Filter & filt )
 {
   if(in_wrapper_!=NULL){
     std::cout<<"can't re-initialize"<<std::endl;
@@ -86,7 +86,7 @@ void master_box_t::init(const utilities::Wrapper_in & w_in, utilities::Filter & 
 }
 
 
-void master_box_t::priv_init()
+void Master_box::priv_init()
 {
   
   
@@ -129,13 +129,13 @@ void master_box_t::priv_init()
 
 
 
-void master_box_t::print(){
+void Master_box::print(){
   for(unsigned int j = 0; j<particle_vec_.size();++j)
     particle_vec_.at(j)->print();
 }
 
 
-master_box_t::~master_box_t(){
+Master_box::~Master_box(){
   //deletes the particles it made
   for(unsigned int j = 0; j<particle_vec_.size();++j)
     {

@@ -79,13 +79,6 @@ void particle_track::print_t(int more)const{
   
 }
 
-// void particle_track::print()const{
-//   cout<<"'";
-//   particle_base::print();
-
-
-// }
-
 
 void particle_track::set_next(particle_track* n_next){
   if(next_!=NULL)
@@ -188,7 +181,7 @@ bool particle_track::step_forwards(int n,  particle_track* & dest){
 
 bool particle_track::step_backwards(int n, particle_track* & dest){
 
-  if (next_ == NULL)
+  if (prev_ == NULL)
   {
     dest = NULL;
     return false;
@@ -313,4 +306,32 @@ const utilities::Tuple particle_track::get_corrected_pos()const
       return utilities::Tuple();
     }
   return position_ - shelf_->get_cum_forward_disp();
+}
+
+
+void particle_track::clear_data_forward()
+{
+  particle_track * next_part = next_;
+  next_ = NULL;
+  if(next_part !=NULL)
+  {
+    next_part->prev_ = NULL;
+    next_part->track_= NULL;
+    next_part->clear_data_forward();
+  }
+  
+}
+
+
+void particle_track::clear_data_backward()
+{
+  particle_track * next_part = prev_;
+  prev_ = NULL;
+  if(next_part !=NULL)
+  {
+    next_part->next_ = NULL;
+    next_part->track_= NULL;
+    next_part->clear_data_backward();
+  }
+  
 }

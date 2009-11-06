@@ -69,7 +69,7 @@ using utilities::Filter_basic;
 using utilities::Filter_trivial;
 using utilities::D_TYPE;
 
-using tracking::master_box_t;
+using tracking::Master_box;
 using tracking::particle;
 using tracking::hash_case;
 
@@ -184,7 +184,7 @@ int main(int argc, const char * argv[])
     cout<<"number of entries in wrapper: "<<wp.get_num_entries(-1)<<endl;
     
 
-    master_box_t box;
+    Master_box box;
     //Filter_basic filt("25-0_mid_0.h5");
     Filter_trivial filt;
     
