@@ -262,10 +262,13 @@ void Track_box::split_to_parts(track_shelf & shelf)
       else if(I[k] > I[j])
       {
 	local_maxes[j] = false;
-	++l_max_count;
       }
     }
+    if(local_maxes[j])
+      ++l_max_count;
   }
+  //  cout<<"l_max_count"<<l_max_count<<endl;
+  
   vector<int> peak_indx;
   peak_indx.reserve(l_max_count);
   for(int j = 0;j<length_;++j)
@@ -281,25 +284,25 @@ void Track_box::split_to_parts(track_shelf & shelf)
     if((peak_indx[j+1] - peak_indx[j])<2*buffer)
     {
       // see if the next peak is to close
-      if(j<(length_-2) && ((peak_indx[j+2] - peak_indx[j+1])<2*buffer))
+      if(j<(l_max_count-2) && ((peak_indx[j+2] - peak_indx[j+1])<2*buffer))
       {
 	// deal with 3 peak case
 	// if the middle peak is not highest, kill it
 	if(I[peak_indx[j+1]]<I[peak_indx[j]] ||
 	   I[peak_indx[j+1]]<I[peak_indx[j+2]])
 	{
-	  local_maxes.erase(local_maxes.begin()+j+1);
+	  peak_indx.erase(peak_indx.begin()+j+1);
 	  --l_max_count;
 	}
 	// else kill the outer two
 	else
 	{
-	  local_maxes.erase(local_maxes.begin()+j);
-	  --l_max_count;
-	  
-	  local_maxes.erase(local_maxes.begin()+j+2);
-	  --l_max_count;
+	  // remove the second one first to not screw up the indexing of the other one
+	  peak_indx.erase(peak_indx.begin()+j+2);
+	  peak_indx.erase(peak_indx.begin()+j);
 	  --j;
+	  --(--l_max_count);
+
 	}
       }
       else
@@ -307,12 +310,12 @@ void Track_box::split_to_parts(track_shelf & shelf)
 	// keep peak with higher intensity
 	if(I[peak_indx[j]]>I[peak_indx[j+1]])
 	{
-	  local_maxes.erase(local_maxes.begin()+j+1);
+	  peak_indx.erase(peak_indx.begin()+j+1);
 	  --l_max_count;
 	}
 	else
 	{
-	  local_maxes.erase(local_maxes.begin()+j);
+	  peak_indx.erase(peak_indx.begin()+j);
 	  --j;
 	  --l_max_count;
 	}
@@ -335,10 +338,24 @@ void Track_box::split_to_parts(track_shelf & shelf)
     // trim regions
     if(j>0)
     {
-      if(regions[j-1].second == regions[j].first)
+      if(regions[j-1].second > regions[j].first)
       {
+
+	
+// 	cout<<"pre_trim"<<endl;
+// 	cout<<regions[j-1].first<<","<<regions[j-1].second<<endl;
+// 	cout<<regions[j].first<<","<<regions[j].second<<endl;
+
+
+	
 	--regions[j-1].second;
 	++regions[j].first;
+	
+// 	cout<<"post_trim"<<endl;
+// 	cout<<regions[j-1].first<<","<<regions[j-1].second<<endl;
+// 	cout<<regions[j].first<<","<<regions[j].second<<endl;
+
+
       }
     }
     
@@ -364,13 +381,17 @@ Track_box* Track_box::split_track(int split_point)
 
   // set pointer to next on last particle of first segment to null
   t_last_ = (back_first->get_prev());
-  t_last_->clear_next();
-
+  if(split_point !=0)
+    t_last_->clear_next();
+  else if (split_point==0)
+    t_first_=NULL;
+  
+  length_ = split_point;
   // set prev pointer of first particle of second section to null
   back_first->clear_prev();
   
   // reduce length_ of first track
-  length_ = split_point;
+  
 
   // make second track, return
 
@@ -386,13 +407,15 @@ void Track_box::trim_track(int start,int length)
   t_first_ = at(start);
   // walk backwards clearing track data
 
-  // set new length
-  length_ = length;
+
+
   
   // get new last particle
-  if(! t_first_->step_forwards(--length_,t_last_))
+  if(! t_first_->step_forwards(length - 1,t_last_))
     throw "track_box: stepped out of track";
   
+  // set new length
+  length_ = length;
   t_first_->clear_data_backward();
   t_last_->clear_data_forward();
   

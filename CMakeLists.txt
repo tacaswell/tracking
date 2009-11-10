@@ -29,7 +29,7 @@ SET(COMMON_TRACK_SRC
 
   )
 
-SET(HASH_TRAKC_SRC
+SET(HASH_TRACK_SRC
     ${COMMON_SRC_PATH}/hash_track_funs.cpp 
 )
 

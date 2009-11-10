@@ -61,9 +61,10 @@ public:
   float               get_value(float& out,
 				int ind,D_TYPE type, int frame) const 
   {
-    int perd = 6;
+    //int perd = 4;
+    //    out = sin(ind*(3.14/perd))*sin((3.14/perd)*ind);
+    out = ind;
     
-    out = sin(ind*(3.14/perd))*sin((3.14/perd)*ind);
     return out;
   }
   

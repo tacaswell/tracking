@@ -85,19 +85,20 @@ static string base_proc_path = "/home/tcaswell/colloids/processed/";
 int main(int argc, const char * argv[])
 {
 
-  if(argc != 3)
+  if(argc != 4)
   {
-    cerr<< "wrong number of args args"<<endl;
+    cerr<< "wrong number of args "<<endl;
     return 0;
   }
   
   
   string file_path = string(argv[1]);
   string file_name = string(argv[2]);
+  string save_name = string(argv[3]);
   
 
   string proc_file = base_proc_path + file_path + file_name + ".h5";
-  string out_file = base_proc_path + file_path + file_name + "_tracks_mid_part" + ".h5";
+  string out_file = base_proc_path + file_path + file_name + "_" + save_name + ".h5";
   cout<<"file to read in: "<<proc_file<<endl;
   cout<<"file that will be written to: "<<out_file<<endl;
 
@@ -120,8 +121,9 @@ int main(int argc, const char * argv[])
 
   
     // set up the input wrapper
+    cout<<"here"<<endl;
     Wrapper_i_hdf wh(proc_file,data_types,0,20);
-    
+    cout<<"here"<<endl;
 
     // fill the master_box
     Master_box box;
@@ -146,9 +148,11 @@ int main(int argc, const char * argv[])
     tracks.remove_short_tracks(min_track_length);
     
     track_shelf final_tracks;
+    tracks.split_to_parts(final_tracks);
     
 
     cout<<tracks.get_track_count()<<endl;
+    cout<<final_tracks.get_track_count()<<endl;
     
     D_TYPE tmp2[] = {utilities::D_XPOS,
 		     utilities::D_YPOS,
@@ -156,10 +160,6 @@ int main(int argc, const char * argv[])
 		     utilities::D_ZPOS
     };
     set<D_TYPE> data_types2 = set<D_TYPE>(tmp2, tmp2+4);
-
-
-
-
 
     //tracks.pass_fun_to_track(&Track_box::plot_intensity);
     Wrapper_o_hdf hdf_w(out_file,data_types2,"track",true);
@@ -169,7 +169,7 @@ int main(int argc, const char * argv[])
 
 
     
-    tracks.output_to_wrapper(hdf_w);
+    final_tracks.output_to_wrapper(hdf_w);
     
  
   }

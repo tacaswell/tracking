@@ -64,19 +64,23 @@ std::string DT2str_s(D_TYPE in)
     out = std::string("prev_part") ; 
     return out; 
   case D_DX: 
-    out =  "x_shift";
-    break; 
+    out =  std::string("x_shift");
+    return out;
   case D_DY: 
-    out =  "y_shift";
+    out =  std::string("y_shift");
+    return out;
     break; 
   case D_ORGX: 
     out =  "org_x";
+    return out;
     break; 
   case D_ORGY: 
     out = "org_y";
+    return out;
     break; 
   case D_ZPOS: 
     out = std::string("z") ; 
+    return out;
     return out;
   case D_UNQID: 
     out = std::string("unique_id") ; 
@@ -92,10 +96,8 @@ std::string DT2str_s(D_TYPE in)
     return out;
   default:
     throw("unknown type");
-  
-    
   }
-  return "";
+  return out;
   
   
 }

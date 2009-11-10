@@ -99,22 +99,25 @@ void particle_track::set_prev(particle_track* n_prev){
 
 bool particle_track::step_forwards(int n, const particle_track* & dest)const{
 
-  if (next_ == NULL)
-  {
-    dest = NULL;
-    return false;
-  }
-
-  if(n==1)
-  {
-    dest = next_;
-    return true;
-  }
   if(n==0)
   {
     dest = this;
     return true;
   }
+
+  if (next_ == NULL)
+  {
+    dest = NULL;
+    return false;
+  }
+    
+  if(n==1)
+  {
+    dest = next_;
+    return true;
+  }
+
+
   if(n<0)
     throw "negative forward step";
   else
@@ -152,6 +155,13 @@ bool particle_track::step_backwards(int n, const particle_track* & dest)const{
 
 bool particle_track::step_forwards(int n,  particle_track* & dest){
 
+  
+  if(n==0)
+  {
+    dest = this;
+    return true;
+  }
+  
   if (next_ == NULL)
   {
     dest = NULL;
@@ -160,14 +170,12 @@ bool particle_track::step_forwards(int n,  particle_track* & dest){
 
   if(n==1)
   {
+    
     dest = next_;
     return true;
   }
-  if(n==0)
-  {
-    dest = this;
-    return true;
-  }
+  
+
   if(n<0)
     throw "negative forward step";
   else

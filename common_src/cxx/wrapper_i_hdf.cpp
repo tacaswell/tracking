@@ -73,7 +73,10 @@ void Wrapper_i_hdf::priv_init(int f_count,unsigned int start)
   
   try
   {
+    
+    
     H5File * file = new H5File( file_name_, H5F_ACC_RDONLY );  
+    
     Group * group = new Group(file->openGroup("/"));
     Attribute * tmpa =  new Attribute(group->openAttribute("number-of-planes"));
     tmpa->read(PredType::NATIVE_INT,&frame_count_);
@@ -147,6 +150,7 @@ void Wrapper_i_hdf::priv_init(int f_count,unsigned int start)
 	
 	if(two_d_data_ && (*it)==utilities::D_ZPOS)
 	  continue;
+
 	
 	DataSet * dset = new DataSet(frame->openDataSet(DT2str_s(*it)));
 	DataSpace dspace = dset-> getSpace();

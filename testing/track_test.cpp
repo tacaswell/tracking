@@ -110,7 +110,6 @@ int main(int argc, const char * argv[])
 
     
     Track_box* track_box = new Track_box(box.get_particle(0));
-    track_box->print();
     for(unsigned int j = 1; j<box.size();++j)
     {
       track_box->push_back(box.get_particle(j));
