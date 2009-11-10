@@ -123,47 +123,43 @@ stand alone/IDL GUI
 </TABLE>
 
 The primary advantage of this implementation is that it is
-significantly faster than implantation in IDL or MATLAB simply because
-they are interpreted languages (~20x against the Blair code but I think
-that can be improved).  This implementation also provides
-structural advantages and allows information about the particle's
-spatial and temporal neighborhood to be quickly extracted.
+significantly faster than implantation in IDL or MATLAB.
+It is at least ~20x than Dan Blair's MATLAB code.
 
-The code is very flexible and can be readily adapted to N-dimensions,
-but currently only 2 and 3 dimensions have been implemented.  The
-format of the input and output data is extremely flexible.  There are
-wrapper classes that can be quickly subclassed to allow the program to
-take input/give output to basically anything.  Currently there are
-implementations for input/output from/to text files and MATLAB.
+
+The code is flexible and can be adapted to N-dimensions,
+but only 2 and 3 dimensions have been implemented. Input and
+output are done through wrapper classes so with minimal new code
+basically any input/output format can be dealt with.  Currently there are
+wrappers for text, MATLAB, and HDF5.
 
 Currently track linking and a few basic static measurements
- (g(r),\f$\Phi_6\f$) have been implemented, but the long term goal is
- to move all static and dynamic measurements in to this frame work.
- The frame work allows any measurement that requires information about
- a particles neighborhood can be efficiently calculated.
+ (g(r),\f$\Phi_6\f$,\f$g(\theta)\f$) have been implemented, but the
+ long term goal is to move all static and dynamic measurements in to
+ this frame work.  The framework allows any measurement that requires
+ information about a particle's neighborhood to be efficiently
+ calculated.
+
 
  The identification code is a modified version of Peter Lu's particle
  identification code.  The most current version of PLuTARC, as well as
  a MATLAB wrapper for it, is available at <a
  href="http://plutarc.sourceforge.net/">http://plutarc.sourceforge.net/</a>
  
-
-
-
  
-The most recent code is revision TREV avaialble at
+The most recent code is revision, TREV,is available at
 <KBD>svn://innoue.uchicago.edu/tracking/trunk</KBD> or as a <a
 href="http://jfi.uchicago.edu/~tcaswell/track_doc/tars/tarball_rev_TTAR.tar">
-tarball</a>.  This code should be reasonably portable to other *nix systems,
+tarball</a>.  This code should be reasonably portable to *nix systems,
 but the library paths will need to be fixed.  As it is the code will not
 work with matlab on a windows machine, but might work as a stand alone. (There
 are lots of couts in the code which matlab in linux can cope with, but matlab
 on windows apparently can't (according to matlab documentation)).
 
-The current 'stable' version is 0.1 and is available at 
-<KBD>svn://innoue.uchicago.edu/tracking/tags/tracking-0.1</KBD>
+The current 'stable' version is 0.2 and is available at 
+<KBD>svn://innoue.uchicago.edu/tracking/tags/tracking-0.2</KBD>
 or as a <a
-href="http://jfi.uchicago.edu/~tcaswell/track_doc/tars/tracking-0.1.tar">
+href="http://jfi.uchicago.edu/~tcaswell/track_doc/tars/tracking-0.2.tar">
 tarball</a>.
 
 Funded by a Keck Grant to Heinrich Jaeger, Sidney Nagel, Wendy Zhang 
