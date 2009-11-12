@@ -32,7 +32,7 @@
 #define TRACK_LIST
 namespace tracking{
 
-class track_shelf;
+class Track_shelf;
 /**
    List wrapper class for us in the track linking portion of the code.
    It is a list of particle_track pointers and functions to do the looping
@@ -55,7 +55,7 @@ public:
   ///Sets up the object to start linking tracks.  The object passed in
   ///is DESTROYED (eventually), be aware of this!
   track_list(std::list<particle_track*>* first_list,
-	     float i_max_disp,track_shelf* in_tracks);
+	     float i_max_disp,Track_shelf* in_tracks);
 
   ~track_list();
   
@@ -74,7 +74,7 @@ protected:
   ///list for the 'next' particles in the subnetworks
   //std::set<particle_track*,bool(*)(particle_track*,particle_track*)> n_sub_net;
   std::set<particle_track*> n_sub_net;
-  track_shelf* tracks;
+  Track_shelf* tracks;
 
   ///maximum distance a particle may move
   float max_disp;

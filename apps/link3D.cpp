@@ -78,7 +78,7 @@ using tracking::Master_box;
 using tracking::particle;
 using tracking::hash_case;
 using tracking::Corr_gofr;
-using tracking::track_shelf;
+using tracking::Track_shelf;
 using tracking::Track_box;
 static string base_proc_path = "/home/tcaswell/colloids/processed/";
 
@@ -122,7 +122,7 @@ int main(int argc, const char * argv[])
   
     // set up the input wrapper
     cout<<"here"<<endl;
-    Wrapper_i_hdf wh(proc_file,data_types,0,20);
+    Wrapper_i_hdf wh(proc_file,data_types);
     cout<<"here"<<endl;
 
     // fill the master_box
@@ -140,14 +140,14 @@ int main(int argc, const char * argv[])
     hash_case hcase(box,dims,pixel_per_box,wh.get_num_frames());
     cout<<"hash case filled"<<endl;
     
-    track_shelf tracks;
+    Track_shelf tracks;
     
     hcase.link(pixel_per_box,tracks);
-    int min_track_length = 4;
+    int min_track_length = 3;
     
     tracks.remove_short_tracks(min_track_length);
     
-    track_shelf final_tracks;
+    Track_shelf final_tracks;
     tracks.split_to_parts(final_tracks);
     
 
@@ -161,19 +161,25 @@ int main(int argc, const char * argv[])
     };
     set<D_TYPE> data_types2 = set<D_TYPE>(tmp2, tmp2+4);
 
+    
     //tracks.pass_fun_to_track(&Track_box::plot_intensity);
-    Wrapper_o_hdf hdf_w(out_file,data_types2,"track",true);
+    Wrapper_o_hdf hdf_w(out_file,data_types2,"frame",true);
+    cout<<"made wrapper"<<endl;
+    
 
-
-    hdf_w.set_compress(false);
+    //hdf_w.set_compress(false);
 
 
     
-    final_tracks.output_to_wrapper(hdf_w);
+    final_tracks.output_link_to_wrapper(hdf_w);
     
  
   }
   catch(const char * err){
+    std::cerr<<"caught on error: ";
+    std::cerr<<err<<endl;
+  } 
+  catch( char const * err){
     std::cerr<<"caught on error: ";
     std::cerr<<err<<endl;
   } 

@@ -77,7 +77,7 @@ using tracking::Master_box;
 using tracking::particle;
 
 
-using tracking::track_shelf;
+using tracking::Track_shelf;
 using tracking::Track_box;
 
 
@@ -128,7 +128,7 @@ int main(int argc, const char * argv[])
 //     delete track_box_ss;
        
 
-    track_shelf shelf;
+    Track_shelf shelf;
     track_box->split_to_parts(shelf);
     shelf.print();
     

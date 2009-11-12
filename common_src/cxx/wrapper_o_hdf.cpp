@@ -31,6 +31,8 @@
 #include "particle_base.h"
 #include "particle_track.h"
 
+
+#include "track_box.h"
 //using namespace H5;
 
 using utilities::Wrapper_o_hdf;
@@ -139,7 +141,10 @@ void Wrapper_o_hdf::open_particle(int ind)
     throw "group not open";
   if(part_open_)
     throw "particle already open";
+  if(ind<0 && !new_hdf_)
+    throw "wrapper_o_hdf: index less than 0 and not a new hdf";
   
+
   if(new_hdf_)
   {
     part_index_ = part_count_++;
@@ -428,4 +433,20 @@ void Wrapper_o_hdf::set_value(D_TYPE type,const particle* p_in)
     throw "you have hit a type that is not defined in enum_utils::v_type";
     break;
   }
+}
+
+void Wrapper_o_hdf::set_all_values(const tracking::Track_box * in) 
+{
+  open_particle(-1);
+  Triple cord;
+  float I;
+  in->average_cord(cord,I);
+  set_value(utilities::D_XPOS,cord[0]);
+  set_value(utilities::D_YPOS,cord[1]);
+  set_value(utilities::D_ZPOS,cord[2]);
+  set_value(utilities::D_I,I);
+  close_particle();
+  
+    
+
 }

@@ -55,7 +55,7 @@ using namespace tracking;
 
 typedef  map<int,Track_box*> tr_map;
 
-track_shelf::~track_shelf(){
+Track_shelf::~Track_shelf(){
   for(map<int,Track_box*>::iterator it = track_map.begin();
       it!=track_map.end(); it++)
     delete it->second;
@@ -63,7 +63,7 @@ track_shelf::~track_shelf(){
 }
 
 
-void track_shelf::add_new_track(particle_track* first_part){
+void Track_shelf::add_new_track(particle_track* first_part){
   if(first_part ==NULL)
     throw "null particle";
   Track_box * tmp_box = new Track_box(first_part);
@@ -72,26 +72,28 @@ void track_shelf::add_new_track(particle_track* first_part){
   
 
 }
-void track_shelf::add_track(Track_box * track)
+void Track_shelf::add_track(Track_box * track)
 {
   track_map.insert(pair<int,Track_box*>(track->get_id(), track));
+  ++track_count_;
+  
 }
 
 
   
-void track_shelf::remove_track(int track){
+void Track_shelf::remove_track(int track){
   map<int,Track_box*>::iterator it = track_map.find(track);
   remove_track_internal_(it);
 }
 
-Track_box* track_shelf::get_track(int track){
+Track_box* Track_shelf::get_track(int track){
   map<int,Track_box*>::iterator it = track_map.find(track);
   if(it == track_map.end())
     throw "not in map";
   return it->second;
 }
 
-void track_shelf::remove_short_tracks(int min_length){
+void Track_shelf::remove_short_tracks(int min_length){
   int tmp_length;
   
   for(map<int,Track_box*>::iterator it = track_map.begin();
@@ -108,7 +110,7 @@ void track_shelf::remove_short_tracks(int min_length){
   
 }
 
-void track_shelf::print(){
+void Track_shelf::print(){
  for(map<int,Track_box*>::iterator it = track_map.begin();
      it!=track_map.end(); it++)
    {
@@ -119,13 +121,13 @@ void track_shelf::print(){
 
 
 
-// void track_shelf::set_shelf(){
+// void Track_shelf::set_shelf(){
 //   for(map<int,Track_box* >::iterator it = track_map.begin();
 //       it!= track_map.end(); it++)
 //     ((*it).second)->set_track();
 // }
 
-void track_shelf::remove_track_internal_(  map<int,Track_box*>::iterator it)
+void Track_shelf::remove_track_internal_(  map<int,Track_box*>::iterator it)
 {
   if(it == track_map.end())
     throw "not in map";
@@ -134,13 +136,13 @@ void track_shelf::remove_track_internal_(  map<int,Track_box*>::iterator it)
   track_map.erase(it);
 }
 
-void track_shelf::track_length_histogram(Histogram & hist_in){
+void Track_shelf::track_length_histogram(Histogram & hist_in){
   for(map<int,Track_box*>::iterator it = track_map.begin();
       it!=track_map.end(); it++)
     hist_in.add_data_point(((*it).second)->get_length());
 }
 
-void track_shelf::msd(Svector<double> & msd_vec,Svector<int> & entry_count)const{
+void Track_shelf::msd(Svector<double> & msd_vec,Svector<int> & entry_count)const{
   //this exception needs to get it's own class or something
   if(msd_vec.data.size()!=entry_count.data.size())
     throw "Vector size's don't match, change this exception";
@@ -198,7 +200,7 @@ void track_shelf::msd(Svector<double> & msd_vec,Svector<int> & entry_count)const
 }
 
 
-void track_shelf::msd_corrected(Svector<double> & msd_vec,Svector<int> & entry_count)const{
+void Track_shelf::msd_corrected(Svector<double> & msd_vec,Svector<int> & entry_count)const{
   //this exception needs to get it's own class or something
   if(msd_vec.data.size()!=entry_count.data.size())
     throw "Vector size's don't match, change this exception";
@@ -261,7 +263,7 @@ void track_shelf::msd_corrected(Svector<double> & msd_vec,Svector<int> & entry_c
 
 
 
-void track_shelf::msd_corrected(utilities::Counted_vector & msd)const
+void Track_shelf::msd_corrected(utilities::Counted_vector & msd)const
 {
   //this exception needs to get it's own class or something
 
@@ -302,7 +304,7 @@ void track_shelf::msd_corrected(utilities::Counted_vector & msd)const
   }
 }
 
-void track_shelf::msd_corrected(utilities::Counted_vector & md,
+void Track_shelf::msd_corrected(utilities::Counted_vector & md,
 				utilities::Counted_vector & msd,
 				utilities::Counted_vector & msd_sq)const
 {
@@ -371,7 +373,7 @@ void track_shelf::msd_corrected(utilities::Counted_vector & md,
 
 
 
-void track_shelf::msd_hist(int time_step ,utilities::Histogram & in) const
+void Track_shelf::msd_hist(int time_step ,utilities::Histogram & in) const
 {
   const particle_track* current = NULL;
   //const particle_track* next = NULL;
@@ -394,7 +396,7 @@ void track_shelf::msd_hist(int time_step ,utilities::Histogram & in) const
 }
 
 
-void track_shelf::set_raw_disp_to_cell(Cell & output)const{
+void Track_shelf::set_raw_disp_to_cell(Cell & output)const{
   tr_map::const_iterator working_track = track_map.begin();
   Array tmp(1);
   for(int j = 0; j<output.get_length();j++)
@@ -406,7 +408,7 @@ void track_shelf::set_raw_disp_to_cell(Cell & output)const{
 }
 
 
-void track_shelf::set_corrected_disp_to_cell(Cell & output)const{
+void Track_shelf::set_corrected_disp_to_cell(Cell & output)const{
   tr_map::const_iterator working_track = track_map.begin();
   Array tmp(1);
   for(int j = 0; j<output.get_length();j++)
@@ -418,7 +420,7 @@ void track_shelf::set_corrected_disp_to_cell(Cell & output)const{
 }
 
 
-void track_shelf::initial_corrected_pos_to_wrapper(utilities::Generic_wrapper_base * data_out_wrapper)const{
+void Track_shelf::initial_corrected_pos_to_wrapper(utilities::Generic_wrapper_base * data_out_wrapper)const{
   tr_map::const_iterator working_track = track_map.begin();
   const particle_track *  working_track_ptr;
 
@@ -443,7 +445,7 @@ void track_shelf::initial_corrected_pos_to_wrapper(utilities::Generic_wrapper_ba
   
 }
 
-void track_shelf::corrected_tracks_out(Cell & output, utilities::Generic_wrapper_base * data_out_wrapper)const{
+void Track_shelf::corrected_tracks_out(Cell & output, utilities::Generic_wrapper_base * data_out_wrapper)const{
   tr_map::const_iterator working_track = track_map.begin();
   const particle_track *  working_track_ptr;
   Array tmp(1);
@@ -479,7 +481,7 @@ void track_shelf::corrected_tracks_out(Cell & output, utilities::Generic_wrapper
 
 
 
-void track_shelf::pass_fun_to_track(void(Track_box::*fun)()const)const
+void Track_shelf::pass_fun_to_track(void(Track_box::*fun)()const)const
 {
   map<int,Track_box*>::const_iterator myend =  track_map.end();
   for(map<int,Track_box*>::const_iterator it = track_map.begin();
@@ -490,7 +492,7 @@ void track_shelf::pass_fun_to_track(void(Track_box::*fun)()const)const
 }
 
 
-void track_shelf::split_to_parts(track_shelf & output_shelf)
+void Track_shelf::split_to_parts(Track_shelf & output_shelf)
 {
 
   if(&output_shelf == this)

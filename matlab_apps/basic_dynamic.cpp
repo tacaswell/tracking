@@ -148,7 +148,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
     // start actual computation
     Master_box<particle>bt(&p_in,&p_out);
 
-    track_shelf tracks;
+    Track_shelf tracks;
     cout<<"total number of particles is: "<<bt.size()<<endl;;
     //build hash case
     hash_case s(bt,dims,(int)max_r,frames);

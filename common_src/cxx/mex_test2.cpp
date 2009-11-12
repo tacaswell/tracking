@@ -72,7 +72,7 @@ extern void _main();
 //globals :(
 Master_box<particle_track> master_box;
 hash_case hcase;
-track_shelf tracks;
+Track_shelf tracks;
 
 
 void my_mex_exit_func(void)

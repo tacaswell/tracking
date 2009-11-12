@@ -35,11 +35,13 @@ using tracking::hash_shelf;
 using tracking::hash_case;
 using tracking::particle;
 
-using tracking::track_shelf;
+using tracking::Track_shelf;
 using tracking::Track_box;
 
 
 using utilities::Wrapper_out;
+using utilities::Triple;
+
 using tracking::Corr;
 
 using std::set;
@@ -95,7 +97,7 @@ void hash_box::output_to_wrapper(Wrapper_out & wrapper) const
 
 
 // track output chain
-void track_shelf::output_to_wrapper(Wrapper_out & wrapper) const
+void Track_shelf::output_to_wrapper(Wrapper_out & wrapper) const
 {
   wrapper.initialize_wrapper();
   map<int,Track_box*>::const_iterator myend =  track_map.end();
@@ -119,6 +121,25 @@ void Track_box::output_to_wrapper(Wrapper_out & wrapper) const
   wrapper.close_group();
 }
     
+
+void Track_shelf::output_link_to_wrapper(Wrapper_out & wrapper) const
+{
+
+ 
+  
+  wrapper.initialize_wrapper();
+  wrapper.open_group(0,track_count_);
+  map<int,Track_box*>::const_iterator myend =  track_map.end();
+  for(map<int,Track_box*>::const_iterator it = track_map.begin();it!=myend;++it)
+  {
+
+    wrapper.set_all_values((it->second));
+    
+    
+  }
+  wrapper.close_group();
+  wrapper.finalize_wrapper();
+}
 
 
 

@@ -588,7 +588,7 @@ void track_list::set_up_sub_ntwrk(){
 
 
 track_list::track_list(list<particle_track*>* first_list, float i_max_disp, 
-		       track_shelf* in_tracks):
+		       Track_shelf* in_tracks):
   p_list(NULL), n_list(NULL), store_list(first_list), 
   tracks(in_tracks),max_disp(i_max_disp), max_disp_sq(i_max_disp*i_max_disp)
 {

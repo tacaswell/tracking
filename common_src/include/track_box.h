@@ -30,13 +30,14 @@
 namespace utilities{
 class Array;
 class Wrapper_out;
+class Triple;
 
 }
 
 namespace tracking{
 // forward declaration
 class particle_track;
-class track_shelf;
+class Track_shelf;
 
 
 /**
@@ -127,26 +128,14 @@ public:
      splits the track into segments that correspond to a single particle
      sliced in z.  The resulting new tracks are stored in the self
    */
-  void split_to_parts(track_shelf & shelf);
-  
-  
-  /**
-     Splits the track at the given index and returns a pointer to the back
-     half of the track.
-   */
-  Track_box * split_track(int indx);
-  
-  /**
-     Trims the track it include only the particles between the indexes
-     given, the final track contains the particles (ind_start -
-     (ind_end -1)).  This is to stay with in the frame work of all the
-     standard library stuff which gives the end value as
-     'one-past-the-end'.
-     @param ind_start first particle to keep
-     @param ind_end number of particles to keep
-   */
-  void trim_track(int ind_start, int length);
+  void split_to_parts(Track_shelf & shelf);
 
+  /**
+     returns the intensity weighted average position used for link3D.  This really
+     should be sub-classed
+   */
+  void average_cord(utilities::Triple & pos,float & I) const ;
+  
 
 protected:
   ///Pointer to first particle in track
@@ -165,6 +154,28 @@ protected:
      non-const version of at()
    */
   particle_track * at(int n) ;
+
+
+    
+  
+  /**
+     Splits the track at the given index and returns a pointer to the back
+     half of the track.
+   */
+  Track_box * split_track(int indx);
+  
+  /**
+     Trims the track it include only the particles between the indexes
+     given, the final track contains the particles (ind_start -
+     (ind_end -1)).  This is to stay with in the frame work of all the
+     standard library stuff which gives the end value as
+     'one-past-the-end'.
+     @param ind_start first particle to keep
+     @param ind_end number of particles to keep
+   */
+  void trim_track(int ind_start, int length);
+
+  
 
 };
 }

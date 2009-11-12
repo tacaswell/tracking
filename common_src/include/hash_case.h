@@ -47,7 +47,7 @@ class Counted_vector;
 }
 
 namespace tracking{
-class track_shelf;
+class Track_shelf;
 class hash_shelf;
 class track_list;
 class Master_box;
@@ -120,9 +120,9 @@ public:
      the maximum displacement a particle is expected to have in
      a time step
      @param tracks
-     a track_shelf object passed in by reference.
+     a Track_shelf object passed in by reference.
   */
-  void link(float max_range, track_shelf& tracks);
+  void link(float max_range, Track_shelf& tracks);
 
   /**
      Compute mean forward displacement for each shelf

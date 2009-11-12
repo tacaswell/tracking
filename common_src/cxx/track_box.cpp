@@ -36,6 +36,8 @@
 using namespace tracking;
 using utilities::Array;
 using utilities::Tuple;
+using utilities::Triple;
+
 
 using std::vector;
 using std::pair;
@@ -212,7 +214,7 @@ void Track_box::plot_intensity() const
 }
 
 
-void Track_box::split_to_parts(track_shelf & shelf)
+void Track_box::split_to_parts(Track_shelf & shelf)
 {
 
   const int buffer = 2;
@@ -420,3 +422,36 @@ void Track_box::trim_track(int start,int length)
   t_last_->clear_data_forward();
   
 }
+
+void Track_box::average_cord(Triple & cord, float & tot_I)const
+{
+  tot_I = 0;
+  float x_m=0,y_m=0,z_m=0;
+  
+  const particle_track * cur_part = t_first_;
+  float I_tmp =0;
+  float z_tmp =0;
+  Tuple xy;
+  
+  while(cur_part != NULL)
+  {
+    xy = cur_part-> get_position();
+    cur_part->get_value(utilities::D_I,I_tmp);
+    cur_part->get_value(utilities::D_ZPOS,z_tmp);
+    
+    x_m += xy[0] * I_tmp;
+    y_m += xy[1] * I_tmp;
+    z_m += z_tmp   * I_tmp;
+    tot_I += I_tmp;
+    cur_part = cur_part->next_;
+    
+  }
+  x_m /=tot_I;
+  y_m /=tot_I;
+  z_m /=tot_I;
+  
+  cord[0] = x_m;
+  cord[1] = y_m;
+  cord[2] = z_m;
+}
+

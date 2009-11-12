@@ -496,7 +496,7 @@ void hash_case::D_rr(utilities::Coarse_grain_array& D)const
 
 
 
-void hash_case::link(float max_range, track_shelf& tracks){
+void hash_case::link(float max_range, Track_shelf& tracks){
 
   //doing this rehash takes a long time for large data sets, better to just
   //get it right begin with

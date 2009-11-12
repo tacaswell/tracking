@@ -50,7 +50,7 @@ class particle_track;
    all the track_* classes but this one will be made completely
    private with friend functions.
 */
-class track_shelf{
+class Track_shelf{
 
 public:
   /**
@@ -99,7 +99,7 @@ public:
   void set_shelf();
 
   /**
-     Generates a histogram of the lengths of all the tracks in the track_shelf
+     Generates a histogram of the lengths of all the tracks in the Track_shelf
    */
   void track_length_histogram(utilities::Histogram & in);
 
@@ -169,21 +169,30 @@ public:
      Pass a function to all of the Track_box objects contained
    */
   void pass_fun_to_track(void(Track_box::*fun)()const)const;
+
   /**
      Outputs the particles in a track-centric format
    */
   void output_to_wrapper(utilities::Wrapper_out & wrapper) const;
 
+  
+  /**
+     outputs the contents of the shelf treating each track as a single particle.
+     for use with 3D linking.  This should be sub-classed
+   */
+  void output_link_to_wrapper(utilities::Wrapper_out & wrapper) const;
+
+
   /**
      Splits all the tracks in the self in to sections that represent single
      particles when the tracking is linking between z-planes
    */
-  void split_to_parts(track_shelf & out_put_shelf);
+  void split_to_parts(Track_shelf & out_put_shelf);
   
   ///Constructor
-  track_shelf():track_count_(0){};
+  Track_shelf():track_count_(0){};
   ///Destructor.  Destroys all of the tracks contained in the shelf
-  ~track_shelf();
+  ~Track_shelf();
 protected:
   /** 
       Map to store locations of tracks.  Map used instead of a vector

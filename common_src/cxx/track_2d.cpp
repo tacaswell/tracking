@@ -70,7 +70,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
   dims.push_back((int)mxGetScalar(prhs[2]));    
   dims.push_back((int)mxGetScalar(prhs[3]));    
   
-  track_shelf tracks;
+  Track_shelf tracks;
 
 
   //nonsense to get the map set up

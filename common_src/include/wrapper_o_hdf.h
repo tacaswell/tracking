@@ -61,7 +61,7 @@ public:
 
   
   void set_all_values(const tracking::particle *);
-  
+  void set_all_values(const tracking::Track_box *);
   void set_value(D_TYPE,const tracking::particle *);
   
 
