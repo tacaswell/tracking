@@ -78,14 +78,36 @@ protected:
      internal initialization
    */
   void init();
+
+  /**
+     internal get_value
+   */
+  float get_value(int ind,  utilities::D_TYPE type,int junk)const;
+  
 public:
   int get_num_entries() const;
 
   //  void print(int ind);
   void print()const;
-  float get_value(int ind, utilities::D_TYPE type,int frame = 0)const;
-  void get_value(float &out,int ind, utilities::D_TYPE type,int frame = 0)const;
-  void get_value(std::complex<float> &out,int ind, utilities::D_TYPE type,int frame = 0)const;
+  
+  int                 get_value(int& out,
+				int ind,D_TYPE type, int frame) const ;
+  float               get_value(float& out,
+				int ind,D_TYPE type, int frame) const ;
+  std::complex<float> get_value(std::complex<float>& out,
+				int ind,D_TYPE type, int frame) const ;
+  
+  
+  int get_num_entries(int frame) const ;
+
+  int get_num_frames() const ;
+
+  bool contains_type(D_TYPE type) const ;
+
+  Tuple get_dims() const;
+
+
+
   
   virtual ~Wrapper_i_matlab();
   Wrapper_i_matlab(params_matlab* param);

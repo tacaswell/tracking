@@ -74,40 +74,42 @@ find_package(HDF5 REQUIRED)
 include_directories(${HDF_INCLUDE_DIR})
 include_directories(${TRACKING_SOURCE_DIR}/common_src/include)
 
-SET(CMAKE_CXX_FLAGS "-ansi -D_GNU_SOURCE -fPIC -fno-omit-frame-pointer -pthread -Wall ")
 
-if( (NOT COMPILE_MEX) AND (NOT  COMPILE_IDEN ) AND (NOT COMPILE_TEST))
+
+if( (NOT MATLAB_MEX_FILE) AND (NOT  COMPILE_IDEN ) AND (NOT COMPILE_TEST))
   set(COMPILE_BASIC 1)
-endif( (NOT COMPILE_MEX)  AND (NOT  COMPILE_IDEN )AND (NOT COMPILE_TEST))
+endif( (NOT MATLAB_MEX_FILE)  AND (NOT  COMPILE_IDEN )AND (NOT COMPILE_TEST))
 
-if(COMPILE_MEX)
+if(MATLAB_MEX_FILE)
   MESSAGE(STATUS "making the mex files")
   set(COMPILE_BASIC 0)
   set(COMPILE_IDEN 0)
+  set(COMPILE_TEST 0)
   add_subdirectory(matlab_apps)
-endif(COMPILE_MEX)
+endif(MATLAB_MEX_FILE)
 
 
 if(COMPILE_BASIC)
   MESSAGE(STATUS "making basic functionality")
+  SET(CMAKE_CXX_FLAGS "-ansi -D_GNU_SOURCE -fPIC -fno-omit-frame-pointer -pthread -Wall ")
   add_subdirectory(apps)
 endif(COMPILE_BASIC)
 
 
 if(COMPILE_IDEN)
   MESSAGE(STATUS "making the identification functionality")
+  SET(CMAKE_CXX_FLAGS "-ansi -D_GNU_SOURCE -fPIC -fno-omit-frame-pointer -pthread -Wall ")
   add_subdirectory(iden/apps)
 endif(COMPILE_IDEN)
 
 if(COMPILE_TEST)
   add_subdirectory(testing)
+  SET(CMAKE_CXX_FLAGS "-ansi -D_GNU_SOURCE -fPIC -fno-omit-frame-pointer -pthread -Wall ")
 endif(COMPILE_TEST)
 
-# #SET(CMAKE_CXX_COMPILER "/usr/bin/g++") 
-# SET(CMAKE_CXX_COMPILER "/usr/bin/g++-4.1") 
 
 
-# find_package(Matlab)
+#
 # 
 
  

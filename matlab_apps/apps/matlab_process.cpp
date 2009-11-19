@@ -51,24 +51,27 @@
 #include "kernel1.h"
 #include "fileops1.h"
 
+#include "iden.h"
+
 /*//header files for Intel and TIFF code*/
 
 /*//standard C++ header files*/
 #include <time.h>
 #include <string>
-using namespace std;
-#include <fstream>
+
+
 #include <iostream>
 
-#include <mcheck.h>
 
 /*//defined constants*/
-#define epsilon 0.0001
+
 
 
 using iden::Params;
 using iden::Image2D;
-using iden::mat_to_IPP;
+using std::cout;
+using std::endl;
+
 
 
 extern void _main();
@@ -77,6 +80,12 @@ void mexFunction( int nlhs, mxArray *plhs[],
      
 { 
 
+
+  
+  if(nrhs!=3){
+    cout<<"Error, wrong number of arguments"<<endl;
+    return;
+  }
 
  //mexPrintf("Hello, world!\n"); 
  IppStatus status;
@@ -93,26 +102,21 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
 
  
- //mexPrintf("size, %d %d\n",mxGetM(prhs[1]),mxGetN(prhs[1]));
- //debugging statement
- //mexPrintf("parm 1: %d 2: %f 3: %d 4: %d 5: %f 6: %d\n",parm.get_feature_radius(),parm.get_hwhm_length(),parm.get_dilation_radius(),parm.get_mask_radius(),parm.get_pctle_threshold(),parm.get_testmode());
 
 
- Image2D image_in = mat_to_IPP(prhs[0]); 
-
-
- 
- 
- /* Create an mxArray for the output data */
- 
-
-    
-    
-   /* Retrieve the input data */
   
-   //  data1 = mxGetPr(prhs[i]);
-    //data2 = mxGetPr(plhs[i]);
+ Image2D image_in(mxGetN(prhs[0]),mxGetM(prhs[0]));
 
+
+ image_in.set_data(prhs[0]); 
+ 
+
+ image_in.trim_max(mxGetScalar(prhs[2]));
+ 
+ cout<<"cutting: "<<mxGetScalar(prhs[2])*100<<"% off the top"<<endl;
+ 
+ 
+ 
 
     
  Image2D image_bpass(image_in.get_height(), image_in.get_width());	
@@ -149,15 +153,16 @@ void mexFunction( int nlhs, mxArray *plhs[],
  if(nlhs>1)
    {
      plhs[1] = mxCreateDoubleMatrix(image_in.get_width(), image_in.get_height(), mxREAL);
-     IPP_to_mat(plhs[1],image_bpass_thresh);
+     image_bpass_thresh.get_data(plhs[1]);
      if(nlhs>2)
        {
 	 plhs[2] = mxCreateDoubleMatrix(image_in.get_width(), image_in.get_height(), mxREAL);
-	 IPP_to_mat(plhs[2],image_localmax);
+	 image_localmax.get_data(plhs[2]);
 	 if(nlhs>3)
 	   {
 	     plhs[3] = mxCreateDoubleMatrix(image_in.get_width(), image_in.get_height(), mxREAL);
-	     IPP_to_mat(plhs[3],image_bpass);
+	     image_bpass.get_data(plhs[3]);
+	     
 	   }
        }
    }

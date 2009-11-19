@@ -150,12 +150,12 @@ public:
   virtual void set_all_values(const tracking::particle *)=0;
 
 
-    
+#if PTYPE == 1    
   /**
      sets all of the values that the wrapper knows about by asking the particle
    */
   virtual void set_all_values(const tracking::Track_box *) = 0;
-  
+#endif
 
   /**
      'closes' a particle. 

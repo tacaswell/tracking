@@ -81,7 +81,7 @@ public:
   
   Wrapper_out* make_wrapper_out(){
     return new Wrapper_o_matlab(this);
-    }
+  }
     
     
 };  

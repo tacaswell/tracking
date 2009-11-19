@@ -42,7 +42,7 @@
 //copied form https://plutarc.svn.sourceforge.net/svnroot/plutarc/trunk/matlab_wrapper rev9
 // Modified by Thomas A Caswell tcaswell@uchicago.edu 09/2009-
 #include "ipp.h"
-#if COMPILE_MEX
+#if MATLAB_MEX_FILE
 #include "mex.h"
 #endif 
 
@@ -59,6 +59,8 @@
 using iden::Image2D;
 using std::cout;
 using std::endl;
+
+
 
 // tac 2009-09-21
 // added displaying functionality
@@ -142,8 +144,64 @@ void Image2D::set_data(const WORD * data_in, int rows, int cols,WORD in_step)
 }
 
 
+void Image2D::trim_max(float cut_percent)
+{
+  
+  if(cut_percent ==0)
+    return;
+  
+  if(cut_percent>1)
+    throw "image2D: nonsense percent";
+  
+  // find max and min
+  Ipp32f max=0,min=0;
+  ippiMinMax_32f_C1R(imagedata_,stepsize_,ROIfull_,&min,&max);
+  
+  
+  // make histogram, set bin count by cut_percent, so that if flat
+  // would cut top two boxes
+  int n_bins = (int)ceil(2.0/cut_percent)+1;
+  Ipp32f bin_step = (max-min)/((Ipp32f)n_bins);
+  Ipp32f * p_levels = new Ipp32f [n_bins];
+  Ipp32s * p_hist = new Ipp32s[n_bins -1];
 
-void wait_for_key();
+  for(int j = 0;j<n_bins;++j)
+    p_levels[j] = min + bin_step*j;
+  
+
+  ippiHistogramRange_32f_C1R(imagedata_,stepsize_,ROIfull_,p_hist,p_levels,n_bins);
+  
+  // sum from the top of the histogram until cut_percent of pixels are
+  // included, use the top of the last bin as the cut off
+  Ipp32s sum = 0;
+  Ipp32s sum_max = (Ipp32s)(numberofpixels_*cut_percent);
+  int bin_indx = n_bins-1;
+  while(sum < sum_max)
+    sum+=p_hist[--bin_indx];
+
+  // move back one bin
+  ++bin_indx;
+
+  cout<<"cutting top "<<bin_indx<<" bins"<<endl;
+  
+  // trim data in place, set all values above the cutoff to the cutoff
+  ippiThreshold_GTVal_32f_C1IR(imagedata_,stepsize_,ROIfull_,
+			       p_levels[bin_indx],p_levels[bin_indx]);
+  
+
+
+  // clean up memory
+  delete [] p_levels;
+  delete [] p_hist;
+  
+}
+
+
+
+
+
+
+// void wait_for_key();
  
 // void Image2D::display_image() const
 // {
@@ -177,19 +235,19 @@ void wait_for_key();
 // }
 
 
-void wait_for_key ()
-{
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__TOS_WIN__)  // every keypress registered, also arrow keys
-  cout << endl << "Press any key to continue..." << endl;
+// void wait_for_key ()
+// {
+// #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__TOS_WIN__)  // every keypress registered, also arrow keys
+//   cout << endl << "Press any key to continue..." << endl;
 
-  FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
-  _getch();
-#elif defined(unix) || defined(__unix) || defined(__unix__) || defined(__APPLE__)
-  cout << endl << "Press ENTER to continue..." << endl;
+//   FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
+//   _getch();
+// #elif defined(unix) || defined(__unix) || defined(__unix__) || defined(__APPLE__)
+//   cout << endl << "Press ENTER to continue..." << endl;
 
-  std::cin.clear();
-  std::cin.ignore(std::cin.rdbuf()->in_avail());
-  std::cin.get();
-#endif
-  return;
-}
+//   std::cin.clear();
+//   std::cin.ignore(std::cin.rdbuf()->in_avail());
+//   std::cin.get();
+// #endif
+//   return;
+// }

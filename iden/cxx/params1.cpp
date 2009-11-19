@@ -43,7 +43,7 @@
 // Modified by Thomas Caswell tcaswell@uchicago.edu 09/2009-
 
 #include "params1.h"
-#if COMPILE_MEX
+#if MATLAB_MEX_FILE
 #include "mex.h"
 #endif 
 

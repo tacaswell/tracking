@@ -51,11 +51,11 @@ public:
   }
   void close_particle();
 
-  void open_frame(int,int)
+  void open_group(int,int)
   {
     throw "not implemented";
   }
-  void close_frame(){
+  void close_group(){
     throw "not implemented";
   }
   void finalize_wrapper();
@@ -69,6 +69,15 @@ public:
   void print()const;
   void get_content_tpyes(std::set<D_TYPE>&) const {};
   int  num_entries()const{return 0;};
+
+  
+    
+  void set_all_values(const tracking::particle *);
+  void set_all_values(const tracking::Track_box *);
+  void set_value(D_TYPE,const tracking::particle *);
+
+  const std::set<D_TYPE>& get_content_tpyes() const;
+
   
 
  protected:

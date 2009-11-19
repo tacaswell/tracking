@@ -76,12 +76,12 @@ float Wrapper_i_matlab::get_value(int ind,  utilities::D_TYPE type,int junk)cons
 
 }
 
-void Wrapper_i_matlab::get_value(float &out,int ind, utilities::D_TYPE type,int frame)const
+float Wrapper_i_matlab::get_value(float &out,int ind, utilities::D_TYPE type,int frame)const
 {
   out = get_value(ind,type,frame);
 }
 
-void Wrapper_i_matlab::get_value(std::complex<float> &out,int ind, utilities::D_TYPE type,int frame)const
+complex<float> Wrapper_i_matlab::get_value(std::complex<float> &out,int ind, utilities::D_TYPE type,int frame)const
 {
   throw " this wrapper type does not deal with complex yet";
 }

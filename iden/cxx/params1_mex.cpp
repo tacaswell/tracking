@@ -42,6 +42,25 @@
 //copied form https://plutarc.svn.sourceforge.net/svnroot/plutarc/trunk/matlab_wrapper rev9
 // Modified by Thomas Caswell tcaswell@uchicago.edu 09/2009-
 
+#include "params1.h"
+#if MATLAB_MEX_FILE
+#include "mex.h"
+#endif 
+
+#include <stdlib.h>
+#include <string>
+
+#include <iostream>
+#include <iomanip>
+#include <sstream>
+
+using std::cout;
+using std::endl;
+using std::ostream;
+
+
+using iden::Params;
+
 
 Params::Params(const int numargs,const mxArray *arguments):
   feature_radius_(0), hwhm_length_(0), 

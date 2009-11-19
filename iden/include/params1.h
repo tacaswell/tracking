@@ -47,8 +47,9 @@
 
 #include <fstream>
 #include <string>
-//#include "mex.h"
-
+#ifdef MATLAB_MEX_FILE
+#include "mex.h"
+#endif
 /*
  * modified 06/08 by tcaswell to make compatable with matlab mex code
  */
@@ -63,8 +64,19 @@ class Params
 {
 public:
 
-  //  Params(const int numargs, const mxArray *arguments);	/*//Regular used constructor that reads command-line parameters*/
-  Params(const int numargs);						/*//Constructor that simply checks for enough arguments*/
+#ifdef MATLAB_MEX_FILE
+  /**
+     Regular used constructor that reads command-line parameters
+  */
+  Params(const int numargs, const mxArray *arguments);	
+#endif
+  /** 
+      Constructor that simply checks for enough arguments
+  */
+  Params(const int numargs);			
+  /** 
+      Constructor 
+  */
   Params(int,float,int,float,int);
   
   const Params &operator=(const Params &);	/*//overloaded assignment operator*/

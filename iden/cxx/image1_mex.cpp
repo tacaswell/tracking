@@ -41,50 +41,44 @@
 
 //copied form https://plutarc.svn.sourceforge.net/svnroot/plutarc/trunk/matlab_wrapper rev9
 // Modified by Thomas Caswell tcaswell@uchicago.edu 09/2009-
+#include "ipp.h"
+#if MATLAB_MEX_FILE
+#include "mex.h"
+#endif 
 
 
-Image2D iden::mat_to_IPP(const mxArray *data)
+#include <fstream>
+#include <iostream>
+#include <math.h>
+// tac 2009-09-15
+// 
+#include "image1.h"
+
+// tac 2009-09-15
+// 
+using iden::Image2D;
+using std::cout;
+using std::endl;
+
+
+
+
+void Image2D::get_data(mxArray *data)const
 {
   int j;
   double *mat_tmp;
   mat_tmp = mxGetPr(data);
   IppStatus status;
 
-  int mat_width = mxGetM(data);
-  int mat_height = mxGetN(data);
-  
 
-  IppiSize roi = {mat_width, mat_height};
-  
-  Image2D image_in(mat_height, mat_width);
-  
-  Ipp32f *image_tmp;
-  image_tmp = image_in.get_image2D();
-  for(j=0;j<mat_height*mat_width;j++)
+  for (j = 0; j <width_*height_ ; ++j)
     {
-      image_tmp[j] = mat_tmp[j];
-    } 
-
-  return image_in;
-}
-
-IppStatus iden::IPP_to_mat(mxArray *data, Image2D &image_out)
-{
-  int j;
-  double *mat_tmp;
-  mat_tmp = mxGetPr(data);
-  IppStatus status;
-  Ipp32f *image_tmp;
-  image_tmp = image_out.get_image2D();
-
-  for (j = 0; j <image_out.get_width()*image_out.get_height() ; j++)
-    {
-      mat_tmp[j] = (double)image_tmp[j];
+      mat_tmp[j] = (double)imagedata_[j];
     }
 
 
 
-  return status;
+
 }
 
 

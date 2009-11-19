@@ -81,6 +81,10 @@ IppStatus iden::BandPass_2D(Image2D &image_in, Image2D &image_bandpassed, const 
   Tophat_Kernel TopHatKernel(feature_radius, image_in.get_width(), image_in.get_height());
   int number_of_pixels = image_in.get_numberofpixels();
   int step_size = image_in.get_stepsize();
+
+
+  // trim off extreme outliers (cut top .2% of data off
+
 	
   /*//Create and initialize intermediate images*/
   Image2D image_gauss_col(image_in.get_height(), image_in.get_width());

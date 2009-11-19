@@ -49,7 +49,7 @@
 // will try for cross compatibility
 
 #include "FreeImage.h"
-#if COMPILE_MEX
+#if MATLAB_MEX_FILE
 #include "mex.h"
 #endif 
 /*#include <string>*/
@@ -80,16 +80,28 @@ public:
   
   ~Image2D();
   
+  /**
+     given the index of image data, returns x-position in pixels
+  */
+  int getx(const int index1D);	
+  /** 
+      given the index of image data, returns y-position in pixels
+  */
+  int gety(const int index1D);	
+  /**
+     given x and y, return 1-dim index of image
+  */
+  int get1Dindex(const int x, const int y);
 
-  int getx(const int index1D);	/*//given the index of image data, returns x-position in pixels*/
-  int gety(const int index1D);	/*//given the index of image data, returns y-position in pixels*/
-  int get1Dindex(const int x, const int y);	/*//given x and y, return 1-dim index of image*/
-
-#if COMPILE_MEX
+#if MATLAB_MEX_FILE
   /**
      fill the image with data from matlab
    */
   void set_data(const mxArray *data);
+  /**
+     fill data in to a matlab array
+   */
+  void get_data(mxArray *data)const;
 #endif
   /**
      Fill the image with data form a pointer to unsigned ints (16bit)
@@ -122,15 +134,35 @@ public:
    */
   void display_image() const;
   
+  void trim_max(float cut_percent);
+  
   
 
 private:
-  Ipp32f *imagedata_;					/*//actual image data in Ipp32f format*/
-  int stepsize_;						/*//stepsize for use with IPP functions (step size in bytes)*/
-  int width_;							/*//width of image, in pixels*/
-  int height_;							/*//length (or height) of image, in pixels*/
-  int numberofpixels_;					/*//total number of pixels in image*/
-  IppiSize ROIfull_;					/*//ROI of the full image, used in IPP functions, when including whole image*/
+  /**
+     actual image data in Ipp32f format
+  */
+  Ipp32f *imagedata_;					
+  /**
+     stepsize for use with IPP functions (step size in bytes)
+  */
+  int stepsize_;						
+  /**
+     width of image, in pixels
+  */
+  int width_;							
+  /**
+     length (or height) of image, in pixels
+  */
+  int height_;							
+  /**
+     total number of pixels in image
+  */
+  int numberofpixels_;					
+  /**
+     ROI of the full image, used in IPP functions, when including whole image
+  */
+  IppiSize ROIfull_;					
 
 
   

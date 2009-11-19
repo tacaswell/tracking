@@ -135,7 +135,7 @@ int main(int argc, const char * argv[])
     Pair dims = wh.get_dims();
     cout<<dims<<endl;
 
-    int pixel_per_box= 2;
+    int pixel_per_box= 4;
     
     hash_case hcase(box,dims,pixel_per_box,wh.get_num_frames());
     cout<<"hash case filled"<<endl;

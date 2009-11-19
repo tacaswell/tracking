@@ -122,25 +122,6 @@ void Track_box::output_to_wrapper(Wrapper_out & wrapper) const
 }
     
 
-void Track_shelf::output_link_to_wrapper(Wrapper_out & wrapper) const
-{
-
- 
-  
-  wrapper.initialize_wrapper();
-  wrapper.open_group(0,track_count_);
-  map<int,Track_box*>::const_iterator myend =  track_map.end();
-  for(map<int,Track_box*>::const_iterator it = track_map.begin();it!=myend;++it)
-  {
-
-    wrapper.set_all_values((it->second));
-    
-    
-  }
-  wrapper.close_group();
-  wrapper.finalize_wrapper();
-}
-
 
 
 

@@ -44,7 +44,14 @@ include_directories(${IDEN_INC_PATH})
 
 
 
-add_executable(Iden process.cpp ${COMMON_IDEN_SRC} ${COMMON_SRC} ${UTIL_SRC} ${HDF_SRC} )
+add_executable(Iden process.cpp 
+  ${COMMON_IDEN_SRC} 
+  ${COMMON_SRC} 
+  ${UTIL_SRC} 
+  ${HDF_SRC} 
+  ${COMMON_WRAPPER_SRC}
+  ${COMMON_HASH_SRC}
+  )
 set_target_properties(Iden PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_COUNT=2")
 message(STATUS "Found IPP: ${IPP_LIBRARIES}")
 target_link_libraries(Iden ${IPP_LIBRARIES} )

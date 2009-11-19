@@ -125,6 +125,11 @@ void Iden::fill_wrapper(Wrapper_i_plu & wrapper, Pair dims,int frames,int start)
     // shove data in to image object
     Image2D image_in(rows,cols);
     image_in.set_data(data_ptr, rows,cols,scan_step);
+    
+    // trim off the top .1% of the pixels to deal with outliers
+    ///TODO make this a parameter
+    image_in.trim_max(.001);
+ 
 
     // clear the input data
     src.unlockPage(image,false);
