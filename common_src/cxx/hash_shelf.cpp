@@ -258,7 +258,7 @@ void hash_shelf::get_region_px( int n,
 {
 
   
-  get_region(n,out,ceil(range_in_px/ppb_));
+  get_region(n,out,(int)ceil(range_in_px/ppb_));
   
 }
 

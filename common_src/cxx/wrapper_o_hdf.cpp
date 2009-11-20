@@ -41,6 +41,7 @@ using std::string;
 using std::set;
 using std::vector;
 using std::cout;
+using std::cerr;
 using std::endl;
 using std::complex;
 
@@ -83,7 +84,7 @@ void Wrapper_o_hdf::initialize_wrapper()
   if(over_write_)
     file_ = new H5File(file_name_,H5F_ACC_TRUNC);
   else
-    file_ = new H5File(file_name_,H5F_ACC_RDONLY);
+    file_ = new H5File(file_name_,H5F_ACC_RDWR);
 
   wrapper_open_ = true;
 }
@@ -221,6 +222,7 @@ void Wrapper_o_hdf::close_group()
     else
       group_ = new Group(file_->openGroup(group_name_));
   
+
     
     // shove into file
     
@@ -273,6 +275,7 @@ void Wrapper_o_hdf::close_group()
       DataSet * dset = NULL;
       //     int * tmp_ptr_i = NULL;
       //       float * tmp_ptr_f = NULL;
+
       
       switch(v_type(*it))
       {
@@ -314,6 +317,7 @@ void Wrapper_o_hdf::close_group()
       
       
       delete dset;
+
       
     }
 

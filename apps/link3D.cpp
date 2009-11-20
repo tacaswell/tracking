@@ -136,13 +136,14 @@ int main(int argc, const char * argv[])
     cout<<dims<<endl;
 
     int pixel_per_box= 4;
+    float search_range = 3.5;
     
     hash_case hcase(box,dims,pixel_per_box,wh.get_num_frames());
     cout<<"hash case filled"<<endl;
     
     Track_shelf tracks;
     
-    hcase.link(pixel_per_box,tracks);
+    hcase.link(search_range,tracks);
     int min_track_length = 3;
     
     tracks.remove_short_tracks(min_track_length);

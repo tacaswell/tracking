@@ -26,16 +26,19 @@ import colorsys
     
 
 def _start_scene(pov_file):
-    print >> pov_file, "#include \"colors.inc\""
-    print >> pov_file, "background {color White}"
-    print >> pov_file, "  camera {"
-    print >> pov_file, "location <-125, 500, 250>"
-    print >> pov_file, "look_at  <50, 75,  0>"
-    print >> pov_file, "angle 25"
-    print >> pov_file, "sky <0,0,1>"
-    print >> pov_file,"}"
-    print >> pov_file, "light_source { <50, 100, 300> color White}"
-
+    print >>pov_file, """
+#include "colors.inc"
+background {color White}
+camera {
+    location <-100, 35, 75>
+    look_at  <75, 35,  20>
+    angle 15
+    sky <0,0,1>
+    }
+light_source { <75, 35, 300> color White}
+light_source { <75, 35, -300> color White}
+light_source { <-100, 35, 20> color White}
+"""
 def _end_scene(pov_file):
     pass
 
@@ -52,14 +55,14 @@ def _close_particle(pov_file,h):
    print >> pov_file, "}"
 
 
-def _set_posistion(pov_file, vec):
-    r = .45
+def _set_posistion(pov_file, vec,r):
+
     print >> pov_file, "<"+ str(vec[0])+","+str(vec[1])+","+str(vec[2])+">," + str(r)
 
 
 
-f = h5py.File("/home/tcaswell/colloids/processed/polyNIPAM_batch_12/20090730/jammed/z/27-7_link_full_3.h5")
-scale = .1707576
+f = h5py.File("/home/tcaswell/colloids/processed/polyNIPAM_batch_12/20090730/jammed/z/27-7_link.h5")
+scale = 6.45/60
 x = f["/frame000000/x"]
 y = f["/frame000000/y"]
 z = f["/frame000000/z"]
@@ -69,12 +72,16 @@ pov_file = open("pov_file.pov",'w')
 _start_scene(pov_file)
 #for ind in range(0,20000):
 for ind in range(0,x.shape[0]):
-    top = 25
-    bot = 15
-    if z[ind]<top and z[ind]>bot:
+    ztop = 20
+    zbot = 10
+    xtop = 980
+    xbot = 20
+    ytop = 480
+    ybot = 20
+    if z[ind]<ztop and z[ind]>zbot and x[ind] <xtop and x[ind] > xbot and y[ind]<ytop and y[ind]>ybot:
         _open_particle(pov_file)
-        _set_posistion(pov_file,(x[ind]*scale,y[ind]*scale,z[ind]))
-        _close_particle(pov_file,(z[ind]-bot)/(top-bot)/2)
+        _set_posistion(pov_file,(x[ind]*scale,y[ind]*scale,z[ind]),(8.5/2)*scale)
+        _close_particle(pov_file,(z[ind]-zbot)/(ztop-zbot)/2)
 
 _end_scene(pov_file)
     

@@ -70,6 +70,8 @@ public:
    */
   //virtual void add_metadata(std::string, const void * , V_TYPE) = 0;
   
+  virtual ~Generic_wrapper(){};
+  
   
  
 };

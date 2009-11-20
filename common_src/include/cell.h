@@ -39,6 +39,9 @@ public:
     return length_;
   }
   Cell(int l);
+  virtual ~Cell(){};
+  
+		  
 protected:
   int length_;
 

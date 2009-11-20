@@ -79,6 +79,8 @@ Params::Params(const int numargs,const mxArray *arguments):
     
   feature_radius_ = (int)args[0];
   hwhm_length_ = args[1];
+  cout<<hwhm_length_<<endl;
+
   dilation_radius_ = (int)args[2];
   mask_radius_ = (int)args[3];
   pctle_threshold_ = args[4];

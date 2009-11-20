@@ -21,12 +21,12 @@ import os.path
 import subprocess
 import h5py
 
-path_name = 'polyNIPAM_batch_12/20090820/2/t/'
+path_name = 'polyNIPAM_batch_12/20090730/jammed/z/'
 base_data_path = "/home/tcaswell/colloids/data/"
 base_proc_path = "/home/tcaswell/colloids/processed/"
 
-prog_path = "/home/tcaswell/misc_builds/proc3D/apps/"
-prog_name = "goftheta_hdf"
+prog_path = "/home/tcaswell/misc_builds/basic/apps/"
+prog_name = "gofr_hdf"
 
 
 contents = os.listdir(base_data_path +path_name)

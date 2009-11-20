@@ -156,7 +156,7 @@ void Corr_goftheta::compute(const particle * p_in,const vector<const particle*> 
       
       // assume the nhood is the right size
       
-      int ind = floor(n_bins_ * (theta)/(pi));
+      int ind = (int)floor(n_bins_ * (theta)/(pi));
       if(ind ==n_bins_)
 	ind = 0;
       try

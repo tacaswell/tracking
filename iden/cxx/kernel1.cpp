@@ -87,7 +87,7 @@ void Print2DKernel32f(const int diameter, const Ipp32f *kernel)
 
 
 Gaussian_Kernel::Gaussian_Kernel(const int radius, const float HWHM, const int tif_width, const int tif_length):
-anchor_point(0), offset(0), kernel(NULL), kernel_length(0)
+  kernel(NULL),  anchor_point(0), kernel_length(0),offset(0)
 {
 	/*//Gaussian kernel is a one-dimensional array*/
 	/*//kernellength is an odd number*/

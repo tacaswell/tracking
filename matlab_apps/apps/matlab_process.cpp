@@ -131,7 +131,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
     
 //     /*//Convolve kernels with image (gauss and top-hat); then subtract the two (i.e. bandpass filter them)*/
 
- status = BandPass_2D(image_in, image_bpass, parm.get_feature_radius(), (int)parm.get_hwhm_length());
+ status = BandPass_2D(image_in, image_bpass, parm.get_feature_radius(), parm.get_hwhm_length());
 	
  status = FindLocalMax_2D(image_bpass, image_bpass_thresh, image_localmax, (int)parm.get_pctle_threshold(),
 			  parm.get_dilation_radius());

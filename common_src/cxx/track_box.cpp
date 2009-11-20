@@ -229,7 +229,7 @@ void Track_box::split_to_parts(Track_shelf & shelf)
   
   for(int j = 0;j<length_;++j)
   {
-    // fill I,pos,z
+    // fill I
     cur_part->get_value(utilities::D_I,I[j]);
     cur_part = cur_part->get_next();
     

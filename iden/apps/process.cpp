@@ -179,6 +179,8 @@ int main(int argc, const char * argv[])
     Iden iden(p);
     iden.set_fname(data_file);
     Wrapper_i_plu wp(1,dims);
+
+    
     
     iden.fill_wrapper(wp,dims,frame_c,0);
     cout<<"number of entries in wrapper: "<<wp.get_num_entries(-1)<<endl;
@@ -225,7 +227,7 @@ int main(int argc, const char * argv[])
     }
     catch(...)
     {
-      std::cerr<<"not right type"<<endl;
+      std::cerr<<"unknown error type"<<endl;
     }
     
 

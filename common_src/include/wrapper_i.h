@@ -96,6 +96,10 @@ public:
      Returns the dimension of each 'frame' of the data in the wrapper
    */
   virtual Tuple get_dims() const = 0;
+
+  virtual ~Wrapper_in(){};
+  
+  
   
 };
 

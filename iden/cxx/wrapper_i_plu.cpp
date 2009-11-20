@@ -34,11 +34,13 @@ using utilities::Wrapper_i_plu;
 
 using utilities::Tuple;
 using utilities::Pair;
+using std::cerr;
 using std::cout;
 using std::endl;
 
 using std::vector;
 using std::set;
+
 
 using utilities::Data_map;
 
@@ -65,7 +67,11 @@ void Wrapper_i_plu::print()const
 int Wrapper_i_plu::get_value(int& out,int ind,D_TYPE type, int frame) const
 {
   if(V_INT!=v_type(type))
-    throw "wrong data type";
+  {
+    cerr<<"got "<<type<<" which is a "<<v_type(type)<<" need "<<V_INT<<endl;
+    throw "wrapper_i_plu: wrong data type, expect int";
+  }
+  
   if(type == D_FRAME)
   {
     out = frame;
@@ -83,7 +89,11 @@ int Wrapper_i_plu::get_value(int& out,int ind,D_TYPE type, int frame) const
 float Wrapper_i_plu::get_value(float& out,int ind,D_TYPE type, int frame) const
 {
   if(V_FLOAT!=v_type(type))
-    throw "wrong data type";
+  {
+    cerr<<"got "<<type<<" which is a "<<v_type(type)<<" need "<<V_FLOAT<<endl;
+    throw "wrapper_i_plu: wrong data type, expect float";
+  }
+  
   //  out = (float)(*(*(data_.at(frame) + ind*cols) + data_map_(type)));
   out = (float)(data_.at(frame)[ind][data_map_(type)]);
   return out;

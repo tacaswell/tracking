@@ -36,7 +36,7 @@
 #include "array.h"
 #include "cell.h"
 #include "exception.h"
-
+#include "wrapper_o.h"
 
 using std::map;
 using std::pair;
@@ -50,6 +50,8 @@ using utilities::Svector;
 using utilities::Ll_range_error;
 using utilities::Array;
 using utilities::Cell;
+
+using utilities::Wrapper_out;
 
 using namespace tracking;
 

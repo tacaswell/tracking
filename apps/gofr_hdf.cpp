@@ -86,10 +86,14 @@ int main(int argc, const char * argv[])
   
   string file_path = string(argv[1]);
   string file_name = string(argv[2]);
-  
+  string out_name = string(argv[0]);
+  unsigned int slash_index = out_name.find_last_of("/");
+  if(slash_index < out_name.size())
+    out_name = out_name.substr(1+slash_index);
+
 
   string proc_file = base_proc_path + file_path + file_name + ".h5";
-  string out_file = base_proc_path + file_path + "gofr" + ".h5";
+  string out_file = base_proc_path + file_path + out_name + ".h5";
   cout<<"file to read in: "<<proc_file<<endl;
   cout<<"file that will be written to: "<<out_file<<endl;
 
@@ -111,7 +115,7 @@ int main(int argc, const char * argv[])
 
   
     
-    Wrapper_i_hdf wh(proc_file,data_types,0,15);
+    Wrapper_i_hdf wh(proc_file,data_types);
 
     
 
@@ -152,9 +156,9 @@ int main(int argc, const char * argv[])
     gofr.display();
 
       
-//     Generic_wrapper_hdf hdf_out(out_file,true);
-//     gofr.out_to_wrapper(hdf_out);
-//     cout<<"wrote out g(r)"<<endl;
+     Generic_wrapper_hdf hdf_out(out_file,true);
+     gofr.out_to_wrapper(hdf_out);
+     cout<<"wrote out g(r)"<<endl;
 
     
   }

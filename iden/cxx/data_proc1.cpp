@@ -79,7 +79,7 @@ IppStatus iden::BandPass_2D(Image2D &image_in, Image2D &image_bandpassed, const 
   IppStatus status;
   Gaussian_Kernel GaussKernel(feature_radius, hwhm_length, image_in.get_width(), image_in.get_height());
   Tophat_Kernel TopHatKernel(feature_radius, image_in.get_width(), image_in.get_height());
-  int number_of_pixels = image_in.get_numberofpixels();
+  //  int number_of_pixels = image_in.get_numberofpixels();
   int step_size = image_in.get_stepsize();
 
 
@@ -296,7 +296,8 @@ Ipp32f (*iden::ParticleStatistics(Image2D &image_localmax, Image2D &image_in,
 	
   counter = 0;				
   /*//index that keeps track of which particle*/
-  int imagewidth = image_in.get_width();
+  //int imagewidth = image_in.get_width();
+
   /*//determine integer x and y values (in pixels) for each local maximum outside*/
   /*//of border exclusion area*/
   //  cout<<"np "<<numberofpixels<<endl;

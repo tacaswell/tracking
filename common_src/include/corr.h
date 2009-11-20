@@ -74,6 +74,9 @@ public:
      that the hash_shelf can properly limit the particles that it hands in
    */
   virtual float get_max_range() const = 0;
+
+  virtual ~Corr(){};
+  
   
 };
 
