@@ -48,13 +48,13 @@ class Counted_vector;
 
 namespace tracking{
 class Track_shelf;
-class hash_shelf;
+class Hash_shelf;
 class track_list;
 class Master_box;
 
 class Corr;
 /**
-   Class to hold sets of hash_shelf.  This is used as a structure to organize
+   Class to hold sets of Hash_shelf.  This is used as a structure to organize
    the hash tables by time frame.  
 */
 
@@ -62,7 +62,7 @@ class hash_case{
 
 public:
   ///retrun a given shelf
-  hash_shelf * return_shelf(int n) const{
+  Hash_shelf * return_shelf(int n) const{
     return h_case_.at(n);
   }
 
@@ -141,7 +141,7 @@ public:
   void get_cum_disp(utilities::Array & cum_disp_array, int start=0);
 
   /**
-     Averages g(r) over the contained hash_shelfs 
+     Averages g(r) over the contained Hash_shelfs 
    */
   void gofr_norm(float max_d, int nbins,
 		 std::vector<float>& bin_count,std::vector<float>& bin_r) const;
@@ -208,13 +208,13 @@ public:
      Passes functions to the shelves in the case, this one for void,
      argument-less functions
   */
-  void pass_fun_to_shelf(void(hash_shelf::*fun)());
+  void pass_fun_to_shelf(void(Hash_shelf::*fun)());
 
   /**
      Passes functions to the shelves in the case, this one for void,
      argument-less functions
   */
-  void pass_fun_to_shelf(void(hash_shelf::*fun)()const)const;
+  void pass_fun_to_shelf(void(Hash_shelf::*fun)()const)const;
 
   /**
      returns the number of frames in the hash case
@@ -251,7 +251,7 @@ protected:
   /**
      vector of pointers to shelves
    */
-  std::vector<hash_shelf*> h_case_;
+  std::vector<Hash_shelf*> h_case_;
 
 
   
@@ -263,12 +263,12 @@ protected:
      @param
      tlist list of particles to find the possible next particles of
      @param in_it iterator to the vector h_case that points to the
-     hash_shelf to look for possible next particles in
+     Hash_shelf to look for possible next particles in
      @param max_disp
      the maximum allowed displacement when looking for possible particles
   */
   void fill_pos_link_next(std::list<particle_track*>* tlist, 
-			  std::vector<hash_shelf*>::iterator in_it, float max_disp);
+			  std::vector<Hash_shelf*>::iterator in_it, float max_disp);
 
   
   

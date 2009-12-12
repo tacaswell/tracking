@@ -22,6 +22,11 @@
 //containing parts covered by the terms of MATLAB User License, the
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
+
+#ifndef HASH_SHELF
+#define HASH_SHELF
+
+
 #include <vector>
 #include <list>
 #include <vector>
@@ -33,9 +38,6 @@
 #include "pair.h"
 #include "triple.h"
 
-
-#ifndef HASH_SHELF
-#define HASH_SHELF
 namespace utilities{
 class Coarse_grain_array;
 class Counted_vector;
@@ -54,9 +56,9 @@ class Master_box;
 class Corr;
 /**
    Class to implemnt the hash table
- */
+*/
 
-class hash_shelf{
+class Hash_shelf{
 public:
   /**
      add the particle_base to the hash_shelf
@@ -64,122 +66,95 @@ public:
   */
   void push(particle * p);
 
-//   /*
-//      add the particle_track to the hash_shelf
-//      @param p pointer to the particle to add
-//   */
-//   void push(particle_track * p);
-
-
-  ///constructor for eating a Master_box
-  hash_shelf(Master_box & mb, int imsz1, 
-	      int imsz2, unsigned int ppb);
-
-  ///Constructor that makes an empty hash_shelf
-  hash_shelf(unsigned int imsz1, unsigned int imsz2, 
-	     unsigned int ppb,int i_frame);
-  ///Constructor that makes an empty hash_shelf
-  hash_shelf(utilities::Tuple imgsz, unsigned int ippb, int i_frame);
-
 
   ///Changed the pixels per box and re-hashes the shelf
-  void rehash(unsigned int PPB);
+  void rehash(unsigned int unit_per_box);
   
   ///Generates the hash value based on a pointer to a particle object
   virtual unsigned int hash_function(const particle* p) const;
 
+
+  /**
+     Constructor 
+   */
+  Hash_shelf(utilities::Tuple imgsz, float upb,int i_frame);
+  
+
+
   ///Destructor
-  virtual ~hash_shelf();
+  virtual ~Hash_shelf();
 
   ///Print function
   virtual void print() const;
 
-  ///@name Getter Functions
-  ///@{
 
-  ///returns the box at (n,m)
-  hash_box* get_box(int x, int y) const{
-    return (hash_.at(((int)hash_dims_[0])*y + x));
-  }
-  
-  ///Retruns the hash for the particle p
 
   
+
   /**
+     @name Get Region
      appends the region of (2*range +1) on a side from the hash table
      centered on the box (n,m) deals with boxes with in range of the
      edges by truncating the volume returned.  Functions that use this
      need to keep track of this them selves
   */
-  void get_region( int n,  int m, 
-		   hash_box* box, int range=1) const;
-  void get_region_px( int n, 
-		      std::vector<const particle*> & out ,
-		      int range_in_px) const;
-  
-  void get_region( int n,
-		   hash_box* box, int range=1) const;
-  virtual void get_region( particle* n,
-			   hash_box* box, int range=1) const;
+  ///@{
+  /**
+     gets a region where range is set by a distance in real space
+     /pram n the hash_box to center on
+     /pram out a vector that the particles in the region will be added to
+     /pram range_in_units the distance around the central box in data units to extract
+  */
+  void get_region_px( int n, std::vector<const particle*> & out ,
+		      float range_in_units) const;
 
-  
-  void get_region( int n,
-		   std::list<particle*>& in_list, int range=1) const;
+  /**
+     gets a region around box n and puts the results into a hash_box.  This
+     is here because it gets used in some places deep in the code.  These should
+     be gotten rid of
+     /pram n the hash_box to center on
+     /pram box the hash_box to add particles to
+     /pram range how big of a region to extract
+  */
+  void get_region( int n,hash_box* box, int range) const ;
+  /**
+     gets a region around box containing particle n and puts the
+     results into a hash_box.  This is here because it gets used in
+     some places deep in the code.  These should be gotten rid of
 
-  void get_region( int n, int m,
-		   std::vector<const particle*> & out,int range) const;
-  void get_region( int n,
-		   std::vector<const particle*> & out,int range) const;
+     /pram n particle in hash_box to center on 
+     /pram box the hash_box to add     particles to 
+     /pram range how big of a region to extract
+  */
+  void get_region( particle* n,hash_box* box, int range) const ;
+
+  /**
+     gets a region around box n and puts the particles in to the list handed in
+
+     /pram n hash_box to center on
+     /pram out_list list the particles are added to
+     /pram range how big of a region to extract
+  */
+  void get_region( int n,std::list<particle*>& out_list, int range) const ;
+
+  /**
+     gets a region around box n and puts the particles in to the vector handed in.
+     There is something funny going on with const correctness with this
+
+     /pram n hash_box to center on
+     /pram out_vector list the particles are added to
+     /pram range how big of a region to extract
+  */
+  void get_region( int n,std::vector<const particle*> & out_vector,int range) const ;
   
-  
+  /**
+     returns the plane number of this shelf
+   */  
   int get_plane_num() const
   {
     return plane_number_;
   }
   
-  ///@}
-
-  ///@name g(r)
-  ///@{
-
-  ///returns the fully normalized g(r)
-  void gofr_norm(float max_d, int nbins,
-	    std::vector<float>& bin_count,std::vector<float>& bin_r) const;
-  /**
-     returns the total number of particles.  The bin_c is
-     normalized by area and density, but not averaged
-   */
-  int gofr(float max_d, int nbins,
-	    std::vector<float>& bin_count,std::vector<float>& bin_r) const;
-
-  /**
-     returns the total number of particles.  The bin_c is
-     normalized by area and density, but not averaged.  Does
-     not reinitialize the data arrays
-   */
-
-  float gofr(float max_d, int nbins, std::vector<float>& bin_count,int & count) const;
-  ///@}
-
-  
-
-
-  /**
-     G(r) filling in a more sensible object
-  */
-  void gofr(utilities::Coarse_grain_array G,int& particle_count) const;
-  /**
-     Generates and returns a pointer to all the particles in
-     this shelf in a list form.  This makes new objects on the
-     heap, be aware of this for memory leaks.
-
-     \todo 
-     remove, but this version can not be removed until the tracking code is overhauled to 
-
-     see the other version
-   */
-  std::list<particle_track*> * shelf_to_list() const;
-
   /**
      Converts the whole shelf to a list of const pointers
    */
@@ -213,33 +188,9 @@ public:
 
   
   /**
-     Computes D_rr, theu two point microrhelogy correlation.
-     See 
-     Title: Two-Point Microrheology of Inhomogeneous Soft  Materials
-     Authors: Crocker, John C. and Valentine, M. T. and Weeks, Eric
-     R. and Gisler, T.  and Kaplan, P. D. and Yodh, A. G. and Weitz,
-     D. A.
-     prl 85,8,888
-   */
-  void D_rr(utilities::Coarse_grain_array & D)const;
-  
-  /**
-     Computes a collection of correlation functions
-  */
-  void D_lots(utilities::Coarse_grain_array & Drr,
-	      utilities::Coarse_grain_array & Dtt,
-	      utilities::Coarse_grain_array & Ddrdr,
-// 	      utilities::Coarse_grain_array & Dxx,
-// 	      utilities::Coarse_grain_array & Dyy,
-	      utilities::Coarse_grain_array & Duu,
-	      utilities::Coarse_grain_array & Ddudu,
-	      utilities::Counted_vector const & msd 
-	      )const;
-  
-  /**
      Sets the pointer to the next shelf in a case
    */  
-  void set_next_shelf(hash_shelf* next);
+  void set_next_shelf(Hash_shelf* next);
   
 
 
@@ -249,26 +200,8 @@ public:
     passes a pointer to it out as a reference, if there is
     not a shelf, returns false.
    */
-  bool step_forwards(int n,const hash_shelf* & next)const;
-  /**
-     Returns an array of the vectors that point to the nearest
-     neighbors.
-   */
-  void nearest_neighbor_array(utilities::Array & pos_array,
-			      utilities::Array & nn_array, float range)const;
+  bool step_forwards(int n,const Hash_shelf* & next)const;
   
-  /**
-     next nn
-   */
-  void next_nearest_neighbor_array(utilities::Array & pos_array,
-				   utilities::Array & nn_array,
-				   utilities::Array & nnn_array)const;
-
-  /**
-     2D gofr
-   */
-  void gofr2D(float max_d, utilities::Histogram2D & gofr2 ) const;
-
   /**
      Fills in the neighbor vectors for the particles in the shelf
    */
@@ -290,46 +223,28 @@ public:
   /**
      for outputting to a wrapper
    */
-  void output_to_wrapper(utilities::Wrapper_out & wrapper) const;
+  virtual void output_to_wrapper(utilities::Wrapper_out & wrapper) const;
   
   
   /**
      passes a Corr object down the pyramid
    */
   void compute_corr(tracking::Corr &) const ;
+  
+
 
   /**
-     returns the average density of a region a distance buffer away from the edges
+     Testing function to verify that the hash function 
    */
-  unsigned int get_density()const;
-  
+  void test() ;
   
 protected:
-  //change all of this to be pointers to hash_boxes, to keep
-  //consistent with everythign else
-
 
   ///Main data structure.  This is an vector of
   ///hash boxes.  For simplicity the strcuture is stored as
   ///a 1-D array and the class takes care of the 1D<->2D conversion
   std::vector<hash_box*> hash_;
   
-  ///@name grid properties.
-  /// These should not be allowed to change once
-  /// the hash table is instantiated 
-  //@{ 
-  
-  ///Vector to store the dimensions of the grid
-  //vector<int> hash_dims;
-  utilities::Tuple hash_dims_;
-  ///Vector to store the dimensions of input data
-  //  vector<int> img_dims;
-  utilities::Tuple img_dims_;
-
-  
-  ///number of pixels per side of the gridboxes
-  unsigned int ppb_;
-  //@}
   ///stores the plane number of the shelf
   int plane_number_;
   
@@ -343,16 +258,11 @@ protected:
      Cumlative displacement vector
   */
   utilities::Tuple cumulative_disp_;
-  
-  /**
-     computes area of image
-   */
-  int img_area()const;
 
   /**
      Pointer to the next shelf in the case
    */
-  hash_shelf * next_;
+  Hash_shelf * next_;
 
   /**
      number of particles in shelf.
@@ -361,17 +271,41 @@ protected:
   unsigned int particle_count_;
 
   /**
-     if the containing hash_case, and thus this shelf and it's boxes own the
-     particles and need to clean them up at the end
+     Dimensions of the hash table
    */
-  bool own_particles_;
+  utilities::Tuple hash_dims_;
+  
+  /**
+     Dimensions of the image
+   */
+  utilities::Tuple img_dims_;
+  /**
+     size of the side of each hash box
+   */
+  float upb_;
   
 private:
-  ///Initialization function
-  //  void init(unsigned int X, unsigned int Y, unsigned int PPB);
-  void init2();
-
-
+  /**
+     converts a coordinate tuple in the hash shelf to an index
+   */
+  int tuple_to_indx(const utilities::Tuple& cord)const;
+  
+  /**
+     converts an index in the hash shelf to a coordinate tuple 
+   */
+  utilities::Tuple indx_to_tuple(int indx) const;
+  
+  /**
+     converts an arbitrary 
+   */
+  utilities::Tuple range_indx_to_tuple(int indx,const utilities::Tuple& side) const;
+  
+  /**
+     private initialization function
+   */
+  void priv_init();
+  
+  
 };
 
 

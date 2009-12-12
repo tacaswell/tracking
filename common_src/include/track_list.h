@@ -39,7 +39,7 @@ class Track_shelf;
    needed in the track locatign algorithm
 
    \todo
-   need to overhaul to use list objets so that the pointer returning code in hash_shelf
+   need to overhaul to use list objets so that the pointer returning code in Hash_shelf
    can be removed
 */
 

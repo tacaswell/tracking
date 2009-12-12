@@ -121,7 +121,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
     
     particle::set_neighborhood_range(neighbor_range);
     
-    h_case.pass_fun_to_shelf(&hash_shelf::fill_in_neighborhood);
+    h_case.pass_fun_to_shelf(&Hash_shelf::fill_in_neighborhood);
     h_case.pass_fun_to_part(&particle::fill_phi_6);
 //     h_case.pass_fun_to_part(&particle::print);
 

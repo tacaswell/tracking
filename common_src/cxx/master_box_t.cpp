@@ -46,15 +46,11 @@ Master_box::Master_box(utilities::params* params_in )
   init(params_in);
 
 }
-
-
 Master_box::Master_box()
   :in_wrapper_(NULL),own_wrapper_(false){
   
 
 }
-
-
 void Master_box::init(utilities::params* params_in){
   if(in_wrapper_!=NULL){
     std::cout<<"can't re-initialize"<<std::endl;
@@ -66,6 +62,7 @@ void Master_box::init(utilities::params* params_in){
   
   priv_init();
 }
+
 
 
 void Master_box::init(const utilities::Wrapper_in & w_in, utilities::Filter & filt )

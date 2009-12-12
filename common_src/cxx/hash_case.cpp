@@ -92,9 +92,9 @@ void hash_case::init(Master_box & mb,const utilities::Tuple & dims,
   
   
   h_case_.resize(frames);
-  h_case_.at(0) = new hash_shelf(dims, ppb,0);
+  h_case_.at(0) = new Hash_shelf(dims, ppb,0);
   for(unsigned int j = 1; j<h_case_.size(); ++j){
-    h_case_[j] = new hash_shelf(dims, ppb,j);
+    h_case_[j] = new Hash_shelf(dims, ppb,j);
     h_case_[j-1]->set_next_shelf(h_case_[j]);
   }
 
@@ -159,7 +159,7 @@ hash_case::~hash_case(){
 }
 
 void hash_case::rehash(unsigned int ppb){
-  for(vector<hash_shelf*>::iterator it = h_case_.begin();
+  for(vector<Hash_shelf*>::iterator it = h_case_.begin();
       it<h_case_.end(); ++it)
     (*it)->rehash(ppb);
 }
@@ -167,7 +167,7 @@ void hash_case::rehash(unsigned int ppb){
 
 void hash_case:: compute_mean_disp(){
   Tuple cum_disp;
-  for(vector<hash_shelf*>::iterator it = h_case_.begin();
+  for(vector<Hash_shelf*>::iterator it = h_case_.begin();
       it<h_case_.end(); ++it){
     (*it)->compute_mean_forward_disp(cum_disp);  
   }
@@ -193,61 +193,61 @@ void hash_case::get_cum_disp(utilities::Array & cum_disp_array, int start){
 }
 
 
-void hash_case::nearest_neighbor_array(utilities::Cell & pos_cell,
-				       utilities::Cell & nn_cell, float range)const
-{
-  for(vector<hash_shelf*>::const_iterator shelf_it = h_case_.begin();
-      shelf_it!= h_case_.end();++shelf_it)
-  {
-//     cout<<"here!! "<<h_case_.size()<<endl;
+// void hash_case::nearest_neighbor_array(utilities::Cell & pos_cell,
+// 				       utilities::Cell & nn_cell, float range)const
+// {
+//   for(vector<Hash_shelf*>::const_iterator shelf_it = h_case_.begin();
+//       shelf_it!= h_case_.end();++shelf_it)
+//   {
+// //     cout<<"here!! "<<h_case_.size()<<endl;
     
-    utilities::Array nn_array(1);
-    utilities::Array pos_array(1);
+//     utilities::Array nn_array(1);
+//     utilities::Array pos_array(1);
 
-    (*shelf_it)->nearest_neighbor_array(pos_array,nn_array,range);
-    nn_cell.add_array(nn_array);
-    pos_cell.add_array(pos_array);
+//     (*shelf_it)->nearest_neighbor_array(pos_array,nn_array,range);
+//     nn_cell.add_array(nn_array);
+//     pos_cell.add_array(pos_array);
     
-  }
+//   }
   
 
-}
+// }
 
 
 
-void hash_case::next_nearest_neighbor_array(utilities::Cell & pos_cell,
-				       utilities::Cell & nn_cell ,
-				       utilities::Cell & nnn_cell )const
-{
-  int j = 0;
+// void hash_case::next_nearest_neighbor_array(utilities::Cell & pos_cell,
+// 				       utilities::Cell & nn_cell ,
+// 				       utilities::Cell & nnn_cell )const
+// {
+//   int j = 0;
   
-  for(vector<hash_shelf*>::const_iterator shelf_it = h_case_.begin();
-      shelf_it!= h_case_.end();++shelf_it)
-  {
-    cout<<"here!! "<<j++<<endl;
+//   for(vector<Hash_shelf*>::const_iterator shelf_it = h_case_.begin();
+//       shelf_it!= h_case_.end();++shelf_it)
+//   {
+//     cout<<"here!! "<<j++<<endl;
     
-    utilities::Array nn_array(1);
-    utilities::Array nnn_array(1);
-    utilities::Array pos_array(1);
+//     utilities::Array nn_array(1);
+//     utilities::Array nnn_array(1);
+//     utilities::Array pos_array(1);
 
-    (*shelf_it)->next_nearest_neighbor_array(pos_array,nn_array,nnn_array);
-    nn_cell.add_array(nn_array);
-    nnn_cell.add_array(nnn_array);
-    pos_cell.add_array(pos_array);
+//     (*shelf_it)->next_nearest_neighbor_array(pos_array,nn_array,nnn_array);
+//     nn_cell.add_array(nn_array);
+//     nnn_cell.add_array(nnn_array);
+//     pos_cell.add_array(pos_array);
     
-  }
+//   }
   
 
-}
+// }
 
-void hash_case::gofr2D(float max_d, utilities::Histogram2D& gofr2 ) const
-{
+// void hash_case::gofr2D(float max_d, utilities::Histogram2D& gofr2 ) const
+// {
   
-  for(vector<hash_shelf*>::const_iterator shelf_it = h_case_.begin();
-      shelf_it!= h_case_.end();++shelf_it)
-  {
-    (*shelf_it)->gofr2D(max_d,gofr2);
-  }
-}
+//   for(vector<Hash_shelf*>::const_iterator shelf_it = h_case_.begin();
+//       shelf_it!= h_case_.end();++shelf_it)
+//   {
+//     (*shelf_it)->gofr2D(max_d,gofr2);
+//   }
+// }
 
 

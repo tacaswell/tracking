@@ -440,7 +440,7 @@ void Wrapper_o_hdf::set_value(D_TYPE type,const particle* p_in)
 }
 
 #if PTYPE == 1
-void Wrapper_o_hdf::set_all_values(const tracking::Track_box * in) 
+void Wrapper_o_hdf::set_all_values(const tracking::Track_box * in,float scale) 
 {
   open_particle(-1);
   Triple cord;

@@ -107,6 +107,7 @@ struct mymath{
   };
 }mymathobs;
 }
+
 //}
 // int hash_box::gofr(float max_d, int nbins, hash_box* points,
 // 		   vector<float>& bin_count,vector<float>& bin_r){
@@ -145,7 +146,7 @@ struct mymath{
   
 // }
 
-// int hash_shelf::gofr(float max_d, int nbins, vector<float>& bin_count,
+// int Hash_shelf::gofr(float max_d, int nbins, vector<float>& bin_count,
 // 		      vector<float>& bin_r) const{
 //   cout<<"shouldn't be using this one"<<endl;
 //   int count = 0;
@@ -168,7 +169,7 @@ struct mymath{
 // }
 
 
-// void hash_shelf::gofr_norm(float max_d, int nbins, vector<float>& bin_count,
+// void Hash_shelf::gofr_norm(float max_d, int nbins, vector<float>& bin_count,
 // 		      vector<float>& bin_r) const{
 //   cout<<"shouldn't be using this one"<<endl;
 //   int count =   gofr(max_d, nbins,bin_count,bin_r);
@@ -183,202 +184,202 @@ struct mymath{
 
 
 
-void hash_case::gofr_norm(float max_d, int nbins,
-			  vector<float>& bin_count,vector<float>& bin_r) const{
+// void hash_case::gofr_norm(float max_d, int nbins,
+// 			  vector<float>& bin_count,vector<float>& bin_r) const{
   
-  int count = 0;
-  float dens = 0;
-  bin_count.clear();
-  bin_count.resize(nbins);
+//   int count = 0;
+//   float dens = 0;
+//   bin_count.clear();
+//   bin_count.resize(nbins);
 
-  bin_r.clear();
-  bin_r.resize(nbins);
-  for(int j = 0; j<(int)bin_r.size();j++)
-    bin_r.at(j) = j*max_d /nbins;
-  for(int j = 0; j<(int)bin_r.size();j++)
-    bin_count.at(j) = 0;
+//   bin_r.clear();
+//   bin_r.resize(nbins);
+//   for(int j = 0; j<(int)bin_r.size();j++)
+//     bin_r.at(j) = j*max_d /nbins;
+//   for(int j = 0; j<(int)bin_r.size();j++)
+//     bin_count.at(j) = 0;
   
-  //compute the area of each ring, this requires a point at
-  //max_d which is added and removed
-  vector<float>area(bin_r.size());
-  bin_r.push_back(max_d);
-  transform(bin_r.begin(),bin_r.end()-1,
-	    bin_r.begin()+1,
-	    area.begin(),
-	    mymathobs.myaob);
-  bin_r.pop_back();
+//   //compute the area of each ring, this requires a point at
+//   //max_d which is added and removed
+//   vector<float>area(bin_r.size());
+//   bin_r.push_back(max_d);
+//   transform(bin_r.begin(),bin_r.end()-1,
+// 	    bin_r.begin()+1,
+// 	    area.begin(),
+// 	    mymathobs.myaob);
+//   bin_r.pop_back();
   
 
   
-  for(vector<hash_shelf*>::const_iterator it = h_case_.begin();
-      it != h_case_.end(); ++it)
-    {
-      cout<<"plane: "<<(*it)->get_plane_num()<<endl;
+//   for(vector<Hash_shelf*>::const_iterator it = h_case_.begin();
+//       it != h_case_.end(); ++it)
+//     {
+//       cout<<"plane: "<<(*it)->get_plane_num()<<endl;
       
-      dens += ((*it)->gofr(max_d, nbins, bin_count,count));
+//       dens += ((*it)->gofr(max_d, nbins, bin_count,count));
      
-    }
+//     }
 
   
 				      
 
-  cout<<"total count "<<count<<endl;
-  cout<<"average density "<<dens/h_case_.size()<<endl;
+//   cout<<"total count "<<count<<endl;
+//   cout<<"average density "<<dens/h_case_.size()<<endl;
 
-  transform(bin_count.begin(), bin_count.end(), 
-   	    area.begin(),
-    	    bin_count.begin(),
-   	    mymathobs.mydob);
+//   transform(bin_count.begin(), bin_count.end(), 
+//    	    area.begin(),
+//     	    bin_count.begin(),
+//    	    mymathobs.mydob);
   
-  //average over number of particles
-  mymathobs.mydob.div = count ;
-  transform(bin_count.begin(), bin_count.end(), bin_count.begin(),mymathobs.mydob);
-  // //normalize by density
-  mymathobs.mydob.div = dens/h_case_.size() ;
-  transform(bin_count.begin(), bin_count.end(), bin_count.begin(),mymathobs.mydob);
+//   //average over number of particles
+//   mymathobs.mydob.div = count ;
+//   transform(bin_count.begin(), bin_count.end(), bin_count.begin(),mymathobs.mydob);
+//   // //normalize by density
+//   mymathobs.mydob.div = dens/h_case_.size() ;
+//   transform(bin_count.begin(), bin_count.end(), bin_count.begin(),mymathobs.mydob);
   
-}
+// }
 
 
-float hash_shelf::gofr(float max_d, int nbins, vector<float>& bin_count,
-			int & count) const{
-  //this needs some extra code to cope with edge cases between this
-  // and making the hash table something better needs to be done about
-  // how the size mismatch for the image and the hash table are handled
-  unsigned int buffer = (unsigned int)((int)max_d%(int)ppb_==0?max_d/ppb_:(1+max_d/ppb_));
-  int local_count = 0;
+// float Hash_shelf::gofr(float max_d, int nbins, vector<float>& bin_count,
+// 			int & count) const{
+//   //this needs some extra code to cope with edge cases between this
+//   // and making the hash table something better needs to be done about
+//   // how the size mismatch for the image and the hash table are handled
+//   unsigned int buffer = (unsigned int)((int)max_d%(int)ppb_==0?max_d/ppb_:(1+max_d/ppb_));
+//   int local_count = 0;
   
-  hash_box*  working_box;
-  hash_box working_region = hash_box();
-
-  
-
+//   hash_box*  working_box;
+//   hash_box working_region = hash_box();
 
   
 
-  // the hack to have asymmetric buffers is here
-  for(unsigned int x = buffer; x<(hash_dims_[0]-buffer-1);++x){
-    for(unsigned int y = buffer; y<(hash_dims_[1]-buffer-1);++y){
-      working_box = get_box(x,y);
-      get_region(x,y,&working_region,buffer);
-//       cout<<"("<<x<<","<<y<<")"<<endl;
+
+  
+
+//   // the hack to have asymmetric buffers is here
+//   for(unsigned int x = buffer; x<(hash_dims_[0]-buffer-1);++x){
+//     for(unsigned int y = buffer; y<(hash_dims_[1]-buffer-1);++y){
+//       working_box = get_box(x,y);
+//       get_region(x,y,&working_region,buffer);
+// //       cout<<"("<<x<<","<<y<<")"<<endl;
       
-      local_count += working_box->gofr(max_d,nbins,&working_region,bin_count);
-      working_region.clear();
-    }
-  }
+//       local_count += working_box->gofr(max_d,nbins,&working_region,bin_count);
+//       working_region.clear();
+//     }
+//   }
 
 
 
 
-  // devide by the
-  //average density.  The average density used is the density with in
-  // the non-exlcuded area.  If you have nice uniform samples then
-  //this should be fine.
-  //div = 1 * count/((number of boxes)(area of a box))
-  //div = 1 * (count /((hash_dims[0]-buffer)(hash_dims[1]-buffer)(area of box)))
+//   // devide by the
+//   //average density.  The average density used is the density with in
+//   // the non-exlcuded area.  If you have nice uniform samples then
+//   //this should be fine.
+//   //div = 1 * count/((number of boxes)(area of a box))
+//   //div = 1 * (count /((hash_dims[0]-buffer)(hash_dims[1]-buffer)(area of box)))
 
-  count += local_count;
-  //  cout<<count<<endl;
-  return local_count /(float)(ppb_*ppb_*(hash_dims_[0]-2*buffer -1)*(hash_dims_[1]-2*buffer-1));
-
-
-
-}
-
-
-int hash_box::gofr(float max_d, int nbins, hash_box* points,
-		   vector<float>& bin_count){
+//   count += local_count;
+//   //  cout<<count<<endl;
+//   return local_count /(float)(ppb_*ppb_*(hash_dims_[0]-2*buffer -1)*(hash_dims_[1]-2*buffer-1));
 
 
 
-  float max_d_sqr = max_d * max_d;
-  float tmp_dist = 0;
+// }
 
-  vector<particle*>::iterator box_it, points_it;
 
-  for(box_it = contents_.begin(); box_it!=contents_.end(); ++box_it)
-    {
+// int hash_box::gofr(float max_d, int nbins, hash_box* points,
+// 		   vector<float>& bin_count){
+
+
+
+//   float max_d_sqr = max_d * max_d;
+//   float tmp_dist = 0;
+
+//   vector<particle*>::iterator box_it, points_it;
+
+//   for(box_it = contents_.begin(); box_it!=contents_.end(); ++box_it)
+//     {
       
-      for(points_it = (points->contents_).begin(); 
-	points_it !=(points->contents_).end();++points_it )
-	{
-   	  tmp_dist = (*box_it)->distancesq(*points_it);
-  	  // (*box_it)->print();
-	  //   	  (*points_it)->print();
-	  //   	  cout<<"distance sqr: "<<tmp_dist<<endl;
-	  // 	  cout<<"max distance sqr: "<<max_d_sqr<<endl;
-	  if((tmp_dist < max_d_sqr) && (tmp_dist !=0))
-	    {
-	      bin_count.at((int)(((sqrt(tmp_dist))/max_d)*nbins))++;
+//       for(points_it = (points->contents_).begin(); 
+// 	points_it !=(points->contents_).end();++points_it )
+// 	{
+//    	  tmp_dist = (*box_it)->distancesq(*points_it);
+//   	  // (*box_it)->print();
+// 	  //   	  (*points_it)->print();
+// 	  //   	  cout<<"distance sqr: "<<tmp_dist<<endl;
+// 	  // 	  cout<<"max distance sqr: "<<max_d_sqr<<endl;
+// 	  if((tmp_dist < max_d_sqr) && (tmp_dist !=0))
+// 	    {
+// 	      bin_count.at((int)(((sqrt(tmp_dist))/max_d)*nbins))++;
 	
-	    }
-	  else
-	    {
+// 	    }
+// 	  else
+// 	    {
 
-	    }
-	}
+// 	    }
+// 	}
 
-    }
+//     }
 
-  return contents_.size(); 
-}
+//   return contents_.size(); 
+// }
 	     
-void hash_shelf::gofr2D(float max_d, utilities::Histogram2D & gofr2 ) const
-{
-  int buffer = (int)ceil(max_d/ppb_);
+// void Hash_shelf::gofr2D(float max_d, utilities::Histogram2D & gofr2 ) const
+// {
+//   int buffer = (int)ceil(max_d/ppb_);
   
 
   
-  list<particle*> current_box;
-  list<particle*> current_region;
+//   list<particle*> current_box;
+//   list<particle*> current_region;
 
-  max_d *=max_d;
+//   max_d *=max_d;
   
-  for(unsigned int x = buffer; x<(hash_dims_[0]-buffer-1);++x)
-  {
-    for(unsigned int y = buffer; y<(hash_dims_[1]-buffer-1);++y)
-    {
-      // problem may be here, check order
-      int j = y * (int)hash_dims_[0] + x;
+//   for(unsigned int x = buffer; x<(hash_dims_[0]-buffer-1);++x)
+//   {
+//     for(unsigned int y = buffer; y<(hash_dims_[1]-buffer-1);++y)
+//     {
+//       // problem may be here, check order
+//       int j = y * (int)hash_dims_[0] + x;
       
 
       
-      hash_[j]->box_to_list(current_box);
-      get_region(j,current_region,buffer);
-      if(current_box.empty())
-      {
-	continue;
-      }
+//       hash_[j]->box_to_list(current_box);
+//       get_region(j,current_region,buffer);
+//       if(current_box.empty())
+//       {
+// 	continue;
+//       }
       
-      for(list<particle*>::const_iterator box_part = current_box.begin();
-	  box_part != current_box.end();++box_part)
-      {
-	const particle* box_part_ptr = *box_part;
-	for(list<particle*>::const_iterator region_part = ++(current_region.begin());
-	    region_part!= current_region.end();++region_part)
-	{
-	  const particle* region_part_ptr = *region_part;
-	  if(region_part_ptr == box_part_ptr)
-	  {
-	    continue;
-	  }
-	  float sep_r = box_part_ptr->distancesq(region_part_ptr);
-	  if(sep_r == 0)
-	  {
-	    continue;
-	    // if the paritcles are on top of each other don't record them
-	  }
-	  if(sep_r<max_d)
-	  {
-	    utilities::Tuple tmp = box_part_ptr->get_position()-region_part_ptr->get_position() ;
-	    gofr2.add_data_point(tmp);
+//       for(list<particle*>::const_iterator box_part = current_box.begin();
+// 	  box_part != current_box.end();++box_part)
+//       {
+// 	const particle* box_part_ptr = *box_part;
+// 	for(list<particle*>::const_iterator region_part = ++(current_region.begin());
+// 	    region_part!= current_region.end();++region_part)
+// 	{
+// 	  const particle* region_part_ptr = *region_part;
+// 	  if(region_part_ptr == box_part_ptr)
+// 	  {
+// 	    continue;
+// 	  }
+// 	  float sep_r = box_part_ptr->distancesq(region_part_ptr);
+// 	  if(sep_r == 0)
+// 	  {
+// 	    continue;
+// 	    // if the paritcles are on top of each other don't record them
+// 	  }
+// 	  if(sep_r<max_d)
+// 	  {
+// 	    utilities::Tuple tmp = box_part_ptr->get_position()-region_part_ptr->get_position() ;
+// 	    gofr2.add_data_point(tmp);
 	    
 	    
-	  }
+// 	  }
 	  
-	}
-      }
-    }
-  }
-}
+// 	}
+//       }
+//     }
+//   }
+// }

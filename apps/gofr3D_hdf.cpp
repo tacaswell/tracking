@@ -31,21 +31,131 @@
 //this Program grant you additional permission to convey the resulting
 
 
-
-#include <iostream>
-
 #include "master_box_t.h"
 
 #include "particle_base.h"
 #include "hash_case.h"
-
-#include "triple.h"
+#include "pair.h"
 #include "wrapper_o_hdf.h"
 #include "wrapper_i_hdf.h"
 #include "filter.h"
 
 #include "generic_wrapper_hdf.h"
 #include "corr_gofr.h"
+//#include "gnuplot_i.hpp" //Gnuplot class handles POSIX-Pipe-communication with Gnuplot
 
-#include "track_shelf.h"
-#include "track_box.h"
+using std::cout;
+using std::endl;
+using std::set;
+using std::string;
+using std::cerr;
+
+
+using utilities::Wrapper_o_hdf;
+using utilities::Wrapper_i_hdf;
+
+using utilities::Pair;
+using utilities::Filter_basic;
+using utilities::Filter_trivial;
+using utilities::D_TYPE;
+using utilities::Generic_wrapper_hdf;
+
+
+using tracking::Master_box;
+using tracking::particle;
+using tracking::hash_case;
+using tracking::Corr_gofr;
+
+static string base_proc_path = "/home/tcaswell/colloids/processed/";
+
+int main(int argc, const char * argv[])
+{
+
+  if(argc != 3)
+  {
+    cerr<< "wrong number of args args"<<endl;
+    return 0;
+  }
+  
+  
+  string file_path = string(argv[1]);
+  string file_name = string(argv[2]);
+  string out_name = string(argv[0]);
+  unsigned int slash_index = out_name.find_last_of("/");
+  if(slash_index < out_name.size())
+    out_name = out_name.substr(1+slash_index);
+
+
+  string proc_file = base_proc_path + file_path + file_name + ".h5";
+  string out_file = base_proc_path + file_path + out_name + ".h5";
+  cout<<"file to read in: "<<proc_file<<endl;
+  cout<<"file that will be written to: "<<out_file<<endl;
+
+  try
+  {
+
+
+     
+    D_TYPE tmp[] = {utilities::D_XPOS,
+		    utilities::D_YPOS,
+		    utilities::D_ZPOS,
+    };
+    set<D_TYPE> data_types = set<D_TYPE>(tmp, tmp+3);
+
+  
+    
+    Wrapper_i_hdf wh(proc_file,data_types);
+
+    
+
+    Master_box box;
+    //Filter_basic filt(proc_file);
+    Filter_trivial filt;
+    
+
+    box.init(wh,filt);
+    
+
+    
+    cout<<"total number of particles is: "<<box.size()<<endl;;
+    
+
+
+
+
+    int max_range = 100;
+    
+    
+    Pair dims = wh.get_dims();
+    hash_case hcase(box,dims,max_range,wh.get_num_frames());
+
+    cout<<"hash case filled"<<endl;
+    
+//     particle::set_neighborhood_range(101);
+//     hcase.fill_in_neighborhood();
+    
+    
+    //hcase.print();
+
+    
+    Corr_gofr gofr(2000,(float)max_range,file_name);
+    hcase.compute_corr(gofr);
+    cout<<"computed g(r)"<<endl;
+    
+    gofr.display();
+
+      
+    Generic_wrapper_hdf hdf_out(out_file,true);
+    gofr.out_to_wrapper(hdf_out);
+    cout<<"wrote out g(r)"<<endl;
+
+    
+  }
+  catch(const char * err){
+    std::cerr<<"caught on error: ";
+    std::cerr<<err<<endl;
+  } 
+  
+  return 0;
+}
+

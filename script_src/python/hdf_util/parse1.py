@@ -102,6 +102,8 @@ def make_h5(fname_in,d_path,p_path):
 
     # make sure the files exist
     if not (os.path.exists(fname) and os.path.exists(fname_p)):
+        print fname
+        print fname_p
         print "files don't exist"
         exit()
 

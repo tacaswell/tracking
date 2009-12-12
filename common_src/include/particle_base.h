@@ -264,7 +264,7 @@ protected:
 
 
   /**
-     Vector of the particles with in max_range_ in the hash_shelf_ of
+     Vector of the particles with in max_range_ in the Hash_shelf_ of
      the particle.
    */
   std::vector<const particle*> neighborhood_;

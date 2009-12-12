@@ -71,7 +71,7 @@ public:
   virtual void out_to_wrapper(utilities::Generic_wrapper & ) const =0;
   /**
      returns the maximum range that the Corr object looks out to.  This is needed so
-     that the hash_shelf can properly limit the particles that it hands in
+     that the Hash_shelf can properly limit the particles that it hands in
    */
   virtual float get_max_range() const = 0;
 

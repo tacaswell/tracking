@@ -34,7 +34,7 @@
 #define PARTICLE_TRACK
 namespace tracking{
 class Track_box;
-class hash_shelf;
+class Hash_shelf;
 class hash_case;
 
 /**
@@ -152,7 +152,7 @@ public:
      Returns pointer to the shelf the particle resides in
    */
   
-  const hash_shelf* get_shelf()const{
+  const Hash_shelf* get_shelf()const{
     return shelf_;
   }
 
@@ -205,7 +205,7 @@ private:
      redundent with the plane information, but this is more elegent
      and makes looking up the planes cumlative displacemet easier
    */
-  hash_shelf* shelf_;
+  Hash_shelf* shelf_;
 
   /**
      The foward displacement vector

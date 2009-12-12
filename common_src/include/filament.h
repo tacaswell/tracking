@@ -29,7 +29,7 @@
 
 namespace tracking
 {
-class hash_shelf;
+class Hash_shelf;
 }
 
 
@@ -47,7 +47,7 @@ public:
   /**
      connects this filament to those in the next frame
    */
-  void connect_forward(tracking::hash_shelf*);
+  void connect_forward(tracking::Hash_shelf*);
   /**
      returns a pointer to the front or back connected vector that
      corresponds to the end that end_puncta is on.
@@ -85,7 +85,7 @@ protected:
   /**
      Pointer to hash shelf that this filament is in
    */
-  tracking::hash_shelf* shelf_;
+  tracking::Hash_shelf* shelf_;
   
 private:
 

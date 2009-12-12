@@ -83,6 +83,9 @@ void particle_base::priv_init()
 void particle_base::fill_position(){
   wrapper_in_->get_value(position_[0],ind_,utilities::D_XPOS,frame_);
   wrapper_in_->get_value(position_[1],ind_,utilities::D_YPOS,frame_);
+#if DIM_COUNT == 3
+  wrapper_in_->get_value(position_[2],ind_,utilities::D_ZPOS,frame_);
+#endif
 }
 
 

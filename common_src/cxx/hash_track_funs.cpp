@@ -81,7 +81,7 @@ bool lt_pair_tac(const pair<particle_track*, float> &  lh, const pair<particle_t
   }
 
 void hash_case::fill_pos_link_next(list<particle_track*>* tlist, 
-			vector<hash_shelf*>::iterator in_it, float max_disp)
+			vector<Hash_shelf*>::iterator in_it, float max_disp)
 {
   hash_box tmp_box;
   float distsq;
@@ -160,7 +160,7 @@ void hash_case::D_lots(utilities::Coarse_grain_array & Duu,
 		       utilities::Counted_vector const& md 
 		       )const
 {
-  for(vector<hash_shelf*>::const_iterator shelf_it = h_case_.begin();
+  for(vector<Hash_shelf*>::const_iterator shelf_it = h_case_.begin();
       shelf_it!= h_case_.end();++shelf_it)
   {
 //     (*shelf_it)->D_lots(Duu,DuuL,DuuT,Ddrdr,Dxx,Dyy,Ddudu,md);
@@ -169,7 +169,7 @@ void hash_case::D_lots(utilities::Coarse_grain_array & Duu,
 
 }
 
-void hash_shelf::D_lots(utilities::Coarse_grain_array & Duu,
+void Hash_shelf::D_lots(utilities::Coarse_grain_array & Duu,
 			utilities::Coarse_grain_array & DuuL,
 			utilities::Coarse_grain_array & DuuT,
 			utilities::Coarse_grain_array & Ddrdr,
@@ -361,7 +361,7 @@ void hash_shelf::D_lots(utilities::Coarse_grain_array & Duu,
     
 
 }
-void hash_shelf::D_rr(utilities::Coarse_grain_array & Drr)const
+void Hash_shelf::D_rr(utilities::Coarse_grain_array & Drr)const
 {
   list<particle_track*> current_box;
   list<particle_track*> current_region;
@@ -487,7 +487,7 @@ void hash_shelf::D_rr(utilities::Coarse_grain_array & Drr)const
 
 void hash_case::D_rr(utilities::Coarse_grain_array& D)const
 {
-  for(vector<hash_shelf*>::const_iterator shelf_it = h_case_.begin();
+  for(vector<Hash_shelf*>::const_iterator shelf_it = h_case_.begin();
       shelf_it!= h_case_.end();++shelf_it)
   {
     (*shelf_it)->D_rr(D);
@@ -504,7 +504,7 @@ void hash_case::link(float max_range, Track_shelf& tracks){
 
   //  cout<<"rehashed"<<endl;
 
-  vector<hash_shelf*>::iterator it = h_case_.begin();
+  vector<Hash_shelf*>::iterator it = h_case_.begin();
 
   //generate first list
   list<particle_track*>* t_list = (*it)->shelf_to_list();

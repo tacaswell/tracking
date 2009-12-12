@@ -31,7 +31,7 @@
 
 
 using tracking::hash_box;
-using tracking::hash_shelf;
+using tracking::Hash_shelf;
 using tracking::hash_case;
 using tracking::particle;
 
@@ -41,6 +41,7 @@ using tracking::Track_box;
 
 using utilities::Wrapper_out;
 using utilities::Triple;
+using utilities::Tuple;
 
 using tracking::Corr;
 
@@ -59,7 +60,7 @@ void hash_case::output_to_wrapper(Wrapper_out & wrapper) const
 {
 
   wrapper.initialize_wrapper();
-  for(vector<hash_shelf*>::const_iterator current_shelf= h_case_.begin();
+  for(vector<Hash_shelf*>::const_iterator current_shelf= h_case_.begin();
       current_shelf!=h_case_.end();++current_shelf)				// loop over frames
   {
     (*current_shelf)->output_to_wrapper(wrapper);
@@ -68,7 +69,7 @@ void hash_case::output_to_wrapper(Wrapper_out & wrapper) const
 
 
 }
-void hash_shelf::output_to_wrapper(Wrapper_out & wrapper) const
+void Hash_shelf::output_to_wrapper(Wrapper_out & wrapper) const
 {
   cout<<"frame "<<plane_number_<<"contains ";
   
@@ -128,15 +129,15 @@ void Track_box::output_to_wrapper(Wrapper_out & wrapper) const
 
 void hash_case::pass_fun_to_part(void(particle::*fun)())
 {
-  vector<hash_shelf*>::iterator myend =  h_case_.end();
-  for(vector<hash_shelf*>::iterator it = h_case_.begin();
+  vector<Hash_shelf*>::iterator myend =  h_case_.end();
+  for(vector<Hash_shelf*>::iterator it = h_case_.begin();
       it!=myend;++it)
   {
     (*it)->pass_fun_to_part(fun);
     
   }
 }
-void hash_shelf::pass_fun_to_part(void(particle::*fun)())
+void Hash_shelf::pass_fun_to_part(void(particle::*fun)())
 {
   vector<hash_box*>::iterator myend =  hash_.end();
   for(vector<hash_box*>::iterator it = hash_.begin();
@@ -165,15 +166,15 @@ void hash_box::pass_fun_to_part(void(particle::*fun)())
 
 void hash_case::pass_fun_to_part(void(particle::*fun)()const)const
 {
-  vector<hash_shelf*>::const_iterator myend =  h_case_.end();
-  for(vector<hash_shelf*>::const_iterator it = h_case_.begin();
+  vector<Hash_shelf*>::const_iterator myend =  h_case_.end();
+  for(vector<Hash_shelf*>::const_iterator it = h_case_.begin();
       it!=myend;++it)
   {
     (*it)->pass_fun_to_part(fun);
     
   }
 }
-void hash_shelf::pass_fun_to_part(void(particle::*fun)()const)const
+void Hash_shelf::pass_fun_to_part(void(particle::*fun)()const)const
 {
   vector<hash_box*>::const_iterator myend =  hash_.end();
   for(vector<hash_box*>::const_iterator it = hash_.begin();
@@ -198,20 +199,20 @@ void hash_box::pass_fun_to_part(void(particle::*fun)()const)const
 
 
 
-void hash_case::pass_fun_to_shelf(void(hash_shelf::*fun)())
+void hash_case::pass_fun_to_shelf(void(Hash_shelf::*fun)())
 {
-  vector<hash_shelf*>::iterator myend =  h_case_.end();
-  for(vector<hash_shelf*>::iterator it = h_case_.begin();
+  vector<Hash_shelf*>::iterator myend =  h_case_.end();
+  for(vector<Hash_shelf*>::iterator it = h_case_.begin();
       it!=myend;++it)
   {
     ((*it)->*fun)();
     
   }
 }
-void hash_case::pass_fun_to_shelf(void(hash_shelf::*fun)()const)const
+void hash_case::pass_fun_to_shelf(void(Hash_shelf::*fun)()const)const
 {
-  vector<hash_shelf*>::const_iterator myend =  h_case_.end();
-  for(vector<hash_shelf*>::const_iterator it = h_case_.begin();
+  vector<Hash_shelf*>::const_iterator myend =  h_case_.end();
+  for(vector<Hash_shelf*>::const_iterator it = h_case_.begin();
       it!=myend;++it)
   {
     ((*it)->*fun)();
@@ -226,7 +227,7 @@ void hash_case::pass_fun_to_shelf(void(hash_shelf::*fun)()const)const
 void hash_case::compute_corr(Corr & in) const
 {
   
-  for(vector<hash_shelf*>::const_iterator shelf_it = h_case_.begin();
+  for(vector<Hash_shelf*>::const_iterator shelf_it = h_case_.begin();
       shelf_it!= h_case_.end();++shelf_it)
   {
     (*shelf_it)->compute_corr(in);
@@ -234,20 +235,43 @@ void hash_case::compute_corr(Corr & in) const
   }
 }
 
-void hash_shelf::compute_corr(Corr & in)const
+void Hash_shelf::compute_corr(Corr & in)const
 {
 
   float range = in.get_max_range();
-  unsigned int buffer = (unsigned int)((int)range%(int)ppb_==0?range/ppb_:(1+range/ppb_));
+  unsigned int buffer = (unsigned int)ceil(range/upb_);
   
-  // the hack to have asymmetric buffers is here
-  for(unsigned int x = buffer; x<(hash_dims_[0]-buffer-1);++x){
-    for(unsigned int y = buffer; y<(hash_dims_[1]-buffer-1);++y){
-      get_box(x,y)->compute_corr(in);
-      
-    }
-  }
+  
+  
+  Tuple bottom_corner, top_corner;
+  // check top and bottom corners are in range
+  for(int j = 0;j<Tuple::length_;++j)
+  {
+    if(buffer>=hash_dims_[j])
+      throw "Hash_shelf::compute_corr buffer is bigger than a hash dimension" ;
+    
 
+    bottom_corner[j] = buffer;
+    top_corner[j] = hash_dims_[j] - buffer;
+    
+  }
+  
+    
+  Tuple region_sides = top_corner - bottom_corner;
+  int region_sz = (int)region_sides.prod();
+  
+  
+  for(int j = 0;j<region_sz;++j)
+  {
+    Tuple tmp = range_indx_to_tuple(j,region_sides);
+    tmp += bottom_corner;
+    
+    int tmp_indx = tuple_to_indx(tmp);
+    (hash_.at(tmp_indx))->compute_corr(in);;
+    
+    
+  }
+  
 }
 void hash_box::compute_corr(Corr & in )const
 {
@@ -294,7 +318,7 @@ void hash_box::compute_corr(Corr & in )const
 void hash_case::fill_in_neighborhood() 
 {
   
-  for(vector<hash_shelf*>::iterator shelf_it = h_case_.begin();
+  for(vector<Hash_shelf*>::iterator shelf_it = h_case_.begin();
       shelf_it!= h_case_.end();++shelf_it)
   {
     (*shelf_it)->fill_in_neighborhood();
@@ -302,7 +326,7 @@ void hash_case::fill_in_neighborhood()
 }
 
 
-void hash_shelf::fill_in_neighborhood()
+void Hash_shelf::fill_in_neighborhood()
 {
   //  cout<<"particle_count_"<<particle_count_<<endl;
   
@@ -311,7 +335,7 @@ void hash_shelf::fill_in_neighborhood()
   
   for(int j = 0; j<(int)hash_.size(); ++j)
   {
-    int buffer = (int)ceil(particle::get_max_range()/ppb_);
+    int buffer = (int)ceil(particle::get_max_range()/upb_);
     if(buffer<1)
     {
       buffer = 1;

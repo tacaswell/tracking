@@ -29,6 +29,8 @@
 #include <cmath>
 #include<iostream>
 #include <vector>
+#include <cmath>
+
 
 #include "hash_shelf.h"
 #include "hash_box.h"
@@ -65,34 +67,7 @@ using std::vector;
 
 
 
-unsigned int hash_shelf::hash_function(const particle* p) const
-{
-  utilities::Tuple cur_pos = p->get_position();
-  
-  return (unsigned int)
-    (((unsigned int)cur_pos[1]/ppb_)*hash_dims_[0] + cur_pos[0]/ppb_);
-  //   return (unsigned int)
-  //     (((unsigned int)p->get_value(wrapper::D_YPOS)/ppb)*hash_dims[0] +
-  //        p->get_value(wrapper::D_XPOS)/ppb_);
-}
-
-hash_shelf::hash_shelf(Master_box& mb, int imsz1, 
-		       int imsz2, unsigned int PPB): ppb_(PPB)
-{
-  img_dims_[0] = imsz1;
-  img_dims_[1] = imsz2;
-  std::cout<<img_dims_[0]<<std::endl
-	   <<img_dims_[1]<<std::endl;
-  init2();
-  for(unsigned int j = 0; j<mb.size();j++)
-  {
-    particle* p = mb.get_particle(j);
-    push(p);
-  }
-}
-
-
-void hash_shelf::push(particle * p){
+void Hash_shelf::push(particle * p){
   try{
     (hash_.at(hash_function(p)))->push(p);
   }
@@ -124,178 +99,42 @@ void hash_shelf::push(particle * p){
 
 
 
-hash_shelf::hash_shelf(unsigned int imsz1, 
-		       unsigned int imsz2, unsigned int PPB,
-		       int i_frame):  ppb_(PPB), plane_number_(i_frame),
-				      next_(NULL),particle_count_(0)
-{
-  img_dims_[0] = (imsz1);
-  img_dims_[1] = (imsz2);
-  init2();
-}
-
-hash_shelf::hash_shelf(utilities::Tuple imgsz, 
-		       unsigned int ippb, 
-		       int i_frame):img_dims_(imgsz),  ppb_(ippb),  
+Hash_shelf::Hash_shelf(utilities::Tuple imgsz, 
+		       float upb, 
+		       int i_frame):img_dims_(imgsz),  upb_(upb),  
 				    plane_number_(i_frame), 
 				    next_(NULL),particle_count_(0)
 {  
-  init2();
+  priv_init();
+  
 }
 
-void hash_shelf::init2(){
-
+void Hash_shelf::priv_init()
+{
+  
   int k = Tuple::length_;
   hash_dims_.clear();
   hash_.clear();
 
+  int hash_dim_prod = 1;
+  
   for(int j = 0; j<k;++j)
-    {
-      hash_dims_[j] = (((int)(img_dims_[j]))%ppb_==0?((int)img_dims_[j])/ppb_:(((int)img_dims_[j])/ppb_)+1);
+  {
+    hash_dims_[j] = ceil(img_dims_[j]/upb_);
+    
+	// (((int)(img_dims_[j]))%upb_==0?
+	//  ((int)img_dims_[j])/upb_:
+	//  (((int)img_dims_[j])/upb_)+1);
+      hash_dim_prod*=hash_dims_[j];
+      
     }
-  // tac 2009-03-11
-  // hash_dims.push_back((*it)%ppb_==0?(*it)/ppb_:(1+(*it)/ppb_)+1);
 
-
-  int tmp_prod = (int) hash_dims_.prod();
-
-
-  hash_.reserve(tmp_prod);
-  for(int j = 0; j<tmp_prod;j++)
+  hash_.reserve(hash_dim_prod);
+  for(int j = 0; j<hash_dim_prod;j++)
     hash_.push_back(new hash_box(this,j));
 }
 
 
-void hash_shelf::print() const{
-  // tac 2009-07-22
-  // changed print to spew less
-
-  int total = 0;
-  
-  for(int i=0; i<hash_dims_[0];i++){
-    for(int j=0; j<hash_dims_[1];j++){
-      cout<<(hash_.at(j*(int)hash_dims_[0] + i))->get_size() <<"\t";
-      total += (hash_.at(j*(int)hash_dims_[0] + i))->get_size();
-      
-    }
-    cout<<endl;
-  }
-  //mean_forward_disp_.print();
-
-  cout<<total<<endl;
-}
-
-void hash_shelf::get_region( int n, int m,
-			     hash_box* box,int range) const {
-  if(n<0||m<0||range<0||box==NULL)
-    return;
-  int x_bot = (((n-range)>=0)?(n-range):0);
-  int x_top = ((n+range)<((int)hash_dims_[0]-1)?(n+range):((int)hash_dims_[0]-1));
-  int y_bot = ((m-range)>0?(m-range):0);
-  int y_top = ((m+range)<((int)hash_dims_[1]-1)?(m+range):((int)hash_dims_[1]-1));
-  //      cout<<"x: "<<n<<"\t"
-  //          <<"y: "<<m<<"\t"
-  //          <<x_bot<<"\t"
-  //          <<x_top<<"\t"
-  //          <<y_bot<<"\t"
-  //          <<y_top<<"\t"<<endl;
-  for( int x = x_bot; x<=x_top;++x)
-  {
-    for( int y = y_bot; y<=y_top;++y)
-    {
-      box->append((hash_.at(x+int(hash_dims_[0])*y)));
-      //	 box->append((hash_.at(j+int(hash_dims_[0])*k)));
-      // 	 cout<<j<<"\t"<<k<<endl;
-      // 	 cout<<"appending box at: "<<j+hash_dims_[0]*k<<endl;
-    }
-  }
-  //     cout<<"+++++++++++++++"<<endl;
-}
-
-
-void hash_shelf::get_region( int n, int m,
-			     vector<const particle*> & out,int range) const {
-  
-  if(n<0||m<0||range<0)
-    throw "hash_shelf::get_region: nonsensical arugements";
-  
-
-  
-  int x_bot = (((n-range)>=0)?(n-range):0);
-  int x_top = ((n+range)<((int)hash_dims_[0]-1)?(n+range):((int)hash_dims_[0]-1));
-  int y_bot = ((m-range)>0?(m-range):0);
-  int y_top = ((m+range)<((int)hash_dims_[1]-1)?(m+range):((int)hash_dims_[1]-1));
-  
-  int nsize= 0;
-  for( int x = x_bot; x<=x_top;++x)
-    for( int y = y_bot; y<=y_top;++y)
-      nsize += (hash_.at(x+int(hash_dims_[0])*y))->get_size();
-
-  out.clear();
-  out.reserve(nsize);
-  
-  for( int x = x_bot; x<=x_top;++x)
-  {
-    for( int y = y_bot; y<=y_top;++y)
-    {
-      hash_box* cur_box = (hash_.at(x+int(hash_dims_[0])*y));
-      vector<particle *>::const_iterator it_end = cur_box->end();
-      for(vector<particle *>::const_iterator it = cur_box->begin();
-	  it!=it_end;++it)
-      {
-	out.push_back(*it);
-      }
-      
-    }
-  }
-}
-
-
-void hash_shelf::get_region_px( int n, 
-				vector<const particle*> & out ,
-				int range_in_px) const
-  
-{
-
-  
-  get_region(n,out,(int)ceil(range_in_px/ppb_));
-  
-}
-
-
-
-void hash_shelf::get_region( int n, 
-			     vector<const particle*> & out ,
-			     int range) const
-{
-  get_region(n%int(hash_dims_[0]), n/int(hash_dims_[0]), out, range);
-
-}
-
-
-
-void hash_shelf::get_region( int n, 
-			     hash_box* box,int range) const
-{
-  get_region(n%int(hash_dims_[0]), n/int(hash_dims_[0]), box, range);
-
-}
-
-void hash_shelf::get_region( particle* n,
-			     hash_box* box, int range) const
-{
-  get_region(hash_function(n),box,range);
-  
-}
-
-void hash_shelf::get_region( int n,
-			     std::list<particle*>& in_list, 
-			     int range) const
-{
-  hash_box tmp;
-  get_region(n,&tmp,range);
-  tmp.box_to_list(in_list);
-}
 
 
 
@@ -303,39 +142,24 @@ void hash_shelf::get_region( int n,
   /**
      Remakes the hash table using the same particles using  new
      pixel per box count
-     @param PPB
+     @param UPB
      new pixel per box value
    */
-void hash_shelf::rehash(unsigned int PPB){
+void Hash_shelf::rehash(unsigned int UPB){
   list<particle*> tmp;
   shelf_to_list(tmp);
-
-  ppb_ = PPB;
+  upb_ = UPB;
+  
   //rebuilds the hash table
-  init2();
+  priv_init();
   list< particle*>::iterator myEnd = tmp.end();
   
   for(list<particle*>::iterator it = tmp.begin(); it!=myEnd; ++it)
       push(*it);
 }
 
-list<particle_track*> * hash_shelf::shelf_to_list() const{
-  list<particle_track*>* tmp = new list<particle_track*>;
-  for( vector<hash_box* >::const_iterator cur_box = hash_.begin(); cur_box<hash_.end(); ++cur_box)
-    {
-      
-      for(vector<particle*>::iterator cur_part = (*cur_box)->begin();
-	  cur_part!=(*cur_box)->end(); ++cur_part)
-	{
-	  tmp->push_back(static_cast<particle_track*>(*cur_part));
-	}
-    }
 
-  return tmp;
-}
-
-
-void hash_shelf::shelf_to_list(std::list<particle*> &tmp) const{
+void Hash_shelf::shelf_to_list(std::list<particle*> &tmp) const{
   tmp.clear();
   for(vector<hash_box*>::const_iterator cur_box = hash_.begin(); cur_box<hash_.end(); ++cur_box)
     {
@@ -348,7 +172,7 @@ void hash_shelf::shelf_to_list(std::list<particle*> &tmp) const{
     }
 }
 
-void hash_shelf::shelf_to_list(std::list<const particle*> &tmp) const{
+void Hash_shelf::shelf_to_list(std::list<const particle*> &tmp) const{
   tmp.clear();
   for(vector<hash_box*>::const_iterator cur_box = hash_.begin(); cur_box<hash_.end(); ++cur_box)
     {
@@ -362,7 +186,7 @@ void hash_shelf::shelf_to_list(std::list<const particle*> &tmp) const{
 }
 
 
-void hash_shelf::compute_mean_forward_disp(utilities::Tuple & cum_disp_in){
+void Hash_shelf::compute_mean_forward_disp(utilities::Tuple & cum_disp_in){
   cumulative_disp_ = cum_disp_in;
   mean_forward_disp_.clear();
   int count = 0;
@@ -386,13 +210,7 @@ void hash_shelf::compute_mean_forward_disp(utilities::Tuple & cum_disp_in){
   
 }
 
-int hash_shelf::img_area() const
-{
-  return int(img_dims_.prod());
-
-}
-
-hash_shelf::~hash_shelf()
+Hash_shelf::~Hash_shelf()
 {
   for(vector<hash_box*>::iterator it = hash_.begin(); it<hash_.end(); ++it)
   {
@@ -407,7 +225,7 @@ hash_shelf::~hash_shelf()
 
 
 
-void hash_shelf::set_next_shelf(hash_shelf* next)
+void Hash_shelf::set_next_shelf(Hash_shelf* next)
 {
   if(next_ !=NULL)
   {
@@ -417,7 +235,7 @@ void hash_shelf::set_next_shelf(hash_shelf* next)
 }
 
 
-bool hash_shelf::step_forwards(int n, const hash_shelf* & dest)const{
+bool Hash_shelf::step_forwards(int n, const Hash_shelf* & dest)const{
 
   if (next_ == NULL)
   {
@@ -439,157 +257,196 @@ bool hash_shelf::step_forwards(int n, const hash_shelf* & dest)const{
   
 }
 
-void hash_shelf::nearest_neighbor_array(utilities::Array & pos_array,
-					utilities::Array & nn_array, float range)const
-{
-//   cout<<"particle_count_"<<particle_count_<<endl;
-  
-  nn_array.resize(particle_count_);
-  pos_array.resize(particle_count_);
 
-  
-    
-  list<particle*> current_box;
-  list<particle*> current_region;
-  
-  for(int j = 0; j<(int)hash_.size(); ++j)
+// may have trouble with int/float changes
+int Hash_shelf::tuple_to_indx(const Tuple & cord)const
+{
+  unsigned int indx = 0;
+  int length = Tuple::length_;
+  for(int j = 0;j<length;++j)
   {
-    int buffer = 2;
-    hash_[j]->box_to_list(current_box);
-    get_region(j,current_region,buffer);
-    if(current_box.empty())
-    {
-      continue;
-    }
+    if(cord[j]>=hash_dims_[j])
+      throw "Hash_shelf::tuple_to_indx cord out of hash dimensions";
     
-    // tac 2009-07-22
-    // infinite loop if no particles 
-    while(current_region.size()<=1 && buffer<hash_dims_[0] &&buffer<hash_dims_[1])
+    unsigned int tmp_prod = 1;
+    for(int k = 0;k<(j);++k)
     {
-      ++buffer;
-      get_region(j,current_region,buffer);
+      tmp_prod*=hash_dims_[k];
     }
+
     
-    for(list<particle*>::const_iterator box_part = current_box.begin();
-	box_part != current_box.end();++box_part)
+    indx += ((unsigned int)cord[j])*tmp_prod;
+  }
+  return indx;
+}
+
+
+
+Tuple Hash_shelf::indx_to_tuple(int indx) const
+{
+  Tuple cord ;
+  for(int j = 0;j<Tuple::length_;++j)
+  {
+    int tmp_prod = 1;
+    for(int k = 0;k<(j);++k)
     {
-      const particle* box_part_ptr = *box_part;
-      const particle* nn_prtcle = current_region.front();
-      float min_r= 999999999;
-      
-      
-      for(list<particle*>::const_iterator region_part = ++(current_region.begin());
-	  region_part!= current_region.end();++region_part)
-      {
-	const particle* region_part_ptr = *region_part;
-	if(region_part_ptr == box_part_ptr)
-	{
-	  continue;
-	}
-	
-	float sep_r = box_part_ptr->distancesq(region_part_ptr);
-	if (sep_r<min_r)
-	{
-	  min_r = sep_r;
-	  nn_prtcle = region_part_ptr;
-	  if(sep_r == 0)
-	  {
-	    box_part_ptr->print();
-	    nn_prtcle->print();
-	    
-	  }
-	  
-	}
+      tmp_prod*=hash_dims_[k];
+    }
+    cord[j] = (indx/tmp_prod)%((int)hash_dims_[j]);
+  }
+  return Tuple(cord);
+  
+}
+Tuple Hash_shelf::range_indx_to_tuple(int indx,const Tuple& side) const
+{
+  Tuple cord ;
+  for(int j = 0;j<Tuple::length_;++j)
+  {
+    int tmp_prod = 1;
+    for(int k = 0;k<(j-1);++k)
+    {
+      tmp_prod*=(int)side[k];
+    }
+    cord[j] = (indx/tmp_prod)%((int)side[j]);
+  }
+  return Tuple(cord);
+  
+}
+  
+
+unsigned int Hash_shelf::hash_function(const particle* p) const
+{
+
+  Tuple cur_pos = p->get_position();
+  cur_pos/=upb_;
+  return tuple_to_indx(cur_pos);
+  
+
+}
+
+
+void Hash_shelf::test()
+{
+  cout<<hash_dims_<<endl;
+  
+  Tuple base;
+#if DIM_COUNT == 2
+  Tuple inc1 = Tuple(1,0);
+  Tuple inc2 = Tuple(0,1);
+#elif DIM_COUNT == 3
+  Tuple inc1 = Tuple(1,0,0);
+  Tuple inc2 = Tuple(0,1,0);
+  Tuple inc3 = Tuple(0,0,1);
+#endif
+  
+  cout<<tuple_to_indx(base)<<'\t'<<base<<endl;
+  for(int j = 0; j<5;++j)
+  {
+    base+=inc1;
+    cout<<base<<'\t'<<tuple_to_indx(base)<<'\t'<<indx_to_tuple(tuple_to_indx(base)) <<endl;
+    for(int k= 0; k<5;++k)
+    { 
+      base+=inc2;
+      cout<<base<<'\t'<<tuple_to_indx(base)<<'\t'<<indx_to_tuple(tuple_to_indx(base)) <<endl;
+
+#if DIM_COUNT == 3
+      for(int m= 0; m<5;++m)
+      { 
+	base+=inc3;
+	cout<<base<<'\t'<<tuple_to_indx(base)<<'\t'<<indx_to_tuple(tuple_to_indx(base)) <<endl;
       }
-      nn_array.push(nn_prtcle->get_position() - box_part_ptr->get_position());
-      pos_array.push(box_part_ptr->get_position());
+      base[2] = 0;
+      
+#endif
     }
+    base[1] = 0;
+    
+  }
+  
+}
+
+
+
+void Hash_shelf::get_region(int n,vector<const particle*> & out_vector,int range) const
+{
+  Tuple center = indx_to_tuple(n);
+  Tuple bottom_corner, top_corner;
+  // check top and bottom corners are in range
+  for(int j = 0;j<Tuple::length_;++j)
+  {
+    bottom_corner[j] = (((center[j]-range)>=0)?(center[j]-range):0);
+    top_corner[j] = (((center[j]+range)<=hash_dims_[j])?(center[j]+range):hash_dims_[j]);
+  }
+  
+    
+  Tuple region_sides = top_corner - bottom_corner;
+  int region_sz = (int)region_sides.prod();
+  
+  
+  for(int j = 0;j<region_sz;++j)
+  {
+    Tuple tmp = range_indx_to_tuple(j,region_sides);
+    tmp += bottom_corner;
+    
+    int tmp_indx = tuple_to_indx(tmp);
+    hash_box* cur_box = (hash_.at(tmp_indx));
+    vector<particle *>::const_iterator it_end = cur_box->end();
+    for(vector<particle *>::const_iterator it = cur_box->begin();
+	it!=it_end;++it)
+    {
+      out_vector.push_back(*it);
+    }
+    
   }
 }
 
-void hash_shelf::next_nearest_neighbor_array(utilities::Array & pos_array,
-					utilities::Array & nn_array,
-					utilities::Array & nnn_array)const
+
+void Hash_shelf::get_region(int n,list< particle*> & out_vector,int range) const
 {
-//   cout<<"particle_count_"<<particle_count_<<endl;
-
-  nn_array.resize(particle_count_);
-  nnn_array.resize(particle_count_);
-  pos_array.resize(particle_count_);
-
-  
-    
-  list<particle*> current_box;
-  list<particle*> current_region;
-  
-  for(int j = 0; j<(int)hash_.size(); ++j)
+  Tuple center = indx_to_tuple(n);
+  Tuple bottom_corner, top_corner;
+  // check top and bottom corners are in range
+  for(int j = 0;j<Tuple::length_;++j)
   {
-    int buffer = 2;
-    hash_[j]->box_to_list(current_box);
-    get_region(j,current_region,buffer);
-    if(current_box.empty())
-    {
-      continue;
-    }
-    
-    // tac 2009-07-22
-    // infinite loop if no particles 
-    while(!(current_region.size()>3) && buffer<hash_dims_[0] &&buffer<hash_dims_[1])
-    {
-      ++buffer;
-      get_region(j,current_region,buffer);
-    }
-    
-    for(list<particle*>::const_iterator box_part = current_box.begin();
-	box_part != current_box.end();++box_part)
-    {
-      const particle* box_part_ptr = *box_part;
-      const particle* nn_prtcle = current_region.front();
-      const particle* nnn_prtcle = current_region.front();
-      float nn_r= 999999999;
-      float nnn_r= 999999999;
-      
-      for(list<particle*>::const_iterator region_part = ++(current_region.begin());
-	  region_part!= current_region.end();++region_part)
-      {
-	const particle* region_part_ptr = *region_part;
-	if(region_part_ptr == box_part_ptr)
-	{
-	  continue;
-	}
-	
-	float sep_r = box_part_ptr->distancesq(region_part_ptr);
-	if(sep_r == 0)
-	{
-	  box_part_ptr->print();
-	  nn_prtcle->print();
-	  continue;
-	  // if the paritcles are on top of each other don't record them
-	}
-	if(sep_r<nnn_r)
-	{
-	  
-	  if (sep_r<nn_r)
-	  {
-	    nnn_r = nn_r;
-	    nnn_prtcle = nn_prtcle;
-	    
-	    nn_r = sep_r;
-	    nn_prtcle = region_part_ptr;
-	  }
-	  else
-	  {
-	    nnn_r = sep_r;
-	    nnn_prtcle = region_part_ptr;
-	    
-	  }
-	}
-      }
-      nn_array.push(nn_prtcle->get_position() - box_part_ptr->get_position());
-      nnn_array.push(nnn_prtcle->get_position() - box_part_ptr->get_position());
-      pos_array.push(box_part_ptr->get_position());
-    }
+    bottom_corner[j] = (((center[j]-range)>=0)?(center[j]-range):0);
+    top_corner[j] = (((center[j]+range)<=hash_dims_[j])?(center[j]+range):hash_dims_[j]);
   }
+  
+    
+  Tuple region_sides = top_corner - bottom_corner;
+  int region_sz = (int)region_sides.prod();
+  
+  
+  for(int j = 0;j<region_sz;++j)
+  {
+    Tuple tmp = range_indx_to_tuple(j,region_sides);
+    tmp += bottom_corner;
+    
+    int tmp_indx = tuple_to_indx(tmp);
+    hash_box* cur_box = (hash_.at(tmp_indx));
+    vector<particle *>::const_iterator it_end = cur_box->end();
+    for(vector<particle *>::const_iterator it = cur_box->begin();
+	it!=it_end;++it)
+    {
+      out_vector.push_back(*it);
+    }
+    
+  }
+}
+
+
+void Hash_shelf::get_region_px( int n, std::vector<const particle*> & out ,
+		    float range_in_units) const
+{
+  get_region(n,out,ceil(range_in_units/upb_));
+
+}
+
+void Hash_shelf::print()const
+{
+  cout<<"hash dimensions: "<<hash_dims_<<endl;
+  cout<<"contains: "<<particle_count_<<endl;
+  
 }
 
 

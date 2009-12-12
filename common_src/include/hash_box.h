@@ -45,7 +45,7 @@ class Wrapper_out;
 namespace tracking{
 
 class Corr;
-class hash_shelf;
+class Hash_shelf;
 
 /**
    Class for storing particles in the hash table.  This class will
@@ -60,9 +60,9 @@ protected:
   std::vector<particle*> contents_;
   
   /**
-     pointer to the hash_shelf that contains this box
+     pointer to the Hash_shelf that contains this box
    */
-  const hash_shelf  * shelf_;
+  const Hash_shelf  * shelf_;
   
   /**
      position in hash shelf 
@@ -75,8 +75,8 @@ public:
   ///Constructors, destructor, and clear all data
   //@{ 
 
-  ///constructor with hash_shelf information
-  hash_box(const hash_shelf* in,int hash_indx):contents_(),shelf_(in),hash_indx_(hash_indx){
+  ///constructor with Hash_shelf information
+  hash_box(const Hash_shelf* in,int hash_indx):contents_(),shelf_(in),hash_indx_(hash_indx){
 
   }
   /**
