@@ -72,6 +72,7 @@ using utilities::Filter_basic;
 using utilities::Filter_trivial;
 using utilities::D_TYPE;
 using utilities::Generic_wrapper_hdf;
+using utilities::Triple;
 
 
 using tracking::Master_box;
@@ -156,9 +157,9 @@ int main(int argc, const char * argv[])
     cout<<final_tracks.get_track_count()<<endl;
     
     D_TYPE tmp2[] = {utilities::D_XPOS,
-		     utilities::D_YPOS,
-		     utilities::D_I,
-		     utilities::D_ZPOS
+    		     utilities::D_YPOS,
+    		     utilities::D_I,
+    		     utilities::D_ZPOS
     };
     set<D_TYPE> data_types2 = set<D_TYPE>(tmp2, tmp2+4);
 
@@ -168,11 +169,18 @@ int main(int argc, const char * argv[])
     cout<<"made wrapper"<<endl;
     
 
-    //hdf_w.set_compress(false);
-
-
+    hdf_w.set_compress(false);
+    float scale_tmp = wh.get_xy_scale();
     
-    final_tracks.output_link_to_wrapper(hdf_w);
+    cout<<"scale_tmp: "<<scale_tmp<<endl;;
+    
+
+    Triple scale_t(scale_tmp,scale_tmp,1.0f);
+    cout<<"scare triple :"<<scale_t<<endl;
+    
+    Triple dim(dims[0]*scale_tmp, dims[1]*scale_tmp,wh.get_num_frames()*.2);
+    
+    final_tracks.output_link_to_wrapper(hdf_w,scale_t,dim);
     
  
   }

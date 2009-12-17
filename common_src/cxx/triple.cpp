@@ -263,3 +263,8 @@ Triple::Triple(const float * in )
   for( int j = 0;j<length_;++j)
     data_[j] = in[j];
 }
+
+const float * Triple::get_ptr() const
+{
+  return data_;
+}

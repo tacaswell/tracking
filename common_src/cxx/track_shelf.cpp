@@ -52,6 +52,7 @@ using utilities::Array;
 using utilities::Cell;
 
 using utilities::Wrapper_out;
+using utilities::Triple;
 
 using namespace tracking;
 
@@ -512,18 +513,25 @@ void Track_shelf::split_to_parts(Track_shelf & output_shelf)
 
 
 
-void Track_shelf::output_link_to_wrapper(Wrapper_out & wrapper) const
+void Track_shelf::output_link_to_wrapper(Wrapper_out & wrapper,
+					 const Triple& scale_t,
+					 const utilities::Triple & dim) const
 {
 
  
   
   wrapper.initialize_wrapper();
+  wrapper.add_meta_data("dims",dim);
+  
   wrapper.open_group(0,track_count_);
   map<int,Track_box*>::const_iterator myend =  track_map.end();
+  
+
+  
   for(map<int,Track_box*>::const_iterator it = track_map.begin();it!=myend;++it)
   {
 
-    wrapper.set_all_values((it->second));
+    wrapper.set_all_values((it->second),scale_t);
     
     
   }

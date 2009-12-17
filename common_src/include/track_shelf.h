@@ -36,6 +36,7 @@ class Cell;
 class Counted_vector;
 class Generic_wrapper_base;
 class Wrapper_out;
+class Triple;
 
 }
 
@@ -180,7 +181,9 @@ public:
      outputs the contents of the shelf treating each track as a single particle.
      for use with 3D linking.  This should be sub-classed
    */
-  void output_link_to_wrapper(utilities::Wrapper_out & wrapper) const;
+  void output_link_to_wrapper(utilities::Wrapper_out & wrapper, 
+			      const utilities::Triple & scale_t,
+			      const utilities::Triple & dim) const;
 
 
   /**

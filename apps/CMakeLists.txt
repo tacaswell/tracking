@@ -50,4 +50,16 @@ target_link_libraries(link3D ${HDF5_LIBRARIES} )
 set_target_properties(link3D PROPERTIES COMPILE_DEFINITIONS  "PTYPE=1;DIM_COUNT=2")
 
 
+add_executable(gofr3D gofr3D_hdf.cpp ${COMMON_SRC}
+ ${UTIL_SRC}
+ ${HDF_SRC}
+ ${CORR_SRC}
+ ${GNU_PLOT_SRC}
+ ${COMMON_HASH_SRC} 
+ ${COMMON_WRAPPER_SRC} 
+)
+target_link_libraries(gofr3D ${HDF5_LIBRARIES} )
+set_target_properties(gofr3D PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_COUNT=3")
+
+
 

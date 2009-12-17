@@ -50,6 +50,7 @@ using H5::H5File;
 using H5::Group;
 using H5::DataSpace;
 using H5::H5File;
+using H5::Attribute;
 using H5::PredType;
 using H5::CompType;
 using H5::DataSet;
@@ -131,7 +132,16 @@ void Wrapper_o_hdf::open_group(int group,int count)
   
   // reset the particle count
   part_count_ = 0;
+      
+  group_name_ = format_name(group_index_);
+
   
+  if(over_write_)
+    group_ = new Group(file_->createGroup(group_name_));
+  else
+    group_ = new Group(file_->openGroup(group_name_));
+  
+
 
   group_open_ = true;  
 }
@@ -213,15 +223,6 @@ void Wrapper_o_hdf::close_group()
     if(part_count_ != group_max_count_)
       throw "not enough particles added";
     
-    
-    string group_name_ = format_name(group_index_);
-    Group* group_;
-    
-    if(over_write_)
-      group_ = new Group(file_->createGroup(group_name_));
-    else
-      group_ = new Group(file_->openGroup(group_name_));
-  
 
     
     // shove into file
@@ -324,7 +325,10 @@ void Wrapper_o_hdf::close_group()
     
     delete group_;
     group_ = NULL;
- 
+    
+    group_name_.clear();
+    
+    
     // clean up
     for(vector<int*>::iterator it = int_data_.begin();
 	it != int_data_.end();++it)
@@ -357,6 +361,9 @@ void Wrapper_o_hdf::finalize_wrapper()
     {
       close_group();
     }
+
+  
+    
     delete file_;
     file_ = NULL;
     wrapper_open_ = false;
@@ -440,19 +447,105 @@ void Wrapper_o_hdf::set_value(D_TYPE type,const particle* p_in)
 }
 
 #if PTYPE == 1
-void Wrapper_o_hdf::set_all_values(const tracking::Track_box * in,float scale) 
+void Wrapper_o_hdf::set_all_values(const tracking::Track_box * in,const utilities::Triple & scale) 
 {
   open_particle(-1);
   Triple cord;
   float I;
   in->average_cord(cord,I);
+  cord*=scale;
   set_value(utilities::D_XPOS,cord[0]);
   set_value(utilities::D_YPOS,cord[1]);
   set_value(utilities::D_ZPOS,cord[2]);
   set_value(utilities::D_I,I);
   close_particle();
+
   
     
 
 }
 #endif
+
+
+
+
+void Wrapper_o_hdf::add_meta_data(const std::string & key, float val,bool current_group )
+{
+  throw "Wrapper_o_hdf::not implemented yet";
+  
+}
+void Wrapper_o_hdf::add_meta_data(const std::string & key, const Triple & val,bool current_group )
+{
+  
+  if (!wrapper_open_)
+    throw "Wrapper_o_hdf::add_meta_data warpper not open";
+  
+  
+  Group * group;
+  if(! current_group)
+    group = new Group(file_->openGroup("/"));
+  else
+    group = group_;
+  
+
+  try
+  {
+    hsize_t dim_c = (hsize_t) Triple::length_;
+      
+    DataSpace dspace =  DataSpace(1,&dim_c);
+    Attribute * tmpa =  
+      new Attribute(group->createAttribute(key,
+					   PredType::NATIVE_FLOAT,
+					   dspace));
+    tmpa->write(PredType::NATIVE_FLOAT,val.get_ptr());
+    delete tmpa;
+  }
+  catch(H5::AttributeIException)
+  {
+    throw "Wrapper_o_hdf::write_meta_data trying to clobber dimension meta-data";
+  }
+
+}
+
+
+void Wrapper_o_hdf::add_meta_data(const std::string & key, const Pair & val,bool current_group )
+{
+  if (!wrapper_open_)
+    throw "Wrapper_o_hdf::add_meta_data warpper not open";
+  
+  
+  Group * group;
+  if(! current_group)
+    group = new Group(file_->openGroup("/"));
+  else
+    group = group_;
+  
+
+  try
+  {
+    hsize_t dim_c = (hsize_t) Pair::length_;
+      
+    DataSpace dspace =  DataSpace(1,&dim_c);
+    Attribute * tmpa =  
+      new Attribute(group->createAttribute(key,
+					   PredType::NATIVE_FLOAT,
+					   dspace));
+    tmpa->write(PredType::NATIVE_FLOAT,val.get_ptr());
+    delete tmpa;
+  }
+  catch(H5::AttributeIException)
+  {
+    throw "Wrapper_o_hdf::write_meta_data trying to clobber dimension meta-data";
+  }
+
+  
+}
+
+void Wrapper_o_hdf::add_meta_data(const std::string & key, const std::string & val,bool current_group )
+{
+    throw "Wrapper_o_hdf::not implemented yet";
+}
+void Wrapper_o_hdf::add_meta_data(const std::string & key, int val,bool current_group)
+{
+    throw "Wrapper_o_hdf::not implemented yet";
+}

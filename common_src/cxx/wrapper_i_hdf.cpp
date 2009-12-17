@@ -380,3 +380,17 @@ Tuple Wrapper_i_hdf::get_dims()const
   return Tuple(tmp);
   
 }
+
+float Wrapper_i_hdf::get_xy_scale() const
+{
+  H5File * file = new H5File( file_name_, H5F_ACC_RDONLY );  
+  Group * group = new Group(file->openGroup("/frame000000"));
+  Attribute * tmpa =  new Attribute(group->openAttribute("spatial-calibration-x"));
+  float scale;
+  
+  tmpa->read(PredType::NATIVE_FLOAT,&scale);
+  delete tmpa;
+  
+  return(scale);
+  
+}

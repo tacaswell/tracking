@@ -50,11 +50,7 @@ namespace utilities
 {
 class Triple;
 class Pair;
-
-
-
-
-#if DIM_COUNT == 2
+#if   DIM_COUNT == 2
 typedef Pair Tuple;
 #elif DIM_COUNT == 3
 typedef Triple Tuple;

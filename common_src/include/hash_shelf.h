@@ -60,6 +60,8 @@ class Corr;
 
 class Hash_shelf{
 public:
+
+  
   /**
      add the particle_base to the hash_shelf
      @param p pointer to the particle to add
@@ -238,6 +240,13 @@ public:
    */
   void test() ;
   
+
+  /**
+     This needs to remain beaause of the way that track_list and the
+     linking code is written
+   */
+  std::list<particle_track*> * shelf_to_list() const;
+
 protected:
 
   ///Main data structure.  This is an vector of
@@ -304,6 +313,7 @@ private:
      private initialization function
    */
   void priv_init();
+  
   
   
 };

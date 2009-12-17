@@ -208,6 +208,16 @@ public:
      Takes at an array, assumes it is the length_ length_
    */
   Pair(const float * );
+
+  
+  /**
+     returns a pointer to the internal data in a safe way.
+     mostly to make it simpler to write out to hdf wrappers
+   */
+  const float * get_ptr() const;
+  
+
+
   
 protected:
   /**

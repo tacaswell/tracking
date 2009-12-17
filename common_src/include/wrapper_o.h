@@ -30,7 +30,7 @@
 
 #include <complex>
 #include <set>
-
+#include <string>
 #include "enum_utils.h"
 #include "part_def.h"
 
@@ -102,41 +102,6 @@ public:
   */
   virtual void open_particle(int ind = -1)=0;
   
-  /*
-     sets the data for type to val for the currently activated
-     particle in the data structure.  If the wrapper doesn't know
-     about the D_TYPE type, then [[throw an exception|ignore]] )(have
-     not decided yet)
-    
-     @param type
-     the parameter to be set
-     @param val
-     the value to set the parameter to
-  */
-  //virtual void set_value(D_TYPE type, float val)=0;
-  /*
-     sets the data for type to val for the currently activated
-     particle in the data structure.  If the wrapper doesn't know
-     about the D_TYPE type, then [[throw an exception|ignore]] )(have
-     not decided yet)
-    
-     @param type
-     the parameter to be set
-     @param val
-     the value to set the parameter to
-  */
-  //virtual void set_value(D_TYPE type, int val)=0;
-  
-  /*
-     sets data for complex numbers, see set_value
-
-     @param type
-     the parameter to be set
-     @param val
-     the value to set the parameter to
-   */
-  //virtual void set_value(D_TYPE type, std::complex<float> val)=0;
-  
   
   /**
      sets the value of data type type for the particle p_in with out haveing
@@ -150,11 +115,11 @@ public:
   virtual void set_all_values(const tracking::particle *)=0;
 
 
-#if PTYPE == 1    
+#if PTYPE == 1
   /**
      sets all of the values that the wrapper knows about by asking the particle
    */
-  virtual void set_all_values(const tracking::Track_box *) = 0;
+  virtual void set_all_values(const tracking::Track_box *,const utilities::Triple &) = 0;
 #endif
 
   /**
@@ -175,15 +140,14 @@ public:
   virtual   void finalize_wrapper()=0;
   
   
-  /**
+  /*
      changes where the wrapper is pointing (ie, write out to a
      different array or file or some thin
    */
-  virtual void reset_wrapper(params * param)=0;
-
-  
-
+  //virtual void reset_wrapper(params * param)=0;
   //\@}
+  
+   
 
   /**
      Returns a set containing the D_TYPES that the wrapper can cope with
@@ -198,10 +162,28 @@ public:
      empty constructor 
    */
   Wrapper_out(){};
-  
-  
-  
 
+
+  /**
+     Adds a float meta-data
+   */
+  virtual void add_meta_data(const std::string & key, float val,bool current_group=false)=0;
+  /**
+     Adds a Triple meta-data
+   */
+  virtual void add_meta_data(const std::string & key, const Triple & val,bool current_group=false)=0;
+  /**
+     Adds a Pair meta-data
+   */
+  virtual void add_meta_data(const std::string & key, const Pair& val,bool current_group=false)=0;
+  /**
+     Adds a string meta-data
+   */
+  virtual void add_meta_data(const std::string & key,  const std::string & val,bool current_group=false)=0;
+  /**
+     Adds an integer meta-data
+   */
+  virtual void add_meta_data(const std::string & key, int val,bool current_group=false)=0;
 };
 
 }

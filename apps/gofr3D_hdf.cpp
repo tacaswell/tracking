@@ -54,7 +54,7 @@ using std::cerr;
 using utilities::Wrapper_o_hdf;
 using utilities::Wrapper_i_hdf;
 
-using utilities::Pair;
+using utilities::Triple;
 using utilities::Filter_basic;
 using utilities::Filter_trivial;
 using utilities::D_TYPE;
@@ -123,31 +123,32 @@ int main(int argc, const char * argv[])
 
 
 
-    int max_range = 100;
+    int max_range = 10;
     
     
-    Pair dims = wh.get_dims();
+    Triple dims = wh.get_dims();
+
     hash_case hcase(box,dims,max_range,wh.get_num_frames());
 
     cout<<"hash case filled"<<endl;
     
-//     particle::set_neighborhood_range(101);
-//     hcase.fill_in_neighborhood();
+// //     particle::set_neighborhood_range(101);
+// //     hcase.fill_in_neighborhood();
     
     
-    //hcase.print();
+//     //hcase.print();
 
     
-    Corr_gofr gofr(2000,(float)max_range,file_name);
-    hcase.compute_corr(gofr);
-    cout<<"computed g(r)"<<endl;
+//     Corr_gofr gofr(2000,(float)max_range,file_name);
+//     hcase.compute_corr(gofr);
+//     cout<<"computed g(r)"<<endl;
     
-    gofr.display();
+//     gofr.display();
 
       
-    Generic_wrapper_hdf hdf_out(out_file,true);
-    gofr.out_to_wrapper(hdf_out);
-    cout<<"wrote out g(r)"<<endl;
+//     Generic_wrapper_hdf hdf_out(out_file,true);
+//     gofr.out_to_wrapper(hdf_out);
+//     cout<<"wrote out g(r)"<<endl;
 
     
   }

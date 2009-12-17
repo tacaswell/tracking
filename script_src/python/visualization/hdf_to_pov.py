@@ -30,14 +30,14 @@ def _start_scene(pov_file):
 #include "colors.inc"
 background {color White}
 camera {
-    location <-100, 35, 75>
-    look_at  <75, 35,  20>
-    angle 15
+    location <55, 55, 45>
+    look_at  <25, 25,  15>
+    angle 30
     sky <0,0,1>
     }
 light_source { <75, 35, 300> color White}
 light_source { <75, 35, -300> color White}
-light_source { <-100, 35, 20> color White}
+light_source { <100, 35, 20> color White}
 """
 def _end_scene(pov_file):
     pass
@@ -60,9 +60,15 @@ def _set_posistion(pov_file, vec,r):
     print >> pov_file, "<"+ str(vec[0])+","+str(vec[1])+","+str(vec[2])+">," + str(r)
 
 
+fbase = "/home/tcaswell/colloids/processed/"
+fpath = "polyNIPAM_batch_12/20090501/"
+fname = "z_series_28-1_0_link.h5 "
+old = "/home/tcaswell/colloids/processed/polyNIPAM_batch_12/20090730/jammed/z/27-7_link.h5"
+print fbase + fpath + fname
 
-f = h5py.File("/home/tcaswell/colloids/processed/polyNIPAM_batch_12/20090730/jammed/z/27-7_link.h5")
+f = h5py.File((fbase + fpath + fname).strip())
 scale = 6.45/60
+scale = 1
 x = f["/frame000000/x"]
 y = f["/frame000000/y"]
 z = f["/frame000000/z"]
@@ -72,15 +78,15 @@ pov_file = open("pov_file.pov",'w')
 _start_scene(pov_file)
 #for ind in range(0,20000):
 for ind in range(0,x.shape[0]):
-    ztop = 20
-    zbot = 10
-    xtop = 980
-    xbot = 20
-    ytop = 480
-    ybot = 20
+    ztop = 160
+    zbot = 0
+    xtop = 160
+    xbot = 0
+    ytop = 160
+    ybot = 0
     if z[ind]<ztop and z[ind]>zbot and x[ind] <xtop and x[ind] > xbot and y[ind]<ytop and y[ind]>ybot:
         _open_particle(pov_file)
-        _set_posistion(pov_file,(x[ind]*scale,y[ind]*scale,z[ind]),(8.5/2)*scale)
+        _set_posistion(pov_file,(x[ind]*scale,y[ind]*scale,z[ind]),.5*scale)
         _close_particle(pov_file,(z[ind]-zbot)/(ztop-zbot)/2)
 
 _end_scene(pov_file)

@@ -209,6 +209,14 @@ public:
    */
   Triple(const float * );
   
+  
+  /**
+     returns a pointer to the internal data in a safe way.
+     mostly to make it simpler to write out to hdf wrappers
+   */
+  const float * get_ptr() const;
+  
+  
 protected:
   /**
      pointer to data

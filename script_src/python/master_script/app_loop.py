@@ -40,7 +40,7 @@ print to_process
 
 
 # make sure there is a  file
-f = h5py.File(base_proc_path + path_name +prog_name + ".h5",'w')
+f = h5py.File((base_proc_path + path_name +prog_name + ".h5").strip(),'w')
 f.close()
 
 for f in to_process:

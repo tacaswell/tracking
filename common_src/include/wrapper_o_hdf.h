@@ -37,6 +37,10 @@
 #include "part_def.h"
 
 
+#include "triple.h"
+#include "pair.h"
+
+
 namespace H5
 {
 class H5File;
@@ -62,7 +66,7 @@ public:
   
   void set_all_values(const tracking::particle *);
 #if PTYPE == 1
-  void set_all_values(const tracking::Track_box *);
+  void set_all_values(const tracking::Track_box *,const utilities::Triple &);
 #endif
   void set_value(D_TYPE,const tracking::particle *);
   
@@ -79,7 +83,17 @@ public:
   const std::set<D_TYPE>& get_content_tpyes() const;
   
 
+
+
   void set_compress(bool in){compress_ = in;}
+
+
+
+  void add_meta_data(const std::string & key, float val,bool current_group = false);
+  void add_meta_data(const std::string & key, const Pair & val,bool current_group = false);
+  void add_meta_data(const std::string & key, const Triple & val,bool current_group = false);
+  void add_meta_data(const std::string & key,  const std::string & val,bool current_group = false);
+  void add_meta_data(const std::string & key, int val,bool current_group = false);
   
 
   ~Wrapper_o_hdf();
@@ -128,10 +142,18 @@ private:
    */
   H5::H5File * file_;
   /**
-     pointer to currently open group
+     file name
    */
   std::string file_name_;
-
+  /**
+     pointer to currently open group
+   */
+  H5::Group* group_;
+  /**
+     name of currently open group
+   */
+  std::string group_name_;
+  
   /**
      A set of the data types that are to be added to the file
    */
@@ -215,8 +237,10 @@ private:
      set if the datasets should be compressed
    */
   bool compress_;
+
+ 
   
-  
+
 };
 
 }

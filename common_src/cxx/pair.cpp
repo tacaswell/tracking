@@ -263,5 +263,10 @@ Pair::Pair(const float * in )
     data_[j] = in[j];
 }
 
+
+const float * Pair::get_ptr() const
+{
+  return data_;
+}
     
   

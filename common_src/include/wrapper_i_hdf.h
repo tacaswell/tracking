@@ -115,6 +115,12 @@ public:
 
 
   
+  /**
+     returns the scaling between pixels and microns.  This should be pushed up
+     to the next level, but I am lazy.
+   */
+  float get_xy_scale() const;
+  
 
   
   

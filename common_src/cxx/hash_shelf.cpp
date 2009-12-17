@@ -69,6 +69,8 @@ using std::vector;
 
 void Hash_shelf::push(particle * p){
   try{
+    cout<<hash_function(p)<<endl;
+    
     (hash_.at(hash_function(p)))->push(p);
   }
   catch (std::exception& e)    {
@@ -81,12 +83,6 @@ void Hash_shelf::push(particle * p){
     throw;
 
   }
-  catch(...)
-  {
-    std::cout<<"the problem is here"<<std::endl;
-
-    return;
-  }    
   
   ++particle_count_;
 //   cout<<"particle: "<<endl;
@@ -101,9 +97,9 @@ void Hash_shelf::push(particle * p){
 
 Hash_shelf::Hash_shelf(utilities::Tuple imgsz, 
 		       float upb, 
-		       int i_frame):img_dims_(imgsz),  upb_(upb),  
-				    plane_number_(i_frame), 
-				    next_(NULL),particle_count_(0)
+		       int i_frame):plane_number_(i_frame), 
+				    next_(NULL),particle_count_(0),
+				    img_dims_(imgsz),  upb_(upb)
 {  
   priv_init();
   
@@ -450,3 +446,47 @@ void Hash_shelf::print()const
 }
 
 
+
+void Hash_shelf::get_region(particle* n,hash_box * out_box,int range) const
+{
+  Tuple center = indx_to_tuple(hash_function(n));
+  Tuple bottom_corner, top_corner;
+  // check top and bottom corners are in range
+  for(int j = 0;j<Tuple::length_;++j)
+  {
+    bottom_corner[j] = (((center[j]-range)>=0)?(center[j]-range):0);
+    top_corner[j] = (((center[j]+range)<=hash_dims_[j])?(center[j]+range):hash_dims_[j]);
+  }
+  
+    
+  Tuple region_sides = top_corner - bottom_corner;
+  int region_sz = (int)region_sides.prod();
+  
+  
+  for(int j = 0;j<region_sz;++j)
+  {
+    Tuple tmp = range_indx_to_tuple(j,region_sides);
+    tmp += bottom_corner;
+    
+    int tmp_indx = tuple_to_indx(tmp);
+    hash_box* cur_box = (hash_.at(tmp_indx));
+    out_box->append(cur_box);
+    
+  }
+}
+
+
+list<particle_track*> * Hash_shelf::shelf_to_list() const{
+  list<particle_track*>* tmp = new list<particle_track*>; 
+  for( vector<hash_box* >::const_iterator cur_box = hash_.begin(); cur_box<hash_.end(); ++cur_box)
+  {                                                                                             
+                                                                                                  
+    for(vector<particle*>::iterator cur_part = (*cur_box)->begin();                             
+	cur_part!=(*cur_box)->end(); ++cur_part)                                                 
+    {                                                                                          
+      tmp->push_back(static_cast<particle_track*>(*cur_part));                                 
+    }                                                                                          
+  }                                                                                             
+                                                                                                  
+  return tmp;                                                                                     
+}   
