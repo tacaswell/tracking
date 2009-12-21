@@ -240,6 +240,7 @@ void Hash_shelf::compute_corr(Corr & in)const
 
   float range = in.get_max_range();
   unsigned int buffer = (unsigned int)ceil(range/upb_);
+  cout<<"buffer range "<<buffer<<endl;
   
   
   

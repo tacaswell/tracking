@@ -145,17 +145,44 @@ void Corr_gofr::normalize(vector<float> & out)const
   // this does not need to be averaged by the number of particles
   // added because in the normalization the average is multiplied by
   // the number of particles added so it cancels out
+
+#if DIM_COUNT == 2
   float avg = (count_sum)/(pi*max_range_*max_range_);
-  
-  
+#elif DIM_COUNT == 3
+  float avg = (count_sum)/(pi*max_range_*max_range_*max_range_*4/3);
+#endif
 
   out.resize(n_bins_);
+#if DIM_COUNT == 2
+  float norm_factor = ((bin_edges_[1]*bin_edges_[1]*3.14159)*avg);
+#elif DIM_COUNT ==3
+  float norm_factor = ((bin_edges_[1]*bin_edges_[1]*bin_edges_[1]*3.14159)*avg)*4/3;
+#endif
+  out[0] = bin_count_[0]/norm_factor;
   
-  out[0] = bin_count_[0]/((bin_edges_[1]*bin_edges_[1]*3.14159)*avg);
   
   for(int j = 1;j<(n_bins_-1);++j)
   {
-    out[j] = bin_count_[j]/( avg * 3.14159*(bin_edges_[j+1]*bin_edges_[j+1] - bin_edges_[j]*bin_edges_[j]));
+
+#if DIM_COUNT == 2
+    norm_factor = ( avg * 3.14159*(bin_edges_[j+1]*bin_edges_[j+1] 
+					 - bin_edges_[j]*bin_edges_[j]));
+#elif DIM_COUNT ==3
+    norm_factor = ( avg * 3.14159*(bin_edges_[j+1]*bin_edges_[j+1] *bin_edges_[j+1] 
+					 - bin_edges_[j]*bin_edges_[j]*bin_edges_[j]))*4/3;
+#endif
+    out[j] = bin_count_[j]/norm_factor;
+  
   }
-  out[n_bins_-1] = bin_count_[n_bins_-1]/( avg * 3.14159*(max_range_*max_range_ - bin_edges_[n_bins_-1]*bin_edges_[n_bins_-1]));
+
+#if DIM_COUNT == 2
+  norm_factor = ( avg * 3.14159*(max_range_*max_range_ 
+				 - bin_edges_[n_bins_-1]*bin_edges_[n_bins_-1]));
+#elif DIM_COUNT ==3
+  norm_factor =  ( avg * 3.14159*
+		   (max_range_*max_range_*max_range_ 
+		    - bin_edges_[n_bins_-1]*bin_edges_[n_bins_-1]*bin_edges_[n_bins_-1]))*4/3;
+#endif
+  out[n_bins_-1] = bin_count_[n_bins_-1]/norm_factor;
+  
 }

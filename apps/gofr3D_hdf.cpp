@@ -104,7 +104,7 @@ int main(int argc, const char * argv[])
 
   
     
-    Wrapper_i_hdf wh(proc_file,data_types);
+    Wrapper_i_hdf wh(proc_file,data_types,0,1,false);
 
     
 
@@ -127,7 +127,8 @@ int main(int argc, const char * argv[])
     
     
     Triple dims = wh.get_dims();
-
+    cout<<dims<<endl;
+    
     hash_case hcase(box,dims,max_range,wh.get_num_frames());
 
     cout<<"hash case filled"<<endl;
@@ -139,9 +140,9 @@ int main(int argc, const char * argv[])
 //     //hcase.print();
 
     
-//     Corr_gofr gofr(2000,(float)max_range,file_name);
-//     hcase.compute_corr(gofr);
-//     cout<<"computed g(r)"<<endl;
+     Corr_gofr gofr(2000,(float)max_range,file_name);
+     hcase.compute_corr(gofr);
+     cout<<"computed g(r)"<<endl;
     
 //     gofr.display();
 

@@ -63,6 +63,12 @@ Wrapper_i_hdf::Wrapper_i_hdf(std::string fname,const std::set<utilities::D_TYPE>
   priv_init(f_count,start);
   
 }
+Wrapper_i_hdf::Wrapper_i_hdf(std::string fname,const std::set<utilities::D_TYPE> &dtypes,int start,int f_count,bool two_d_data)
+  :  file_name_(fname),data_types_(dtypes),total_part_count_(0),two_d_data_(two_d_data)
+{
+  priv_init(f_count,start);
+  
+}
 
 
 void Wrapper_i_hdf::priv_init(int f_count,unsigned int start)
@@ -76,12 +82,18 @@ void Wrapper_i_hdf::priv_init(int f_count,unsigned int start)
     
     
     H5File * file = new H5File( file_name_, H5F_ACC_RDONLY );  
+    if(two_d_data_)
+    {
+      Group * group = new Group(file->openGroup("/"));
+      Attribute * tmpa =  new Attribute(group->openAttribute("number-of-planes"));
+      tmpa->read(PredType::NATIVE_INT,&frame_count_);
+      delete tmpa;
+    }
+    else
+    {
+      frame_count_ = 1;
+    }
     
-    Group * group = new Group(file->openGroup("/"));
-    Attribute * tmpa =  new Attribute(group->openAttribute("number-of-planes"));
-    tmpa->read(PredType::NATIVE_INT,&frame_count_);
-    delete tmpa;
-
 
     if(f_count != 0)
     {
@@ -138,6 +150,8 @@ void Wrapper_i_hdf::priv_init(int f_count,unsigned int start)
       
       if(two_d_data_)
       {
+
+	
 	Attribute * tmpa =  new Attribute(frame->openAttribute("z-position"));
 	tmpa->read(PredType::NATIVE_FLOAT,&frame_zdata_[j]);
 	delete tmpa;
@@ -369,10 +383,14 @@ string Wrapper_i_hdf::format_name(int in)
 
 Tuple Wrapper_i_hdf::get_dims()const
 {
+
+
   H5File * file = new H5File( file_name_, H5F_ACC_RDONLY );  
   Group * group = new Group(file->openGroup("/"));
+  
   Attribute * tmpa =  new Attribute(group->openAttribute("dims"));
   float tmp[Tuple::length_] ;
+
   
   tmpa->read(PredType::NATIVE_FLOAT,tmp);
   delete tmpa;
@@ -383,6 +401,8 @@ Tuple Wrapper_i_hdf::get_dims()const
 
 float Wrapper_i_hdf::get_xy_scale() const
 {
+
+  
   H5File * file = new H5File( file_name_, H5F_ACC_RDONLY );  
   Group * group = new Group(file->openGroup("/frame000000"));
   Attribute * tmpa =  new Attribute(group->openAttribute("spatial-calibration-x"));

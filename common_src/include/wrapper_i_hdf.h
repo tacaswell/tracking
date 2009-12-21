@@ -113,7 +113,8 @@ public:
 		int start=0,
 		int frames =0);
 
-
+  Wrapper_i_hdf(std::string fname,const std::set<utilities::D_TYPE> &dtypes,int start,int f_count,bool two_d_data);
+  
   
   /**
      returns the scaling between pixels and microns.  This should be pushed up

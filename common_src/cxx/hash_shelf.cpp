@@ -69,7 +69,7 @@ using std::vector;
 
 void Hash_shelf::push(particle * p){
   try{
-    cout<<hash_function(p)<<endl;
+    //cout<<hash_function(p)<<endl;
     
     (hash_.at(hash_function(p)))->push(p);
   }
@@ -299,7 +299,7 @@ Tuple Hash_shelf::range_indx_to_tuple(int indx,const Tuple& side) const
   for(int j = 0;j<Tuple::length_;++j)
   {
     int tmp_prod = 1;
-    for(int k = 0;k<(j-1);++k)
+    for(int k = 0;k<(j);++k)
     {
       tmp_prod*=(int)side[k];
     }
@@ -358,31 +358,56 @@ void Hash_shelf::test()
     base[1] = 0;
     
   }
+
+  for(int k = 0; k<200;++k)
+  {
+    cout<<"-----"<<k<<'\t'<<indx_to_tuple(k)<<"-----"<<endl;
+    vector<const particle*> yar;
+    
+    get_region(k,yar,1);
+  }
   
+  
+
 }
 
 
 
 void Hash_shelf::get_region(int n,vector<const particle*> & out_vector,int range) const
 {
+  bool testing = false;
+  
   Tuple center = indx_to_tuple(n);
   Tuple bottom_corner, top_corner;
   // check top and bottom corners are in range
   for(int j = 0;j<Tuple::length_;++j)
   {
     bottom_corner[j] = (((center[j]-range)>=0)?(center[j]-range):0);
-    top_corner[j] = (((center[j]+range)<=hash_dims_[j])?(center[j]+range):hash_dims_[j]);
+    top_corner[j] = (((center[j]+range)<hash_dims_[j])?(center[j]+range):hash_dims_[j]-1);
+  }
+  if(testing)
+  {
+    cout<<"bottom: "<<bottom_corner<<endl;
+    cout<<"top: "<<top_corner<<endl;
   }
   
-    
-  Tuple region_sides = top_corner - bottom_corner;
+  Tuple region_sides = (top_corner - bottom_corner) +1;
   int region_sz = (int)region_sides.prod();
+  
+  if(testing)
+  {
+    
+    cout<<"region_sides: "<<region_sides<<endl;
+    cout<<"region_sz: "<<region_sz<<endl;
+  }
   
   
   for(int j = 0;j<region_sz;++j)
   {
     Tuple tmp = range_indx_to_tuple(j,region_sides);
     tmp += bottom_corner;
+    if(testing)
+       cout<<j <<'\t'<<tmp<<endl;
     
     int tmp_indx = tuple_to_indx(tmp);
     hash_box* cur_box = (hash_.at(tmp_indx));
