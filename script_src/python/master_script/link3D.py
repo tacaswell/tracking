@@ -21,7 +21,8 @@ import os.path
 import subprocess
 import sys
 import getopt
-
+import sqlite
+from datetime import date
 
 
 base_proc_path = "/home/tcaswell/colloids/processed/"
@@ -54,7 +55,7 @@ def _process_filename(file_name):
     _prcocess_list(to_process)
 
 def _prcocess_list(to_process):
-
+    con = sqlite3.connect('/home/tcaswell/sql_play/test.db')
     for fin in to_process:
         path_name = os.path.dirname(fin) + '/'
         f = os.path.basename(fin)
@@ -63,7 +64,15 @@ def _prcocess_list(to_process):
         base_name = ''.join(tmp[:-1])
         print base_proc_path + path_name + base_name
         subprocess.call(["time",prog_path + prog_name,path_name,base_name])
+        _addcomp(
+    conn.close()
 
+
+def _addcomp(fin_name,fout_name,date,comp,key,conn):
+
+    t = (key,fin_name,fout_name,date,comp)
+    conn.execute('insert into comp values (?,?,?,?,?)',t)
+    conn.commit()
 
 
 def _usage():

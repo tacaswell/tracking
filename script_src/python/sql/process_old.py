@@ -19,48 +19,126 @@
 import sqlite3
 import h5py
 import os.path
+import re
+
 from datetime import date
 
 def _eat_file_name(conn,dir_name,fnames):
     (sname,dtype) = _parse_dir_name(dir_name)
 
+    if dtype == 'unknown':
+        check_type = True
+    else:
+        check_type = False
 
     for fname in fnames:
         full_name = (dir_name + '/' + fname).strip()
 
         if os.path.isfile(full_name):
-            (tiff_name,temp) = _parsehdf(full_name)
-            pdate = date.fromtimestamp(os.path.getmtime(full_name)).strftime('%Y-%m-%d')
+            if re.search("gof",full_name):
+                pass
 
-            _adddset(tiff_name,temp,sname,dtype,pdate,conn)
-            print tiff_name
-            tiff_key = conn.execute("select key from dsets where fname=?;",tiff_name).fetchone()[0]
+            elif re.search("link3D",full_name):
+                #_process_link(fname,full_name,dir_name,conn)
+                pass
+            elif re.search("link",full_name):
+                pass
+            elif re.search("track",full_name):
+                #_process_track(fname,full_name,dir_name,conn)
+                pass
+            elif re.search("split",full_name):
+                pass
 
-            _addcomp(tiff_name,full_name,pdate,'Iden',conn)
+            else:
+                #_process_iden_fnames(fname,check_type,sname,dtype,conn,full_name)
+                pass
+            
+def _process_track(fname,full_name,dir_name,conn):
+    base_name = full_name.replace("_tracks",'')
+    base_name = base_name.replace("_part",'')
+    print base_name
+    key = conn.execute("select key from comp where fout=?;",(base_name,)).fetchone()[0]
+    print (key,base_name)
+    
+def _process_link(fname,full_name,dir_name,conn):
+    base_name = full_name.replace("_link3D",'')
 
+    key = conn.execute("select key from comp where fout=?;",(base_name,)).fetchone()[0]
+
+    pdate = date.fromtimestamp(os.path.getmtime(full_name)).strftime('%Y-%m-%d')
+    print (key,pdate)
+    _addcomp(base_name,full_name,pdate,'link3D',key,conn)
+    
+def _process_iden_fnames(fname,check_type,sname,dtype,conn,full_name):
+    print "found a iden file called " + fname
+    (tiff_name,temp) = _parsehdf(full_name)
+    pdate = date.fromtimestamp(os.path.getmtime(full_name)).strftime('%Y-%m-%d')
+
+    if tiff_name == 0:
+        tiff_name = full_name.replace("processed",'data').replace(".h5",".tif").strip()
+
+    if check_type:
+        if re.match('[zZ]_?[sS]eries',fname):
+            dtype = 'z'
+    print tiff_name
+    if temp == -1:
+        temp = 'NULL'
+    print (sname,temp,dtype)
+    _adddset(tiff_name,temp,sname,dtype,pdate,conn)
+
+    tiff_key = conn.execute("select key from dsets where fname=?;",(tiff_name,)).fetchone()[0]
+
+    _addcomp(tiff_name,full_name,pdate,'Iden',tiff_key,conn)
+                
 
 def _adddset(fname,temp,dname,dtype,date,conn):
     t = (fname,dname,temp,dtype,date)
-    conn.execute('insert into dsets (fname,dname,temp,dtype,date) values (?,?,?,?,?)',t)
+    conn.execute('insert into dsets (fname,sname,temp,dtype,date) values (?,?,?,?,?)',t)
     conn.commit()
 
 def _addcomp(fin_name,fout_name,date,comp,key,conn):
     t = (key,fin_name,fout_name,date,comp)
     conn.execute('insert into comp values (?,?,?,?,?)',t)
-
+    conn.commit()
+    
 def _parsehdf(fname):
     print fname
     F = h5py.File(fname,'r')
     tiff_name = F.attrs.get('image_name',0);
 
-    temp = F.attrs.get('probe_temp',0);
+    temp = F.attrs.get('probe_temp',-1);
     F.close
     return (tiff_name,temp)
 
 
 def _parse_dir_name(dir_name):
     ds = dir_name.split('/')
-    return (ds[-3] + '-' + ds[-2], ds[-1])
+    flag = False
+    count = 0
+    sname = ''
+    tflag = False
+    for part in ds:
+        if re.match('[0-9]{8}',part):
+            flag = True
+        if flag:
+            if count == 0:
+                sname = sname + part
+                count = count +1
+            elif re.match('[zt]$',part) and not tflag:
+                tflag = True
+                dtype = part
+                break
+            elif part == 'ztl' and not tflag:
+                tflag = True
+                dtype = part
+                break
+            elif count<2:
+                sname = sname + '-' + part
+                count = count + 1
+            
+    if not tflag:
+        dtype = 'unknown'
+    return (sname,dtype)
 
 con = sqlite3.connect('/home/tcaswell/sql_play/test.db')
 
