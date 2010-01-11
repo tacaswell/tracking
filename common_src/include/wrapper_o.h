@@ -167,23 +167,23 @@ public:
   /**
      Adds a float meta-data
    */
-  virtual void add_meta_data(const std::string & key, float val,bool current_group=false)=0;
+  virtual void add_meta_data(const std::string & key, float val,bool root_group=true)=0;
   /**
      Adds a Triple meta-data
    */
-  virtual void add_meta_data(const std::string & key, const Triple & val,bool current_group=false)=0;
+  virtual void add_meta_data(const std::string & key, const Triple & val,bool root_group=true)=0;
   /**
      Adds a Pair meta-data
    */
-  virtual void add_meta_data(const std::string & key, const Pair& val,bool current_group=false)=0;
+  virtual void add_meta_data(const std::string & key, const Pair& val,bool root_group=true)=0;
   /**
      Adds a string meta-data
    */
-  virtual void add_meta_data(const std::string & key,  const std::string & val,bool current_group=false)=0;
+  virtual void add_meta_data(const std::string & key,  const std::string & val,bool root_group=true)=0;
   /**
      Adds an integer meta-data
    */
-  virtual void add_meta_data(const std::string & key, int val,bool current_group=false)=0;
+  virtual void add_meta_data(const std::string & key, int val,bool root_group=true)=0;
 };
 
 }
