@@ -55,7 +55,7 @@ class Master_box;
 
 class Corr;
 /**
-   Class to implemnt the hash table
+   Class to implement the hash table
 */
 
 class Hash_shelf{
