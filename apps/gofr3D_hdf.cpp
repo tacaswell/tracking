@@ -44,11 +44,18 @@
 #include "corr_gofr.h"
 //#include "gnuplot_i.hpp" //Gnuplot class handles POSIX-Pipe-communication with Gnuplot
 
+
+#include <unistd.h>
+#include <vector>
+#include "read_config.h"
+
+
 using std::cout;
 using std::endl;
 using std::set;
 using std::string;
 using std::cerr;
+using std::vector;
 
 
 using utilities::Wrapper_o_hdf;
@@ -59,6 +66,7 @@ using utilities::Filter_basic;
 using utilities::Filter_trivial;
 using utilities::D_TYPE;
 using utilities::Generic_wrapper_hdf;
+using utilities::Read_config;
 
 
 using tracking::Master_box;
@@ -68,29 +76,79 @@ using tracking::Corr_gofr;
 
 static string base_proc_path = "/home/tcaswell/colloids/processed/";
 
-int main(int argc, const char * argv[])
+int main(int argc, char * const argv[])
 {
+  
+  float max_range = 10;
+  int nbins;
+  string proc_file;
+  string out_file;
+      
+  int optchar;
+  bool found_i=false,found_o= false,found_f=false;
 
-  if(argc != 3)
+  
+  while((optchar = getopt(argc,argv,"i:o:c:")) !=-1)
   {
-    cerr<< "wrong number of args args"<<endl;
-    return 0;
+    switch(optchar)
+    {
+    case 'i':
+      proc_file = string(optarg);
+      found_i = true;
+      break;
+    case 'o':
+      out_file = string(optarg);
+      found_o = true;
+      break;
+    case 'c':
+      {
+	vector<string> names;
+	names.push_back("max_range");
+	names.push_back("nbins");
+	Read_config rc(string(optarg),names,"gofr3D");
+	if(!rc.get_val("max_range",max_range))
+	{
+	  cerr<<"max_range not found"<<endl;
+	  return -1;
+	}
+	if(!rc.get_val("nbins",nbins))
+	{
+	  cerr<<"nbins not found"<<endl;
+	  return -1;
+	}
+	
+	found_f = true;
+	break;
+      }
+    case '?':
+    default:
+      cout<<"-i input filename"<<endl;
+      cout<<"-o output filename"<<endl;
+      cout<<"-c configuration filename"<<endl;
+    break;
+    }
+  }
+
+  if(!(found_i && found_o && found_f))
+  {
+    cerr<<"input failed"<<endl;
+    cout<<"-i input filename"<<endl;
+    cout<<"-o output filename"<<endl;
+    cout<<"-c configuration filename"<<endl;
+    return -1;
   }
   
   
-  string file_path = string(argv[1]);
-  string file_name = string(argv[2]);
-  string out_name = string(argv[0]);
-  unsigned int slash_index = out_name.find_last_of("/");
-  if(slash_index < out_name.size())
-    out_name = out_name.substr(1+slash_index);
-
-
-  string proc_file = base_proc_path + file_path + file_name + ".h5";
-  string out_file = base_proc_path + file_path + out_name + ".h5";
+    
   cout<<"file to read in: "<<proc_file<<endl;
   cout<<"file that will be written to: "<<out_file<<endl;
+  cout<<"Parameters: "<<endl;
+  cout<<"  max range: "<<max_range<<endl;
+  cout<<"  nbins: "<<nbins<<endl;
 
+
+  return 0;
+  
   try
   {
 
@@ -101,30 +159,22 @@ int main(int argc, const char * argv[])
 		    utilities::D_ZPOS,
     };
     set<D_TYPE> data_types = set<D_TYPE>(tmp, tmp+3);
-
-  
     
+    /// @TODO these parameters need to be passed in
     Wrapper_i_hdf wh(proc_file,data_types,0,1,false);
 
     
 
     Master_box box;
+    
+    
     //Filter_basic filt(proc_file);
     Filter_trivial filt;
-    
-
     box.init(wh,filt);
     
 
     
     cout<<"total number of particles is: "<<box.size()<<endl;;
-    
-
-
-
-
-    int max_range = 10;
-    
     
     Triple dims = wh.get_dims();
     cout<<dims<<endl;
@@ -140,16 +190,16 @@ int main(int argc, const char * argv[])
 //     //hcase.print();
 
     
-     Corr_gofr gofr(2000,(float)max_range,file_name);
+     Corr_gofr gofr(nbins,(float)max_range,out_file);
      hcase.compute_corr(gofr);
      cout<<"computed g(r)"<<endl;
     
-//     gofr.display();
+     //     gofr.display();
 
       
-//     Generic_wrapper_hdf hdf_out(out_file,true);
-//     gofr.out_to_wrapper(hdf_out);
-//     cout<<"wrote out g(r)"<<endl;
+    Generic_wrapper_hdf hdf_out(out_file,true);
+    gofr.out_to_wrapper(hdf_out);
+    cout<<"wrote out g(r)"<<endl;
 
     
   }

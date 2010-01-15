@@ -57,11 +57,18 @@
 #include "track_shelf.h"
 #include "track_box.h"
 
+#include <unistd.h>
+#include <vector>
+#include "read_config.h"
+
+
+
 using std::cout;
 using std::endl;
 using std::set;
 using std::string;
 using std::cerr;
+using std::vector;
 
 
 using utilities::Wrapper_o_hdf;
@@ -73,6 +80,7 @@ using utilities::Filter_trivial;
 using utilities::D_TYPE;
 using utilities::Generic_wrapper_hdf;
 using utilities::Triple;
+using utilities::Read_config;
 
 
 using tracking::Master_box;
@@ -83,26 +91,86 @@ using tracking::Track_shelf;
 using tracking::Track_box;
 static string base_proc_path = "/home/tcaswell/colloids/processed/";
 
-int main(int argc, const char * argv[])
+int main(int argc, char * argv[])
 {
-
-  if(argc != 4)
+  
+    
+  int optchar;
+  bool found_i=false,found_o= false,found_f=false;
+  
+  string proc_file,out_file;
+  
+  
+  int pixel_per_box;
+  float search_range ;
+  int min_track_length;
+  
+  while((optchar = getopt(argc,argv,"i:o:c:")) !=-1)
   {
-    cerr<< "wrong number of args "<<endl;
-    return 0;
+    switch(optchar)
+    {
+    case 'i':
+      proc_file = string(optarg);
+      found_i = true;
+      break;
+    case 'o':
+      out_file = string(optarg);
+      found_o = true;
+      break;
+    case 'c':
+      {
+	vector<string> names;
+	names.push_back("box_side_len");
+	names.push_back("search_range");
+	names.push_back("min_trk_len");
+	Read_config rc(string(optarg),names,"link3D");
+	if(!rc.get_val("box_side_len",pixel_per_box))
+	{
+	  cerr<<"box_side_len not found"<<endl;
+	  return -1;
+	}
+	if(!rc.get_val("search_range",search_range))
+	{
+	  cerr<<"search_range not found"<<endl;
+	  return -1;
+	}
+	if(!rc.get_val("min_trk_len",min_track_length))
+	{
+	  min_track_length = 3;
+	
+	}
+	found_f = true;
+	break;
+      }
+    case '?':
+    default:
+      cout<<"-i input filename"<<endl;
+      cout<<"-o output filename"<<endl;
+      cout<<"-c configuration filename"<<endl;
+    break;
+    }
+  }
+
+  if(!(found_i && found_o && found_f))
+  {
+    cerr<<"input failed"<<endl;
+    cout<<"-i input filename"<<endl;
+    cout<<"-o output filename"<<endl;
+    cout<<"-c configuration filename"<<endl;
+    return -1;
   }
   
-  
-  string file_path = string(argv[1]);
-  string file_name = string(argv[2]);
-  string save_name = string(argv[3]);
-  
-
-  string proc_file = base_proc_path + file_path + file_name + ".h5";
-  string out_file = base_proc_path + file_path + file_name + "_" + save_name + ".h5";
   cout<<"file to read in: "<<proc_file<<endl;
   cout<<"file that will be written to: "<<out_file<<endl;
+  cout<<"Parameters: "<<endl;
+  cout<<"  pixel_per_box: "<<pixel_per_box<<endl;
+  cout<<"  search_range: "<<search_range<<endl;
+  cout<<"  min_track_length: "<<min_track_length<<endl;
 
+
+  return 0;
+  
+  
   try
   {
    
@@ -122,9 +190,8 @@ int main(int argc, const char * argv[])
 
   
     // set up the input wrapper
-    cout<<"here"<<endl;
     Wrapper_i_hdf wh(proc_file,data_types);
-    cout<<"here"<<endl;
+
 
     // fill the master_box
     Master_box box;
@@ -135,9 +202,6 @@ int main(int argc, const char * argv[])
  
     Pair dims = wh.get_dims();
     cout<<dims<<endl;
-
-    int pixel_per_box= 4;
-    float search_range = 3.5;
     
     hash_case hcase(box,dims,pixel_per_box,wh.get_num_frames());
     cout<<"hash case filled"<<endl;
@@ -145,7 +209,7 @@ int main(int argc, const char * argv[])
     Track_shelf tracks;
     
     hcase.link(search_range,tracks);
-    int min_track_length = 3;
+
     
     tracks.remove_short_tracks(min_track_length);
     
@@ -176,7 +240,7 @@ int main(int argc, const char * argv[])
     
 
     Triple scale_t(scale_tmp,scale_tmp,1.0f);
-    cout<<"scare triple :"<<scale_t<<endl;
+    cout<<"scale triple :"<<scale_t<<endl;
     
     Triple dim(dims[0]*scale_tmp, dims[1]*scale_tmp,wh.get_num_frames()*.2);
     

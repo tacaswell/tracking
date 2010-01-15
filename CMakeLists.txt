@@ -70,8 +70,22 @@ SET(HDF_SRC
   ${COMMON_SRC_PATH}/filter_basic.cpp
   )
 
-find_package(HDF5 REQUIRED)
+SET(CONFIG_SRC
+  ${COMMON_SRC_PATH}/read_config.cpp
+  )
+
+
+SET(ENV{HDF5_ROOT} "/home/tcaswell/local_installs")
+SET(HDF5_USE_STATIC_LIBRARIES FALSE)
+find_package(HDF5 REQUIRED CXX)
 include_directories(${HDF_INCLUDE_DIR})
+MESSAGE (STATUS "Found HDF5: ${HDF5_LIBRARIES}")
+
+set(ENV{XERCESC_ROOT} "/home/tcaswell/local_installs")
+find_package(XercesC REQUIRED)
+include_directories(${XERCESC_INCLUDE_DIR})
+
+
 include_directories(${TRACKING_SOURCE_DIR}/common_src/include)
 
 

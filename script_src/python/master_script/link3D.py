@@ -64,8 +64,8 @@ def _prcocess_list(to_process):
         base_name = ''.join(tmp[:-1])
         print base_proc_path + path_name + base_name
         subprocess.call(["time",prog_path + prog_name,path_name,base_name])
-        _addcomp(
-    conn.close()
+        _addcomp()
+        conn.close()
 
 
 def _addcomp(fin_name,fout_name,date,comp,key,conn):

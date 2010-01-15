@@ -12,7 +12,7 @@ set(XERCESC_FIND_QUIETLY FALSE)
 
 # Look for a root installation
 FIND_PATH(XERCESC_ROOT_DIR include/xercesc/parsers/SAXParser.hpp
-  HINTS   XERCESC_ROOT
+  HINTS ENV  XERCESC_ROOT
   /usr
   
   DOC "The root of an installed xerces-c installation"
@@ -21,7 +21,7 @@ FIND_PATH(XERCESC_ROOT_DIR include/xercesc/parsers/SAXParser.hpp
 # try to find the header
 FIND_PATH(XERCESC_INCLUDE_DIR xercesc/parsers/SAXParser.hpp 
   ${XERCESC_ROOT_DIR}/include
-  HINTS   XERCESC_ROOT
+  HINTS ENV  XERCESC_ROOT
   /usr/include 
   /usr/local/include
 )
@@ -29,7 +29,7 @@ FIND_PATH(XERCESC_INCLUDE_DIR xercesc/parsers/SAXParser.hpp
 # Find the library
 FIND_LIBRARY(XERCESC_LIBRARY
    NAMES xerces-c 
-   HINTS   XERCESC_ROOT
+   HINTS ENV  XERCESC_ROOT
    PATHS
      ${XERCESC_ROOT_DIR}/lib
      /usr/lib 

@@ -29,10 +29,18 @@
 #include <string>
 namespace utilities{
 
+/**
+   Class for reading configuration from xml files.  This is very simple.
+   Each instance can only read from one element in the xml file and the
+   element must be a child of the root. 
+ */
 class Read_config{
 public:
   /**
-     constructor.  The vector of strings is the list of attributes to try to parse
+     constructor.  The vector of strings is the list of attributes to try to parse.
+     
+     @param attr_names the attributes to look for
+     @param elm_name the element to look for the parameters in.  
   */
   Read_config(std::string fname, std::vector<std::string> attr_names,std::string elm_name);
   /**
@@ -41,11 +49,19 @@ public:
   ~Read_config();
 
   /**
-     looks up the value of the given attribute.  Returns true if the attribute is found
-     and false if not found.  The value is returned by reference in val
+     looks up the value of the given attribute.  Returns true if the
+     attribute is found and false if not found.  The value is returned
+     by reference in val.  The attribute must have been given in the constructor
+     to be found.
+
+     @param attr_name attribute name
   */
   bool get_val(std::string attr_name,float & val)const;
+  bool get_val(std::string attr_name,int & val)const;
   
+  /**
+     prints all information stored.
+   */
   void print()const;
   
 

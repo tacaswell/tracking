@@ -6,10 +6,6 @@ SET(GNU_PLOT_SRC
 include_directories(${TRACKING_SOURCE_DIR}/external_src/gnu_wrapper)
 
 
-message(status "common source is ${COMMON_SRC}")
-message(status "util source is ${UTIL_SRC}")
-message(status "common track source is ${COMMON_TRACK_SRC}")
-
 add_executable(track_test track_test.cpp 
   ${COMMON_SRC} 
   ${UTIL_SRC} 
@@ -35,6 +31,10 @@ add_executable(hash_test3 hash_test.cpp
 set_target_properties(hash_test3 PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_COUNT=3;TESTING")
 
 
-
+add_executable(xml_test read_config_test.cpp
+  ${CONFIG_SRC}
+  )
+target_link_libraries(xml_test ${XERCESC_LIBRARY} )
+set_target_properties(xml_test PROPERTIES COMPILE_DEFINITIONS "MAIN_TEST")
 
 

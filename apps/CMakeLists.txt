@@ -6,7 +6,7 @@ SET(GNU_PLOT_SRC
 include_directories(${TRACKING_SOURCE_DIR}/external_src/gnu_wrapper)
 
 
-message(status "common source is ${COMMON_SRC}")
+#message(status "common source is ${COMMON_SRC}")
 
 add_executable(gofr_hdf gofr_hdf.cpp 
   ${COMMON_SRC} 
@@ -17,7 +17,7 @@ add_executable(gofr_hdf gofr_hdf.cpp
   ${COMMON_HASH_SRC} 
   ${COMMON_WRAPPER_SRC} 
   )
-message(STATUS "Found HDF: ${HDF5_LIBRARIES}")
+#message(STATUS "Found HDF: ${HDF5_LIBRARIES}")
 target_link_libraries(gofr_hdf ${HDF5_LIBRARIES} )
 set_target_properties(gofr_hdf PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_COUNT=2")
 
@@ -31,7 +31,7 @@ add_executable(goftheta_hdf goftheta_hdf.cpp ${COMMON_SRC}
  ${COMMON_HASH_SRC} 
  ${COMMON_WRAPPER_SRC} 
 )
-message(STATUS "Found HDF: ${HDF5_LIBRARIES}")
+#message(STATUS "Found HDF: ${HDF5_LIBRARIES}")
 target_link_libraries(goftheta_hdf ${HDF5_LIBRARIES} )
 set_target_properties(goftheta_hdf PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_COUNT=2")
 
@@ -45,8 +45,12 @@ add_executable(link3D link3D.cpp ${COMMON_SRC}
  ${COMMON_HASH_SRC} 
  ${HASH_TRACK_SRC}
  ${COMMON_WRAPPER_SRC} 
+ ${CONFIG_SRC}
 )
-target_link_libraries(link3D ${HDF5_LIBRARIES} )
+target_link_libraries(link3D 
+  ${HDF5_LIBRARIES} 
+  ${XERCESC_LIBRARY} 
+  )
 set_target_properties(link3D PROPERTIES COMPILE_DEFINITIONS  "PTYPE=1;DIM_COUNT=2")
 
 
@@ -57,8 +61,12 @@ add_executable(gofr3D gofr3D_hdf.cpp ${COMMON_SRC}
  ${GNU_PLOT_SRC}
  ${COMMON_HASH_SRC} 
  ${COMMON_WRAPPER_SRC} 
+ ${CONFIG_SRC}
 )
-target_link_libraries(gofr3D ${HDF5_LIBRARIES} )
+target_link_libraries(gofr3D 
+  ${HDF5_LIBRARIES} 
+  ${XERCESC_LIBRARY} 
+)
 set_target_properties(gofr3D PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_COUNT=3")
 
 

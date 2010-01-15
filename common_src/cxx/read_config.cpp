@@ -218,7 +218,7 @@ Read_config::Read_config(std::string fname,vector<string> attr_names, string elm
 
 void Read_config::print() const
 {
-  for(int j = 0; j<attr_names_.size();++j)
+  for(unsigned int j = 0; j<attr_names_.size();++j)
   {
     cout<<attr_names_.at(j)<<'\t'<<attr_found_.at(j)<<'\t'<<attr_values_.at(j)<<endl;
     
@@ -240,6 +240,23 @@ bool Read_config::get_val(string attr_name,float & val)const
     if(attr_names_[j].compare(attr_name) == 0)
     {
       val = attr_values_.at(j);
+      return attr_found_.at(j);
+      
+    }
+  }
+  return false;
+}
+
+bool Read_config::get_val(string attr_name,int & val)const
+{
+  int max = attr_names_.size();
+  
+
+  for(int j = 0;j<max;++j)
+  {
+    if(attr_names_[j].compare(attr_name) == 0)
+    {
+      val = (int) attr_values_.at(j);
       return attr_found_.at(j);
       
     }
