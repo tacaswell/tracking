@@ -26,6 +26,7 @@ import subprocess
 import sys
 import getopt
 import sqlite3
+import readline
 from datetime import date
 
 
@@ -49,7 +50,7 @@ class _xml_data:
     def disp(self):
         print self.doc.toprettyxml()
 
-        
+
         
 def _addcomp(fin_name,fout_name,date,comp,key,conn):
     """Adds an entry to the database connection handed in"""
@@ -65,10 +66,12 @@ def _call_program(prog_name,iname,oname,cname,prog_path):
     subprocess.call(["time",prog_path + prog_name,'-i',iname,'-o',oname,'-c',cname])
     #_addcomp(iname,oname,date,program,
 
-def _main():
+def _main_test():
     
     config = _xml_data()
-    config.add_elm("link3D",[("box_side_len","4"),("search_range","3.5"),("min_trk_len","3")])
+    config.add_elm("link3D",[("box_side_len","4"),
+                             ("search_range","3.5"),
+                             ("min_trk_len","3")])
 
     config.add_elm("gofr3D",[("max_range","9.5"),
                                ("nbins","2000")])
@@ -89,7 +92,66 @@ def _main():
     
     os.remove(fname)
 
+def _do_link3D(key,conn):
+
+
+
+    # figure out name of file to write to
+    res = conn.execute("select fout from comp where key=? and function='Iden';",(key,)).fetchall()
+    if len(res) ==0:
+        print "no entry"
+        # _do_iden(key,conn)
+        return
+    if len(res) >1:
+        print "more than one entry, can't cope, quiting"
+        return
+    fname = res[0][0]
+
+
+    # see if there is already a linked file
+    res = conn.execute("select fout from comp where key=? and function='link3D';",(key,)).fetchall()
+    if len(res)>0:
+        print "Already linked"
+    
+    config = _xml_data()
+    config.add_elm("link3D",[("box_side_len","4"),
+                             ("search_range","3.5"),
+                             ("min_trk_len","3")])
+
+    fout = fname.replace(".h5","_link.h5")
+
+    # look
+    
+    print fname
+    print fout
+    
+    
+def _main_loop():
+    stop = False;
+    conn = sqlite3.connect('/home/tcaswell/colloids/processed/test.db')
+    menu = {'l': _list,
+            'c': _compute,
+            'q': lambda x :  True}
+
+    while not stop:
+        cmd = raw_input("enter command: ")
+        cmd = cmd[0]
+        if menu.has_key(cmd):
+            stop = menu[cmd](conn)
+        else:
+            print "unknown command"
+            
+
+def _list(conn):
+    print "This will access the database"
+
+    return False
+
+def _compute(conn):
+    key = raw_input("enter key: ")
+    _do_link3D(key,conn)
+    return False
 
 if __name__ == "__main__":
-    _main()
+    _main_loop()
 

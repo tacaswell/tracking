@@ -83,7 +83,8 @@ int main(int argc, char * const argv[])
   int nbins;
   string proc_file;
   string out_file;
-      
+  string grp_name;
+  
   int optchar;
   bool found_i=false,found_o= false,found_f=false;
 
@@ -105,6 +106,7 @@ int main(int argc, char * const argv[])
 	vector<string> names;
 	names.push_back("max_range");
 	names.push_back("nbins");
+	names.push_back("grp_name");
 	Read_config rc(string(optarg),names,"gofr3D");
 	if(!rc.get_val("max_range",max_range))
 	{
@@ -114,6 +116,11 @@ int main(int argc, char * const argv[])
 	if(!rc.get_val("nbins",nbins))
 	{
 	  cerr<<"nbins not found"<<endl;
+	  return -1;
+	}
+	if(!rc.get_val("grp_name",grp_name))
+	{
+	  cerr<"grp_name not found"<<endl;
 	  return -1;
 	}
 	
@@ -190,7 +197,7 @@ int main(int argc, char * const argv[])
 //     //hcase.print();
 
     
-     Corr_gofr gofr(nbins,(float)max_range,out_file);
+     Corr_gofr gofr(nbins,(float)max_range,grp_name);
      hcase.compute_corr(gofr);
      cout<<"computed g(r)"<<endl;
     

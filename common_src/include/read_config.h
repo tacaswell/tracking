@@ -58,6 +58,7 @@ public:
   */
   bool get_val(std::string attr_name,float & val)const;
   bool get_val(std::string attr_name,int & val)const;
+  bool get_val(std::string attr_name,std::string & val)const;
   
   /**
      prints all information stored.
@@ -73,7 +74,7 @@ private:
   /**
      vector of parsed values
   */
-  std::vector<float> attr_values_;
+  std::vector<std::string> attr_values_;
 
   /**
      vector of if the attribute was found

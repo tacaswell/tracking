@@ -165,9 +165,9 @@ Read_config::Read_config(std::string fname,vector<string> attr_names, string elm
 
 	      char * tmp = XMLString::transcode(cur_elm->getAttribute(attr_tmp));
 	      
-	      attr_found_.at(j) = from_string<float> (attr_values_.at(j),
-						      string(tmp),
-						      std::dec);
+	      attr_values_.at(j) = string(tmp);
+	      attr_found_.at(j) = true;
+	      
 	      XMLString::release(&tmp);
 	      
 	    }
@@ -233,16 +233,13 @@ Read_config::~Read_config()
 bool Read_config::get_val(string attr_name,float & val)const
 {
   int max = attr_names_.size();
-  
-
   for(int j = 0;j<max;++j)
   {
     if(attr_names_[j].compare(attr_name) == 0)
-    {
-      val = attr_values_.at(j);
-      return attr_found_.at(j);
-      
-    }
+      if(attr_found_.at(j))
+	return from_string<float> (val,attr_values_.at(j),std::dec);
+      else
+	return false;
   }
   return false;
 }
@@ -255,11 +252,29 @@ bool Read_config::get_val(string attr_name,int & val)const
   for(int j = 0;j<max;++j)
   {
     if(attr_names_[j].compare(attr_name) == 0)
-    {
-      val = (int) attr_values_.at(j);
-      return attr_found_.at(j);
-      
-    }
+      if(attr_found_.at(j))
+	return from_string<int> (val,attr_values_.at(j),std::dec);
+      else
+	return false;
+  }
+  return false;
+}
+
+bool Read_config::get_val(string attr_name,string & val)const
+{
+  int max = attr_names_.size();
+  
+
+  for(int j = 0;j<max;++j)
+  {
+    if(attr_names_[j].compare(attr_name) == 0)
+      if(attr_found_.at(j))
+      {
+	val = attr_values_.at(j);
+	return true;
+      }
+      else
+	return false;
   }
   return false;
 }
