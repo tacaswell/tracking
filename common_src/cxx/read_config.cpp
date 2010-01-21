@@ -236,10 +236,13 @@ bool Read_config::get_val(string attr_name,float & val)const
   for(int j = 0;j<max;++j)
   {
     if(attr_names_[j].compare(attr_name) == 0)
+    {
       if(attr_found_.at(j))
 	return from_string<float> (val,attr_values_.at(j),std::dec);
       else
 	return false;
+    }
+    
   }
   return false;
 }
@@ -252,10 +255,14 @@ bool Read_config::get_val(string attr_name,int & val)const
   for(int j = 0;j<max;++j)
   {
     if(attr_names_[j].compare(attr_name) == 0)
+    {
+      
       if(attr_found_.at(j))
 	return from_string<int> (val,attr_values_.at(j),std::dec);
       else
 	return false;
+    }
+    
   }
   return false;
 }
@@ -268,6 +275,8 @@ bool Read_config::get_val(string attr_name,string & val)const
   for(int j = 0;j<max;++j)
   {
     if(attr_names_[j].compare(attr_name) == 0)
+    {
+      
       if(attr_found_.at(j))
       {
 	val = attr_values_.at(j);
@@ -275,6 +284,8 @@ bool Read_config::get_val(string attr_name,string & val)const
       }
       else
 	return false;
+    }
+    
   }
   return false;
 }

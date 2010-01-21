@@ -94,9 +94,6 @@ static string base_proc_path = "/home/tcaswell/colloids/processed/";
 int main(int argc, char * argv[])
 {
   
-    
-  int optchar;
-  bool found_i=false,found_o= false,found_f=false;
   
   string proc_file,out_file;
   
@@ -104,71 +101,77 @@ int main(int argc, char * argv[])
   int pixel_per_box;
   float search_range ;
   int min_track_length;
-  
-  while((optchar = getopt(argc,argv,"i:o:c:")) !=-1)
+
   {
-    switch(optchar)
+    
+    int optchar;
+    bool found_i=false,found_o= false,found_f=false;
+
+    while((optchar = getopt(argc,argv,"i:o:c:")) !=-1)
     {
-    case 'i':
-      proc_file = string(optarg);
-      found_i = true;
-      break;
-    case 'o':
-      out_file = string(optarg);
-      found_o = true;
-      break;
-    case 'c':
+      switch(optchar)
       {
-	vector<string> names;
-	names.push_back("box_side_len");
-	names.push_back("search_range");
-	names.push_back("min_trk_len");
-	Read_config rc(string(optarg),names,"link3D");
-	if(!rc.get_val("box_side_len",pixel_per_box))
+      case 'i':
+	proc_file = string(optarg);
+	found_i = true;
+	break;
+      case 'o':
+	out_file = string(optarg);
+	found_o = true;
+	break;
+      case 'c':
 	{
-	  cerr<<"box_side_len not found"<<endl;
-	  return -1;
-	}
-	if(!rc.get_val("search_range",search_range))
-	{
-	  cerr<<"search_range not found"<<endl;
-	  return -1;
-	}
-	if(!rc.get_val("min_trk_len",min_track_length))
-	{
-	  min_track_length = 3;
+	  vector<string> names;
+	  names.push_back("box_side_len");
+	  names.push_back("search_range");
+	  names.push_back("min_trk_len");
+	  Read_config rc(string(optarg),names,"link3D");
+	  if(!rc.get_val("box_side_len",pixel_per_box))
+	  {
+	    cerr<<"box_side_len not found"<<endl;
+	    return -1;
+	  }
+	  if(!rc.get_val("search_range",search_range))
+	  {
+	    cerr<<"search_range not found"<<endl;
+	    return -1;
+	  }
+	  if(!rc.get_val("min_trk_len",min_track_length))
+	  {
+	    min_track_length = 3;
 	
+	  }
+	  found_f = true;
+	  break;
 	}
-	found_f = true;
+      case '?':
+      default:
+	cout<<"-i input filename"<<endl;
+	cout<<"-o output filename"<<endl;
+	cout<<"-c configuration filename"<<endl;
 	break;
       }
-    case '?':
-    default:
+    }
+
+    if(!(found_i && found_o && found_f))
+    {
+      cerr<<"input failed"<<endl;
       cout<<"-i input filename"<<endl;
       cout<<"-o output filename"<<endl;
       cout<<"-c configuration filename"<<endl;
-    break;
+      return -1;
     }
-  }
-
-  if(!(found_i && found_o && found_f))
-  {
-    cerr<<"input failed"<<endl;
-    cout<<"-i input filename"<<endl;
-    cout<<"-o output filename"<<endl;
-    cout<<"-c configuration filename"<<endl;
-    return -1;
-  }
   
-  cout<<"file to read in: "<<proc_file<<endl;
-  cout<<"file that will be written to: "<<out_file<<endl;
-  cout<<"Parameters: "<<endl;
-  cout<<"  pixel_per_box: "<<pixel_per_box<<endl;
-  cout<<"  search_range: "<<search_range<<endl;
-  cout<<"  min_track_length: "<<min_track_length<<endl;
+    cout<<"file to read in: "<<proc_file<<endl;
+    cout<<"file that will be written to: "<<out_file<<endl;
+    cout<<"Parameters: "<<endl;
+    cout<<"  pixel_per_box: "<<pixel_per_box<<endl;
+    cout<<"  search_range: "<<search_range<<endl;
+    cout<<"  min_track_length: "<<min_track_length<<endl;
 
 
-  return 0;
+    return 0;
+  }
   
   
   try

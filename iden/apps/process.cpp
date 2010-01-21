@@ -81,33 +81,62 @@ using H5::Group;
 using H5::Attribute;
 using H5::PredType;
 
-static string base_data_path = "/home/tcaswell/colloids/data/";
-static string base_proc_path = "/home/tcaswell/colloids/processed/";
-
 
 int main(int argc, const char * argv[])
 {
-
-  if(argc != 3)
+  
+  		   
+  string data_file ;
+  string proc_file ;
+  
   {
-    cerr<< "wrong number of args args"<<endl;
+    
+    int optchar;
+    bool found_i=false,found_o= false;
+    
+    while((optchar = getopt(argc,argv,"i:o:c:")) !=-1)
+    {
+      switch(optchar)
+      {
+      case 'i':
+	data_file = string(optarg);
+	found_i = true;
+	break;
+      case 'o':
+	proc_file = string(optarg);
+	found_o = true;
+	break;
+      case 'c':
+	cout<<"-c not supported in this program, parameters passed in via hdf"<<endl;
+      case '?':
+      default:
+	cout<<"-i input filename"<<endl;
+	cout<<"-o output filename"<<endl;
+	break;
+      }
+    }
+
+    if(!(found_i && found_o && found_f))
+    {
+      cerr<<"input failed"<<endl;
+      cout<<"-i input filename"<<endl;
+      cout<<"-o output filename"<<endl;
+      cout<<"-c configuration filename"<<endl;
+      return -1;
+    }
+  
+    cout<<"file to read in: "<<proc_file<<endl;
+    cout<<"file that will be written to: "<<out_file<<endl;
+    
     return 0;
+    
+
+  
+  
+
+
   }
   
-  
-  string file_path = string(argv[1]);
-  string file_name = string(argv[2]);
-  
-  string data_file = base_data_path + file_path + file_name + ".tif";
-  string proc_file = base_proc_path + file_path + file_name + ".h5";
-
-  cout<<data_file<<endl;
-  cout<<proc_file<<endl;
-
-
-
-
-
 
   try
   {

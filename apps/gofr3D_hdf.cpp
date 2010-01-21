@@ -120,7 +120,7 @@ int main(int argc, char * const argv[])
 	}
 	if(!rc.get_val("grp_name",grp_name))
 	{
-	  cerr<"grp_name not found"<<endl;
+	  cerr<<"grp_name not found"<<endl;
 	  return -1;
 	}
 	

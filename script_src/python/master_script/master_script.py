@@ -17,6 +17,7 @@
 #along with this program; if not, see <http://www.gnu.org/licenses>.
 
 import os
+import os.path
 import xml.dom.minidom
 import tempfile
 
@@ -33,7 +34,7 @@ from datetime import date
 class _xml_data:
     def __init__(self):
         self.doc = xml.dom.minidom.getDOMImplementation(None).createDocument(None,"root",None)
-
+        self.fname = None
     def add_elm(self,elm,params):
         tmpelm = self.doc.createElement(elm)
         for a,b in params:
@@ -45,17 +46,32 @@ class _xml_data:
         f = open(tf[1],'w')
         self.doc.writexml(f,addindent='   ',newl='\n')
         f.close()
-
-        return tf[1]
+        self.fname = tf[1]
+        return self.fname
     def disp(self):
         print self.doc.toprettyxml()
 
-
+    def __del__(self):
+        if self.fname:
+            if os.path.isfile(self.fname):
+                os.remove(self.fname)
         
+
+
+class Computations:
+    def __init__(self,database):
+        self.conn = None
+    def do_computation(self,func):
+        pass
+        
+
+def _quick_test():
+    pass
+
 def _addcomp(fin_name,fout_name,date,comp,key,conn):
     """Adds an entry to the database connection handed in"""
     t = (key,fin_name,fout_name,date,comp)
-    conn.execute('insert into comp values (?,?,?,?,?)',t)
+    conn.execute('insert into comp (dset_key,fin,fout,out,function) values (?,?,?,?,?)',t)
     conn.commit()
 
 
@@ -64,7 +80,7 @@ def _addcomp(fin_name,fout_name,date,comp,key,conn):
 def _call_program(prog_name,iname,oname,cname,prog_path):
     """Calls a function/program with the given arguements"""
     subprocess.call(["time",prog_path + prog_name,'-i',iname,'-o',oname,'-c',cname])
-    #_addcomp(iname,oname,date,program,
+    _addcomp(iname,oname,date,program,
 
 def _main_test():
     
@@ -88,16 +104,21 @@ def _main_test():
     
     prog_path = "/home/tcaswell/misc_builds/basic/apps/"
     prog_name = "gofr3D"
-#    _call_program(prog_name,"/path/to/in","/path/to/out",fname,prog_path)
-    
-    os.remove(fname)
+    #    _call_program(prog_name,"/path/to/in","/path/to/out",fname,prog_path)
+
+
+def _check_comps_table(key,func,conn):
+    # figure out name of file to write to
+    res = conn.execute("select fout from comp where dset_key=? and function='?';",(key,func)).fetchall()
+    return res
+
+
 
 def _do_link3D(key,conn):
-
-
-
+    prog_path = "/home/tcaswell/misc_builds/basic/apps/"
+    
     # figure out name of file to write to
-    res = conn.execute("select fout from comp where key=? and function='Iden';",(key,)).fetchall()
+    res = _check_comps_table(key,"Iden",conn)
     if len(res) ==0:
         print "no entry"
         # _do_iden(key,conn)
@@ -109,14 +130,16 @@ def _do_link3D(key,conn):
 
 
     # see if there is already a linked file
-    res = conn.execute("select fout from comp where key=? and function='link3D';",(key,)).fetchall()
+    res = conn.execute("select fout from comp where dset_key=? and function='link3D';",(key,)).fetchall()
     if len(res)>0:
         print "Already linked"
+        return
     
     config = _xml_data()
     config.add_elm("link3D",[("box_side_len","4"),
                              ("search_range","3.5"),
                              ("min_trk_len","3")])
+    cname = config.write_to_file()
 
     fout = fname.replace(".h5","_link.h5")
 
@@ -124,7 +147,50 @@ def _do_link3D(key,conn):
     
     print fname
     print fout
-    
+    _call_program("link3D", fname,fount,cname,prog_path)
+
+def _do_Iden(key,conn):
+    # see if the file has already been processed
+
+    # format name
+
+    # call process
+    pass
+
+def _do_gofr3D(key,conn):
+    # see if the file has already been processed
+    res = _check_comps_table(key,"Iden",conn)
+    if len(res) ==0:
+        print "no entry"
+        return
+    if len(res) >1:
+        print "more than one entry, can't cope, quiting"
+        return
+    fname = res[0][0]
+        
+    # format name
+
+    # call process
+    pass
+
+
+def _do_gofr2D(key,conn):
+    # see if the file has already been processed
+    res = _check_comps_table(key,"Iden",conn)
+    if len(res) ==0:
+        print "no entry"
+        return
+    if len(res) >1:
+        print "more than one entry, can't cope, quiting"
+        return
+    fname = res[0][0]
+
+    # format name
+
+    # call process
+    pass
+
+
     
 def _main_loop():
     stop = False;
@@ -154,4 +220,5 @@ def _compute(conn):
 
 if __name__ == "__main__":
     _main_loop()
-
+    #_quick_test()
+    
