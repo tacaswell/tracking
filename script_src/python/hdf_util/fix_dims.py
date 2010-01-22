@@ -23,7 +23,8 @@ import re
 
 def _fix_z(arg,dir_name,fnames):
     for f in fnames:
-        if(os.path.isfile((dir_name +'/'+ f).strip()) and f[-9:] == "link3D.h5"  ):
+#        if(os.path.isfile((dir_name +'/'+ f).strip()) and f[-9:] == "link3D.h5"  ):
+        if(os.path.isfile((dir_name +'/'+ f).strip()) and f[-7:] == "link.h5"  ):
             print dir_name + f
             F = h5py.File((dir_name +'/'+ f),'r+')
             tmp = F.attrs.get('dims',0);
@@ -32,8 +33,48 @@ def _fix_z(arg,dir_name,fnames):
             tmp[0] = math.ceil(tmp[0])
             tmp[1] = math.ceil(tmp[1])
             print tmp
-       #     F.attrs.modify('dims',tmp)
+            F.attrs.modify('dims',tmp)
             F.close()
 
-base_proc_path = "/home/tcaswell/colloids/processed/"
-os.path.walk(base_proc_path,_fix_z,0)
+
+def _fix_all_dims(arg,dir_name,fnames):
+    for f in fnames:
+#        if(os.path.isfile((dir_name +'/'+ f).strip()) and f[-9:] == "link3D.h5"  ):
+        if(os.path.isfile((dir_name +'/'+ f).strip()) and f[-7:] == "link.h5"  ):
+            print dir_name + f
+            F = h5py.File((dir_name +'/'+ f),'r+')
+            tmp = F.attrs.get('dims',0);
+            print tmp
+            tmp[2] = math.ceil(F["/frame000000/z"][:].max())
+            tmp[0] = math.ceil(F["/frame000000/x"][:].max())
+            tmp[1] = math.ceil(F["/frame000000/y"][:].max())
+            print tmp
+            F.attrs.modify('dims',tmp)
+            F.close()
+
+
+
+def _rescale(arg,dir_name,fnames):
+    scale = 6.45/60
+    
+    for f in fnames:
+        if(os.path.isfile((dir_name +'/'+ f).strip()) and f[-7:] == "link.h5"  ):
+            print dir_name + f
+            F = h5py.File((dir_name +'/'+ f),'r+')
+            tmp = F.attrs.get('dims',0);
+            print tmp
+            F["/frame000000/y"][:] = F["/frame000000/y"][:] * scale
+            F["/frame000000/x"][:] = F["/frame000000/x"][:] * scale
+            
+            tmp[2] = math.ceil(F["/frame000000/z"][:].max())
+            tmp[0] = math.ceil(F["/frame000000/x"][:].max())
+            tmp[1] = math.ceil(F["/frame000000/y"][:].max())
+            print tmp
+                                  
+            #F.attrs.modify('dims',tmp)
+            
+            F.close()
+
+base_proc_path = "/home/tcaswell/colloids/processed/polyNIPAM_batch_12/20100119/a/z/"
+os.path.walk(base_proc_path,_fix_all_dims,0)
+

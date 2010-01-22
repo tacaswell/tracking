@@ -170,7 +170,7 @@ int main(int argc, char * argv[])
     cout<<"  min_track_length: "<<min_track_length<<endl;
 
 
-    return 0;
+
   }
   
   

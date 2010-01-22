@@ -13,15 +13,19 @@ include(LibFindMacros)
 # Use pkg-config to get hints about paths
 #libfind_pkg_check_modules(FreeImage_PKGCONF)
 
+
+
 # Include dir
 find_path(FreeImage_INCLUDE_DIR
   NAMES FreeImage.h
-  HINTS  /home/tcaswell/other_source/FreeImage/Dist
+  HINTS $ENV{FREEIMAGE_ROOT}/include
 )
 # finally the library itself
 find_library(FreeImage_LIBRARY
   NAMES freeimageplus
-  HINTS  /home/tcaswell/other_source/FreeImage/Dist
+  HINTS $ENV{FREEIMAGE_ROOT}/lib
+
+
   )
 
 # Set the include dir variables and the libraries and let libfind_process do the rest.

@@ -82,7 +82,7 @@ using H5::Attribute;
 using H5::PredType;
 
 
-int main(int argc, const char * argv[])
+int main(int argc, char * const argv[])
 {
   
   		   
@@ -116,7 +116,7 @@ int main(int argc, const char * argv[])
       }
     }
 
-    if(!(found_i && found_o && found_f))
+    if(!(found_i && found_o))
     {
       cerr<<"input failed"<<endl;
       cout<<"-i input filename"<<endl;
@@ -125,10 +125,12 @@ int main(int argc, const char * argv[])
       return -1;
     }
   
-    cout<<"file to read in: "<<proc_file<<endl;
-    cout<<"file that will be written to: "<<out_file<<endl;
+    cout<<"file to read in: "<<data_file<<endl;
+    cout<<"file that will be written to: "<<proc_file<<endl;
     
-    return 0;
+    
+
+    
     
 
   
@@ -253,10 +255,12 @@ int main(int argc, const char * argv[])
     {
       std::cerr<<"caught on error: ";
       std::cerr<<err<<endl;
+      return -1;
     }
     catch(...)
     {
       std::cerr<<"unknown error type"<<endl;
+      return -1;
     }
     
 
@@ -265,6 +269,8 @@ int main(int argc, const char * argv[])
   catch(const char * err){
     std::cerr<<"caught on error: ";
     std::cerr<<err<<endl;
+    return -1;
+    
   } 
   
   return 0;

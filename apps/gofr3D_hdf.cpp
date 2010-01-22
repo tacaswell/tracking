@@ -154,7 +154,7 @@ int main(int argc, char * const argv[])
   cout<<"  nbins: "<<nbins<<endl;
 
 
-  return 0;
+
   
   try
   {
@@ -213,6 +213,8 @@ int main(int argc, char * const argv[])
   catch(const char * err){
     std::cerr<<"caught on error: ";
     std::cerr<<err<<endl;
+    return -1;
+    
   } 
   
   return 0;

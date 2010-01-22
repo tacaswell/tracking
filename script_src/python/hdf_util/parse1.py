@@ -110,7 +110,9 @@ def make_h5(fname_in,d_path,p_path):
 
     f = h5py.File(out_fname,'w')
 
-    _add_name(f,fname)
+    print fname
+    
+    _add_name(f,fname.encode('ascii'))
     _parse_temp(f,fname_in)
     _parse_params(f,fname_p)
 

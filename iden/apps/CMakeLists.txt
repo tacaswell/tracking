@@ -11,6 +11,7 @@ SET(COMMON_IDEN_SRC
 
 
 find_package(IPP REQUIRED)
+set(ENV{FREEIMAGE_ROOT} "/home/tcaswell/local_installs/usr/")
 find_package(FreeImage REQUIRED)
 find_package(HDF5 REQUIRED)
 
