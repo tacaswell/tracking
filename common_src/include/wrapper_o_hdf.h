@@ -56,9 +56,14 @@ namespace utilities{
 */
 class Wrapper_o_hdf:public Wrapper_out{
 public:  
-    
-  Wrapper_o_hdf(const std::string& file_name,std::set<D_TYPE> d_add,const std::string& group_prefix = "frame",bool over_write = false);
   
+  Wrapper_o_hdf(const std::string& file_name,
+		const std::set<D_TYPE>& d_add,
+		const std::string & group_prefix="frame",
+		bool over_write=false,
+		bool new_hdf=true);
+  
+    
   void initialize_wrapper();
   void open_group(int,int);
   void open_particle(int);

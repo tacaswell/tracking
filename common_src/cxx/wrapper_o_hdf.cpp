@@ -62,24 +62,39 @@ using utilities::D_TYPE;
 using tracking::particle;
 
 
-Wrapper_o_hdf::Wrapper_o_hdf(const string& file_name,set<D_TYPE> d_add,const string & group_prefix,bool over_write):
-  part_count_(0),part_open_(false), wrapper_open_(false), group_open_(false),
-  part_index_(-1), group_max_count_(-1), group_index_(-1), new_hdf_(true),over_write_(over_write),
-  file_(NULL), file_name_(file_name),group_(NULL),group_name_(""),
-  d_types_add_(d_add),d_types_check_(),d_types_already_(), 
-  float_data_(),int_data_(),complex_data_(),group_prefix_(group_prefix),compress_(true)
+Wrapper_o_hdf::Wrapper_o_hdf(const string& file_name,
+			     const set<D_TYPE>& d_add,
+			     const string & group_prefix,
+			     bool over_write,
+			     bool new_hdf):
+  part_count_(0),
+  part_open_(false),
+  wrapper_open_(false),
+  group_open_(false),
+  part_index_(-1),
+  group_max_count_(-1),
+  group_index_(-1),
+  new_hdf_(new_hdf),
+  over_write_(over_write),
+  file_(NULL),
+  file_name_(file_name),
+  group_(NULL),
+  group_name_(""),
+  d_types_add_(d_add),
+  d_types_check_(),
+  d_types_already_(),
+  float_data_(),
+  int_data_(),
+  complex_data_(),
+  group_prefix_(group_prefix),
+  compress_(true)
 {
 
-
-  // don't make these assumptions, this may be useful later
+  if(!new_hdf && over_write)
+    throw "non-sensible parameters set"; 
   
-  // erase frames from the data to add, there is no good reason to
-  // record information that is in the structure
-  
-  //  d_types_add_.erase(D_FRAME);
   
 }
-
 
 void Wrapper_o_hdf::initialize_wrapper()
 {
@@ -153,7 +168,7 @@ void Wrapper_o_hdf::open_group(int group,int count)
   group_name_ = format_name(group_index_);
 
   
-  if(over_write_)
+  if(new_hdf_)
     group_ = new Group(file_->createGroup(group_name_));
   else
     group_ = new Group(file_->openGroup(group_name_));
