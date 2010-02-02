@@ -70,11 +70,13 @@ private:
   
   void clean_data();
   
-  void priv_init(int f_count =0, unsigned int start = 0);
+  void priv_init(int f_count =0);
   
   bool two_d_data_;
   
   std::vector<float> frame_zdata_;
+
+  unsigned int start_;
   
   
 
@@ -110,12 +112,12 @@ public:
  
   Wrapper_i_hdf(std::string fname,
 		const std::set<utilities::D_TYPE>& dtypes,
-		int start=0,
+		unsigned int start=0,
 		int frames =0);
 
   Wrapper_i_hdf(std::string fname,
 		const std::set<utilities::D_TYPE> &dtypes,
-		int start,
+		unsigned int start,
 		int f_count,
 		bool two_d_data);
   
@@ -126,7 +128,13 @@ public:
    */
   float get_xy_scale() const;
   
-
+  /**
+     Returns the starting plane.  This may be needed to put data back
+     into hdf files properly.  Although, processing only part of the
+     file seems like it would lead to madness and chaos.
+   */
+  unsigned int get_start_offset() const {return start_;}
+  
   
   
 };

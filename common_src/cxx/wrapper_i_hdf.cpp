@@ -57,23 +57,30 @@ using std::complex;
 
 using tracking::particle;
 
-Wrapper_i_hdf::Wrapper_i_hdf(std::string fname,const std::set<utilities::D_TYPE> &dtypes,int start,int f_count)
-  :  file_name_(fname),data_types_(dtypes),total_part_count_(0),two_d_data_(true)
+Wrapper_i_hdf::Wrapper_i_hdf(std::string fname,
+			     const std::set<utilities::D_TYPE> &dtypes,
+			     unsigned int start,
+			     int f_count)
+  :  file_name_(fname),data_types_(dtypes),total_part_count_(0),two_d_data_(true),start_(start)
 {
-  priv_init(f_count,start);
+  priv_init(f_count);
   
 }
-Wrapper_i_hdf::Wrapper_i_hdf(std::string fname,const std::set<utilities::D_TYPE> &dtypes,int start,int f_count,bool two_d_data)
-  :  file_name_(fname),data_types_(dtypes),total_part_count_(0),two_d_data_(two_d_data)
+Wrapper_i_hdf::Wrapper_i_hdf(std::string fname,
+			     const std::set<utilities::D_TYPE> &dtypes,
+			     unsigned int start,
+			     int f_count,
+			     bool two_d_data)
+  :  file_name_(fname),data_types_(dtypes),total_part_count_(0),two_d_data_(two_d_data),start_(start)
 {
-  priv_init(f_count,start);
+  priv_init(f_count);
   
 }
 
 
-void Wrapper_i_hdf::priv_init(int f_count,unsigned int start)
+void Wrapper_i_hdf::priv_init(int f_count)
 {
-  if (start <0)
+  if (start_ <0)
     throw "wrapper_i_hdf: start must be positive";
   
   
@@ -99,7 +106,7 @@ void Wrapper_i_hdf::priv_init(int f_count,unsigned int start)
 
     if(f_count != 0)
     {
-      if(f_count + start > frame_count_)
+      if(f_count + start_ > frame_count_)
 	throw "wrapper_i_hdf: asking for too many frames";
       frame_count_ = f_count;
       
@@ -147,7 +154,7 @@ void Wrapper_i_hdf::priv_init(int f_count,unsigned int start)
     
     for(unsigned int j = 0; j<frame_count_;++j)
     {
-      string frame_name = format_name(j+start);
+      string frame_name = format_name(j+start_);
       Group * frame = new Group(file->openGroup(frame_name));
       
       if(two_d_data_)
