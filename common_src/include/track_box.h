@@ -22,11 +22,12 @@
 //containing parts covered by the terms of MATLAB User License, the
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
-#include <vector>
+
 
 
 #ifndef TRACK_BOX
 #define TRACK_BOX
+#include <vector>
 namespace utilities{
 class Array;
 class Wrapper_out;
@@ -165,6 +166,8 @@ protected:
   Track_box * split_track(int indx);
   
   /**
+     CHECK THIS DOCUMENTATION
+
      Trims the track it include only the particles between the indexes
      given, the final track contains the particles (ind_start -
      (ind_end -1)).  This is to stay with in the frame work of all the

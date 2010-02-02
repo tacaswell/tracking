@@ -1,4 +1,4 @@
-//Copyright 2008,2009 Thomas A Caswell
+//Copyright 2008-2010 Thomas A Caswell
 //tcaswell@uchicago.edu
 //http://jfi.uchicago.edu/~tcaswell
 //
@@ -22,10 +22,11 @@
 //containing parts covered by the terms of MATLAB User License, the
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
-#include <map>
-
 #ifndef TRACK_SHELF
 #define TRACK_SHELF
+
+#include <map>
+
 
 //forward declare histogram
 namespace utilities{
@@ -157,11 +158,15 @@ public:
   }
   /**
      outputs the initial location and plane of the tracks
+     
+     to be removed
    */
   void initial_corrected_pos_to_wrapper(utilities::Generic_wrapper_base * data_out_wrapper)const;
   
   /**
      Outputs both the corrected initial position and the corrected displacements
+
+     to be removed
    */
   void corrected_tracks_out(utilities::Cell & output, utilities::Generic_wrapper_base * data_out_wrapper)const;
   
@@ -194,6 +199,7 @@ public:
   
   ///Constructor
   Track_shelf():track_count_(0){};
+
   ///Destructor.  Destroys all of the tracks contained in the shelf
   ~Track_shelf();
 protected:
@@ -218,6 +224,7 @@ protected:
      number of tracks in the self
    */
   unsigned int track_count_;
+  
   
 };
 }

@@ -15,6 +15,7 @@
 #You should have received a copy of the GNU General Public License
 #along with this program; if not, see <http://www.gnu.org/licenses>.
 
+
 import os
 import os.path
 
@@ -26,6 +27,10 @@ import subprocess
 import sqlite3
 from datetime import date
 
+def _make_sure_h5_exists(fname):
+    if not os.path.isfile(fname):
+        f = h5py.File(fname)
+        f.close()
 
 
 def do_link3D(key,conn):
@@ -44,7 +49,8 @@ def do_link3D(key,conn):
 
 
     # see if there is already a linked file
-    res = conn.execute("select fout from comps where dset_key=? and function='link3D';",(key,)).fetchall()
+    res = conn.execute("select fout from comps where dset_key=? and function='link3D';",
+                       (key,)).fetchall()
     if len(res)>0:
         print "Already linked"
         return
@@ -56,7 +62,7 @@ def do_link3D(key,conn):
     cname = config.write_to_file()
 
     fout = fname.replace(".h5","_link.h5")
-
+    _make_sure_h5_exists(fout)
     # look
     
     print fname
@@ -140,11 +146,8 @@ def do_gofr3D(key,conn):
     fin = res[0][0]
 
     fout = os.path.dirname(fin) + '/gofr3D.h5'
-    if not os.path.isfile(fout):
-        f = h5py.File(fout)
-        f.close()
-        del f
-
+    _make_sure_h5_exists(fout)
+    
     comp_num = conn.execute("select max(comp_key) from comps;").fetchone()[0] + 1
 
     config = _xml_data()
@@ -163,4 +166,11 @@ def do_gofr3D(key,conn):
         print "entering into database"
         conn.execute("insert into comps (comp_key,dset_key,date,fin,fout,function) values (?,?,?,?,?,?);",
                      (comp_num,key,date.today().isoformat(),fin,fout,prog_name))
+
+
+def do_tracking(key,conn):
+    prog_path = '/home/tcaswell/misc_builds/basic/apps/'
+    prog_name = "gofr3D"
+
+    pass
 

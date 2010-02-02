@@ -55,7 +55,7 @@
 #include "gnuplot_i.hpp" //Gnuplot class handles POSIX-Pipe-communication with Gnuplot
 
 #include "track_shelf.h"
-#include "track_box.h"
+#include "link_box.h"
 
 #include <unistd.h>
 #include <vector>
@@ -89,7 +89,7 @@ using tracking::hash_case;
 using tracking::Corr_gofr;
 using tracking::Track_shelf;
 using tracking::Track_box;
-static string base_proc_path = "/home/tcaswell/colloids/processed/";
+
 
 int main(int argc, char * argv[])
 {
@@ -209,14 +209,14 @@ int main(int argc, char * argv[])
     hash_case hcase(box,dims,pixel_per_box,wh.get_num_frames());
     cout<<"hash case filled"<<endl;
     
-    Track_shelf tracks;
+    Track_shelf tracks(false);
     
     hcase.link(search_range,tracks);
 
     
     tracks.remove_short_tracks(min_track_length);
     
-    Track_shelf final_tracks;
+    Track_shelf final_tracks(false);
     tracks.split_to_parts(final_tracks);
     
 
@@ -254,12 +254,19 @@ int main(int argc, char * argv[])
   catch(const char * err){
     std::cerr<<"caught on error: ";
     std::cerr<<err<<endl;
+    return -1;
   } 
   catch( char const * err){
     std::cerr<<"caught on error: ";
     std::cerr<<err<<endl;
+    return -1;
   } 
-
+  catch(...)
+  {
+    std::cerr<<"uncaught error"<<endl;
+    return -1;
+  }
+  
 
   return 0;
   
