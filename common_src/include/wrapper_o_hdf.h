@@ -87,13 +87,13 @@ public:
 
   void set_compress(bool in){compress_ = in;}
 
+  
 
-
-  void add_meta_data(const std::string & key, float val,bool current_group = false);
-  void add_meta_data(const std::string & key, const Pair & val,bool current_group = false);
-  void add_meta_data(const std::string & key, const Triple & val,bool current_group = false);
-  void add_meta_data(const std::string & key,  const std::string & val,bool current_group = false);
-  void add_meta_data(const std::string & key, int val,bool current_group = false);
+  void add_meta_data(const std::string & key, float val,bool root_group = true);
+  void add_meta_data(const std::string & key, const Pair & val,bool root_group = true);
+  void add_meta_data(const std::string & key, const Triple & val,bool root_group = true);
+  void add_meta_data(const std::string & key,  const std::string & val,bool root_group = true);
+  void add_meta_data(const std::string & key, int val,bool root_group = true);
   
 
   ~Wrapper_o_hdf();

@@ -177,7 +177,8 @@ public:
   void pass_fun_to_track(void(Track_box::*fun)()const)const;
 
   /**
-     Outputs the particles in a track-centric format
+     Outputs the particles in a track-centric format.  Assumes that the wrapper is 
+     already initialized.
    */
   void output_to_wrapper(utilities::Wrapper_out & wrapper) const;
 

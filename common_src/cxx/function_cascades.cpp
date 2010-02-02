@@ -100,19 +100,23 @@ void hash_box::output_to_wrapper(Wrapper_out & wrapper) const
 // track output chain
 void Track_shelf::output_to_wrapper(Wrapper_out & wrapper) const
 {
-  wrapper.initialize_wrapper();
+
   map<int,Track_box*>::const_iterator myend =  track_map.end();
   for(map<int,Track_box*>::const_iterator it = track_map.begin();it!=myend;++it)
   {
     Track_box * cur_box = (it->second);
     cur_box->output_to_wrapper(wrapper);
   }
-  wrapper.finalize_wrapper();
+
 }
 
 void Track_box::output_to_wrapper(Wrapper_out & wrapper) const
 {
   wrapper.open_group(id_,length_);
+  // add meta data
+  wrapper.add_meta_data("init_plane",t_first_->get_frame(),false);
+  
+
   particle_track * cur_part = t_first_;
   for(int j = 0; j< length_;++j)
   {

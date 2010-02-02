@@ -95,6 +95,8 @@ void Wrapper_i_hdf::priv_init(int f_count,unsigned int start)
     }
     
 
+    
+
     if(f_count != 0)
     {
       if(f_count + start > frame_count_)
@@ -138,7 +140,7 @@ void Wrapper_i_hdf::priv_init(int f_count,unsigned int start)
     if(two_d_data_)
       frame_zdata_.resize(frame_count_);
     
-    
+
     // fill in data
     // assume that the frames run from 0 to frame_count_
 
@@ -215,7 +217,8 @@ void Wrapper_i_hdf::priv_init(int f_count,unsigned int start)
       for(unsigned int j = 0; j<frame_count_;++j)
 	frame_zdata_[j] -= min ;
     }
-    
+
+
   }
   catch(Exception & e)
   {
@@ -240,7 +243,7 @@ Wrapper_i_hdf::~Wrapper_i_hdf()
 
 void Wrapper_i_hdf::clean_data()
 {
-    vector<std::vector<int*> >::iterator i_o_end = data_i_.end();
+  vector<std::vector<int*> >::iterator i_o_end = data_i_.end();
   for(vector<std::vector<int*> >::iterator outer = data_i_.begin();
       outer != i_o_end; ++outer)
   {

@@ -1,4 +1,4 @@
-//Copyright 2009 Thomas A Caswell
+//Copyright 2008,2009,2010 Thomas A Caswell
 //tcaswell@uchicago.edu
 //http://jfi.uchicago.edu/~tcaswell
 //
@@ -22,22 +22,8 @@
 //containing parts covered by the terms of MATLAB User License, the
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
-// 
-//If you modify this Program, or any covered work, by linking or
-//combining it with IPP (or a modified version of that library),
-//containing parts covered by the terms of End User License Agreement
-//for the Intel(R) Software Development Products, the licensors of
-//this Program grant you additional permission to convey the resulting
-//work.
-//
-//If you modify this Program, or any covered work, by linking or
-//combining it with FreeImage (or a modified version of that library),
-//containing parts covered by the terms of End User License Agreement
-//for FreeImage Public License, the licensors of
-//this Program grant you additional permission to convey the resulting
 
 
-#include <iostream>
 
 #include "master_box_t.h"
 
@@ -62,6 +48,9 @@
 #include "read_config.h"
 
 
+using std::string;
+using std::vector;
+
 
 using std::cout;
 using std::endl;
@@ -69,7 +58,7 @@ using std::set;
 using std::string;
 using std::cerr;
 using std::vector;
-
+using std::map;
 
 using utilities::Wrapper_o_hdf;
 using utilities::Wrapper_i_hdf;
@@ -83,23 +72,22 @@ using utilities::Triple;
 using utilities::Read_config;
 
 
-using tracking::Master_box;
-using tracking::particle;
-using tracking::hash_case;
-using tracking::Corr_gofr;
-using tracking::Track_shelf;
-using tracking::Track_box;
 
 
-int main(int argc, char * argv[])
+using namespace tracking;
+
+
+int main(int argc, char * const argv[])
 {
   
   
+  Track_shelf tracks;
+
   string proc_file,out_file;
   
   
   int pixel_per_box;
-  float search_range ;
+  float search_range;
   int min_track_length;
 
   {
@@ -125,7 +113,7 @@ int main(int argc, char * argv[])
 	  names.push_back("box_side_len");
 	  names.push_back("search_range");
 	  names.push_back("min_trk_len");
-	  Read_config rc(string(optarg),names,"link3D");
+	  Read_config rc(string(optarg),names,"tracking");
 	  if(!rc.get_val("box_side_len",pixel_per_box))
 	  {
 	    cerr<<"box_side_len not found"<<endl;
@@ -139,7 +127,6 @@ int main(int argc, char * argv[])
 	  if(!rc.get_val("min_trk_len",min_track_length))
 	  {
 	    min_track_length = 3;
-	
 	  }
 	  found_f = true;
 	  break;
@@ -171,35 +158,28 @@ int main(int argc, char * argv[])
 
 
 
+
   }
-  
   
   try
   {
-   
     
-    // set up data types to import form the input
-    D_TYPE tmp[] = {utilities::D_XPOS,
-		    utilities::D_YPOS,
-		    utilities::D_DX,
-		    utilities::D_DY,
-		    utilities::D_I,
-		    utilities::D_R2,
-		    utilities::D_MULT,
-		    utilities::D_E,
-		    utilities::D_ZPOS
-		    };
-    set<D_TYPE> data_types = set<D_TYPE>(tmp, tmp+9);
 
-  
+    //nonsense to get the map set up
+    map<utilities::D_TYPE, int> contents;
+    utilities::D_TYPE tmp[] = {utilities::D_XPOS,
+			       utilities::D_YPOS};
+    set<D_TYPE> data_types = set<D_TYPE>(tmp,tmp+2);
+    
+      
     // set up the input wrapper
-    Wrapper_i_hdf wh(proc_file,data_types);
+    Wrapper_i_hdf wh(proc_file,data_types,0,100);
 
 
     // fill the master_box
     Master_box box;
-    Filter_basic filt(proc_file);
-    //    Filter_trivial filt;
+    //Filter_basic filt(proc_file);
+    Filter_trivial filt;
     box.init(wh,filt);
     
  
@@ -212,44 +192,33 @@ int main(int argc, char * argv[])
     Track_shelf tracks;
     
     hcase.link(search_range,tracks);
+    cout<<"after searching found "<<tracks.get_track_count()<<" tracks"<<endl;
+    
 
     
     tracks.remove_short_tracks(min_track_length);
-    
-    Track_shelf final_tracks;
-    tracks.split_to_parts(final_tracks);
-    
-
-    cout<<tracks.get_track_count()<<endl;
-    cout<<final_tracks.get_track_count()<<endl;
+    cout<<"after trimming found "<<tracks.get_track_count()<<" tracks"<<endl;
+    // make wrapper
     
     D_TYPE tmp2[] = {utilities::D_XPOS,
     		     utilities::D_YPOS,
-    		     utilities::D_I,
-    		     utilities::D_ZPOS
-    };
-    set<D_TYPE> data_types2 = set<D_TYPE>(tmp2, tmp2+4);
-
+		     };
+    set<D_TYPE> data_types2 = set<D_TYPE>(tmp2, tmp2+2);
     
-    //tracks.pass_fun_to_track(&Track_box::plot_intensity);
-    Wrapper_o_hdf hdf_w(out_file,data_types2,"frame",true);
-    cout<<"made wrapper"<<endl;
-    
-
+    Wrapper_o_hdf hdf_w(out_file,data_types2,"track",true);
     hdf_w.set_compress(false);
-    float scale_tmp = wh.get_xy_scale();
-    
-    cout<<"scale_tmp: "<<scale_tmp<<endl;;
-    
-
-    Triple scale_t(scale_tmp,scale_tmp,1.0f);
-    cout<<"scale triple :"<<scale_t<<endl;
-    
-    Triple dim(dims[0]*scale_tmp, dims[1]*scale_tmp,wh.get_num_frames()*.2);
-    
-    final_tracks.output_link_to_wrapper(hdf_w,scale_t,dim);
-    
- 
+    cout<<"made wrapper"<<endl;
+    hdf_w.initialize_wrapper();
+    // set meta data on wrapper
+    hdf_w.add_meta_data(string("search_range"),search_range,true);
+    hdf_w.add_meta_data(string("min_track_length"),min_track_length,true);
+    // set the tracks to the wrapper
+    cout<<"set meta-data"<<endl;
+    tracks.output_to_wrapper(hdf_w);
+    cout<<"wrote tracks"<<endl;
+    // close wrapper
+    hdf_w.finalize_wrapper();
+    cout<<"done"<<endl;
   }
   catch(const char * err){
     std::cerr<<"caught on error: ";
@@ -267,8 +236,7 @@ int main(int argc, char * argv[])
     return -1;
   }
   
-
-  return 0;
+    
   
-
+  return -1;
 }

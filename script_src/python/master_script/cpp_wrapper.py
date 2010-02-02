@@ -25,7 +25,15 @@ import h5py
 
 import subprocess
 import sqlite3
+from xml_data import xml_data
 from datetime import date
+
+
+def _check_comps_table(key,func,conn):
+    # figure out name of file to write to
+    res = conn.execute("select fout from comps where dset_key=? and function=?;",(key,func)).fetchall()
+    return res
+
 
 def _make_sure_h5_exists(fname):
     if not os.path.isfile(fname):
@@ -55,14 +63,14 @@ def do_link3D(key,conn):
         print "Already linked"
         return
     
-    config = _xml_data()
+    config = xml_data()
     config.add_elm("link3D",[("box_side_len","4"),
                              ("search_range","3.5"),
                              ("min_trk_len","3")])
     cname = config.write_to_file()
 
     fout = fname.replace(".h5","_link.h5")
-    _make_sure_h5_exists(fout)
+
     # look
     
     print fname
@@ -129,6 +137,7 @@ def do_Iden(key,conn):
         print "entering into database"
         conn.execute("insert into comps (dset_key,date,fin,fout,function) values (?,?,?,?,?);",
                      (key,date.today().isoformat(),fin,fout,prog_name))
+        conn.commit()
 
 
 def do_gofr3D(key,conn):
@@ -150,7 +159,7 @@ def do_gofr3D(key,conn):
     
     comp_num = conn.execute("select max(comp_key) from comps;").fetchone()[0] + 1
 
-    config = _xml_data()
+    config = xml_data()
     config.add_elm("gofr3D",[("max_range","9.5"),
                              ("nbins","2000"),
                              ("grp_name",str(comp_num))])
@@ -164,13 +173,62 @@ def do_gofr3D(key,conn):
     # if it works, then returns zero
     if rc == 0:
         print "entering into database"
-        conn.execute("insert into comps (comp_key,dset_key,date,fin,fout,function) values (?,?,?,?,?,?);",
+        conn.execute("insert into comps (comp_key,dset_key,date,fin,fout,function)"
+                     +"values (?,?,?,?,?,?);",
                      (comp_num,key,date.today().isoformat(),fin,fout,prog_name))
+        conn.commit()
 
 
 def do_tracking(key,conn):
-    prog_path = '/home/tcaswell/misc_builds/basic/apps/'
-    prog_name = "gofr3D"
+    prog_path = '/home/tcaswell/misc_builds/basic_git/apps/'
+    prog_name = "tracking"
 
+    # figure out name of file to write to
+    res = _check_comps_table(key,"Iden",conn)
+    if len(res) ==0:
+        print "no entry"
+        # _do_Iden(key,conn)
+        return
+    if len(res) >1:
+        print "more than one entry, can't cope, quiting"
+        return
+    fname = res[0][0]
+    
+    
+    
+    config = xml_data()
+    config.add_elm("tracking",[("search_range","4"),
+                             ("box_side_len","4"),
+                             ("min_trk_len","10")])
+
+    config.disp()
+    cname = config.write_to_file()
+
+        
+    comp_num = conn.execute("select max(comp_key) from comps;").fetchone()[0] + 1
+
+    fout = fname.replace(".h5","_tracks_" + str(comp_num) + ".h5")
+
+
+
+
+    # look
+    
+    print fname
+    print fout
+
+
+    
+    rc = subprocess.call(["time",prog_path + prog_name,'-i',fname,'-o',fout, '-c',cname ])
+    print rc
+
+    # if it works, then returns zero
+    if rc == 0:
+        print "entering into database"
+        conn.execute("insert into comps (dset_key,date,fin,fout,function) values (?,?,?,?,?);",
+                     (key,date.today().isoformat(),fname,fout,prog_name))
+        conn.commit()
+
+    
     pass
 

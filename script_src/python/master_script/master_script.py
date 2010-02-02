@@ -33,33 +33,7 @@ import readline
 from datetime import date
 
 import cpp_wrapper
-
-class _xml_data:
-    def __init__(self):
-        self.doc = xml.dom.minidom.getDOMImplementation(None).createDocument(None,"root",None)
-        self.fname = None
-    def add_elm(self,elm,params):
-        tmpelm = self.doc.createElement(elm)
-        for a,b in params:
-            tmpelm.setAttribute(a,b)
-        self.doc.documentElement.appendChild(tmpelm)
-    def write_to_file(self):
-        tf = tempfile.mkstemp()
-        os.close(tf[0])
-        f = open(tf[1],'w')
-        self.doc.writexml(f,addindent='   ',newl='\n')
-        f.close()
-        self.fname = tf[1]
-        return self.fname
-    def disp(self):
-        print self.doc.toprettyxml()
-
-    def __del__(self):
-        if self.fname:
-            if os.path.isfile(self.fname):
-                os.remove(self.fname)
-        
-
+from xml_data import xml_data
 
 class Computations:
     def __init__(self,database):
@@ -70,7 +44,7 @@ class Computations:
 
 def _main_test():
     
-    config = _xml_data()
+    config = xml_data()
     config.add_elm("link3D",[("box_side_len","4"),
                              ("search_range","3.5"),
                              ("min_trk_len","3")])
@@ -86,11 +60,6 @@ def _main_test():
     prog_name = "gofr3D"
     #    _call_program(prog_name,"/path/to/in","/path/to/out",fname,prog_path)
 
-
-def _check_comps_table(key,func,conn):
-    # figure out name of file to write to
-    res = conn.execute("select fout from comps where dset_key=? and function=?;",(key,func)).fetchall()
-    return res
 
     
 
@@ -109,7 +78,7 @@ def _add_to_dsets(conn):
     conn.commit()
 
 def _list(conn):
-    print "This will access the database"
+    
 
     return False
 

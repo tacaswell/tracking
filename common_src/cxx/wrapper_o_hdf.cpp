@@ -65,28 +65,41 @@ using tracking::particle;
 Wrapper_o_hdf::Wrapper_o_hdf(const string& file_name,set<D_TYPE> d_add,const string & group_prefix,bool over_write):
   part_count_(0),part_open_(false), wrapper_open_(false), group_open_(false),
   part_index_(-1), group_max_count_(-1), group_index_(-1), new_hdf_(true),over_write_(over_write),
-  file_(NULL), file_name_(file_name),
+  file_(NULL), file_name_(file_name),group_(NULL),group_name_(""),
   d_types_add_(d_add),d_types_check_(),d_types_already_(), 
   float_data_(),int_data_(),complex_data_(),group_prefix_(group_prefix),compress_(true)
 {
 
 
+  // don't make these assumptions, this may be useful later
+  
   // erase frames from the data to add, there is no good reason to
   // record information that is in the structure
   
-  d_types_add_.erase(D_FRAME);
+  //  d_types_add_.erase(D_FRAME);
   
 }
 
 
 void Wrapper_o_hdf::initialize_wrapper()
 {
-
-  if(over_write_)
+  
+  try
+  {
+    
+  if(over_write_ && new_hdf_)
     file_ = new H5File(file_name_,H5F_ACC_TRUNC);
-  else
+  else if(new_hdf_)
+    file_ = new H5File(file_name_,H5F_ACC_EXCL);
+  else 
     file_ = new H5File(file_name_,H5F_ACC_RDWR);
 
+  }
+  catch(...)
+  {
+    throw "failure to create or open file";
+  }
+  
   wrapper_open_ = true;
 }
 
@@ -95,6 +108,10 @@ void Wrapper_o_hdf::open_group(int group,int count)
   if(!wrapper_open_)
     throw "wrapper not open";
   
+  if(group_open_)
+    throw "group is already open";
+  
+
  
   group_index_ = group;
   group_max_count_ = count;
@@ -475,6 +492,7 @@ void Wrapper_o_hdf::add_meta_data(const std::string & key, float val,bool root_g
   if (!wrapper_open_)
     throw "Wrapper_o_hdf::add_meta_data warpper not open";
   
+
   
   Group * group;
   if( root_group)
@@ -482,29 +500,40 @@ void Wrapper_o_hdf::add_meta_data(const std::string & key, float val,bool root_g
   else
     group = group_;
   
-
+  
+  
   try
   {
     hsize_t dim_c = 1;
     
       
     DataSpace dspace =  DataSpace(1,&dim_c);
+  
     Attribute * tmpa =  
       new Attribute(group->createAttribute(key,
 					   PredType::NATIVE_FLOAT,
 					   dspace));
+    
+  
     tmpa->write(PredType::NATIVE_FLOAT,&val);
+  
+    
     delete tmpa;
+  
+    
   }
   catch(H5::AttributeIException)
   {
     throw "Wrapper_o_hdf::write_meta_data trying to clobber dimension meta-data";
   }
 
+  
+
   if(root_group)
     delete group;
   
-
+  
+  
   
 }
 
