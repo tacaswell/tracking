@@ -501,7 +501,9 @@ void Wrapper_o_hdf::add_meta_data(const std::string & key, float val,bool root_g
     throw "Wrapper_o_hdf::write_meta_data trying to clobber dimension meta-data";
   }
 
-
+  if(root_group)
+    delete group;
+  
 
   
 }
@@ -537,6 +539,9 @@ void Wrapper_o_hdf::add_meta_data(const std::string & key, const Triple & val,bo
     throw "Wrapper_o_hdf::write_meta_data trying to clobber dimension meta-data";
   }
 
+  if(root_group)
+    delete group;
+  
 }
 
 
@@ -570,6 +575,9 @@ void Wrapper_o_hdf::add_meta_data(const std::string & key, const Pair & val,bool
   {
     throw "Wrapper_o_hdf::write_meta_data trying to clobber dimension meta-data";
   }
+  
+  if(root_group)
+    delete group;
 
   
 }
@@ -612,5 +620,8 @@ void Wrapper_o_hdf::add_meta_data(const std::string & key, int val,bool root_gro
     throw "Wrapper_o_hdf::write_meta_data trying to clobber dimension meta-data";
   }
 
+
+  if(root_group)
+    delete group;
 
 }
