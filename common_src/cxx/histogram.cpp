@@ -1,4 +1,4 @@
-//Copyright 2009 Thomas A Caswell
+//Copyright 2009,2010 Thomas A Caswell
 //tcaswell@uchicago.edu
 //http://jfi.uchicago.edu/~tcaswell
 //
@@ -25,6 +25,7 @@
 #include "histogram.h"
 #include <iostream>
 #include "generic_wrapper_base.h"
+#include "gnuplot_i.hpp"
 using namespace utilities;
 
 using std::cout;
@@ -33,10 +34,10 @@ using std::endl;
 using std::vector;
 
 typedef vector<int> vectori;
-typedef vector<double> vectord;
+typedef vector<float> vectord;
 
-void Histogram::print(){
-  for(vectori::iterator it = hist_array_.begin();
+void Histogram::print() const{
+  for(vectori::const_iterator it = hist_array_.begin();
       it<hist_array_.end(); it++)
     cout<<*it<<"\t";
   cout<<endl;
@@ -44,7 +45,7 @@ void Histogram::print(){
 }
 
 
-Histogram::Histogram(int num_bins, double bottom, double top):
+Histogram::Histogram(int num_bins, float bottom, float top):
   hist_array_(num_bins,0), under_count_(0), over_count_(0), number_bins_(num_bins),
   top_edge_(top), bottom_edge_(bottom), bin_width_((top-bottom)/num_bins)
 {
@@ -60,13 +61,13 @@ Histogram::Histogram(int num_bins, double bottom, double top):
 
 }
 
-vectori Histogram::get_bin_values(){
+vectori Histogram::get_bin_values() const{
   
   return vectori(hist_array_);
 }
 
 
-vectord Histogram::get_bin_edges(){
+vectord Histogram::get_bin_edges() const{
   vectord tmp;
   tmp.reserve(number_bins_ + 1);
   
@@ -80,7 +81,7 @@ vectord Histogram::get_bin_edges(){
 }
 
 
-void Histogram::output_to_wrapper(Generic_wrapper_base * wrapper_out)
+void Histogram::output_to_wrapper(Generic_wrapper_base * wrapper_out)const
 {
   wrapper_out->initialize_wrapper();
   for(int j =0; j<number_bins_;++j)
@@ -106,3 +107,65 @@ void Histogram::output_to_wrapper(Generic_wrapper_base * wrapper_out)
   wrapper_out->finalize_wrapper();
   
 }
+
+
+void Histogram::display() const
+{
+
+  vector<float> tmp = get_bin_edges();
+  tmp.pop_back();
+  
+  vector<float> tmp2 = vector<float>(0);
+  tmp2.reserve(hist_array_.size());
+  
+  for(vectori::const_iterator it = hist_array_.begin();
+      it<hist_array_.end(); ++it)
+    tmp2.push_back(*it);
+  
+  try
+  {
+    
+    Gnuplot g(tmp,tmp2,"track length","histeps");
+    g.set_grid();
+    wait_for_key();
+  }
+  catch(GnuplotException & e)
+  {
+    cout<<e.what()<<endl;
+  }
+  
+}
+
+
+
+void Histogram::display(Gnuplot & g ) const
+{
+
+  vector<float> tmp = get_bin_edges();
+  tmp.pop_back();
+  
+  vector<float> tmp2 = vector<float>(0);
+  tmp2.reserve(hist_array_.size());
+  
+  for(vectori::const_iterator it = hist_array_.begin();
+      it<hist_array_.end(); ++it)
+    tmp2.push_back(*it);
+  
+  try
+  {
+    
+    g.plot_xy(tmp,tmp2);
+    g.set_style("histograms");
+    
+    g.set_grid();
+    g.replot();
+    
+    wait_for_key();
+  }
+  catch(GnuplotException & e)
+  {
+    cout<<e.what()<<endl;
+  }
+  
+}
+

@@ -29,9 +29,12 @@
 #include <exception>
 #include <iostream>
 
+class Gnuplot;
+
 namespace utilities{
 //forward declare
 class Generic_wrapper_base;
+
 /**
    Base class for historgram objects.
    Implements a linearly spaced histogram.
@@ -49,17 +52,17 @@ public:
   /**
      Returns a vector of length number_bins of the values in the bins
    */
-  std::vector<int> get_bin_values();
+  std::vector<int> get_bin_values() const;
 
   /**
      Returns a vector of the edges in the bins, has length number_bins + 1
    */
-  std::vector<double> get_bin_edges();
+  std::vector<float> get_bin_edges() const;
 
   /**
      Spits something reasonable out to std
    */
-  void print();
+  void print() const;
 
   int get_over_count(){
     return over_count_;
@@ -72,7 +75,7 @@ public:
   /**
      Default constructor
    */
-  Histogram(int num_bins, double bottom , double top);
+  Histogram(int num_bins, float bottom , float top);
 
   /**
     Out puts the values of the histogram to a (bins +2)x2 array.  the
@@ -80,9 +83,12 @@ public:
     of the bins.  The extra entry at the end are the number of entries
     outside of the 
   */
-  void output_to_wrapper(Generic_wrapper_base * wrapper_out);
+  void output_to_wrapper(Generic_wrapper_base * wrapper_out) const;
   
-
+  void display()const;
+  void display(Gnuplot & g)const;
+  
+  
   
   ~Histogram(){};
 
@@ -113,17 +119,17 @@ protected:
   /**
      The maximum value to be included in the histogram
   */
-  double top_edge_;
+  float top_edge_;
   
   /**
      The minimum value to be included in the histogram
   */
-  double bottom_edge_;
+  float bottom_edge_;
 
   /**
      Width of each bin
    */
-  double bin_width_;
+  float bin_width_;
 private:
 
 
@@ -133,7 +139,7 @@ template<class T>
 void Histogram::add_data_point(T in){
   using std::cout;
   using std::endl;
-  double tmp_in = (double) in;
+  float tmp_in = (float) in;
   if(tmp_in < bottom_edge_){
     ++under_count_;
     return;
