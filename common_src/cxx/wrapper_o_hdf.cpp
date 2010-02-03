@@ -65,8 +65,8 @@ using tracking::particle;
 Wrapper_o_hdf::Wrapper_o_hdf(const string& file_name,
 			     const set<D_TYPE>& d_add,
 			     const string & group_prefix,
-			     bool over_write,
-			     bool new_hdf):
+			     bool new_hdf,
+			     bool over_write):
   part_count_(0),
   part_open_(false),
   wrapper_open_(false),
