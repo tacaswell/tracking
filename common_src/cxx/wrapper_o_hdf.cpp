@@ -65,7 +65,8 @@ using tracking::particle;
 Wrapper_o_hdf::Wrapper_o_hdf(const string& file_name,
 			     const set<D_TYPE>& d_add,
 			     const string & group_prefix,
-			     bool new_hdf,
+			     bool new_file,
+			     bool new_indexing,
 			     bool over_write):
   part_count_(0),
   part_open_(false),
@@ -74,7 +75,8 @@ Wrapper_o_hdf::Wrapper_o_hdf(const string& file_name,
   part_index_(-1),
   group_max_count_(-1),
   group_index_(-1),
-  new_hdf_(new_hdf),
+  new_file_(new_file),
+  new_indexing_(new_indexing),
   over_write_(over_write),
   file_(NULL),
   file_name_(file_name),
@@ -89,11 +91,11 @@ Wrapper_o_hdf::Wrapper_o_hdf(const string& file_name,
   group_prefix_(group_prefix),
   compress_(true)
 {
+  
+  // add logic checks to make sure the three bools are consistent
 
-  if(!new_hdf && over_write)
-    throw "non-sensible parameters set"; 
-  
-  
+
+
 }
 
 void Wrapper_o_hdf::initialize_wrapper()
@@ -102,13 +104,12 @@ void Wrapper_o_hdf::initialize_wrapper()
   try
   {
     
-  if(over_write_ && new_hdf_)
+  if(over_write_ && new_file_)
     file_ = new H5File(file_name_,H5F_ACC_TRUNC);
-  else if(new_hdf_)
+  else if(new_file_)
     file_ = new H5File(file_name_,H5F_ACC_EXCL);
   else 
     file_ = new H5File(file_name_,H5F_ACC_RDWR);
-
   }
   catch(...)
   {
@@ -167,8 +168,10 @@ void Wrapper_o_hdf::open_group(int group,int count)
       
   group_name_ = format_name(group_index_);
 
-  
-  if(new_hdf_)
+
+  // need to add logic to try and nuke old data
+
+  if(new_indexing_)
     group_ = new Group(file_->createGroup(group_name_));
   else
     group_ = new Group(file_->openGroup(group_name_));
@@ -184,11 +187,11 @@ void Wrapper_o_hdf::open_particle(int ind)
     throw "group not open";
   if(part_open_)
     throw "particle already open";
-  if(ind<0 && !new_hdf_)
+  if(ind<0 && !new_indexing_)
     throw "wrapper_o_hdf: index less than 0 and not a new hdf";
   
 
-  if(new_hdf_)
+  if(new_indexing_)
   {
     part_index_ = part_count_++;
   }
@@ -270,21 +273,11 @@ void Wrapper_o_hdf::close_group()
     float fillvalue_f = 0;
     DSetCreatPropList plist_f;
     plist_f.setFillValue(PredType::NATIVE_FLOAT,&fillvalue_f);
-    if(compress_)
-    {
-      plist_f.setChunk(1,&csize);
-      plist_f.setDeflate(9);
-    }
     
 
     int fillvalue_i = 0;
     DSetCreatPropList plist_i;
     plist_i.setFillValue(PredType::NATIVE_INT,&fillvalue_i);
-    if(compress_)
-    {
-      plist_i.setChunk(1,&csize);
-      plist_i.setDeflate(9);
-    }
     
     csize = csize/2;
     complex_t fillvalue_c;
@@ -292,8 +285,16 @@ void Wrapper_o_hdf::close_group()
     fillvalue_c.re = 0;
     DSetCreatPropList plist_c;
     plist_c.setFillValue(ctype,&fillvalue_c);
+    
     if(compress_)
     {
+      plist_f.setChunk(1,&csize);
+      plist_f.setDeflate(9);
+
+      plist_i.setChunk(1,&csize);
+      plist_i.setDeflate(9);
+
+
       plist_c.setChunk(1,&csize);
       plist_c.setDeflate(9);
     }
@@ -301,40 +302,21 @@ void Wrapper_o_hdf::close_group()
     hsize_t dim [] = {group_max_count_};
     DataSpace space(1,dim);
     
-    
+    // add overwrite logic
+
     for(set<D_TYPE>::const_iterator it = d_types_add_.begin(); 
 	it!=d_types_add_.end();++it)
     {
       DataSet * dset = NULL;
-      //     int * tmp_ptr_i = NULL;
-      //       float * tmp_ptr_f = NULL;
-
-      
       switch(v_type(*it))
       {
 	// integer data
       case V_INT:
-	// 	cout<<*it<<':'<<DT2str_s(*it)<<endl;
-	// 	cout<<int_map_(*it)<<endl;
-	// 	cout<<int_data_.size()<<endl;
-	// 	tmp_ptr_i = int_data_.at(int_map_(*it));
-	// 	for(int j = 0;j<group_max_count_;++j)
-	// 	  cout<<tmp_ptr_i[j]<<'\t';
-	// 	cout<<endl;
-
  	dset = new DataSet(group_->createDataSet(DT2str_s(*it),PredType::NATIVE_INT,space,plist_i));
 	dset->write(int_data_.at(int_map_(*it)),PredType::NATIVE_INT);
 	break;
 	// float data
       case V_FLOAT:
-	// 	cout<<*it<<':'<<DT2str_s(*it)<<endl;
-	// 	cout<<float_map_(*it)<<endl;
-	// 	cout<<float_data_.size()<<endl;
-	//  	tmp_ptr_f = float_data_.at(float_map_(*it));
-	//  	for(int j = 0;j<group_max_count_;++j)
-	//  	  cout<<tmp_ptr_f[j]<<'\t';
-	//  	cout<<endl;
-	
 	dset = new DataSet(group_->createDataSet(DT2str_s(*it),PredType::NATIVE_FLOAT,space,plist_f));
 	dset->write(float_data_.at(float_map_(*it)),PredType::NATIVE_FLOAT);
 	break;
