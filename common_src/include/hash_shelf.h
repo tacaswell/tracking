@@ -87,7 +87,7 @@ public:
   /**
      Constructor 
    */
-  Hash_shelf(utilities::Tuple imgsz, float upb,int i_frame);
+  Hash_shelf(utilities::Tuple imgsz, float upb,int i_frame,float z_offset = 0);
   
 
 
@@ -255,6 +255,8 @@ public:
    */
   std::list<particle_track*> * shelf_to_list() const;
 
+
+  
 protected:
 
   ///Main data structure.  This is an vector of
@@ -300,6 +302,11 @@ protected:
      size of the side of each hash box
    */
   float upb_;
+  
+  /**
+     The z-off set of the shelf
+   */
+  float z_offset_;
   
 private:
   /**

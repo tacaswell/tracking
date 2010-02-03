@@ -97,9 +97,14 @@ void Hash_shelf::push(particle * p){
 
 Hash_shelf::Hash_shelf(utilities::Tuple imgsz, 
 		       float upb, 
-		       int i_frame):plane_number_(i_frame), 
-				    next_(NULL),particle_count_(0),
-				    img_dims_(imgsz),  upb_(upb)
+		       int i_frame,
+		       float z_offset
+		       )
+ :plane_number_(i_frame), 
+  next_(NULL),particle_count_(0),
+  img_dims_(imgsz),
+  upb_(upb),
+  z_offset_(z_offset)
 {  
   priv_init();
   
