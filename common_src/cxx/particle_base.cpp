@@ -135,16 +135,25 @@ float particle_base::get_value(utilities::D_TYPE type,float & data_io ) const
   return data_io;
 }
 
+
+
 int particle_base::get_value(utilities::D_TYPE type,int & data_io  ) const
 {
   if(v_type(type) != utilities::V_INT)
     throw "particle_base: wrong V_TYPE";
-  
-  if(type ==utilities::D_FRAME)
+ 
+  switch(type)
+  {
+  case utilities::D_FRAME:
     data_io = frame_;
-  else
+    break;
+  case utilities::D_INDEX:
+    data_io = ind_;
+    break;
+  default:
     wrapper_in_->get_value(data_io,ind_,type,frame_);
-
+  }
+  
   return data_io;
 }
 
