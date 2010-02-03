@@ -89,7 +89,7 @@ Wrapper_o_hdf::Wrapper_o_hdf(const string& file_name,
   int_data_(),
   complex_data_(),
   group_prefix_(group_prefix),
-  compress_(true)
+  csize_(400)
 {
   
   // add logic checks to make sure the three bools are consistent
@@ -268,7 +268,7 @@ void Wrapper_o_hdf::close_group()
     ctype.insertMember("im",HOFFSET(complex_t,im),PredType::NATIVE_FLOAT);
     
     // set up property lists for data sets
-    hsize_t csize = 400;
+
     
     float fillvalue_f = 0;
     DSetCreatPropList plist_f;
@@ -279,23 +279,26 @@ void Wrapper_o_hdf::close_group()
     DSetCreatPropList plist_i;
     plist_i.setFillValue(PredType::NATIVE_INT,&fillvalue_i);
     
-    csize = csize/2;
+    
     complex_t fillvalue_c;
     fillvalue_c.im = 0;
     fillvalue_c.re = 0;
     DSetCreatPropList plist_c;
     plist_c.setFillValue(ctype,&fillvalue_c);
     
-    if(compress_)
+
+    if(group_max_count_ > csize_*5)
     {
-      plist_f.setChunk(1,&csize);
+      hsize_t tmp = csize_;
+      plist_f.setChunk(1,&tmp);
       plist_f.setDeflate(9);
 
-      plist_i.setChunk(1,&csize);
+      plist_i.setChunk(1,&tmp);
       plist_i.setDeflate(9);
 
-
-      plist_c.setChunk(1,&csize);
+      tmp = csize_/2;
+      
+      plist_c.setChunk(1,&tmp);
       plist_c.setDeflate(9);
     }
 	

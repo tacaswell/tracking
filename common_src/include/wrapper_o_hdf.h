@@ -104,7 +104,7 @@ public:
 
 
 
-  void set_compress(bool in){compress_ = in;}
+  void set_compress(int in){csize_ = in;}
 
   
 
@@ -259,9 +259,10 @@ private:
   void set_value(utilities::D_TYPE type, std::complex<float> val);
   
   /**
-     set if the datasets should be compressed
+     set the size of the data chunks if compression is used.  Compression
+     is used if the group has more than 5 times this many entries.
    */
-  bool compress_;
+  int csize_;
 
  
   
