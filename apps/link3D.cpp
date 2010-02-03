@@ -232,7 +232,7 @@ int main(int argc, char * argv[])
 
     
     //tracks.pass_fun_to_track(&Track_box::plot_intensity);
-    Wrapper_o_hdf hdf_w(out_file,data_types2,"frame",true);
+    Wrapper_o_hdf hdf_w(out_file,data_types2,"frame");
     cout<<"made wrapper"<<endl;
     
 

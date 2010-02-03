@@ -74,7 +74,7 @@ using tracking::particle;
 using tracking::hash_case;
 using tracking::Corr_gofr;
 
-static string base_proc_path = "/home/tcaswell/colloids/processed/";
+
 
 int main(int argc, char * const argv[])
 {
@@ -153,7 +153,7 @@ int main(int argc, char * const argv[])
   cout<<"  max range: "<<max_range<<endl;
   cout<<"  nbins: "<<nbins<<endl;
 
-
+  
 
   
   try
