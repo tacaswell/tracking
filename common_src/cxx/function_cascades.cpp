@@ -63,7 +63,7 @@ void hash_case::output_to_wrapper(Wrapper_out & wrapper,bool add_meta) const
   if(add_meta)
   {
     wrapper.add_meta_data("dims",h_case_[0]->get_img_dims());
-    wrapper.add_meta_data("number-of-frames",(int)h_case_.size());
+    wrapper.add_meta_data("number-of-planes",(int)h_case_.size());
   }
   
   for(vector<Hash_shelf*>::const_iterator current_shelf= h_case_.begin();
@@ -82,6 +82,7 @@ void Hash_shelf::output_to_wrapper(Wrapper_out & wrapper) const
   cout<<particle_count_<<"particles"<<endl;
   
   wrapper.open_group(plane_number_,particle_count_);
+  wrapper.add_meta_data("z-position",z_offset_,false);
   for(vector<hash_box*>::const_iterator current_box = hash_.begin();
       current_box != hash_.end();++current_box)
   {
