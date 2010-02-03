@@ -488,53 +488,38 @@ void Wrapper_o_hdf::set_all_values(const tracking::Track_box * in,const utilitie
 
 void Wrapper_o_hdf::add_meta_data(const std::string & key, float val,bool root_group )
 {
+  // this needs to be fixed to be smarter
+  if(!new_file_)
+  {
+    cout<<"this hit the hack to deal with not crashing over adding meta data twice"<<endl;
+    return;
+  }
   
   if (!wrapper_open_)
     throw "Wrapper_o_hdf::add_meta_data warpper not open";
-  
-
   
   Group * group;
   if( root_group)
     group = new Group(file_->openGroup("/"));
   else
     group = group_;
-  
-  
-  
   try
   {
     hsize_t dim_c = 1;
-    
-      
     DataSpace dspace =  DataSpace(1,&dim_c);
-  
     Attribute * tmpa =  
       new Attribute(group->createAttribute(key,
 					   PredType::NATIVE_FLOAT,
 					   dspace));
-    
-  
     tmpa->write(PredType::NATIVE_FLOAT,&val);
-  
-    
     delete tmpa;
-  
-    
   }
   catch(H5::AttributeIException)
   {
     throw "Wrapper_o_hdf::write_meta_data trying to clobber dimension meta-data";
   }
-
-  
-
   if(root_group)
     delete group;
-  
-  
-  
-  
 }
 
 void Wrapper_o_hdf::add_meta_data(const std::string & key, const Triple & val,bool root_group )
@@ -576,7 +561,14 @@ void Wrapper_o_hdf::add_meta_data(const std::string & key, const Triple & val,bo
 
 void Wrapper_o_hdf::add_meta_data(const std::string & key, const Pair & val,bool root_group )
 {
-
+  
+  // this needs to be fixed to be smarter
+  if(!new_file_)
+  {
+    cout<<"this hit the hack to deal with not crashing over adding meta data twice"<<endl;
+    return;
+  }
+ 
   if (!wrapper_open_)
     throw "Wrapper_o_hdf::add_meta_data warpper not open";
   
@@ -613,13 +605,27 @@ void Wrapper_o_hdf::add_meta_data(const std::string & key, const Pair & val,bool
 
 void Wrapper_o_hdf::add_meta_data(const std::string & key, const std::string & val,bool root_group )
 {
-
+  
+  // this needs to be fixed to be smarter
+  if(!new_file_)
+  {
+    cout<<"this hit the hack to deal with not crashing over adding meta data twice"<<endl;
+    return;
+  }
+ 
     throw "Wrapper_o_hdf::not implemented yet";
  
 }
 void Wrapper_o_hdf::add_meta_data(const std::string & key, int val,bool root_group)
 {
-
+  
+  // this needs to be fixed to be smarter
+  if(!new_file_)
+  {
+    cout<<"this hit the hack to deal with not crashing over adding meta data twice"<<endl;
+    return;
+  }
+ 
   if (!wrapper_open_)
     throw "Wrapper_o_hdf::add_meta_data warpper not open";
   
