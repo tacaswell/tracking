@@ -61,7 +61,15 @@ class Corr;
 class Hash_shelf{
 public:
 
+  /**
+     Returns the image dimensions of the shelf
+   */
+  utilities::Tuple get_img_dims()const
+  {
+    return utilities::Tuple(img_dims_);
+  }
   
+
   /**
      add the particle_base to the hash_shelf
      @param p pointer to the particle to add
