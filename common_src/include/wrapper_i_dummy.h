@@ -48,13 +48,23 @@ private:
   std::set<D_TYPE> d_types_;
   int frames_;
   int count_;
+  mutable int counter_;
   
   
 public:
 
   int                 get_value(int& out,
 				int ind,D_TYPE type, int frame) const {
-    out = 0;
+    if(type == D_FRAME)
+    {
+      out = frame;
+    }
+    else
+    {
+      out = counter_++;
+    }
+    
+
     return out;
   }
   
@@ -63,7 +73,7 @@ public:
   {
     //int perd = 4;
     //    out = sin(ind*(3.14/perd))*sin((3.14/perd)*ind);
-    out = ind;
+    out = ind ;
     
     return out;
   }
@@ -105,7 +115,7 @@ public:
   
  
   Wrapper_i_dummy(const std::set<utilities::D_TYPE>& d_types,int count,int frames):
-    d_types_(d_types),frames_(frames),count_(count)
+    d_types_(d_types),frames_(frames),count_(count),counter_(0)
   {
   }
   

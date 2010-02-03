@@ -84,10 +84,10 @@ int main(int argc, const char * argv[])
     D_TYPE tmp[] = {utilities::D_XPOS,
 		    utilities::D_YPOS,
     };
-    set<D_TYPE> data_types = set<D_TYPE>(tmp, tmp+9);
+    set<D_TYPE> data_types = set<D_TYPE>(tmp, tmp+2);
     string fname = "test.hdf";    
     
-    Wrapper_i_hdf wrapper_in = Wrapper_i_hdf(fname,data_types);
+    Wrapper_i_hdf wrapper_in = Wrapper_i_hdf(fname,data_types,0,5,true);
     
     
     Filter_trivial filt;
@@ -101,7 +101,7 @@ int main(int argc, const char * argv[])
     d2.insert(utilities::D_INDEX);
     
     
-    Wrapper_o_hdf hdf_w(fname,data_types,"frame",
+    Wrapper_o_hdf hdf_w(fname,d2,"frame",
 			false,false,false);
 
     

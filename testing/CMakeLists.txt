@@ -38,3 +38,23 @@ target_link_libraries(xml_test ${XERCESC_LIBRARY} )
 set_target_properties(xml_test PROPERTIES COMPILE_DEFINITIONS "MAIN_TEST")
 
 
+add_executable(hdf_add add_to_hdf_test.cpp
+  ${COMMON_SRC} 
+  ${UTIL_SRC} 
+  ${COMMON_HASH_SRC}
+  ${HDF_SRC}
+  ${GNU_PLOT_SRC} 
+  )
+set_target_properties(hdf_add PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_COUNT=2;TESTING")
+target_link_libraries(hdf_add ${HDF5_LIBRARIES} )
+
+
+add_executable(fake_hdf make_fake_hdf.cpp
+  ${COMMON_SRC} 
+  ${UTIL_SRC} 
+  ${COMMON_HASH_SRC}
+  ${HDF_SRC}
+  ${GNU_PLOT_SRC} 
+  )
+set_target_properties(fake_hdf PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_COUNT=2;TESTING")
+target_link_libraries(fake_hdf ${HDF5_LIBRARIES} )

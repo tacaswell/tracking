@@ -68,6 +68,7 @@ SET(HDF_SRC
   ${COMMON_SRC_PATH}/wrapper_o_hdf.cpp
   ${COMMON_SRC_PATH}/generic_wrapper_hdf.cpp
   ${COMMON_SRC_PATH}/filter_basic.cpp
+  ${COMMON_WRAPPER_SRC}
   )
 
 SET(CONFIG_SRC
