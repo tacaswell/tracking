@@ -57,11 +57,20 @@ namespace utilities{
 class Wrapper_o_hdf:public Wrapper_out{
 public:  
   
+  /**
+     Constructor
+     
+     \param file_name full name of the file to open
+     \param d_add a set of the data types to add
+     \param group_prefix the prefix used for building group names
+     \param new_hdf if a new file should be made, or writing data in to an existing file
+     \param over_write if existing data should be nuked during name clashes
+  */
   Wrapper_o_hdf(const std::string& file_name,
 		const std::set<D_TYPE>& d_add,
 		const std::string & group_prefix="frame",
-		bool over_write=false,
-		bool new_hdf=true);
+		bool new_hdf=true,
+		bool over_write=false);
   
     
   void initialize_wrapper();
