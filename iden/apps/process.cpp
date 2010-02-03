@@ -218,11 +218,11 @@ int main(int argc, char * const argv[])
     
 
     Master_box box;
-    //Filter_basic filt("25-0_mid_0.h5");
+    //Filter_basic filt(proc_file);
     Filter_trivial filt;
     
     box.init(wp,filt);
-    //box.init(wh,filt);
+
 
 
     
