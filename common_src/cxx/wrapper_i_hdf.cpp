@@ -78,7 +78,7 @@ Wrapper_i_hdf::Wrapper_i_hdf(std::string fname,
 }
 
 
-void Wrapper_i_hdf::priv_init(int f_count)
+void Wrapper_i_hdf::priv_init(int fr_count)
 {
   if (start_ <0)
     throw "wrapper_i_hdf: start must be positive";
@@ -94,7 +94,14 @@ void Wrapper_i_hdf::priv_init(int f_count)
       Group * group = new Group(file->openGroup("/"));
       Attribute * tmpa =  new Attribute(group->openAttribute("number-of-planes"));
       tmpa->read(PredType::NATIVE_INT,&frame_count_);
+      
+
+
       delete tmpa;
+
+
+      delete group;
+      
     }
     else
     {
@@ -104,11 +111,11 @@ void Wrapper_i_hdf::priv_init(int f_count)
 
     
 
-    if(f_count != 0)
+    if(fr_count != 0)
     {
-      if(f_count + start_ > frame_count_)
+      if(fr_count + start_ > frame_count_)
 	throw "wrapper_i_hdf: asking for too many frames";
-      frame_count_ = f_count;
+      frame_count_ = fr_count;
       
     }
     
@@ -163,6 +170,7 @@ void Wrapper_i_hdf::priv_init(int f_count)
 	
 	Attribute * tmpa =  new Attribute(frame->openAttribute("z-position"));
 	tmpa->read(PredType::NATIVE_FLOAT,&frame_zdata_[j]);
+
 	delete tmpa;
       }
       
@@ -206,12 +214,17 @@ void Wrapper_i_hdf::priv_init(int f_count)
 	  break;
 	}
 	// clean up hdf stuff
+
 	delete dset;
+
+	
       }
+
       delete frame;
       
     }
     
+
     delete file;
 
     // shift all of the z by the minimum to start at zero
@@ -403,7 +416,16 @@ Tuple Wrapper_i_hdf::get_dims()const
 
   
   tmpa->read(PredType::NATIVE_FLOAT,tmp);
+  
+  
   delete tmpa;
+  
+  
+  delete group;
+  
+  
+  delete file;
+  
 
   return Tuple(tmp);
   
@@ -419,8 +441,18 @@ float Wrapper_i_hdf::get_xy_scale() const
   float scale;
   
   tmpa->read(PredType::NATIVE_FLOAT,&scale);
+  
+  
   delete tmpa;
   
+  
+  delete group;
+  
+  
+  delete file;
+  
+
+
   return(scale);
   
 }
