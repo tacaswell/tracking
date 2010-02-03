@@ -1,4 +1,4 @@
-//Copyright 2008,2009 Thomas A Caswell
+//Copyright 2008,2009,2010 Thomas A Caswell
 //tcaswell@uchicago.edu
 //http://jfi.uchicago.edu/~tcaswell
 //
@@ -166,7 +166,7 @@ Funded by a Keck Grant to Heinrich Jaeger, Sidney Nagel, Wendy Zhang
 and Margaret Gardel
 
 
-&copy; 2008,2009  <a href="http://jfi.uchicago.edu/~tcaswell"> Thomas A Caswell</a>
+&copy; 2008,2009,2010  <a href="http://jfi.uchicago.edu/~tcaswell"> Thomas A Caswell</a>
 
 
 This program is free software; you can redistribute it and/or modify
