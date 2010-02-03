@@ -56,10 +56,16 @@ using std::map;
 
 
 // hash output chain
-void hash_case::output_to_wrapper(Wrapper_out & wrapper) const
+void hash_case::output_to_wrapper(Wrapper_out & wrapper,bool add_meta) const
 {
 
   wrapper.initialize_wrapper();
+  if(add_meta)
+  {
+    wrapper.add_meta_data("dims",h_case_[0]->get_img_dims());
+    wrapper.add_meta_data("number-of-frames",(int)h_case_.size());
+  }
+  
   for(vector<Hash_shelf*>::const_iterator current_shelf= h_case_.begin();
       current_shelf!=h_case_.end();++current_shelf)				// loop over frames
   {
