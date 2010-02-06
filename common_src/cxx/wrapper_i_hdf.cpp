@@ -91,16 +91,20 @@ void Wrapper_i_hdf::priv_init(int fr_count)
     H5File * file = new H5File( file_name_, H5F_ACC_RDONLY );  
     if(two_d_data_)
     {
-      Group * group = new Group(file->openGroup("/"));
-      Attribute * tmpa =  new Attribute(group->openAttribute("number-of-planes"));
-      tmpa->read(PredType::NATIVE_INT,&frame_count_);
+      try
+      {
+	
+	Group * group = new Group(file->openGroup("/"));
+	Attribute * tmpa =  new Attribute(group->openAttribute("number-of-planes"));
+	tmpa->read(PredType::NATIVE_INT,&frame_count_);
+	delete tmpa;
+	delete group;
+      }
+      catch(...)
+      {
+	throw "number of planes not found";
+      }
       
-
-
-      delete tmpa;
-
-
-      delete group;
       
     }
     else
@@ -167,11 +171,19 @@ void Wrapper_i_hdf::priv_init(int fr_count)
       if(two_d_data_)
       {
 
-	
+	try
+	{
+	  
 	Attribute * tmpa =  new Attribute(frame->openAttribute("z-position"));
 	tmpa->read(PredType::NATIVE_FLOAT,&frame_zdata_[j]);
-
 	delete tmpa;
+	}
+	catch(...)
+	{
+	  throw "z-position not found";
+	  
+	}
+	
       }
       
       

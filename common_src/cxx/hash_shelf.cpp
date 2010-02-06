@@ -472,6 +472,16 @@ void Hash_shelf::print()const
 {
   cout<<"hash dimensions: "<<hash_dims_<<endl;
   cout<<"contains: "<<particle_count_<<endl;
+
+  // for(int j = 0; j<hash_dims_[0] ;++j)
+  // {
+  //   for(int k = 0; k<hash_dims_[1];++k)
+  //   {
+  //     cout<<hash_[tuple_to_indx(Tuple(j,k))]->get_size()<<'\t';
+  //   }
+  //   cout<<endl;
+  // }
+  
   
 }
 
