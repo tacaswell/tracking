@@ -194,11 +194,13 @@ def do_tracking(key,conn):
         return
     fname = res[0][0]
     
-    
+
+    srange = raw_input("enter search range: ")
     
     config = xml_data()
-    config.add_elm("tracking",[("search_range","4"),
-                             ("box_side_len","4"),
+    
+    config.add_elm("tracking",[("search_range",srange),
+                             ("box_side_len",srange),
                              ("min_trk_len","10")])
 
     config.disp()

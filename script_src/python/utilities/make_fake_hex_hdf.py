@@ -14,8 +14,9 @@
 #
 #You should have received a copy of the GNU General Public License
 #along with this program; if not, see <http://www.gnu.org/licenses>.
-
+from __future__ import division
 from numpy import *
+
 import matplotlib.pyplot as plt
 import random
 import itertools
@@ -76,8 +77,10 @@ def _main():
     for fr in range(0,f_count):
         clusters = []
         cents = grid_centers(grd_sz,spc)
-        for a,c in itertools.izip(range(0,25),cents):
-            clusters.extend(_make_cluster(c,(pi/3) * (a/25 + 0*fr/5)))
+        for a,c in itertools.izip(range(0,grd_sz*grd_sz),cents):
+            print a
+            print (pi/3) * (a/(grd_sz*grd_sz) + 0*fr/f_count) /pi * 180
+            clusters.extend(_make_cluster(c,(pi/3) * (a/(grd_sz*grd_sz) + 0*fr/f_count)))
 
         clust = hstack(clusters)
         g = f.create_group("frame%(#)06d"%{"#":fr})

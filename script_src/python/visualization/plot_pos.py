@@ -29,7 +29,7 @@ def plot_file_frame(f,fr_num):
     plt.plot(x,y,'ro')
     plt.show()
 
-f = h5py.File("../utilities/test.h5",'r')
+f = h5py.File("test.h5",'r')
 
 plot_file_frame(f,0)
 f.close()
