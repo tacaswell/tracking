@@ -1,4 +1,4 @@
-//Copyright 2009 Thomas A Caswell
+//Copyright 2010 Thomas A Caswell
 //tcaswell@uchicago.edu
 //http://jfi.uchicago.edu/~tcaswell
 //
@@ -36,7 +36,7 @@
 //for FreeImage Public License, the licensors of
 //this Program grant you additional permission to convey the resulting
 #include <iostream>
-
+#include <map>
 #include "master_box_t.h"
 
 #include "particle_base.h"
@@ -45,6 +45,8 @@
 #include "wrapper_o_hdf.h"
 #include "wrapper_i_hdf.h"
 #include "filter.h"
+
+#include "hash_shelf.h"
 
 #include "generic_wrapper_hdf.h"
 #include "corr_gofr.h"
@@ -55,6 +57,7 @@ using std::endl;
 using std::set;
 using std::string;
 using std::cerr;
+using std::map;
 
 
 using utilities::Wrapper_o_hdf;
@@ -70,94 +73,170 @@ using utilities::Generic_wrapper_hdf;
 using tracking::Master_box;
 using tracking::particle;
 using tracking::hash_case;
+using tracking::Hash_shelf;
 using tracking::Corr_gofr;
 
 int main(int argc, char * const argv[])
 {
 
    
-  float max_range = 10;
-  int nbins;
-  string proc_file;
-  string out_file;
-  string grp_name;
+  string h5_file = "test.h5";
+  string grp_name = "frame";
+
+  float neighbor_range = 1.1;
   
-  int optchar;
-  bool found_i=false,found_o= false,found_f=false;
+  float pixel_per_box = 1.1;
+  
+  
+  // int optchar;
+  // bool found_i=false,found_o= false,found_f=false;
 
   
-  while((optchar = getopt(argc,argv,"i:o:c:")) !=-1)
-  {
-    switch(optchar)
-    {
-    case 'i':
-      proc_file = string(optarg);
-      found_i = true;
-      break;
-    case 'o':
-      out_file = string(optarg);
-      found_o = true;
-      break;
-    case 'c':
-      {
-	vector<string> names;
-	names.push_back("max_range");
-	names.push_back("nbins");
-	names.push_back("grp_name");
-	Read_config rc(string(optarg),names,"gofr3D");
-	if(!rc.get_val("max_range",max_range))
-	{
-	  cerr<<"max_range not found"<<endl;
-	  return -1;
-	}
-	if(!rc.get_val("nbins",nbins))
-	{
-	  cerr<<"nbins not found"<<endl;
-	  return -1;
-	}
-	if(!rc.get_val("grp_name",grp_name))
-	{
-	  cerr<<"grp_name not found"<<endl;
-	  return -1;
-	}
+  // while((optchar = getopt(argc,argv,"i:o:c:")) !=-1)
+  // {
+  //   switch(optchar)
+  //   {
+  //   case 'i':
+  //     proc_file = string(optarg);
+  //     found_i = true;
+  //     break;
+  //   case 'o':
+  //     out_file = string(optarg);
+  //     found_o = true;
+  //     break;
+  //   case 'c':
+  //     {
+  // 	vector<string> names;
+  // 	names.push_back("max_range");
+  // 	names.push_back("nbins");
+  // 	names.push_back("grp_name");
+  // 	Read_config rc(string(optarg),names,"gofr3D");
+  // 	if(!rc.get_val("max_range",max_range))
+  // 	{
+  // 	  cerr<<"max_range not found"<<endl;
+  // 	  return -1;
+  // 	}
+  // 	if(!rc.get_val("nbins",nbins))
+  // 	{
+  // 	  cerr<<"nbins not found"<<endl;
+  // 	  return -1;
+  // 	}
+  // 	if(!rc.get_val("grp_name",grp_name))
+  // 	{
+  // 	  cerr<<"grp_name not found"<<endl;
+  // 	  return -1;
+  // 	}
 	
-	found_f = true;
-	break;
-      }
-    case '?':
-    default:
-      cout<<"-i input filename"<<endl;
-      cout<<"-o output filename"<<endl;
-      cout<<"-c configuration filename"<<endl;
-    break;
-    }
-  }
+  // 	found_f = true;
+  // 	break;
+  //     }
+  //   case '?':
+  //   default:
+  //     cout<<"-i input filename"<<endl;
+  //     cout<<"-o output filename"<<endl;
+  //     cout<<"-c configuration filename"<<endl;
+  //   break;
+  //   }
+  // }
 
-  if(!(found_i && found_o && found_f))
-  {
-    cerr<<"input failed"<<endl;
-    cout<<"-i input filename"<<endl;
-    cout<<"-o output filename"<<endl;
-    cout<<"-c configuration filename"<<endl;
-    return -1;
-  }
+  // if(!(found_i && found_o && found_f))
+  // {
+  //   cerr<<"input failed"<<endl;
+  //   cout<<"-i input filename"<<endl;
+  //   cout<<"-o output filename"<<endl;
+  //   cout<<"-c configuration filename"<<endl;
+  //   return -1;
+  // }
   
   
     
-  cout<<"file to read in: "<<proc_file<<endl;
-  cout<<"file that will be written to: "<<out_file<<endl;
-  cout<<"Parameters: "<<endl;
-  cout<<"  max range: "<<max_range<<endl;
-  cout<<"  nbins: "<<nbins<<endl;
+  // cout<<"file to read in: "<<proc_file<<endl;
+  // cout<<"file that will be written to: "<<out_file<<endl;
+  // cout<<"Parameters: "<<endl;
+  // cout<<"  max range: "<<max_range<<endl;
+  // cout<<"  nbins: "<<nbins<<endl;
 
 
   // make hcase
-      
-  particle::set_neighborhood_range(neighbor_range);
+
+  try
+  {
+    
   
-  h_case.pass_fun_to_shelf(&Hash_shelf::fill_in_neighborhood);
-  h_case.pass_fun_to_part(&particle::fill_phi_6);
+    //nonsense to get the map set up
+    map<utilities::D_TYPE, int> contents;
+    utilities::D_TYPE tmp[] = {utilities::D_XPOS,
+			       utilities::D_YPOS};
+    set<D_TYPE> data_types = set<D_TYPE>(tmp,tmp+2);
+    
+      
+    // set up the input wrapper
+    Wrapper_i_hdf wh(h5_file,data_types);
+  
+
+    // fill the master_box
+    Master_box box;
+    //  Filter_basic filt(h5_file);
+    Filter_trivial filt;
+    box.init(wh,filt);
+    cout<<"master_box contains "<<box.size()<<" particles"<<endl;
+  
+    hash_case hcase(box,wh.get_dims(),pixel_per_box,wh.get_num_frames());
+    cout<<"hash case filled"<<endl;
+    hcase.print();
+    
+      
+    particle::set_neighborhood_range(neighbor_range);
+  
+    hcase.pass_fun_to_shelf(&Hash_shelf::fill_in_neighborhood);
+    hcase.pass_fun_to_part(&particle::fill_phi_6);
 
 
-  // output everything back to the hdf file
+    // output everything back to the hdf file
+
+  
+    set<D_TYPE> d2;
+    d2.insert(utilities::D_S_ORDER_PARAMETER);
+
+  
+    Wrapper_o_hdf hdf_w(h5_file,d2,"frame",
+			false,false,false);
+
+    
+    try
+    {
+      hcase.output_to_wrapper(hdf_w);
+    }
+    catch(const char * err)
+    {
+      std::cerr<<"caught on error: ";
+      std::cerr<<err<<endl;
+      return -1;
+    }
+    catch(...)
+    {
+      std::cerr<<"unknown error type"<<endl;
+      return -1;
+    }
+  }
+  catch(const char * err){
+    std::cerr<<"caught on error: ";
+    std::cerr<<err<<endl;
+    return -1;
+  } 
+  catch( char const * err){
+    std::cerr<<"caught on error: ";
+    std::cerr<<err<<endl;
+    return -1;
+  } 
+  catch(...)
+  {
+    std::cerr<<"uncaught error"<<endl;
+    return -1;
+  }
+
+  return -1;
+  
+
+
 }
