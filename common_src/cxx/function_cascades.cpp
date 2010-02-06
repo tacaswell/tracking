@@ -347,6 +347,9 @@ void Hash_shelf::fill_in_neighborhood()
   
   for(int j = 0; j<(int)hash_.size(); ++j)
   {
+    current_region.clear();
+    current_box.clear();
+    
     int buffer = (int)ceil(particle::get_max_range()/upb_);
     if(buffer<1)
     {
@@ -361,6 +364,8 @@ void Hash_shelf::fill_in_neighborhood()
     
     get_region(j,current_region,buffer);
 
+
+    
     for(list<particle*>::iterator box_part = current_box.begin();
 	box_part != current_box.end();++box_part)
     {
@@ -376,5 +381,8 @@ void Hash_shelf::fill_in_neighborhood()
       
     }
   }
+  
+  
+  
 }
 
