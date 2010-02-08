@@ -234,3 +234,57 @@ def do_tracking(key,conn):
     
     pass
 
+
+
+
+def do_phi6(key,conn):
+    prog_path = '/home/tcaswell/misc_builds/basic/apps/'
+    prog_name = "phi6"
+
+    # figure out name of file to write to
+    res = _check_comps_table(key,"Iden",conn)
+    if len(res) ==0:
+        print "no entry"
+        # _do_Iden(key,conn)
+        return
+    if len(res) >1:
+        print "more than one entry, can't cope, quiting"
+        return
+    fname = res[0][0]
+    
+
+    srange = raw_input("enter search range: ")
+    
+    config = xml_data()
+    
+    config.add_elm("phi6",[("neighbor_range",srange),
+                             ("grp_name","frame")
+                           ])
+
+    config.disp()
+    cname = config.write_to_file()
+
+        
+    comp_num = conn.execute("select max(comp_key) from comps;").fetchone()[0] + 1
+
+    fout = fname
+    # look
+    
+    print fname
+    print fout
+
+
+    
+    rc = subprocess.call(["time",prog_path + prog_name,'-i',fname,'-o',fout, '-c',cname ])
+    print rc
+
+    # if it works, then returns zero
+    if rc == 0:
+        print "entering into database"
+        conn.execute("insert into comps (dset_key,date,fin,fout,function) values (?,?,?,?,?);",
+                     (key,date.today().isoformat(),fname,fout,prog_name))
+        conn.commit()
+
+    
+    pass
+

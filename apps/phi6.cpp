@@ -37,6 +37,7 @@
 //this Program grant you additional permission to convey the resulting
 #include <iostream>
 #include <map>
+#include <vector>
 #include "master_box_t.h"
 
 #include "particle_base.h"
@@ -50,6 +51,7 @@
 
 #include "generic_wrapper_hdf.h"
 #include "corr_gofr.h"
+#include "read_config.h"
 //#include "gnuplot_i.hpp" //Gnuplot class handles POSIX-Pipe-communication with Gnuplot
 
 using std::cout;
@@ -58,6 +60,7 @@ using std::set;
 using std::string;
 using std::cerr;
 using std::map;
+using std::vector;
 
 
 using utilities::Wrapper_o_hdf;
@@ -68,6 +71,7 @@ using utilities::Filter_basic;
 using utilities::Filter_trivial;
 using utilities::D_TYPE;
 using utilities::Generic_wrapper_hdf;
+using utilities::Read_config;
 
 
 using tracking::Master_box;
@@ -80,81 +84,78 @@ int main(int argc, char * const argv[])
 {
 
    
-  string h5_file = "test.h5";
-  string grp_name = "frame";
-
-  float neighbor_range = 1.1;
+  string in_file; //= "test.h5";	
+  string out_file; //= "test.h5";	
+  string grp_name; //= "frame";
   
-  float pixel_per_box = 1.1;
+  float neighbor_range ;
   
-  
-  // int optchar;
-  // bool found_i=false,found_o= false,found_f=false;
 
   
-  // while((optchar = getopt(argc,argv,"i:o:c:")) !=-1)
-  // {
-  //   switch(optchar)
-  //   {
-  //   case 'i':
-  //     proc_file = string(optarg);
-  //     found_i = true;
-  //     break;
-  //   case 'o':
-  //     out_file = string(optarg);
-  //     found_o = true;
-  //     break;
-  //   case 'c':
-  //     {
-  // 	vector<string> names;
-  // 	names.push_back("max_range");
-  // 	names.push_back("nbins");
-  // 	names.push_back("grp_name");
-  // 	Read_config rc(string(optarg),names,"gofr3D");
-  // 	if(!rc.get_val("max_range",max_range))
-  // 	{
-  // 	  cerr<<"max_range not found"<<endl;
-  // 	  return -1;
-  // 	}
-  // 	if(!rc.get_val("nbins",nbins))
-  // 	{
-  // 	  cerr<<"nbins not found"<<endl;
-  // 	  return -1;
-  // 	}
-  // 	if(!rc.get_val("grp_name",grp_name))
-  // 	{
-  // 	  cerr<<"grp_name not found"<<endl;
-  // 	  return -1;
-  // 	}
+  
+  int optchar;
+  bool found_i=false,found_o= false,found_f=false;
+
+  
+  while((optchar = getopt(argc,argv,"i:o:c:")) !=-1)
+  {
+    switch(optchar)
+    {
+    case 'i':
+      in_file = string(optarg);
+      found_i = true;
+      break;
+    case 'o':
+      out_file = string(optarg);
+      found_o = true;
+      break;
+    case 'c':
+      {
+  	vector<string> names;
+  	names.push_back("neighbor_range");
+	names.push_back("grp_name");
+  	Read_config rc(string(optarg),names,"phi6");
+  	if(!rc.get_val("neighbor_range",neighbor_range))
+  	{
+  	  cerr<<"neighbor_range not found"<<endl;
+  	  return -1;
+  	}
+  	if(!rc.get_val("grp_name",grp_name))
+  	{
+  	  cerr<<"grp_name not found"<<endl;
+  	  return -1;
+  	}
 	
-  // 	found_f = true;
-  // 	break;
-  //     }
-  //   case '?':
-  //   default:
-  //     cout<<"-i input filename"<<endl;
-  //     cout<<"-o output filename"<<endl;
-  //     cout<<"-c configuration filename"<<endl;
-  //   break;
-  //   }
-  // }
+  	found_f = true;
+  	break;
+      }
+    case '?':
+    default:
+      cout<<"-i input filename"<<endl;
+      cout<<"-o output filename"<<endl;
+      cout<<"-c configuration filename"<<endl;
+    break;
+    }
+  }
 
-  // if(!(found_i && found_o && found_f))
-  // {
-  //   cerr<<"input failed"<<endl;
-  //   cout<<"-i input filename"<<endl;
-  //   cout<<"-o output filename"<<endl;
-  //   cout<<"-c configuration filename"<<endl;
-  //   return -1;
-  // }
+  if(!(found_i && found_o && found_f))
+  {
+    cerr<<"input failed"<<endl;
+    cout<<"-i input filename"<<endl;
+    cout<<"-o output filename"<<endl;
+    cout<<"-c configuration filename"<<endl;
+    return -1;
+  }
   
   
+
+  // add check to make sure the input and output are the same file
     
-  // cout<<"file to read in: "<<proc_file<<endl;
-  // cout<<"file that will be written to: "<<out_file<<endl;
-  // cout<<"Parameters: "<<endl;
-  // cout<<"  max range: "<<max_range<<endl;
-  // cout<<"  nbins: "<<nbins<<endl;
+  cout<<"file to read in: "<<in_file<<endl;
+  cout<<"file that will be written to: "<<out_file<<endl;
+  cout<<"Parameters: "<<endl;
+  cout<<"  neighbor range: "<<neighbor_range<<endl;
+
 
 
   // make hcase
@@ -171,7 +172,7 @@ int main(int argc, char * const argv[])
     
       
     // set up the input wrapper
-    Wrapper_i_hdf wh(h5_file,data_types);
+    Wrapper_i_hdf wh(in_file,data_types);
   
 
     // fill the master_box
@@ -181,9 +182,9 @@ int main(int argc, char * const argv[])
     box.init(wh,filt);
     cout<<"master_box contains "<<box.size()<<" particles"<<endl;
   
-    hash_case hcase(box,wh.get_dims(),pixel_per_box,wh.get_num_frames());
+    hash_case hcase(box,wh.get_dims(),neighbor_range,wh.get_num_frames());
     cout<<"hash case filled"<<endl;
-    hcase.print();
+    
     
       
     particle::set_neighborhood_range(neighbor_range);
@@ -199,7 +200,7 @@ int main(int argc, char * const argv[])
     d2.insert(utilities::D_S_ORDER_PARAMETER);
 
   
-    Wrapper_o_hdf hdf_w(h5_file,d2,"frame",
+    Wrapper_o_hdf hdf_w(out_file,d2,"frame",
 			false,false,false);
 
     
@@ -235,7 +236,7 @@ int main(int argc, char * const argv[])
     return -1;
   }
 
-  return -1;
+  return 0;
   
 
 

@@ -87,7 +87,8 @@ def _compute(conn):
     menu = {'L':cpp_wrapper.do_link3D,
             'I':cpp_wrapper.do_Iden,
             'g':cpp_wrapper.do_gofr3D,
-            'T':cpp_wrapper.do_tracking
+            'T':cpp_wrapper.do_tracking,
+            'p':cpp_wrapper.do_phi6
             }
     stop = False
     while not stop:
