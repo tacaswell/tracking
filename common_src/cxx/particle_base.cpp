@@ -189,7 +189,7 @@ float particle_base::get_theta(const utilities::Tuple & origin) const{
 
 void particle_base::print()const{
   //float tmp;
-  cout<<'('<<frame_<<','<<ind_<<')';
+  cout<<"particle "<<frame_<<','<<ind_<<") at "<<position_;
   
   // cout<<position_<<"\t\t";
 //   // float tmp;
@@ -314,7 +314,7 @@ complex<float> particle_base::compute_phi_6()const
   {
     throw "no neighborhood";
   }
-  cout<<"Neighborhood size: "<<neighborhood_.size()<<endl;
+
   
   complex<float> phi6(0,0);
   complex<float> i(0,1);
@@ -327,16 +327,10 @@ complex<float> particle_base::compute_phi_6()const
     Tuple tmp = (*cur_nei)->get_position()-position_;
     // angle made with the y-axis (I think, doesn't really matter for this
     float theta6 = atan2(tmp[0],tmp[1])*6;
-    
-    cout<<exp(i*theta6)<<endl;
-    
-    
-    cout<<theta6/6<<endl;
-    
     phi6 += exp(i*theta6);
   }
   phi6/=(float)neighborhood_.size();
-  cout<<"phi6 "<<phi6<<endl;
+
   
   return phi6;
 }

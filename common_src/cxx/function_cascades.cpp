@@ -370,7 +370,7 @@ void Hash_shelf::fill_in_neighborhood()
 	box_part != current_box.end();++box_part)
     {
       particle* box_part_ptr = *box_part;
-      for(list<particle*>::const_iterator region_part = ++(current_region.begin());
+      for(list<particle*>::const_iterator region_part = (current_region.begin());
 	  region_part!= current_region.end();++region_part)
       {
 	const particle* region_part_ptr = *region_part;
