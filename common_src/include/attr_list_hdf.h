@@ -48,11 +48,25 @@ public:
      Constructor, gets 
    */
   Attr_list_hdf(H5::H5Object * obj);
+  /**
+     Destructor			
+   */
   ~Attr_list_hdf();
 
+  /**
+     If the attribute list contains the key.  
+   */
   bool contains_attr(const std::string & key) const;
   
+  /**
+     Returns the value associated with the key cast as an integer.  Still
+     need to sort out what to do if this is an inappropriate cast.
+   */
   int get_value(const std::string & key, int & value_out) const ;
+  /**
+     Sets the value associated with the key cast as an integer.  Still
+     need to sort out what to do if this is an inappropriate cast.
+   */
   void set_value(const std::string & key,  const int &   value_in) ;
 
   float get_value(const std::string & key, float & value_out) const ;
@@ -67,9 +81,13 @@ public:
   std::string get_value(const std::string & key,std::string & value_out)const;
   void set_value(const std::string & key,const std::string & value_out);
 
+
+  /**
+     Removes the key from the H5Object.
+   */
   void remove_attr(const std::string & key);
 
-  void close_hdf();
+
   
   void print()const;
   

@@ -16,7 +16,7 @@
 //along with this program; if not, see <http://www.gnu.org/licenses>.
 //
 
-#include "attr_list.h"
+#include "attr_list_hdf.h"
 #include "H5Cpp.h"
 #include <iostream>
 using utilities::Attr_list_hdf;
@@ -48,9 +48,11 @@ Attr_list_hdf::~Attr_list_hdf()
 
 bool Attr_list_hdf::contains_attr(const std::string & key) const
 {
-
-  
-
+  list<string>::const_iterator last = keys_.end();
+  for(list<string>::const_iterator it = keys_.begin();it!=last;++it)
+    if(key.compare(*it) == 0)
+      return true;
+  return false;
 }
 
 

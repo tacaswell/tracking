@@ -18,7 +18,7 @@
 
 #include <iostream>
 #include <string>
-#include "attr_list.h"
+#include "attr_list_hdf.h"
 #include "H5Cpp.h"
 
 using std::cout;
@@ -46,10 +46,9 @@ int main()
     Group g = file.openGroup("/");
     Attr_list_hdf al(&g);
     al.print();
-
-    Group g2 = file.openGroup("/test_group");
-    Attr_list_hdf al2(&g2);
-    al2.print();
+    
+    cout<<al.contains_attr("attr1")<<endl;
+    cout<<al.contains_attr("dummy")<<endl;
     
   }
   catch(H5::Exception e)
