@@ -58,3 +58,12 @@ add_executable(fake_hdf make_fake_hdf.cpp
   )
 set_target_properties(fake_hdf PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_COUNT=2;TESTING")
 target_link_libraries(fake_hdf ${HDF5_LIBRARIES} )
+
+
+
+add_executable(hdf_attr attr_test.cpp
+  ${COMMON_SRC} 
+  ${COMMON_SRC_PATH}/attr_list_hdf.cpp
+  )
+set_target_properties(hdf_attr PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_COUNT=2;TESTING")
+target_link_libraries(hdf_attr ${HDF5_LIBRARIES} )
