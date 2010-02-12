@@ -505,8 +505,8 @@ void Wrapper_o_hdf::add_meta_data(const std::string & key, float val,bool root_g
     group = group_;
   try
   {
-    hsize_t dim_c = 1;
-    DataSpace dspace =  DataSpace(1,&dim_c);
+
+    DataSpace dspace =  DataSpace(0,NULL);
     Attribute * tmpa =  
       new Attribute(group->createAttribute(key,
 					   PredType::NATIVE_FLOAT,
@@ -639,10 +639,7 @@ void Wrapper_o_hdf::add_meta_data(const std::string & key, int val,bool root_gro
 
   try
   {
-    hsize_t dim_c = 1;
-    
-      
-    DataSpace dspace =  DataSpace(1,&dim_c);
+    DataSpace dspace =  DataSpace(0,NULL);
     Attribute * tmpa =  
       new Attribute(group->createAttribute(key,
 					   PredType::NATIVE_INT,
