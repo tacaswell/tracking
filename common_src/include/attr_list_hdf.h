@@ -60,26 +60,28 @@ public:
   
   /**
      Returns the value associated with the key cast as an integer.  Still
-     need to sort out what to do if this is an inappropriate cast.
+     need to sort out what to do if this is an inappropriate cast.  This assumes
+     that you have checked to make sure that the attribute exists, or it
+     will throw the hdf errors out
    */
   int get_value(const std::string & key, int & value_out) const ;
   /**
      Sets the value associated with the key cast as an integer.  Still
      need to sort out what to do if this is an inappropriate cast.
-   */
-  void set_value(const std::string & key,  const int &   value_in) ;
+  */
+  void set_value(const std::string & key,  const int &   value_in,bool over_write = false) ;
 
   float get_value(const std::string & key, float & value_out) const ;
-  void set_value(const std::string & key,  const float & value_in) ;
+  void set_value(const std::string & key,  const float & value_in,bool over_write = false) ;
   
   utilities::Pair get_value(const std::string & key, utilities::Pair & value_out) const ;
-  void set_value(const std::string & key,  const utilities::Pair & value_in) ;
+  void set_value(const std::string & key,  const utilities::Pair & value_in,bool over_write = false) ;
 
   utilities::Triple get_value(const std::string & key, utilities::Triple & value_out) const ;
-  void set_value(const std::string & key,  const utilities::Triple & value_in) ;
+  void set_value(const std::string & key,  const utilities::Triple & value_in,bool over_write = false) ;
   
   std::string get_value(const std::string & key,std::string & value_out)const;
-  void set_value(const std::string & key,const std::string & value_out);
+  void set_value(const std::string & key,const std::string & value_out,bool over_write = false);
 
 
   /**
