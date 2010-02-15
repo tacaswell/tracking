@@ -203,18 +203,24 @@ void Attr_list_hdf::set_value(const std::string & key,  const std::string &   va
 
 
 
- Attr_list_hdf::get_value(const std::string & key,  & value_out) const 
+utilities::Pair Attr_list_hdf::get_value(const std::string & key,utilities::Pair  & value_out) const 
 {
   Attribute  tmpa =  Attribute(obj_->openAttribute(key));
   H5T_class_t type_class = tmpa.getTypeClass();
-  H5S_class_t space_type = tmpa.getSpace().getSimpleExtentType();
-  if(type_class == H5T_FLOAT && space_type == H5S_SCALAR )
-    tmpa.read(PredType::NATIVE_FLOAT,&value_out);
+  DataSpace dspace = tmpa.getSpace();
+  H5S_class_t space_type = dspace.getSimpleExtentType();
+  
+  if(type_class == H5T_FLOAT && 
+     space_type == H5S_SIMPLE  && 
+     dspace.getSimpleExtentNdims() == 1 && 
+     dspace.getSimpleExtentNpoints() == Pair::length_)
+    tmpa.read(PredType::NATIVE_FLOAT,value_out.get_ptr());
   else
     throw invalid_argument("output does not match attribute dtype");
   
   
-  return value_out;
+  
+  return Pair(value_out);
 
 }
 
@@ -248,7 +254,65 @@ void Attr_list_hdf::set_value(const std::string & key,  const Pair &   value_in,
 }
 
 
+utilities::Triple Attr_list_hdf::get_value(const std::string & key,utilities::Triple  & value_out) const 
+{
+  Attribute  tmpa =  Attribute(obj_->openAttribute(key));
+  H5T_class_t type_class = tmpa.getTypeClass();
+  DataSpace dspace = tmpa.getSpace();
+  H5S_class_t space_type = dspace.getSimpleExtentType();
+  
+  if(type_class == H5T_FLOAT && 
+     space_type == H5S_SIMPLE  && 
+     dspace.getSimpleExtentNdims() == 1 && 
+     dspace.getSimpleExtentNpoints() == Triple::length_)
+    tmpa.read(PredType::NATIVE_FLOAT,value_out.get_ptr());
+  else
+    throw invalid_argument("output does not match attribute dtype");
+  
+  
+  
+  return Triple(value_out);
 
+}
+
+void Attr_list_hdf::set_value(const std::string & key,  const Triple &   value_in,bool over_write) 
+{
+  if(contains_attr(key))
+  {
+    if( over_write)
+    {
+      Attribute  tmpa =  Attribute(obj_->openAttribute(key));
+      H5T_class_t type_class = tmpa.getTypeClass();
+      DataSpace dspace = tmpa.getSpace();
+      H5S_class_t space_type = dspace.getSimpleExtentType();
+  
+      if(type_class == H5T_FLOAT && space_type == H5S_SIMPLE  && 
+	 dspace.getSimpleExtentNdims() == 1 && dspace.getSimpleExtentNpoints() == Triple::length_)
+	tmpa.write(PredType::NATIVE_FLOAT,value_in.get_ptr());
+      else
+      	throw invalid_argument("output does not match attribute dtype");
+    }
+    else
+      throw invalid_argument("attribute name already exists");
+  }
+  else
+  {
+    hsize_t dim_c = (hsize_t) Triple::length_;
+    DataSpace dspace =  DataSpace(1,&dim_c);
+    Attribute  tmpa =  obj_->createAttribute(key,PredType::NATIVE_FLOAT,dspace);
+    tmpa.write(PredType::NATIVE_FLOAT,value_in.get_ptr());
+  }
+}
+
+
+
+
+void Attr_list_hdf::remove_attr(const string & key)
+{
+  obj_->removeAttr(key);
+  keys_.remove(key);
+  
+}
 
 
 

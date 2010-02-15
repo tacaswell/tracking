@@ -21,7 +21,8 @@
 #include <stdexcept>
 #include "attr_list_hdf.h"
 #include "H5Cpp.h"
-
+#include "pair.h"
+#include "triple.h"
 using std::cout;
 using std::cerr;
 using std::endl;
@@ -31,6 +32,8 @@ using H5::H5File;
 using H5::Group;
 
 using utilities::Attr_list_hdf;
+using utilities::Pair;
+using utilities::Triple;
 
 
 int main()
@@ -113,7 +116,64 @@ int main()
     cout<<"string attr: "<<str<<endl;
     cout<<"string attr return: "<<str2<<endl;
 
+
+    cout<<"=== Pair Test ==="<<endl;
+    Pair p,p2;
+    cout<<"--- Read test"<<endl;
+    cout<<"expect: (1.2,3.4)"<<endl;
+    p2 = al.get_value("pair_test",p);
+    cout<<"ref val: "<<p<<endl;
+    cout<<"ret val: "<<p2<<endl;
+
+    p.clear();
+    p2.clear();
+
+    cout<<"--- Write test"<<endl;
+    al.set_value("pair_w_test", Pair(5.6,7.8));
+    cout<<"expect: (5.6,7.8)"<<endl;
+    p2 = al.get_value("pair_w_test",p);
+    cout<<"ref val: "<<p<<endl;
+    cout<<"ret val: "<<p2<<endl;
     
+    p.clear();
+    p2.clear();
+
+    cout<<"--- Over write test"<<endl;
+    al.set_value("pair_test", Pair(9.0,1.2),true);
+    cout<<"expect: (9.0,1.2)"<<endl;
+    p2 = al.get_value("pair_test",p);
+    cout<<"ref val: "<<p<<endl;
+    cout<<"ret val: "<<p2<<endl;
+
+
+    cout<<"=== Triple Test ==="<<endl;
+    Triple t,t2;
+    cout<<"--- Read test"<<endl;
+    cout<<"expect: (1.2,3.4,5.6)"<<endl;
+    t2 = al.get_value("triple_test",t);
+    cout<<"ref val: "<<t<<endl;
+    cout<<"ret val: "<<t2<<endl;
+
+    t.clear();
+    t2.clear();
+
+    cout<<"--- Write test"<<endl;
+    al.set_value("triple_w_test", Triple(7.8,9.0,1.2));
+    cout<<"expect: (7.8,9.0,1.2)"<<endl;
+    t2 = al.get_value("triple_w_test",t);
+    cout<<"ref val: "<<t<<endl;
+    cout<<"ret val: "<<t2<<endl;
+    
+    t.clear();
+    t2.clear();
+
+    cout<<"--- Over write test"<<endl;
+    al.set_value("triple_test", Triple(3.4,5.6,7.8),true);
+    cout<<"expect: (3.4,5.6,7.8)"<<endl;
+    t2 = al.get_value("triple_test",t);
+    cout<<"ref val: "<<t<<endl;
+    cout<<"ret val: "<<t2<<endl;
+
   }
   catch(H5::Exception & e)
   {
