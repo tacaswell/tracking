@@ -26,6 +26,8 @@ using H5::H5Object;
 using H5::Attribute;
 using H5::PredType;
 using H5::DataSpace;
+using H5::StrType;
+
 
 using std::string;
 using std::list;
@@ -144,6 +146,104 @@ void Attr_list_hdf::set_value(const std::string & key,  const float &   value_in
     Attribute  tmpa =Attribute(obj_->createAttribute(key,PredType::NATIVE_FLOAT,dspace));
     tmpa.write(PredType::NATIVE_FLOAT,&value_in);
     keys_.push_back(key);
+  }
+}
+
+
+
+std::string  Attr_list_hdf::get_value(const std::string & key, std::string & value_out) const 
+{
+  Attribute  tmpa =  Attribute(obj_->openAttribute(key));
+  H5T_class_t type_class = tmpa.getTypeClass();
+  H5S_class_t space_type = tmpa.getSpace().getSimpleExtentType();
+  if(type_class == H5T_STRING && space_type == H5S_SCALAR )
+  {
+    // cribbed from tattr.cpp
+    StrType str_type = tmpa.getStrType();
+    tmpa.read(str_type,value_out);
+  }
+  
+  else
+    throw invalid_argument("output does not match attribute dtype");
+  
+  return string(value_out);
+
+}
+
+void Attr_list_hdf::set_value(const std::string & key,  const std::string &   value_in,bool over_write) 
+{
+
+  
+  if(contains_attr(key))
+  {
+    if(over_write)
+    {
+      Attribute  tmpa =  Attribute(obj_->openAttribute(key));
+      H5T_class_t type_class = tmpa.getTypeClass();
+      H5S_class_t space_type = tmpa.getSpace().getSimpleExtentType();
+  
+      if(type_class == H5T_STRING && space_type == H5S_SCALAR )
+      {
+	obj_->removeAttr(key);
+	
+      }
+      else
+      	throw invalid_argument("input does not match attribute dtype");
+    }
+    else
+      throw invalid_argument("attribute name already exists");
+  }
+  StrType str_type(0,value_in.size());
+  DataSpace dspace =  DataSpace(H5S_SCALAR);
+  Attribute  tmpa =Attribute(obj_->createAttribute(key,str_type,dspace));
+  tmpa.write(str_type,value_in);
+  if(!over_write)
+    keys_.push_back(key);
+}
+
+
+
+ Attr_list_hdf::get_value(const std::string & key,  & value_out) const 
+{
+  Attribute  tmpa =  Attribute(obj_->openAttribute(key));
+  H5T_class_t type_class = tmpa.getTypeClass();
+  H5S_class_t space_type = tmpa.getSpace().getSimpleExtentType();
+  if(type_class == H5T_FLOAT && space_type == H5S_SCALAR )
+    tmpa.read(PredType::NATIVE_FLOAT,&value_out);
+  else
+    throw invalid_argument("output does not match attribute dtype");
+  
+  
+  return value_out;
+
+}
+
+void Attr_list_hdf::set_value(const std::string & key,  const Pair &   value_in,bool over_write) 
+{
+  if(contains_attr(key))
+  {
+    if( over_write)
+    {
+      Attribute  tmpa =  Attribute(obj_->openAttribute(key));
+      H5T_class_t type_class = tmpa.getTypeClass();
+      DataSpace dspace = tmpa.getSpace();
+      H5S_class_t space_type = dspace.getSimpleExtentType();
+  
+      if(type_class == H5T_FLOAT && space_type == H5S_SIMPLE  && 
+	 dspace.getSimpleExtentNdims() == 1 && dspace.getSimpleExtentNpoints() == Pair::length_)
+	tmpa.write(PredType::NATIVE_FLOAT,value_in.get_ptr());
+      else
+      	throw invalid_argument("output does not match attribute dtype");
+    }
+    else
+      throw invalid_argument("attribute name already exists");
+  }
+  else
+  {
+    hsize_t dim_c = (hsize_t) Pair::length_;
+    DataSpace dspace =  DataSpace(1,&dim_c);
+    Attribute  tmpa =  obj_->createAttribute(key,PredType::NATIVE_FLOAT,dspace);
+    tmpa.write(PredType::NATIVE_FLOAT,value_in.get_ptr());
   }
 }
 

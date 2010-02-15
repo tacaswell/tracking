@@ -82,6 +82,37 @@ int main()
     
     al.get_value("test_attrf2",f);
     cout<<"float value "<<f<<endl;
+
+    std::string str,str2;
+    str2 = al.get_value("test_str",str);
+    cout<<"string attr: "<<str<<endl;
+    cout<<"string attr return: "<<str2<<endl;
+    
+    al.set_value("test_str","over write test",true);
+
+
+
+    cout<<"wrote"<<endl;
+    str.clear();
+    str2.clear();
+    
+    str2 = al.get_value("test_str",str);
+    cout<<"string attr: "<<str<<endl;
+    cout<<"string attr return: "<<str2<<endl;
+    cout<<"---------"<<endl;
+    
+    
+    string in("write test");
+    al.set_value("test_str2",in);
+    str.clear();
+    str2.clear();
+    cout<<"string attr: "<<str<<endl;
+    cout<<"string attr return: "<<str2<<endl;
+    str2 = al.get_value("test_str2",str);
+    cout<<"expect: "<<in<<endl;
+    cout<<"string attr: "<<str<<endl;
+    cout<<"string attr return: "<<str2<<endl;
+
     
   }
   catch(H5::Exception & e)
