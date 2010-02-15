@@ -215,6 +215,7 @@ public:
      mostly to make it simpler to write out to hdf wrappers
    */
   const float * get_ptr() const;
+  float * get_ptr() ;
   
   
 protected:

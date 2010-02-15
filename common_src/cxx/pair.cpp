@@ -268,5 +268,11 @@ const float * Pair::get_ptr() const
 {
   return data_;
 }
+
+
+float * Pair::get_ptr() 
+{
+  return data_;
+}
     
   

@@ -268,3 +268,8 @@ const float * Triple::get_ptr() const
 {
   return data_;
 }
+
+float * Triple::get_ptr() 
+{
+  return data_;
+}

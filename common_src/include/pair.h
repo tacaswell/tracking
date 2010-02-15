@@ -216,6 +216,12 @@ public:
    */
   const float * get_ptr() const;
   
+  /**
+     returns a pointer to the internal data in a unsafe way.
+     mostly to make it simpler to read out from hdf wrappers
+   */
+  float * get_ptr() ;
+  
 
 
   
