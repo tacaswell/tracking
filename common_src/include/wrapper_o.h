@@ -90,24 +90,6 @@ public:
    */
   virtual void open_group(int group = 0,int p_count=0) = 0;
   
-
-  /**
-     sets up the wrapper to add new particle to the underlying data
-     structure.  Behavior of this function if a particle is already 'open'
-     is currently undefined(either close it and move on, or nuke the old
-     data, or just keep appending to it)
-
-     This function can either write straight in to the underlyign data structure
-     or work through a temporary buffer
-  */
-  virtual void open_particle(int ind = -1)=0;
-  
-  
-  /**
-     sets the value of data type type for the particle p_in with out haveing
-     to worry outside of the wrapper about the V_TYPE of the data
-   */
-  virtual void set_value(D_TYPE type, const tracking::particle * p_in) =0;
   
   /**
      sets all of the values that the wrapper knows about by asking the particle
@@ -121,12 +103,6 @@ public:
    */
   virtual void set_all_values(const tracking::Track_box *,const utilities::Triple &) = 0;
 #endif
-
-  /**
-     'closes' a particle. 
-     Throws an error if there is no particle open
-   */
-  virtual void close_particle()=0;
   /**
      Closes the currently open group.
      Throws an error if there is no open group.
