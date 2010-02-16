@@ -1,4 +1,4 @@
-# apps
+# testing
 
 SET(GNU_PLOT_SRC
   ${PROJECT_SOURCE_DIR}/external_src/gnu_wrapper/gnuplot_i.cpp

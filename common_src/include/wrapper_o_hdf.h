@@ -50,6 +50,7 @@ class DataSet;
 
 
 namespace utilities{
+class Wrapper_o_hdf_group;
 
 /**
    Wrapper class for dealing with output to matlab
@@ -72,6 +73,7 @@ public:
   */
   Wrapper_o_hdf(const std::string& file_name,
 		const std::set<D_TYPE>& d_add,
+		int comp_number,
 		const std::string & group_prefix="frame",
 		bool new_file=false,
 		bool new_indexing=true,
@@ -80,7 +82,7 @@ public:
     
   void initialize_wrapper();
   void open_group(int,int);
-  void open_particle(int);
+
 
   
   void set_all_values(const tracking::particle *);
@@ -90,7 +92,7 @@ public:
   void set_value(D_TYPE,const tracking::particle *);
   
 
-  void close_particle();
+
   void close_group();
   void finalize_wrapper();
 
@@ -104,7 +106,7 @@ public:
 
 
 
-  void set_compress(int in){csize_ = in;}
+  
 
   
 
@@ -121,10 +123,6 @@ private:
   ///Count of the number of particles that have been added
   int part_count_;
   
-
-  ///if a particle is 'opened'
-  bool part_open_;
-  
   ///if the wrapper is 'open' to get additional particles
   bool wrapper_open_;
   
@@ -133,19 +131,11 @@ private:
    */
   bool group_open_;
   
-  ///index of current open particle
-  int part_index_;
-  
   /**
-     maximum number of particles in current group
-   */
-  int group_max_count_;
-  
-  /**
-     index of current open group
+     index of current group
    */
   int group_index_;
-
+  
   /**
      if an existing hdf file is being used, or a new file should be created
    */
@@ -171,10 +161,6 @@ private:
    */
   std::string file_name_;
   /**
-     pointer to currently open group
-   */
-  H5::Group* group_;
-  /**
      name of currently open group
    */
   std::string group_name_;
@@ -194,49 +180,6 @@ private:
    */
   std::set<D_TYPE> d_types_already_;
   
-
-  /**
-     struct to deal with shoving complex data in to hdf
-   */
-  typedef struct complex_t
-  {
-    float re;
-    float im;
-  } complex_t;
-  
-  /**
-     vector of pointers to temporary arrays for floats 
-   */
-  std::vector<float *> float_data_;
-
-  /**
-     look up table for float data
-   */
-  Data_map float_map_;
-  
-
-  /**
-     vector of pointers to temporary arrays for ints
-   */
-  std::vector<int *> int_data_;
-
-  /**
-     look up table for float data
-   */
-  Data_map int_map_;
-
-  
-  /**
-     vector of pointers to temporary arrays for floats 
-   */
-  std::vector<complex_t *> complex_data_;
-
-  /**
-     look up table for float data
-   */
-  Data_map complex_map_;
-
-  
   /**
      prefix for use in formatting the group name
    */
@@ -252,21 +195,18 @@ private:
      formats group names
    */
   std::string format_name(int in)const;
-
-  
-  void set_value(utilities::D_TYPE type, float val);
-  void set_value(utilities::D_TYPE type, int val);
-  void set_value(utilities::D_TYPE type, std::complex<float> val);
   
   /**
-     set the size of the data chunks if compression is used.  Compression
-     is used if the group has more than 5 times this many entries.
+     object for current group
    */
-  int csize_;
-
- 
+  Wrapper_o_hdf_group * current_group_;
   
 
+  /**
+     computation number
+   */
+  int comp_number_;
+  
 };
 
 }

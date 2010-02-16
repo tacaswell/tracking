@@ -45,11 +45,115 @@
 #include "hash_case.h"
 #include "pair.h"
 
-#include "wrapper_i_dummy.h"
 #include "wrapper_o_hdf.h"
 #include "filter.h"
 
 #include "hash_case.h"
+
+
+
+#include <string>
+#include <vector>
+#include <map>
+
+#include <cmath>
+
+#include "wrapper_i.h"
+
+#include "part_def.h"
+
+
+namespace utilities{
+/**
+   Wrapper class for testing purposes
+*/
+class Wrapper_i_dummy:public Wrapper_in{
+private:
+  std::set<D_TYPE> d_types_;
+  int frames_;
+  int count_;
+  mutable int counter_;
+  
+  
+public:
+
+  int                 get_value(int& out,
+				int ind,D_TYPE type, int frame) const {
+    if(type == D_FRAME)
+    {
+      out = frame;
+    }
+    else
+    {
+      out = counter_++;
+    }
+    
+
+    return out;
+  }
+  
+  float               get_value(float& out,
+				int ind,D_TYPE type, int frame) const 
+  {
+    //int perd = 4;
+    //    out = sin(ind*(3.14/perd))*sin((3.14/perd)*ind);
+    out = ind ;
+    
+    return out;
+  }
+  
+  std::complex<float> get_value(std::complex<float>& out,
+				int ind,D_TYPE type, int frame) const 
+  {
+    return out;
+  }
+  
+
+
+  std::set<D_TYPE>    get_data_types() const 
+  {
+    return d_types_;
+  }
+  
+
+
+
+  int get_num_entries(int frame) const {return count_;};
+
+  int get_num_frames() const {return frames_;};
+
+  bool contains_type(D_TYPE in) const
+  {
+    return d_types_.find(in) != d_types_.end();
+  };
+
+  Tuple get_dims() const
+  {
+    return Tuple();
+  }
+  
+
+
+  
+  ~Wrapper_i_dummy(){};
+  
+ 
+  Wrapper_i_dummy(const std::set<utilities::D_TYPE>& d_types,int count,int frames):
+    d_types_(d_types),frames_(frames),count_(count),counter_(0)
+  {
+  }
+  
+
+
+
+  
+
+  
+  
+};
+
+}
+
 
 using std::cout;
 using std::endl;
@@ -104,7 +208,7 @@ int main(int argc, const char * argv[])
     string fname = "test.hdf";
 
     
-    Wrapper_o_hdf hdf_w(fname,data_types,"frame",
+    Wrapper_o_hdf hdf_w(fname,data_types,0,"frame",
 			true,true,true);
 
     
