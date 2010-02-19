@@ -101,7 +101,7 @@ int main(int argc, const char * argv[])
     d2.insert(utilities::D_INDEX);
     
     
-    Wrapper_o_hdf hdf_w(fname,d2,"frame",
+    Wrapper_o_hdf hdf_w(fname,d2,0,"frame",
 			false,false,false);
 
     

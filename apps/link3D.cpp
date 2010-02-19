@@ -99,6 +99,7 @@ int main(int argc, char * argv[])
   
   
   int pixel_per_box;
+  int comp_number;
   float search_range ;
   int min_track_length;
 
@@ -139,7 +140,10 @@ int main(int argc, char * argv[])
 	  if(!rc.get_val("min_trk_len",min_track_length))
 	  {
 	    min_track_length = 3;
-	
+	  }
+	  if(!rc.get_val("comp_number",comp_number))
+	  {
+	    min_track_length = 3;
 	  }
 	  found_f = true;
 	  break;
@@ -232,7 +236,7 @@ int main(int argc, char * argv[])
 
     
     //tracks.pass_fun_to_track(&Track_box::plot_intensity);
-    Wrapper_o_hdf hdf_w(out_file,data_types2,"frame");
+    Wrapper_o_hdf hdf_w(out_file,data_types2,comp_number,"frame");
     cout<<"made wrapper"<<endl;
     
 
