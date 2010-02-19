@@ -348,3 +348,15 @@ void Attr_list_hdf::print()const
 }
 
 
+
+unsigned int Attr_list_hdf::get_value(const std::string & key, unsigned int & value_out) const 
+{
+  Attribute  tmpa =  Attribute(obj_->openAttribute(key));
+  H5T_class_t type_class = tmpa.getTypeClass();
+  H5S_class_t space_type = tmpa.getSpace().getSimpleExtentType();
+  if(type_class == H5T_INTEGER && space_type == H5S_SCALAR )
+    tmpa.read(PredType::NATIVE_UINT,&value_out);
+  else
+    throw invalid_argument("output does not match attribute dtype");
+  return value_out;
+}

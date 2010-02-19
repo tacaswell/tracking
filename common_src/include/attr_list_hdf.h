@@ -83,6 +83,10 @@ public:
   std::string get_value(const std::string & key,std::string & value_out)const;
   void set_value(const std::string & key,const std::string & value_out,bool over_write = false);
 
+    
+  unsigned int get_value(const std::string & key,unsigned int& value_out)const;
+
+
 
   /**
      Removes the key from the H5Object.

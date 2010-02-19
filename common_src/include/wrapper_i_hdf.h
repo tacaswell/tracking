@@ -37,9 +37,6 @@
 #include "part_def.h"
 
 namespace utilities{
-
-class Params_hdf5;
-
 /**
    Wrapper class for eating data from hdf files, take 2
 */
@@ -52,7 +49,8 @@ private:
   
   static std::string format_name(int in);
   
-  std::set<utilities::D_TYPE> data_types_;
+  std::set<std::pair<utilities::D_TYPE,int> > data_types_;
+  std::set<utilities::D_TYPE> data_types_set_;
   
   Data_map d_mapi_;
   Data_map d_mapf_;
@@ -71,6 +69,7 @@ private:
   void clean_data();
   
   void priv_init(int f_count =0);
+  void make_dtype_pairs(int comp_nuber);
   
   bool two_d_data_;
   
@@ -112,27 +111,36 @@ public:
  
   Wrapper_i_hdf(std::string fname,
 		const std::set<utilities::D_TYPE>& dtypes,
+		int comp_nuber,
 		unsigned int start=0,
 		int frames =0);
 
   Wrapper_i_hdf(std::string fname,
 		const std::set<utilities::D_TYPE> &dtypes,
+		int comp_number,
 		unsigned int start,
 		int f_count,
 		bool two_d_data);
   
   
+  Wrapper_i_hdf(std::string fname,
+		const std::set<std::pair<utilities::D_TYPE,int > > &dtypes,
+		unsigned int start,
+		int f_count,
+		bool two_d_data);
+  
+		
   /**
      returns the scaling between pixels and microns.  This should be pushed up
      to the next level, but I am lazy.
-   */
+  */
   float get_xy_scale() const;
   
   /**
      Returns the starting plane.  This may be needed to put data back
      into hdf files properly.  Although, processing only part of the
      file seems like it would lead to madness and chaos.
-   */
+  */
   unsigned int get_start_offset() const {return start_;}
   
   
