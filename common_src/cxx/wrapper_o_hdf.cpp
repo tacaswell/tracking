@@ -248,10 +248,13 @@ void Wrapper_o_hdf::add_meta_data(const std::string & key, float val,bool root_g
     Group * group =  new Group(file_->openGroup("/"));
     Attr_list_hdf atr_lst(group);
     atr_lst.set_value(key,val);
+    delete group;
+    
     
   }
   else if(group_open_)
     current_group_->set_meta_data(key,val);
+  
   
     
 }
@@ -296,9 +299,9 @@ void Wrapper_o_hdf::add_meta_data(const std::string & key, const Pair & val,bool
   if( root_group)
   {
     Group * group =  new Group(file_->openGroup("/"));
-    Attr_list_hdf atr_lst(group);
+    Attr_list_hdf  atr_lst(group);
     atr_lst.set_value(key,val);
-    
+    delete group;
   }
   else if(group_open_)
     current_group_->set_meta_data(key,val);
@@ -327,8 +330,13 @@ void Wrapper_o_hdf::add_meta_data(const std::string & key, int val,bool root_gro
   if( root_group)
   {
     Group * group =  new Group(file_->openGroup("/"));
-    Attr_list_hdf atr_lst(group);
-    atr_lst.set_value(key,val);
+    // scope braces
+    {
+      Attr_list_hdf atr_lst(group);
+      atr_lst.set_value(key,val);
+    }
+    
+    delete group;
     
   }
   else if(group_open_)

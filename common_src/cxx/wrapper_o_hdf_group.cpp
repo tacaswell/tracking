@@ -309,6 +309,10 @@ Wrapper_o_hdf_group::~Wrapper_o_hdf_group()
 	it != dsets_.end();++it)
       delete *it;
     dsets_.clear();
+    
+    delete group_;
+    group_ = NULL;
+    
 }
 
 std::string Wrapper_o_hdf_group::format_dset_name_(D_TYPE type)
