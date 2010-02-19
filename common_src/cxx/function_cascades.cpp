@@ -59,7 +59,7 @@ using std::map;
 void hash_case::output_to_wrapper(Wrapper_out & wrapper,bool add_meta) const
 {
 
-  wrapper.initialize_wrapper();
+
   if(add_meta)
   {
     wrapper.add_meta_data("dims",h_case_[0]->get_img_dims());
@@ -71,7 +71,7 @@ void hash_case::output_to_wrapper(Wrapper_out & wrapper,bool add_meta) const
   {
     (*current_shelf)->output_to_wrapper(wrapper);
   }
-  wrapper.finalize_wrapper();
+
 
 
 }

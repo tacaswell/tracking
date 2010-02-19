@@ -23,11 +23,13 @@
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
 #include <string>
+#include <sstream>
 
 #include "enum_utils.h"
 namespace utilities
 {
 
+const int format_padding_ = 7;
 
 std::string DT2str_s(D_TYPE in)
 {
@@ -144,6 +146,18 @@ V_TYPE v_type(D_TYPE in)
     return V_ERROR;
   }
 }
+
+
+std::string format_dset_name(D_TYPE type,int comp_num)
+{
+  std::ostringstream o;
+  o.width(format_padding_);
+  o.fill('0');
+  o<<std::right<<comp_num;
+  return  DT2str_s(type) +"_"+  o.str();
+
+}
+
 
 
 }

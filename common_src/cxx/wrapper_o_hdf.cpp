@@ -115,6 +115,17 @@ void Wrapper_o_hdf::initialize_wrapper()
   {
     throw "failure to create or open file";
   }
+
+  if(new_file_)
+    dset_pram_group_ = new Group(file_->createGroup("parameters"));
+  else
+    dset_pram_group_ = new Group(file_->openGroup("parameters"));
+
+  for(set<D_TYPE>::iterator it = d_types_add_.begin();
+      it !=d_types_add_.end();++it)
+    dset_pram_group_->createGroup(format_dset_name(*it,comp_number_));
+  
+  
   
   wrapper_open_ = true;
 }
@@ -189,14 +200,26 @@ void Wrapper_o_hdf::finalize_wrapper()
 {
   if(wrapper_open_)
   {
+    delete dset_pram_group_;
+    dset_pram_group_ = NULL;
+    
     if(group_open_)
     {
-      close_group();
+      try
+      {
+	close_group();
+      }
+      catch(...)
+      {
+	cout<<"Something went wrong taking apart the wrapper, but this cant throw"
+	    <<" because it gets called by the destructor"<<endl;
+      }
     }
-    delete file_;
-    file_ = NULL;
-    wrapper_open_ = false;
-  }
+    
+    delete file_; 
+    file_ =NULL; 
+    wrapper_open_ = false; 
+  } 
 }
 
        
@@ -341,8 +364,49 @@ void Wrapper_o_hdf::add_meta_data(const std::string & key, int val,bool root_gro
   }
   else if(group_open_)
     current_group_->set_meta_data(key,val);
+}
+
+
+template <class T> 
+void local_add_meta(const std::string & key, T val,D_TYPE dset_type,bool wrapper_open,int comp_number,Group * dset_pram_group )
+{
+  if(wrapper_open)
+  {
+    H5::Group dgroup = dset_pram_group->openGroup(format_dset_name(dset_type,comp_number));
+    utilities::Attr_list_hdf atr_lst(&dgroup);
+    atr_lst.set_value(key,val);
+    
+  }
+  else
+    throw std::logic_error("void Wrapper_o_hdf::add_meta_data_(const std::string & key, T val,D_TYPE dset_type) \n\t can't add meta data while the warpper is closed");
   
+
+}
+
+
+void Wrapper_o_hdf::add_meta_data(const std::string & key, int val,D_TYPE dset_type)
+{
+  local_add_meta(key,val,dset_type,wrapper_open_,comp_number_,dset_pram_group_);
+}
+
+void Wrapper_o_hdf::add_meta_data(const std::string & key, float val,D_TYPE dset_type)
+{
+  local_add_meta(key,val,dset_type,wrapper_open_,comp_number_,dset_pram_group_);
   
+}
+
+void Wrapper_o_hdf::add_meta_data(const std::string & key, const string& val,D_TYPE dset_type)
+{
+  local_add_meta(key,val,dset_type,wrapper_open_,comp_number_,dset_pram_group_);
   
+}
+void Wrapper_o_hdf::add_meta_data(const std::string & key, const Pair& val,D_TYPE dset_type)
+{
+  local_add_meta(key,val,dset_type,wrapper_open_,comp_number_,dset_pram_group_);
+  
+}
+void Wrapper_o_hdf::add_meta_data(const std::string & key, const Triple& val,D_TYPE dset_type)
+{
+  local_add_meta(key,val,dset_type,wrapper_open_,comp_number_,dset_pram_group_);
   
 }

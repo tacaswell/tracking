@@ -146,11 +146,6 @@ private:
   int added_count_;
   
   /**
-     formats data set names
-  */
-  std::string format_dset_name_( D_TYPE dtype);
-  
-  /**
      If this is a new group.  If it is, then make up new indexing
      and create the group in the parent.  If false, then open
      the group and respect the indexing of the particles.

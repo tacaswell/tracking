@@ -115,11 +115,23 @@ public:
   void add_meta_data(const std::string & key, const Triple & val,bool root_group = true);
   void add_meta_data(const std::string & key,  const std::string & val,bool root_group = true);
   void add_meta_data(const std::string & key, int val,bool root_group = true);
+
   
+  void add_meta_data(const std::string & key, float val,D_TYPE dset_type);
+  
+  void add_meta_data(const std::string & key, const Pair & val,D_TYPE dset_type);
+  
+  void add_meta_data(const std::string & key, const Triple & val,D_TYPE dset_type);
+  
+  void add_meta_data(const std::string & key,  const std::string & val,D_TYPE dset_type);
+  
+  void add_meta_data(const std::string & key, int val,D_TYPE dset_type);
+
 
   ~Wrapper_o_hdf();
 
 private:
+
   ///Count of the number of particles that have been added
   int part_count_;
   
@@ -207,9 +219,11 @@ private:
    */
   int comp_number_;
   
+
+  H5::Group * dset_pram_group_;
+  
 };
 
 }
-
 
 #endif

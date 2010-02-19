@@ -160,6 +160,28 @@ public:
      Adds an integer meta-data
    */
   virtual void add_meta_data(const std::string & key, int val,bool root_group=true)=0;
+  
+  /**
+     Adds a float meta-data for a data set
+   */
+  virtual void add_meta_data(const std::string & key, float val,D_TYPE dset_type)=0;
+  /**
+     Adds a Triple meta-data for a data set
+   */
+  virtual void add_meta_data(const std::string & key, const Triple & val,D_TYPE dset_type)=0;
+  /**
+     Adds a Pair meta-data for a data set
+   */
+  virtual void add_meta_data(const std::string & key, const Pair& val,D_TYPE dset_type)=0;
+  /**
+     Adds a string meta-data for a data set
+   */
+  virtual void add_meta_data(const std::string & key,  const std::string & val,D_TYPE dset_type)=0;
+  /**
+     Adds an integer meta-data for a data set
+   */
+  virtual void add_meta_data(const std::string & key, int val,D_TYPE dset_type)=0;
+  
 };
 
 }

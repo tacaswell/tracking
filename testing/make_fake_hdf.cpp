@@ -214,7 +214,11 @@ int main(int argc, const char * argv[])
     
     try
     {
+      hdf_w.initialize_wrapper();
       hcase.output_to_wrapper(hdf_w);
+      hdf_w.add_meta_data("range",15,utilities::D_XPOS);
+      
+      hdf_w.finalize_wrapper();
     }
     catch(const char * err)
     {

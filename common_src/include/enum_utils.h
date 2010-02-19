@@ -102,6 +102,11 @@ std::string DT2str_s(D_TYPE in);
    Helper functions to convert short name strings in to D_TYPEs 
  */
 D_TYPE DT2str_s(std::string in);
+/**
+   Helper function to format dset names with computation numbers attached
+ */
+std::string format_dset_name(D_TYPE type,int comp_num);
+
 }
 
 

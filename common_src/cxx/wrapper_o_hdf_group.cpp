@@ -66,7 +66,7 @@ using utilities::D_TYPE;
 
 using tracking::particle;
 const int Wrapper_o_hdf_group::csize_ = 400;
-const int Wrapper_o_hdf_group::format_padding = 7;
+
 
 Wrapper_o_hdf_group::Wrapper_o_hdf_group(CommonFG * parent, const std::string & g_name,
 					 std::set<D_TYPE> d_add,
@@ -147,17 +147,17 @@ Wrapper_o_hdf_group::Wrapper_o_hdf_group(CommonFG * parent, const std::string & 
     {
     case V_INT:
       int_data_.push_back(new int[size_]);
-      dsets_.push_back(new DataSet(group_->createDataSet(format_dset_name_(*it),PredType::NATIVE_INT,space,plist_i)));
+      dsets_.push_back(new DataSet(group_->createDataSet(format_dset_name(*it,comp_number_),PredType::NATIVE_INT,space,plist_i)));
       int_map_.set_lookup(*it,i_c++);
       break;
     case V_FLOAT:
       float_data_.push_back(new float[size_]);
-      dsets_.push_back( new DataSet(group_->createDataSet(format_dset_name_(*it),PredType::NATIVE_FLOAT,space,plist_f)));
+      dsets_.push_back( new DataSet(group_->createDataSet(format_dset_name(*it,comp_number_),PredType::NATIVE_FLOAT,space,plist_f)));
       float_map_.set_lookup(*it,f_c++);
       break;
     case V_COMPLEX:
       complex_data_.push_back(new complex_t[size_]);
-      dsets_.push_back( new DataSet(group_->createDataSet(format_dset_name_(*it),ctype,space,plist_c)));
+      dsets_.push_back( new DataSet(group_->createDataSet(format_dset_name(*it,comp_number_),ctype,space,plist_c)));
       complex_map_.set_lookup(*it,c_c++);
       break;
     case V_ERROR:
@@ -313,14 +313,4 @@ Wrapper_o_hdf_group::~Wrapper_o_hdf_group()
     delete group_;
     group_ = NULL;
     
-}
-
-std::string Wrapper_o_hdf_group::format_dset_name_(D_TYPE type)
-{
-  std::ostringstream o;
-  o.width(format_padding);
-  o.fill('0');
-  o<<std::right<<comp_number_;
-  return  DT2str_s(type) +"_"+  o.str();
-
 }
