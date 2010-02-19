@@ -73,10 +73,7 @@ int Attr_list_hdf::get_value(const std::string & key, int & value_out) const
     tmpa.read(PredType::NATIVE_INT,&value_out);
   else
     throw invalid_argument("output does not match attribute dtype");
-  
-  
   return value_out;
-
 }
 
 void Attr_list_hdf::set_value(const std::string & key,  const int &   value_in,bool over_write) 
@@ -95,7 +92,13 @@ void Attr_list_hdf::set_value(const std::string & key,  const int &   value_in,b
       	throw invalid_argument("output does not match attribute dtype");
     }
     else
-      throw invalid_argument("attribute name already exists");
+    {
+      // check to see if they match
+      int tmp = 0;
+      get_value(key,tmp);
+      if(tmp != value_in)
+	throw invalid_argument("attribute name already exists and values don't match: int");
+    }
   }
   else
   {
@@ -137,8 +140,14 @@ void Attr_list_hdf::set_value(const std::string & key,  const float &   value_in
       else
       	throw invalid_argument("output does not match attribute dtype");
     }
-    else
-      throw invalid_argument("attribute name already exists");
+        else
+    {
+      // check to see if they match
+      float tmp = 0;
+      get_value(key,tmp);
+      if(tmp != value_in)
+	throw invalid_argument("attribute name already exists and values don't match: float");
+    }
   }
   else
   {
@@ -238,11 +247,18 @@ void Attr_list_hdf::set_value(const std::string & key,  const Pair &   value_in,
       if(type_class == H5T_FLOAT && space_type == H5S_SIMPLE  && 
 	 dspace.getSimpleExtentNdims() == 1 && dspace.getSimpleExtentNpoints() == Pair::length_)
 	tmpa.write(PredType::NATIVE_FLOAT,value_in.get_ptr());
+      
       else
       	throw invalid_argument("output does not match attribute dtype");
     }
     else
-      throw invalid_argument("attribute name already exists");
+    {
+      // check to see if they match
+      Pair tmp ;
+      get_value(key,tmp);
+      if(!(tmp == value_in))
+	throw invalid_argument("attribute name already exists and values don't match: Pair");
+    }
   }
   else
   {
@@ -293,7 +309,13 @@ void Attr_list_hdf::set_value(const std::string & key,  const Triple &   value_i
       	throw invalid_argument("output does not match attribute dtype");
     }
     else
-      throw invalid_argument("attribute name already exists");
+    {
+      // check to see if they match
+      Triple tmp ;
+      get_value(key,tmp);
+      if(!(tmp == value_in))
+	throw invalid_argument("attribute name already exists and values don't match: Triple");
+    }
   }
   else
   {

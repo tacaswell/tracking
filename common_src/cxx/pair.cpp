@@ -30,8 +30,19 @@
 
 using namespace utilities;
 
+
+
 const int Pair::length_ ;
 //bool Pair::allow_dim_change_ = false;
+
+bool Pair::operator==(const Pair& b)const
+{
+  for(int j = 0;j<length_; ++j)
+    if(data_[j] != b.data_[j])
+      return false;
+  return true;
+}
+
 
 void Pair::operator= (const Pair& y){
   for(int j = 0;j<length_; ++j)

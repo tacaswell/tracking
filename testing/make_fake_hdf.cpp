@@ -1,4 +1,4 @@
-//Copyright 2009 Thomas A Caswell
+//Copyright 2009-2010 Thomas A Caswell
 //tcaswell@uchicago.edu
 //http://jfi.uchicago.edu/~tcaswell
 //
@@ -38,7 +38,7 @@
 
 
 #include <iostream>
-
+#include <stdexcept>
 #include "master_box_t.h"
 
 #include "particle_base.h"
@@ -160,6 +160,7 @@ using std::endl;
 using std::set;
 using std::string;
 using std::cerr;
+using std::exception;
 
 
 
@@ -208,8 +209,7 @@ int main(int argc, const char * argv[])
     string fname = "test.hdf";
 
     
-    Wrapper_o_hdf hdf_w(fname,data_types,0,"frame",
-			true,true,true);
+    Wrapper_o_hdf hdf_w(fname,data_types,322,"frame",false,false,false);
 
     
     try
@@ -226,9 +226,15 @@ int main(int argc, const char * argv[])
       std::cerr<<err<<endl;
       return -1;
     }
+    catch(exception& e)
+    {
+      std::cerr<<"caught on error: ";
+      std::cerr<<"\n"<<e.what()<<endl;
+    }
+    
     catch(...)
     {
-      std::cerr<<"unknown error type"<<endl;
+      std::cerr<<"make_fake_hdf \n\tunknown error type"<<endl;
       return -1;
     }
     

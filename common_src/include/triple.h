@@ -36,7 +36,12 @@ namespace utilities{
  */
 class Triple{
 public:
- /**
+  /**
+     Over loads for comparison	
+  */
+  bool operator==(const Triple& b)const;
+
+  /**
      Over loads for copying
    */
   void operator= (const Triple& y);

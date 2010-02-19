@@ -33,6 +33,16 @@ using namespace utilities;
 const int Triple::length_ ;
 //bool Triple::allow_dim_change_ = false;
 
+
+bool Triple::operator==( const Triple& b) const
+{
+  for(int j = 0;j<length_; ++j)
+    if(data_[j] != b.data_[j])
+      return false;
+  return true;
+}
+
+
 void Triple::operator= (const Triple& y){
   for(int j = 0;j<length_; ++j)
     data_[j] = y.data_[j];

@@ -36,6 +36,11 @@ namespace utilities{
  */
 class Pair{
 public:
+  /**
+     Over loads for comparison	
+   */
+  bool operator==(const Pair& b)const;
+  
  /**
      Over loads for copying
    */
