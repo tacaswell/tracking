@@ -135,10 +135,13 @@ void Master_box::print(){
 Master_box::~Master_box(){
   //deletes the particles it made
   for(unsigned int j = 0; j<particle_vec_.size();++j)
-    {
-      delete particle_vec_.at(j);
-    }
+  {
+    delete particle_vec_.at(j);
+  }
   //deletes the wrapper objects
+  particle_base::clear_wrapper_in();
+  particle_base::clear_data_types();
+
   if(own_wrapper_)
   {
     delete in_wrapper_;

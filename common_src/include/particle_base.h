@@ -220,6 +220,17 @@ public:
      Intialize the static data types for all particles
    */
   static void intialize_data_types(std::set<utilities::D_TYPE>*  data_types);
+
+  /**
+     Cleans up the set wrapper_in
+   */
+  static void clear_wrapper_in();
+
+  /**
+     cleans up the set data_types
+   */
+  static void clear_data_types();
+
   /**
      Sets the maximum neighborhood range, there needs to be something to make
      sure that this doesn't get changed with out updating the 

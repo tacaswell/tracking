@@ -216,6 +216,17 @@ void particle_base::intialize_data_types(std::set<utilities::D_TYPE>*  data_type
   data_types_ = data_types;
 }
 
+void particle_base::clear_wrapper_in()
+{
+  wrapper_in_ = NULL;
+}
+
+void particle_base::clear_data_types()
+{
+  data_types_ = NULL;
+}
+
+
 
 
 bool particle_base::lthan(const particle_base* a,const particle_base* b)const
