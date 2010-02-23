@@ -119,9 +119,17 @@ void Wrapper_o_hdf::initialize_wrapper()
   }
 
   if(file_type_ != APPEND_FILE)
+  {
     dset_pram_group_ = new Group(file_->createGroup("parameters"));
+    add_meta_data("version",1,true);
+  }
   else
     dset_pram_group_ = new Group(file_->openGroup("parameters"));
+  
+    
+    
+  
+  
 
   for(set<D_TYPE>::iterator it = d_types_add_.begin();
       it !=d_types_add_.end();++it)
@@ -354,15 +362,10 @@ void Wrapper_o_hdf::add_meta_data(const std::string & key, int val,bool root_gro
   
   if( root_group)
   {
-    Group * group =  new Group(file_->openGroup("/"));
+    Group group =  file_->openGroup("/");
     // scope braces
-    {
-      Attr_list_hdf atr_lst(group);
-      atr_lst.set_value(key,val);
-    }
-    
-    delete group;
-    
+    Attr_list_hdf atr_lst(&group);
+    atr_lst.set_value(key,val);
   }
   else if(group_open_)
     current_group_->set_meta_data(key,val);
