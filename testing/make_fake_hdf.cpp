@@ -209,7 +209,7 @@ int main(int argc, const char * argv[])
     string fname = "test.hdf";
 
     
-    Wrapper_o_hdf hdf_w(fname,data_types,322,"frame",false,false,false);
+    Wrapper_o_hdf hdf_w(fname,data_types,322,Wrapper_o_hdf::NEW_FILE_OVR, "frame");
 
     
     try
