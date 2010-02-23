@@ -67,3 +67,15 @@ add_executable(hdf_attr attr_test.cpp
   )
 set_target_properties(hdf_attr PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_COUNT=2;TESTING")
 target_link_libraries(hdf_attr ${HDF5_LIBRARIES} )
+
+
+
+add_executable(read_write_add_test read_write_add_test.cpp
+  ${COMMON_SRC} 
+  ${UTIL_SRC} 
+  ${COMMON_HASH_SRC}
+  ${HDF_SRC}
+  ${GNU_PLOT_SRC} 
+  )
+set_target_properties(read_write_add_test PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_COUNT=2;TESTING")
+target_link_libraries(read_write_add_test ${HDF5_LIBRARIES} )

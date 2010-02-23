@@ -67,13 +67,15 @@ class hex_plane:
 
 def _main():
     f_count = 1
-    grd_sz = 2
+    grd_sz = 5
     spc = 6
     
     f = h5py.File("test.h5",'w')
        
-    f.attrs['dims'] = [(grd_sz+1)* spc,(grd_sz+1)* spc]
-    f.attrs['number-of-planes'] = f_count
+    f.attrs.create('dims',[(grd_sz+1)* spc,(grd_sz+1)* spc],None,'float32')
+    f.attrs.create('number-of-planes',f_count,None,'int32')
+    f.attrs.create('version',1,None,'int32')
+
     for fr in range(0,f_count):
         clusters = []
         cents = grid_centers(grd_sz,spc)
@@ -84,9 +86,10 @@ def _main():
 
         clust = hstack(clusters)
         g = f.create_group("frame%(#)06d"%{"#":fr})
-        g.create_dataset('x',data=clust[0,:])
-        g.create_dataset('y',data=clust[1,:])
-        g.attrs['z-position'] = fr
+        g.create_dataset('x_0000000',data=clust[0,:])
+        g.create_dataset('y_0000000',data=clust[1,:])
+        
+        g.attrs.create('z-position', fr,None,'float32')
 
     f.close()
 
