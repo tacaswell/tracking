@@ -57,7 +57,17 @@ class Wrapper_o_hdf_group;
 */
 class Wrapper_o_hdf:public Wrapper_out{
 public:  
+  typedef enum FILE_T
+    {
+      APPEND_FILE=0,
+      NEW_FILE,
+      NEW_FILE_OVR
+    }FILE_T;
   
+    
+      
+      
+
   /**
      Constructor
      
@@ -74,10 +84,8 @@ public:
   Wrapper_o_hdf(const std::string& file_name,
 		const std::set<D_TYPE>& d_add,
 		int comp_number,
-		const std::string & group_prefix="frame",
-		bool new_file=false,
-		bool new_indexing=true,
-		bool over_write=false);
+		Wrapper_o_hdf::FILE_T file_type,
+		const std::string & group_prefix="frame");
   
     
   void initialize_wrapper();
@@ -147,22 +155,16 @@ private:
      index of current group
    */
   int group_index_;
-  
-  /**
-     if an existing hdf file is being used, or a new file should be created
-   */
-  bool new_file_;
 
   /**
-     if the indexing on the particles should be respected, or new indexes
-     assigned
+     Parameter to control behavior of indexing
   */
   bool new_indexing_;
   
   /**
-     if existing data in to be over written
+     Parameter to control file creation and over writing
    */
-  bool over_write_;
+  Wrapper_o_hdf::FILE_T file_type_;
   
   /**
      Pointer to hdf file

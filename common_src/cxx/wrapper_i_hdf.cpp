@@ -439,7 +439,7 @@ Tuple Wrapper_i_hdf::get_dims()const
 
   Attr_list_hdf attr_list(&group);
 
-  if(!attr_list.contains_attraoeu("version"))
+  if(!attr_list.contains_attr("version"))
     throw invalid_argument("input file does not have a version");
   
   int file_version = 0;
@@ -448,7 +448,7 @@ Tuple Wrapper_i_hdf::get_dims()const
 
   if(attr_list.contains_attr("dims"))
   {
-    attr_list.get_value("dimes",tmp);
+    attr_list.get_value("dims",tmp);
   }
   return Tuple(tmp);
   

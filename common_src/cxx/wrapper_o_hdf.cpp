@@ -70,17 +70,13 @@ using tracking::particle;
 Wrapper_o_hdf::Wrapper_o_hdf(const string& file_name,
 			     const set<D_TYPE>& d_add,
 			     int comp_number,
-			     const string & group_prefix,
-			     bool new_file,
-			     bool new_indexing,
-			     bool over_write):
+			     Wrapper_o_hdf::FILE_T file_type,
+			     const string & group_prefix):
   part_count_(0),
   wrapper_open_(false),
   group_open_(false),
   group_index_(-1),
-  new_file_(new_file),
-  new_indexing_(new_indexing),
-  over_write_(over_write),
+  file_type_(file_type),
   file_(NULL),
   file_name_(file_name),
   group_name_(""),
@@ -93,7 +89,13 @@ Wrapper_o_hdf::Wrapper_o_hdf(const string& file_name,
 {
   
   // add logic checks to make sure the three bools are consistent
-
+  if(file_type_ == APPEND_FILE)
+    new_indexing_ = false;
+  else
+    new_indexing_ = true;
+  
+  
+  
 
 
 }
@@ -104,11 +106,11 @@ void Wrapper_o_hdf::initialize_wrapper()
   try
   {
     
-  if(over_write_ && new_file_)
+  if(file_type_ == NEW_FILE_OVR)
     file_ = new H5File(file_name_,H5F_ACC_TRUNC);
-  else if(new_file_)
+  else if(file_type_ == NEW_FILE)
     file_ = new H5File(file_name_,H5F_ACC_EXCL);
-  else 
+  else if(file_type_ == APPEND_FILE)
     file_ = new H5File(file_name_,H5F_ACC_RDWR);
   }
   catch(...)
@@ -116,7 +118,7 @@ void Wrapper_o_hdf::initialize_wrapper()
     throw "failure to create or open file";
   }
 
-  if(new_file_)
+  if(file_type_ != APPEND_FILE)
     dset_pram_group_ = new Group(file_->createGroup("parameters"));
   else
     dset_pram_group_ = new Group(file_->openGroup("parameters"));

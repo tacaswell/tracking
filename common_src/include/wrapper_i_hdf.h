@@ -83,9 +83,16 @@ protected:
 
   void init();
 public:
-
+  typedef enum DATA_DIMS
+    {
+      TWO_D = 0,
+      THREE_D
+    } DATA_DIMS;
+    
+    
+  
   int                 get_value(int& out,
-				int ind,D_TYPE type, int frame) const ;
+				  int ind,D_TYPE type, int frame) const ;
   float               get_value(float& out,
 				int ind,D_TYPE type, int frame) const ;
   std::complex<float> get_value(std::complex<float>& out,
