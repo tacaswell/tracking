@@ -1,3 +1,4 @@
+#Copyright 2010 Thomas A Caswell
 #tcaswell@uchicago.edu
 #http://jfi.uchicago.edu/~tcaswell
 #
@@ -37,14 +38,19 @@ class xml_data:
         self.stanza.appendChild(tmp_elm)
         
         pass
-    def write_to_file(self):
-        tf = tempfile.mkstemp()
-        os.close(tf[0])
-        f = open(tf[1],'w')
+    def write_to_disk(self,fname):
+        f = open(fname,'w')
         self.doc.writexml(f,addindent='   ',newl='\n')
         f.close()
-        self.fname = tf[1]
+    def write_to_tmp(self):
+        if self.fname == None:
+            tf = tempfile.mkstemp()
+            os.close(tf[0])
+            self.fname = tf[1]
+        self.write_to_disk(self.fname)
         return self.fname
+
+    
     def disp(self):
         print self.doc.toprettyxml()
 
@@ -54,7 +60,7 @@ class xml_data:
                 os.remove(self.fname)
         
 
-def __main__():
+def _test_fun():
     test = xml_data()
     test.add_stanza("iden")
     test.add_pram('a','int',1)
@@ -69,4 +75,9 @@ def __main__():
     test.add_pram('g','int',5,"test")
     test.disp()
 
-__main__()
+
+
+if __name__ == "__main__":
+    _test_fun()
+
+
