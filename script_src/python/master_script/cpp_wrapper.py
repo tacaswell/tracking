@@ -68,7 +68,7 @@ def do_link3D(key,conn):
     config.add_pram("box_side_len","float","4");
     config.add_pram("search_range","float","3.5")
     config.add_pram("min_trk_len","int","3")
-    cname = config.write_to_file()
+    cname = config.write_to_tmp()
 
     fout = fname.replace(".h5","_link.h5")
 
@@ -166,7 +166,7 @@ def do_gofr3D(key,conn):
     config.add_pram("nbins","int","2000")
     config.add_pram("grp_name","string",str(comp_num))
     config.disp()
-    cfile = config.write_to_file()
+    cfile = config.write_to_tmp()
     
     
     rc = subprocess.call(["time",prog_path + prog_name,'-i',fin,'-o',fout, '-c',cfile ])
@@ -205,7 +205,7 @@ def do_tracking(key,conn):
     config.add_pram("box_side_len","float",srange)
     config.add_pram("min_trk_len","int","10")
     config.disp()
-    cname = config.write_to_file()
+    cname = config.write_to_tmp()
 
         
     comp_num = conn.execute("select max(comp_key) from comps;").fetchone()[0] + 1
@@ -261,7 +261,7 @@ def do_phi6(key,conn):
     config.add_pram("neighbor_range","float",srange)
     config.add_pram("grp_name","string","frame")
     config.disp()
-    cname = config.write_to_file()
+    cname = config.write_to_tmp()
 
         
     comp_num = conn.execute("select max(comp_key) from comps;").fetchone()[0] + 1
