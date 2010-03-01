@@ -64,9 +64,10 @@ def do_link3D(key,conn):
         return
     
     config = xml_data()
-    config.add_elm("link3D",[("box_side_len","4"),
-                             ("search_range","3.5"),
-                             ("min_trk_len","3")])
+    config.add_stanza("link3D")
+    config.add_pram("box_side_len","float","4");
+    config.add_pram("search_range","float","3.5")
+    config.add_pram("min_trk_len","int","3")
     cname = config.write_to_file()
 
     fout = fname.replace(".h5","_link.h5")
@@ -101,7 +102,7 @@ def do_Iden(key,conn):
 
     fin = conn.execute("select fname from dsets where key = ?;",(key,)).fetchone()[0]
     fout = '.'.join(fin.replace("data","processed").split('.')[:-1]) + '.h5'
-    fpram = fin.replace("tif","pram")
+    fpram = fin.replace("tif","xml")
     if not os.path.isfile(fpram):
         print "can not find parameter file, exiting"
         return
@@ -129,7 +130,7 @@ def do_Iden(key,conn):
     parse1.make_h5(base_name,data_path,proc_path)
 
 
-    rc = subprocess.call(["time",prog_path + prog_name,'-i',fin,'-o',fout ])
+    rc = subprocess.call(["time",prog_path + prog_name,'-i',fin,'-o',fout,'-c',fpram ])
     print rc
 
     # if it works, then returns zero
@@ -160,9 +161,10 @@ def do_gofr3D(key,conn):
     comp_num = conn.execute("select max(comp_key) from comps;").fetchone()[0] + 1
 
     config = xml_data()
-    config.add_elm("gofr3D",[("max_range","9.5"),
-                             ("nbins","2000"),
-                             ("grp_name",str(comp_num))])
+    config.add_stanza("gofr3D")
+    config.add_pram("max_range","float","9.5")
+    config.add_pram("nbins","int","2000")
+    config.add_pram("grp_name","string",str(comp_num))
     config.disp()
     cfile = config.write_to_file()
     
@@ -198,11 +200,10 @@ def do_tracking(key,conn):
     srange = raw_input("enter search range: ")
     
     config = xml_data()
-    
-    config.add_elm("tracking",[("search_range",srange),
-                             ("box_side_len",srange),
-                             ("min_trk_len","10")])
-
+    config.add_stanza("tracking")
+    config.add_pram("search_range","float",srange)
+    config.add_pram("box_side_len","float",srange)
+    config.add_pram("min_trk_len","int","10")
     config.disp()
     cname = config.write_to_file()
 
@@ -256,11 +257,9 @@ def do_phi6(key,conn):
     srange = raw_input("enter search range: ")
     
     config = xml_data()
-    
-    config.add_elm("phi6",[("neighbor_range",srange),
-                             ("grp_name","frame")
-                           ])
-
+    config.add_stanza("phi6")
+    config.add_pram("neighbor_range","float",srange)
+    config.add_pram("grp_name","string","frame")
     config.disp()
     cname = config.write_to_file()
 

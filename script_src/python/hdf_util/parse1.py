@@ -95,15 +95,14 @@ def _parse_region(h5obj):
 
 def make_h5(fname_in,d_path,p_path):
     fname = d_path + fname_in + '.tif'
-    fname_p = d_path + fname_in + '.pram'
+
     out_fname  = p_path + fname_in + '.h5'
 
 
 
     # make sure the files exist
-    if not (os.path.exists(fname) and os.path.exists(fname_p)):
+    if not (os.path.exists(fname) ):
         print fname
-        print fname_p
         print "files don't exist"
         exit()
 
@@ -114,7 +113,7 @@ def make_h5(fname_in,d_path,p_path):
     
     _add_name(f,fname.encode('ascii'))
     _parse_temp(f,fname_in)
-    _parse_params(f,fname_p)
+
 
 
     #changed to deal with 2.5v2.6
