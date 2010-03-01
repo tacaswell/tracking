@@ -62,6 +62,9 @@ using std::cerr;
 using std::cout;
 using std::endl;
 
+using std::logic_error;
+
+
 using xercesc::XMLPlatformUtils;
 using xercesc::XMLString;
 using xercesc::DOMElement;
@@ -86,10 +89,7 @@ bool from_string(T& t,
 
 
 
-Read_config::Read_config(std::string fname,vector<string> attr_names, string elm_str):
-  attr_names_(attr_names),
-  attr_values_(attr_names.size()),
-  attr_found_ (attr_names.size())
+Read_config::Read_config(std::string fname, string elm_str)
 {
 
   // Test to see if the file is ok.
@@ -123,7 +123,11 @@ Read_config::Read_config(std::string fname,vector<string> attr_names, string elm
   
 
   XMLCh* elm_name = XMLString::transcode(elm_str.c_str());
-  
+  XMLCh* key_str = XMLString::transcode("key");
+  XMLCh* type_str = XMLString::transcode("type");
+  XMLCh* value_str = XMLString::transcode("value");
+  XMLCh* pram_str = XMLString::transcode("pram");
+    
   
   XercesDOMParser *config_parser = new XercesDOMParser;
   
@@ -142,6 +146,8 @@ Read_config::Read_config(std::string fname,vector<string> attr_names, string elm
     
     DOMNodeList* children = root->getChildNodes();
     const XMLSize_t node_count = children ->getLength();
+    
+    
 
     for( XMLSize_t j = 0;j<node_count;++j)
     {
@@ -155,34 +161,44 @@ Read_config::Read_config(std::string fname,vector<string> attr_names, string elm
 	// see if this is the element that we want
 	if(XMLString::equals(cur_elm->getTagName(),elm_name))
 	{
-	  int max_name= attr_names_.size();
-	  for(int j =0;j<max_name;++j)
+	  
+	  
+	  DOMNodeList* pram_elms = cur_elm->getChildNodes();
+	  const XMLSize_t pram_count =  pram_elms->getLength();
+	  
+	  for(XMLSize_t k = 0; k<pram_count; ++k)
 	  {
-	    XMLCh * attr_tmp = XMLString::transcode(attr_names_[j].c_str());
-	    
-	    if(cur_elm->hasAttribute(attr_tmp))
+	    DOMNode* pram_node = pram_elms->item(k);
+	    if(pram_node  && 	// make sure that current_node is non NULL
+	       pram_node->getNodeType() == DOMNode::ELEMENT_NODE)
 	    {
+	      DOMElement* pram_elm = dynamic_cast<DOMElement*>(pram_node);
+	      if(XMLString::equals(pram_elm->getTagName(),pram_str))
+	      {
 
-	      char * tmp = XMLString::transcode(cur_elm->getAttribute(attr_tmp));
-	      
-	      attr_values_.at(j) = string(tmp);
-	      attr_found_.at(j) = true;
-	      
-	      XMLString::release(&tmp);
-	      
+		
+		if(!(pram_elm->hasAttribute(key_str) &&
+		     pram_elm->hasAttribute(type_str) &&
+		     pram_elm->hasAttribute(value_str)))
+		  throw logic_error("read_config :: pram entry does not have proper attributes"); 
+		
+		char * key = XMLString::transcode(pram_elm->getAttribute(key_str));
+		char * type = XMLString::transcode(pram_elm->getAttribute(type_str));
+		char * value = XMLString::transcode(pram_elm->getAttribute(value_str));
+		
+
+
+		prams_.push_back(Config_pram(key,type,value));
+
+		XMLString::release(&key);
+		XMLString::release(&type);
+		XMLString::release(&value);
+	      }
 	    }
-	    else
-	    {
-	      attr_found_.at(j) = false;
-	    }
-	    XMLString::release(&attr_tmp);
 	  }
 	}
       }
-      
     }
-    
-      
 	   
   }
   catch( xercesc::XMLException& e )
@@ -191,10 +207,15 @@ Read_config::Read_config(std::string fname,vector<string> attr_names, string elm
     std::ostringstream errBuf;
     errBuf << "Error parsing file: " << message << std::flush;
     XMLString::release( &message );
+
   }
   
   
-
+  XMLString::release(&key_str);
+  XMLString::release(&type_str);
+  XMLString::release(&value_str);
+  XMLString::release(&pram_str);
+  
   // clean up xml stuff
   XMLString::release(&elm_name);
   delete config_parser;
@@ -218,11 +239,8 @@ Read_config::Read_config(std::string fname,vector<string> attr_names, string elm
 
 void Read_config::print() const
 {
-  for(unsigned int j = 0; j<attr_names_.size();++j)
-  {
-    cout<<attr_names_.at(j)<<'\t'<<attr_found_.at(j)<<'\t'<<attr_values_.at(j)<<endl;
-    
-  }
+  for(unsigned int j = 0; j<prams_.size();++j)
+    cout<<'('<<prams_[j].key<<','<<prams_[j].type<<','<<prams_[j].value<<')'<<endl;
 }
 
   
@@ -230,62 +248,99 @@ Read_config::~Read_config()
 {
 }
 
-bool Read_config::get_val(string attr_name,float & val)const
+int Read_config::get_key_index(const string& key) const
 {
-  int max = attr_names_.size();
+  int max = prams_.size();
   for(int j = 0;j<max;++j)
-  {
-    if(attr_names_[j].compare(attr_name) == 0)
-    {
-      if(attr_found_.at(j))
-	return from_string<float> (val,attr_values_.at(j),std::dec);
-      else
-	return false;
-    }
-    
-  }
+    if(prams_[j].key.compare(key) == 0)
+      return j;
+  throw logic_error("Read_config::does not contain key: " + key);
+}
+
+
+bool Read_config::contains_key(const string& key) const
+{
+  int max = prams_.size();
+  for(int j = 0;j<max;++j)
+    if(prams_[j].key.compare(key) ==0)
+      return true;
+  
   return false;
 }
 
-bool Read_config::get_val(string attr_name,int & val)const
+
+bool Read_config::get_val(const string& key,float & val)const
 {
-  int max = attr_names_.size();
+  int j = get_key_index(key);
+  if(prams_[j].type.compare("float") == 0)
+    return from_string<float> (val,prams_[j].value,std::dec);
+  else
+    throw logic_error("Read_congig::get_val, expect pram of type: float, found type: " + prams_[j].type);
+}
+
+
+bool Read_config::get_val(const string& key,int & val)const
+{
+  int j = get_key_index(key);
+  if(prams_[j].type.compare("int") == 0)
+    return from_string<int> (val,prams_[j].value,std::dec);
+  else
+    throw logic_error("Read_congig::get_val, expect pram of type: int, found type: " + prams_[j].type);
+}
+
+
+
+bool Read_config::get_val(const string& key,string & val)const
+{
+  int j = get_key_index(key);
+  if(prams_[j].type.compare("string") == 0)
+  {
+    val = prams_[j].value;
+    return true;
+  }
+  else
+    throw logic_error("Read_congig::get_val, expect pram of type: string, found type: " + prams_[j].type);
+}
+
+// bool Read_config::get_val(string attr_name,int & val)const
+// {
+//   int max = attr_names_.size();
   
 
-  for(int j = 0;j<max;++j)
-  {
-    if(attr_names_[j].compare(attr_name) == 0)
-    {
+//   for(int j = 0;j<max;++j)
+//   {
+//     if(attr_names_[j].compare(attr_name) == 0)
+//     {
       
-      if(attr_found_.at(j))
-	return from_string<int> (val,attr_values_.at(j),std::dec);
-      else
-	return false;
-    }
+//       if(attr_found_.at(j))
+// 	return from_string<int> (val,attr_values_.at(j),std::dec);
+//       else
+// 	return false;
+//     }
     
-  }
-  return false;
-}
+//   }
+//   return false;
+// }
 
-bool Read_config::get_val(string attr_name,string & val)const
-{
-  int max = attr_names_.size();
+// bool Read_config::get_val(string attr_name,string & val)const
+// {
+//   int max = attr_names_.size();
   
 
-  for(int j = 0;j<max;++j)
-  {
-    if(attr_names_[j].compare(attr_name) == 0)
-    {
+//   for(int j = 0;j<max;++j)
+//   {
+//     if(attr_names_[j].compare(attr_name) == 0)
+//     {
       
-      if(attr_found_.at(j))
-      {
-	val = attr_values_.at(j);
-	return true;
-      }
-      else
-	return false;
-    }
+//       if(attr_found_.at(j))
+//       {
+// 	val = attr_values_.at(j);
+// 	return true;
+//       }
+//       else
+// 	return false;
+//     }
     
-  }
-  return false;
-}
+//   }
+//   return false;
+// }

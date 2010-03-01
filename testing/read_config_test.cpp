@@ -45,25 +45,25 @@ int main ()
   
   
   
-  Read_config rc("sample.xml",names,"elm");
+  Read_config rc("test.xml","iden");
   rc.print();
   float f;
   int i;
   string s;
   
   
-  if(rc.get_val("max",f))
-    cout<<"max: "<<f<<endl;
+  if(rc.get_val("a",i))
+    cout<<"a: "<<i<<endl;
   else
     cout<<"not found"<<endl;
   
-  if(rc.get_val("min",s))
-    cout<<"min: "<<s<<endl;
+  if(rc.get_val("b",f))
+    cout<<"b: "<<f<<endl;
   else
     cout<<"not found"<<endl;
   
-  if(rc.get_val("err",i))
-    cout<<"err: "<<i<<endl;
+  if(rc.get_val("c",s))
+    cout<<"c: "<<s<<endl;
   else
     cout<<"not found"<<endl;
   

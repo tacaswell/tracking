@@ -29,8 +29,11 @@
 #include <string>
 namespace utilities{
 
+  
+
+
 /**
-   Class for reading configuration from xml files.  This is very simple.
+   class for reading configuration from xml files.  This is very simple.
    Each instance can only read from one element in the xml file and the
    element must be a child of the root. 
  */
@@ -39,10 +42,10 @@ public:
   /**
      constructor.  The vector of strings is the list of attributes to try to parse.
      
-     @param attr_names the attributes to look for
+     @param fname the xml file to parse
      @param elm_name the element to look for the parameters in.  
   */
-  Read_config(std::string fname, std::vector<std::string> attr_names,std::string elm_name);
+  Read_config(std::string fname, std::string elm_name);
   /**
      destructor
   */
@@ -56,9 +59,14 @@ public:
 
      @param attr_name attribute name
   */
-  bool get_val(std::string attr_name,float & val)const;
-  bool get_val(std::string attr_name,int & val)const;
-  bool get_val(std::string attr_name,std::string & val)const;
+  bool get_val(const std::string & attr_name,float & val)const;
+  bool get_val(const std::string & attr_name,int & val)const;
+  bool get_val(const std::string & attr_name,std::string & val)const;
+  
+
+  bool contains_key(const std::string& key)const;
+  int get_key_index(const std::string& key)const;
+  
   
   /**
      prints all information stored.
@@ -67,20 +75,31 @@ public:
   
 
 private:
+  
+  /**
+     A struct for holding information extracted from parameter
+  */
+  struct Config_pram
+  {
+
+    Config_pram(std::string key_i,std::string type_i,std::string value_i)
+      :key(key_i),type(type_i),value(value_i){}
+    Config_pram(const char * key_i,const char * type_i,const char * value_i)
+      :key(key_i),type(type_i),value(value_i){}
+    Config_pram();
+    ~Config_pram(){};
+    std::string key;
+    std::string type;
+    std::string value;
+  
+
+  };
+
   /**
      vector of the attributes to be parsed
   */
-  std::vector<std::string> attr_names_;
-  /**
-     vector of parsed values
-  */
-  std::vector<std::string> attr_values_;
-
-  /**
-     vector of if the attribute was found
-   */
+  std::vector<Config_pram> prams_;
   
-  std::vector<bool> attr_found_;
   
 };
 
