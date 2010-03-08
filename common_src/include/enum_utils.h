@@ -86,7 +86,8 @@ typedef enum V_TYPE
     V_ERROR = -1,
     V_INT = 0,
     V_FLOAT,
-    V_COMPLEX
+    V_COMPLEX,
+    V_STRING
   }V_TYPE;
 /**
    Helper function to map between D_TYPE and V_TYPE
@@ -106,6 +107,20 @@ D_TYPE DT2str_s(std::string in);
    Helper function to format dset names with computation numbers attached
  */
 std::string format_dset_name(D_TYPE type,int comp_num);
+
+/**
+   Helper function to make v_types to strings
+ */
+std::string VT2str_s(V_TYPE);
+
+/**
+   Helper function to make string in to V_TYPE
+ */
+V_TYPE str2VT_s(const std::string& in);
+/**
+   Helper function to make string in to V_TYPE
+ */
+V_TYPE str2VT_s(const char  * const in);
 
 }
 

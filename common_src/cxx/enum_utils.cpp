@@ -1,4 +1,4 @@
-//Copyright 2009 Thomas A Caswell
+//Copyright 2009-2010 Thomas A Caswell
 //tcaswell@uchicago.edu
 //http://jfi.uchicago.edu/~tcaswell
 //
@@ -26,6 +26,8 @@
 #include <sstream>
 
 #include "enum_utils.h"
+using std::string;
+
 namespace utilities
 {
 
@@ -158,6 +160,54 @@ std::string format_dset_name(D_TYPE type,int comp_num)
 
 }
 
+
+
+
+/**
+   Helper function to make string in to V_TYPE
+*/
+V_TYPE str2VT_s(const std::string& type_str)
+{
+
+  if(type_str.compare("float") == 0)
+    return utilities::V_FLOAT;
+  else if(type_str.compare("int") == 0)
+    return utilities::V_INT;
+  else if(type_str.compare("string") == 0)
+    return utilities::V_STRING;
+  else
+    return utilities::V_ERROR;
+}
+
+/**
+   Helper function to make string in to V_TYPE
+*/
+V_TYPE str2VT_s(const char *const  in)
+{
+  string tmp(in);
+  return str2VT_s(tmp);
+}
+
+std::string VT2str_s(V_TYPE type)
+{
+  switch(type)
+  {
+  case V_INT:
+    return "int";
+  case V_FLOAT:
+    return "float";
+  case V_COMPLEX:
+    return "complex";
+  case V_STRING:
+    return "string";
+  case V_ERROR:
+  default:
+    return "type unknown";
+
+
+  }
+  
+}
 
 
 }
