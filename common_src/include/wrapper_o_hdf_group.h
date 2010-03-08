@@ -60,6 +60,13 @@ namespace utilities{
 class Wrapper_o_hdf_group{
 
 public:  
+  typedef enum GROUP_T
+    {
+      APPEND_GROUP=0,
+      NEW_GROUP,
+      FILL_GROUP
+    }GROUP_T;
+  
   
   /**
      set the size of the data chunks if compression is used.  Compression
@@ -71,7 +78,7 @@ public:
 		      std::set<D_TYPE>,
 		      int size,
 		      int comp_num,
-		      bool new_group);
+		      GROUP_T type);
   
 		      
   
@@ -146,11 +153,9 @@ private:
   int added_count_;
   
   /**
-     If this is a new group.  If it is, then make up new indexing
-     and create the group in the parent.  If false, then open
-     the group and respect the indexing of the particles.
-  */
-  bool new_group_;
+     Sets what sort of group to try to deal with
+   */  
+  GROUP_T type_;
   
   /**
      The data types to add to the group, must be set at construction time

@@ -60,6 +60,7 @@ using H5::PredType;
 using H5::CompType;
 using H5::DataSet;
 using H5::DSetCreatPropList;
+using H5::Exception;
 
 
 using utilities::D_TYPE;
@@ -72,15 +73,28 @@ Wrapper_o_hdf_group::Wrapper_o_hdf_group(CommonFG * parent, const std::string & 
 					 std::set<D_TYPE> d_add,
 					 int size,
 					 int comp_num,
-					 bool new_group
+					 GROUP_T type
 					 ):
-  parent_(parent),comp_number_(comp_num),size_(size),new_group_(new_group),added_count_(0),d_types_add_(d_add)
+  parent_(parent),comp_number_(comp_num),size_(size),added_count_(0),type_(type),d_types_add_(d_add)
 {
+
+  try
+  {
+    
+
   // make a new entry or open group entry in parent
-  if(new_group)
+  if(type==NEW_GROUP)
     group_ = new Group(parent_->createGroup(g_name));
   else
     group_ = new Group(parent_->openGroup(g_name));
+  }
+  catch(Exception &e)
+  {
+    cerr<<"trouble opening/making the group in wrapper_o_hdf_group"<<endl;
+    e.printError();
+    throw e;
+    
+  }
   
 
   
@@ -176,13 +190,14 @@ void Wrapper_o_hdf_group::store_particle(const particle * p_in)
 
   // set particle index
   
-  if(new_group_)
-    part_index = added_count_++;
-  else
+  if(type_ == APPEND_GROUP)
   {
     part_index = p_in->get_ind();
     added_count_++;
   }
+  else
+    part_index = added_count_++;
+
 
 
   // do sanity checks

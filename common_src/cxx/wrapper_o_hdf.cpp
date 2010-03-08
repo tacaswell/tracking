@@ -147,13 +147,31 @@ void Wrapper_o_hdf::open_group(int group_indx,int p_count)
   {
     if(group_open_)
       throw logic_error("wrapper_o_hdf:already have a group open");
+
+    Wrapper_o_hdf_group::GROUP_T g_type;
+    switch(file_type_)
+    {
+    case APPEND_FILE:
+      g_type = Wrapper_o_hdf_group::APPEND_GROUP;
+      break;
+    case NEW_FILE:
+    case NEW_FILE_OVR:
+      g_type = 	Wrapper_o_hdf_group::NEW_GROUP;
+      break;
+    case FILL_FILE:
+      g_type = Wrapper_o_hdf_group::FILL_GROUP;
+      break;
+    }
+    
+
     current_group_ = new Wrapper_o_hdf_group(file_,
 					     format_name(group_indx),
 					     d_types_add_,
 					     p_count,
 					     comp_number_,
-					     new_indexing_);
+					     g_type);
   }
+
   else
     throw logic_error("wrapper_o_hdf:wrapper not open");
       
