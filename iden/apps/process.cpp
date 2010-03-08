@@ -62,6 +62,7 @@ using std::cerr;
 using std::endl;
 using std::set;
 using std::string;
+using std::map;
 
 using std::logic_error;
 
@@ -79,6 +80,7 @@ using utilities::Attr_list_hdf;
 using utilities::Filter_basic;
 using utilities::Filter_trivial;
 using utilities::D_TYPE;
+using utilities::V_TYPE;
 
 using tracking::Master_box;
 using tracking::particle;
@@ -91,6 +93,7 @@ using H5::H5File;
 using H5::Group;
 using H5::Attribute;
 using H5::PredType;
+using H5::Exception;
 
 
 int main(int argc, char * const argv[])
@@ -121,7 +124,8 @@ int main(int argc, char * const argv[])
     case 'c':
       pram_file = string(optarg);
       found_c = true;
-	
+      break;
+      
     case '?':
     default:
       cout<<"-i input file name"<<endl;
@@ -160,12 +164,15 @@ int main(int argc, char * const argv[])
   
   if(!attr_list->contains_attr("number-of-planes"))
     throw logic_error("Can't find number of planes");
+
+  
   if(!attr_list->contains_attr("dims"))
     throw logic_error("Can't find dimensions");
-  
+
   frame_c = attr_list->get_value("number-of-planes",frame_c);
+  cout<<"planes"<<endl;
   dims = attr_list->get_value("dims",dims);
-  
+  cout<<"dims"<<endl;
   delete attr_list;
   attr_list = NULL;
   
@@ -187,25 +194,25 @@ int main(int argc, char * const argv[])
        iden_prams.contains_key("d_rad") &&
        iden_prams.contains_key("mask_rad")))
     throw logic_error("process:: parameter file does not contain enough parameters");
-  if(!iden_prams.get_val("threshold",thresh))
+  if(!iden_prams.get_value("threshold",thresh))
     throw logic_error("process :: failure to parse threshold value");
-  if(!iden_prams.get_val("p_rad",feature_rad))
+  if(!iden_prams.get_value("p_rad",feature_rad))
     throw logic_error("process :: failure to parse p_rad value");
-  if(!iden_prams.get_val("hwhm",hwhm))
+  if(!iden_prams.get_value("hwhm",hwhm))
     throw logic_error("process :: failure to parse hwhm value");
-  if(!iden_prams.get_val("d_rad",dilation_rad))
+  if(!iden_prams.get_value("d_rad",dilation_rad))
     throw logic_error("process :: failure to parse dilation radius");
-  if(!iden_prams.get_val("mask_rad",mask_rad))
+  if(!iden_prams.get_value("mask_rad",mask_rad))
     throw logic_error("process :: failure to parse mask radius");
   
   // read parameters from xml that have do to with logistics
   Read_config comp_prams(pram_file,"comp");
   if(!(comp_prams.contains_key("number")))
     throw logic_error("process: parameter file does not have enough parameters for the logistics");
-  if(!comp_prams.get_val("number",comp_num))
+  if(!comp_prams.get_value("number",comp_num))
     throw logic_error("process: failure to parse computation number");
   // if (comp_prams.contains_key("grp_name"))
-  //   if(!comp_prams.get_val("grp_name",grp_name))
+  //   if(!comp_prams.get_value("grp_name",grp_name))
   //     throw logic_error("process: failure to parse group name");
     
 
@@ -215,6 +222,7 @@ int main(int argc, char * const argv[])
   cout<<frame_c<<endl;
     
 
+  
   
     
 
@@ -254,16 +262,54 @@ int main(int argc, char * const argv[])
     
     
   hash_case hcase(box,dims,20,frame_c);
-  //    hcase.print();
-    
-  //Wrapper_o_hdf hdf_w("25-0_mid_0.h5",wh.get_data_types());
-  Wrapper_o_hdf hdf_w(proc_file,wp->get_data_types(),comp_num,Wrapper_o_hdf::FILL_FILE);
-    
+  hcase.print();
   bool error_flg = false;
-  
   try
   {
-    hcase.output_to_wrapper(hdf_w);
+    //Wrapper_o_hdf hdf_w("25-0_mid_0.h5",wh.get_data_types());
+    set<D_TYPE> d_types = wp->get_data_types();
+    
+    Wrapper_o_hdf hdf_w(proc_file,d_types,comp_num,Wrapper_o_hdf::FILL_FILE);
+    hdf_w.initialize_wrapper();
+    hcase.output_to_wrapper(hdf_w,false);
+    
+    int pram_sz = iden_prams.size();
+    
+    // deal with meta data
+    set<D_TYPE>::iterator end= d_types.end();
+    int tmpi;
+    float tmpf;
+    for(set<D_TYPE>::iterator it = d_types.begin();
+	it != end; ++it)
+    {
+      for(int j = 0; j<pram_sz; ++j)
+      {
+	V_TYPE type = iden_prams.get_type(j);
+	string tmp_key = iden_prams.get_key(j);
+	switch(type)
+	{
+	case utilities::V_INT:
+	  if(iden_prams.get_value(tmp_key,tmpi))
+	    hdf_w.add_meta_data(tmp_key,tmpi,*it);
+	  else
+	    cerr<<"failure to parse value for "<<tmp_key<<endl;
+	  break;
+	case utilities::V_FLOAT:
+	  if(iden_prams.get_value(tmp_key,tmpf))
+	    hdf_w.add_meta_data(tmp_key,tmpf,*it);
+	  else
+	    cerr<<"failure to parse value for "<<tmp_key<<endl;
+	  break;
+	default:
+	  cerr<<"not of type supported in meta data: "<<tmp_key<<','<<VT2str_s(type)<<endl;
+	}
+      }
+      
+    }
+    
+    
+
+    hdf_w.finalize_wrapper();
   }
   catch(const char * err)
   {
@@ -271,11 +317,20 @@ int main(int argc, char * const argv[])
     std::cerr<<err<<endl;
     error_flg = true;
   }
+  catch(Exception & e)
+  {
+    std::cerr<<"caught on error: ";
+    e.printError();
+    
+    error_flg = true;
+  }
+  
   catch(...)
   {
     std::cerr<<"unknown error type"<<endl;
     error_flg = true;
   }
+
   // clean up wrapper
   delete wp;
   wp = NULL;
@@ -284,5 +339,7 @@ int main(int argc, char * const argv[])
   if(error_flg)
     return -1;
   return 0;
+  
+  
 }
 

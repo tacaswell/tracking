@@ -18,6 +18,7 @@
 //see website for additional permissions under GNU GPL version 3 section 7
 #include<iostream>
 #include<cmath>
+#include <stdexcept>
 
 #include "hash_case.h"
 #include "hash_shelf.h"
@@ -53,6 +54,8 @@ using std::ceil;
 using std::list;
 using std::map;
 
+using std::exception;
+
 
 
 // hash output chain
@@ -82,7 +85,15 @@ void Hash_shelf::output_to_wrapper(Wrapper_out & wrapper) const
   cout<<particle_count_<<"particles"<<endl;
   
   wrapper.open_group(plane_number_,particle_count_);
-  wrapper.add_meta_data("z-position",z_offset_,false);
+  // try
+  // {
+  //   wrapper.add_meta_data("z-position",z_offset_,false);
+  // }
+  // catch(exception & e)
+  // {
+  //   cout<<e.what()<<endl;
+  // }
+  
   for(vector<hash_box*>::const_iterator current_box = hash_.begin();
       current_box != hash_.end();++current_box)
   {
