@@ -63,9 +63,11 @@ using utilities::Pair;
 
 
 
-void Iden::fill_wrapper(Wrapper_i_plu & wrapper, Pair dims,int frames,int start)
+Wrapper_i_plu * Iden::fill_wrapper(Pair dims,int frames,int start)
 {
-
+  
+  Wrapper_i_plu * wrapper = NULL;
+  
 
   // load multi page
   
@@ -99,7 +101,7 @@ void Iden::fill_wrapper(Wrapper_i_plu & wrapper, Pair dims,int frames,int start)
   
   
   // replace the wrapper with an entirely new one
-  wrapper = Wrapper_i_plu(frames,dims);
+  wrapper = new Wrapper_i_plu(frames,dims);
 
   fipImage image;
   
@@ -182,7 +184,7 @@ void Iden::fill_wrapper(Wrapper_i_plu & wrapper, Pair dims,int frames,int start)
     //     cout<<counter<<endl;
     //     cout<<"---------------"<<endl;
     
-    wrapper.add_frame_data(particledata,j-start,counter);
+    wrapper->add_frame_data(particledata,j-start,counter);
     //    cout<<j<<endl;
   }
   
@@ -191,6 +193,8 @@ void Iden::fill_wrapper(Wrapper_i_plu & wrapper, Pair dims,int frames,int start)
   
   FreeImage_DeInitialise();
 
+  return wrapper;
+  
 
 }
 

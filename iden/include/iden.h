@@ -74,7 +74,7 @@ public:
   void set_fname(const std::string &);
   void set_params(const Params& param_in);
   
-  void fill_wrapper(utilities::Wrapper_i_plu &,utilities::Pair,int frames=0,int start=0);
+  utilities::Wrapper_i_plu * fill_wrapper(utilities::Pair,int frames=0,int start=0);
   
 private:
   /**
