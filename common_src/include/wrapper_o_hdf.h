@@ -61,7 +61,8 @@ public:
     {
       APPEND_FILE=0,
       NEW_FILE,
-      NEW_FILE_OVR
+      NEW_FILE_OVR,
+      FILL_FILE
     }FILE_T;
   
     

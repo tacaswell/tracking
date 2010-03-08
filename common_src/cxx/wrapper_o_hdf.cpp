@@ -110,7 +110,7 @@ void Wrapper_o_hdf::initialize_wrapper()
     file_ = new H5File(file_name_,H5F_ACC_TRUNC);
   else if(file_type_ == NEW_FILE)
     file_ = new H5File(file_name_,H5F_ACC_EXCL);
-  else if(file_type_ == APPEND_FILE)
+  else if(file_type_ == APPEND_FILE || file_type_ == FILL_FILE)
     file_ = new H5File(file_name_,H5F_ACC_RDWR);
   }
   catch(...)
