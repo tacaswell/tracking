@@ -27,6 +27,7 @@
 #define READ_XML
 #include <vector>
 #include <string>
+#include "enum_utils.h"
 namespace utilities{
 
   
@@ -59,19 +60,34 @@ public:
 
      @param attr_name attribute name
   */
-  bool get_val(const std::string & attr_name,float & val)const;
-  bool get_val(const std::string & attr_name,int & val)const;
-  bool get_val(const std::string & attr_name,std::string & val)const;
+  bool get_value(const std::string & attr_name,float & val)const;
+  bool get_value(const std::string & attr_name,int & val)const;
+  bool get_value(const std::string & attr_name,std::string & val)const;
   
 
   bool contains_key(const std::string& key)const;
   int get_key_index(const std::string& key)const;
   
   
+  
   /**
      prints all information stored.
    */
   void print()const;
+
+  int size() const
+  {
+    return prams_.size();
+  }
+  
+  std::string get_key(int j) const
+  {
+    return prams_.at(j).key;
+  }
+  utilities::V_TYPE get_type(int j)const
+  {
+    return str2VT_s(prams_.at(j).type);
+  }
   
 
 private:

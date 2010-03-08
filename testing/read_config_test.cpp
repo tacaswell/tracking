@@ -52,17 +52,17 @@ int main ()
   string s;
   
   
-  if(rc.get_val("a",i))
+  if(rc.get_value("a",i))
     cout<<"a: "<<i<<endl;
   else
     cout<<"not found"<<endl;
   
-  if(rc.get_val("b",f))
+  if(rc.get_value("b",f))
     cout<<"b: "<<f<<endl;
   else
     cout<<"not found"<<endl;
   
-  if(rc.get_val("c",s))
+  if(rc.get_value("c",s))
     cout<<"c: "<<s<<endl;
   else
     cout<<"not found"<<endl;

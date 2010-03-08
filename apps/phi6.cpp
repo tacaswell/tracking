@@ -115,12 +115,12 @@ int main(int argc, char * const argv[])
   	names.push_back("neighbor_range");
 	names.push_back("grp_name");
   	Read_config rc(string(optarg),names,"phi6");
-  	if(!rc.get_val("neighbor_range",neighbor_range))
+  	if(!rc.get_value("neighbor_range",neighbor_range))
   	{
   	  cerr<<"neighbor_range not found"<<endl;
   	  return -1;
   	}
-  	if(!rc.get_val("grp_name",grp_name))
+  	if(!rc.get_value("grp_name",grp_name))
   	{
   	  cerr<<"grp_name not found"<<endl;
   	  return -1;

@@ -108,17 +108,17 @@ int main(int argc, char * const argv[])
 	names.push_back("nbins");
 	names.push_back("grp_name");
 	Read_config rc(string(optarg),names,"gofr3D");
-	if(!rc.get_val("max_range",max_range))
+	if(!rc.get_value("max_range",max_range))
 	{
 	  cerr<<"max_range not found"<<endl;
 	  return -1;
 	}
-	if(!rc.get_val("nbins",nbins))
+	if(!rc.get_value("nbins",nbins))
 	{
 	  cerr<<"nbins not found"<<endl;
 	  return -1;
 	}
-	if(!rc.get_val("grp_name",grp_name))
+	if(!rc.get_value("grp_name",grp_name))
 	{
 	  cerr<<"grp_name not found"<<endl;
 	  return -1;

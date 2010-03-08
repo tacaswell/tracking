@@ -127,21 +127,21 @@ int main(int argc, char * argv[])
 	  names.push_back("search_range");
 	  names.push_back("min_trk_len");
 	  Read_config rc(string(optarg),names,"link3D");
-	  if(!rc.get_val("box_side_len",pixel_per_box))
+	  if(!rc.get_value("box_side_len",pixel_per_box))
 	  {
 	    cerr<<"box_side_len not found"<<endl;
 	    return -1;
 	  }
-	  if(!rc.get_val("search_range",search_range))
+	  if(!rc.get_value("search_range",search_range))
 	  {
 	    cerr<<"search_range not found"<<endl;
 	    return -1;
 	  }
-	  if(!rc.get_val("min_trk_len",min_track_length))
+	  if(!rc.get_value("min_trk_len",min_track_length))
 	  {
 	    min_track_length = 3;
 	  }
-	  if(!rc.get_val("comp_number",comp_number))
+	  if(!rc.get_value("comp_number",comp_number))
 	  {
 	    min_track_length = 3;
 	  }

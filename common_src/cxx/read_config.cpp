@@ -26,6 +26,7 @@
 // this file is closely related to http://www.yolinux.com/TUTORIALS/XML-Xerces-C.html
 
 #include "read_config.h"
+#include "enum_utils.h"
 
 #include <xercesc/dom/DOM.hpp>
 #include <xercesc/dom/DOMDocument.hpp>
@@ -187,7 +188,6 @@ Read_config::Read_config(std::string fname, string elm_str)
 		char * value = XMLString::transcode(pram_elm->getAttribute(value_str));
 		
 
-
 		prams_.push_back(Config_pram(key,type,value));
 
 		XMLString::release(&key);
@@ -269,78 +269,36 @@ bool Read_config::contains_key(const string& key) const
 }
 
 
-bool Read_config::get_val(const string& key,float & val)const
+bool Read_config::get_value(const string& key,float & val)const
 {
   int j = get_key_index(key);
-  if(prams_[j].type.compare("float") == 0)
+  if(str2VT_s(prams_[j].type) == utilities::V_FLOAT)
     return from_string<float> (val,prams_[j].value,std::dec);
   else
-    throw logic_error("Read_congig::get_val, expect pram of type: float, found type: " + prams_[j].type);
+    throw logic_error("Read_congig::get_value, expect pram of type: float, found type: " + prams_[j].type);
 }
 
 
-bool Read_config::get_val(const string& key,int & val)const
+bool Read_config::get_value(const string& key,int & val)const
 {
   int j = get_key_index(key);
-  if(prams_[j].type.compare("int") == 0)
+  if(str2VT_s(prams_[j].type) == utilities::V_INT)
     return from_string<int> (val,prams_[j].value,std::dec);
   else
-    throw logic_error("Read_congig::get_val, expect pram of type: int, found type: " + prams_[j].type);
+    throw logic_error("Read_congig::get_value, expect pram of type: int, found type: " + prams_[j].type);
 }
 
 
 
-bool Read_config::get_val(const string& key,string & val)const
+bool Read_config::get_value(const string& key,string & val)const
 {
   int j = get_key_index(key);
-  if(prams_[j].type.compare("string") == 0)
+  if(str2VT_s(prams_[j].type) == utilities::V_STRING)
   {
     val = prams_[j].value;
     return true;
   }
   else
-    throw logic_error("Read_congig::get_val, expect pram of type: string, found type: " + prams_[j].type);
+    throw logic_error("Read_congig::get_value, expect pram of type: string, found type: " + prams_[j].type);
 }
 
-// bool Read_config::get_val(string attr_name,int & val)const
-// {
-//   int max = attr_names_.size();
-  
-
-//   for(int j = 0;j<max;++j)
-//   {
-//     if(attr_names_[j].compare(attr_name) == 0)
-//     {
-      
-//       if(attr_found_.at(j))
-// 	return from_string<int> (val,attr_values_.at(j),std::dec);
-//       else
-// 	return false;
-//     }
-    
-//   }
-//   return false;
-// }
-
-// bool Read_config::get_val(string attr_name,string & val)const
-// {
-//   int max = attr_names_.size();
-  
-
-//   for(int j = 0;j<max;++j)
-//   {
-//     if(attr_names_[j].compare(attr_name) == 0)
-//     {
-      
-//       if(attr_found_.at(j))
-//       {
-// 	val = attr_values_.at(j);
-// 	return true;
-//       }
-//       else
-// 	return false;
-//     }
-    
-//   }
-//   return false;
-// }
