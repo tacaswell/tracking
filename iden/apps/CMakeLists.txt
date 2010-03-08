@@ -52,12 +52,15 @@ add_executable(Iden process.cpp
   ${HDF_SRC} 
   ${COMMON_WRAPPER_SRC}
   ${COMMON_HASH_SRC}
+  ${CONFIG_SRC}
   )
 set_target_properties(Iden PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_COUNT=2")
-message(STATUS "Found IPP: ${IPP_LIBRARIES}")
-target_link_libraries(Iden ${IPP_LIBRARIES} )
-message(STATUS "Found HDF: ${HDF5_LIBRARIES}")
-target_link_libraries(Iden ${HDF5_LIBRARIES} )
-message(STATUS "Found FreeImage: ${FreeImage_LIBRARIES}")
-target_link_libraries(Iden ${FreeImage_LIBRARIES})
+
+target_link_libraries(Iden 
+  ${IPP_LIBRARIES} 
+  ${HDF5_LIBRARIES}
+  ${FreeImage_LIBRARIES}
+  ${XERCESC_LIBRARY}
+  )
+
 

@@ -38,10 +38,12 @@ SET(UTIL_SRC
   ${COMMON_SRC_PATH}/cell.cpp
   ${COMMON_SRC_PATH}/coarse_grain_array.cpp
   ${COMMON_SRC_PATH}/counted_vector.cpp
+)
+
+SET(UTIL_SRC_GNU
   ${COMMON_SRC_PATH}/histogram2d.cpp
   ${COMMON_SRC_PATH}/histogram.cpp
 )
-
 SET(CORR_SRC
   ${COMMON_SRC_PATH}/corr_gofr.cpp
   ${COMMON_SRC_PATH}/corr_goftheta.cpp
