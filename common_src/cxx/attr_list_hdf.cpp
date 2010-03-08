@@ -146,8 +146,15 @@ void Attr_list_hdf::set_value(const std::string & key,  const float &   value_in
       float tmp = 0;
       get_value(key,tmp);
       if(tmp != value_in)
+      {
+	cerr<<"setting attribute: "<<key<<endl;
+	cerr<<"the existing value: "<<tmp<<endl;
+	cerr<<"the input value: "<<value_in<<endl;
+	
 	throw invalid_argument("attribute name already exists and values don't match: float");
+      }
     }
+    
   }
   else
   {
