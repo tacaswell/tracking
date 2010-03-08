@@ -85,6 +85,7 @@ SET(HDF5_USE_STATIC_LIBRARIES FALSE)
 find_package(HDF5 REQUIRED CXX)
 include_directories(${HDF_INCLUDE_DIR})
 MESSAGE (STATUS "Found HDF5: ${HDF5_LIBRARIES}")
+MESSAGE (STATUS "Found HDF5: ${HDF5_INCLUDE_DIRS}")
 
 set(ENV{XERCESC_ROOT} "/home/tcaswell/local_installs")
 find_package(XercesC REQUIRED)
