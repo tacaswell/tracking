@@ -93,7 +93,7 @@ def do_link3D(key,conn):
 
 def do_Iden(key,conn):
     # see if the file has already been processed
-    prog_path = '/home/tcaswell/misc_builds/iden_rel/iden/apps/'
+    prog_path = '/home/tcaswell/misc_builds/iden_dbg/iden/apps/'
     prog_name = "Iden"
     res = _check_comps_table(key,"Iden",conn)
     if len(res) >0:
@@ -107,6 +107,18 @@ def do_Iden(key,conn):
         print "can not find parameter file, exiting"
         return
 
+    comp_num = conn.execute("select max(comp_key) from comps;").fetchone()[0] + 1
+
+
+    prams = xml_data()
+    prams.add_stanza("comp")
+    prams.add_pram("number","int",comp_num)
+    prams.merge_File(fpram,"iden")
+    
+    fxml = prams.write_to_tmp()
+
+    prams.disp()
+    prams.write_to_disk('/home/tcaswell/misc_builds/iden_dbg/iden/apps/pram2.xml')
     # ask for confirmation
     print "will processess"
     print fin
@@ -114,10 +126,12 @@ def do_Iden(key,conn):
     print fpram
     print "will write to"
     print fout
-    resp = raw_input("is this ok?: ")
-    if resp[0]=='n':
-        print "you have chosen not to continue"
-        return
+    # resp = raw_input("is this ok?: ")
+    # if resp[0]=='n':
+    #     print "you have chosen not to continue"
+    #     return
+
+    
 
     # format name
     # funny string stuff to match parse1 calls
@@ -129,8 +143,7 @@ def do_Iden(key,conn):
 
     parse1.make_h5(base_name,data_path,proc_path)
 
-
-    rc = subprocess.call(["time",prog_path + prog_name,'-i',fin,'-o',fout,'-c',fpram ])
+    rc = subprocess.call(["time",prog_path + prog_name,'-i',fin,'-o',fout,'-c',fxml ])
     print rc
 
     # if it works, then returns zero
