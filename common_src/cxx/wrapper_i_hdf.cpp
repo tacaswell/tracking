@@ -165,10 +165,9 @@ void Wrapper_i_hdf::priv_init(int fr_count)
 	data_c_.push_back(vector<complex<float>*>(frame_count_));
 	d_mapc_.set_lookup(cur,c_count++);
 	break;
+      case V_STRING:
       case V_ERROR:
-	throw "wrapper_i_hdf: I have no idea why the type was error";
-	break;
-	
+	throw logic_error("wrapper_i_hdf: The data type should not have been " + VT2str_s(v_type(cur)));
       }
     }
 
@@ -233,10 +232,10 @@ void Wrapper_i_hdf::priv_init(int fr_count)
 	  throw "not implemented yet";
 	  
 	  break;
+	case V_STRING:
 	case V_ERROR:
-	  throw "wrapper_i_hdf: I have no idea why the type was error";
-	  break;
-	}
+	  throw logic_error("wrapper_i_hdf: The data type should not have been " + VT2str_s(v_type(cur_type)));
+      	}
 	// clean up hdf stuff
 
 	delete dset;
