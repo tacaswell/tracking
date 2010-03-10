@@ -174,6 +174,8 @@ Wrapper_o_hdf_group::Wrapper_o_hdf_group(CommonFG * parent, const std::string & 
       dsets_.push_back( new DataSet(group_->createDataSet(format_dset_name(*it,comp_number_),ctype,space,plist_c)));
       complex_map_.set_lookup(*it,c_c++);
       break;
+    case V_STRING:
+      throw "type should not be string";
     case V_ERROR:
       throw "type not registered, wrapper_o_hdf";
     }
@@ -243,6 +245,8 @@ void Wrapper_o_hdf_group::store_particle(const particle * p_in)
       tmp_val.im = tmpc.imag();
       complex_data_.at(complex_map_(type))[part_index] =tmp_val;
       break;
+    case V_STRING:
+      throw "type should not be string";
     case V_ERROR:
       throw "you have hit a type that is not defined in enum_utils::v_type";
       break;
