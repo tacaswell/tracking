@@ -29,9 +29,10 @@ def _parse_attr(h5obj,dom_obj):
         _parse_des(h5obj,dom_obj)
         _parse_region(h5obj)
     elif dom_obj.getAttribute("type") =="int":
-        h5obj.attrs[dom_obj.getAttribute("id")] = int(dom_obj.getAttribute("value"))
-    elif  dom_obj.getAttribute("type") =="float":
-        h5obj.attrs[dom_obj.getAttribute("id")] = float(dom_obj.getAttribute("value"))
+        h5obj.attrs.create(dom_obj.getAttribute("id"), int(dom_obj.getAttribute("value")),None,'int32')
+    elif dom_obj.getAttribute("type") =="float":
+        h5obj.attrs.create(dom_obj.getAttribute("id"), float(dom_obj.getAttribute("value")),None,'float32')
+
     else: 
         h5obj.attrs[dom_obj.getAttribute("id")] =  dom_obj.getAttribute("value").encode('ascii')
 
@@ -87,9 +88,9 @@ def _parse_region(h5obj):
     r_str =  h5obj.attrs['Region'].strip().split(' ')
 
     dim = [int(r_str[0].strip(',')) ,int(r_str[2].strip(',')) ]
-    h5obj.attrs['dim_count'] = 2
-    h5obj.attrs['dim_unit'] = 'px'
-    h5obj.attrs['dims'] = dim
+    h5obj.attrs.create('dim_count', 2,None,'int32')
+    h5obj.attrs.create('dim_unit','px')
+    h5obj.attrs.create('dims', dim,None,'float32')
     
 
 
@@ -146,7 +147,6 @@ def make_h5(fname_in,d_path,p_path):
             if p.getAttribute("id") == "number-of-planes":
                 frame_count = int(p.getAttribute("value"))
     g.attrs["dtime"] = 0.0
-
 
 
     for frame in range(1,frame_count):
