@@ -31,7 +31,7 @@ from datetime import date
 
 def _check_comps_table(key,func,conn):
     # figure out name of file to write to
-    res = conn.execute("select fout from comps where dset_key=? and function=?;",(key,func)).fetchall()
+    res = conn.execute("select fout,comp_key from comps where dset_key=? and function=?;",(key,func)).fetchall()
     return res
 
 
@@ -193,6 +193,54 @@ def do_gofr3D(key,conn):
                      (comp_num,key,date.today().isoformat(),fin,fout,prog_name))
         conn.commit()
 
+def do_gofr(key,conn):
+
+    prog_path = '/home/tcaswell/misc_builds/basic_dbg/apps/'
+    prog_name = "gofr"
+
+    # see if the file has already been processed
+    res = _check_comps_table(key,"Iden",conn)
+    if len(res) ==0:
+        print "no entry"
+        return
+    if len(res) >1:
+        print "more than one entry, can't cope, quiting"
+        return
+    (fin,read_comp) = res[0]
+    
+
+    fout = os.path.dirname(fin) + '/gofr.h5'
+    _make_sure_h5_exists(fout)
+    
+    comp_num = conn.execute("select max(comp_key) from comps;").fetchone()[0] + 1
+
+    config = xml_data()
+    config.add_stanza("gofr")
+    config.add_pram("max_range","float","100")
+    config.add_pram("nbins","int","2000")
+    config.add_pram("grp_name","string",prog_name + "_%(#)07d"%{"#":comp_num})
+    config.add_stanza("comps")
+    config.add_pram("read_comp","int",str(read_comp))
+    config.add_pram("write_comp","int",str(comp_num))
+    config.disp()
+    cfile = config.write_to_tmp()
+    print fin
+    print fout
+
+    
+    rc = subprocess.call(["time",prog_path + prog_name,'-i',fin,'-o',fout, '-c',cfile ])
+    print rc
+
+    # if it works, then returns zero
+    if rc == 0:
+        print "entering into database"
+        conn.execute("insert into comps (comp_key,dset_key,date,fin,fout,function)"
+                     +"values (?,?,?,?,?,?);",
+                     (comp_num,key,date.today().isoformat(),fin,fout,prog_name))
+        conn.commit()
+    else:
+        print "ERROR!!!"
+    
 
 def do_tracking(key,conn):
     prog_path = '/home/tcaswell/misc_builds/basic_git/apps/'
@@ -264,7 +312,7 @@ def do_phi6(key,conn):
     if len(res) >1:
         print "more than one entry, can't cope, quiting"
         return
-    fname = res[0][0]
+    (fname,read_comp) = res[0]
     
 
     srange = raw_input("enter search range: ")

@@ -26,40 +26,46 @@
 #include "filter.h"
 #include "wrapper_i.h"
 #include "enum_utils.h"
+#include "attr_list_hdf.h"
 #include "H5Cpp.h"
 
 using namespace utilities;
 
 
 using H5::H5File;
-using H5::Attribute;
-using H5::PredType;
 using H5::Group;
 
+using utilities::Attr_list_hdf;
+
+using std::cerr;
+using std::endl;
+
 Filter_basic::Filter_basic(float ecut,float rg_cut,float shift_cut):
-  e_cut_(e_cut_),rg_cut_(rg_cut),shift_cut_(shift_cut)
+  e_cut_(e_cut_),rg_cut_(rg_cut),shift_cut_(shift_cut),wrap_(NULL)
 {
 }
 
 
-Filter_basic::Filter_basic(std::string  fname)
+Filter_basic::Filter_basic(const std::string & fname,int comp_num):
+  e_cut_(1),rg_cut_(30),shift_cut_(5),wrap_(NULL)
 {
-  H5File* file = new H5File( fname, H5F_ACC_RDONLY );
-  Group * group = new Group(file->openGroup("/"));
-  
-  Attribute at;
-           
-  at = group->openAttribute("e_cut");
-  at.read(PredType::NATIVE_FLOAT,&e_cut_);
-  at = group->openAttribute("rg_cut");
-  at.read(PredType::NATIVE_FLOAT,&rg_cut_);
-  at = group->openAttribute("shift_cut");
-  at.read(PredType::NATIVE_FLOAT,&shift_cut_);
+  H5File file = H5File( fname, H5F_ACC_RDONLY );
+  Group  group = file.openGroup("/parameters/" + format_dset_name(utilities::D_XPOS,comp_num));
   
   
-  delete group;
-  delete file;
-  
+  Attr_list_hdf attr_list(&group);
+  if(attr_list.contains_attr("e_cut"))
+    attr_list.get_value("e_cut",e_cut_);
+  else
+    cerr<<"does not contain c_cut parameter, using default: e_cut = "<<e_cut_<<endl;
+  if(attr_list.contains_attr("rg_cut"))
+    attr_list.get_value("rg_cut",rg_cut_);
+  else
+    cerr<<"does not contain c_cut parameter, using default: rg_cut = "<<rg_cut_<<endl;
+  if(attr_list.contains_attr("shift_cut"))
+    attr_list.get_value("shift_cut",shift_cut_);
+  else
+    cerr<<"does not contain c_cut parameter, using default: shift_cut = "<<shift_cut_<<endl;
 }
 
 

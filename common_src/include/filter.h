@@ -70,12 +70,11 @@ class Filter_basic:public Filter
 {
 public:
   bool operator()(int,int);
-  Filter_basic(std::string);
+  Filter_basic(const std::string&,int);
   Filter_basic(float ecut,float rg_cut,float shift_cut);
   void set_wrapper(const Wrapper_in * w_i )
   {
     wrap_ = w_i;
-    
   }
   
   ~Filter_basic()

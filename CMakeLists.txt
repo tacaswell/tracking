@@ -5,12 +5,19 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
 set(COMMON_SRC_PATH ${PROJECT_SOURCE_DIR}/common_src/cxx)
 
+
+SET(CONFIG_SRC
+  ${COMMON_SRC_PATH}/read_config.cpp
+  ${COMMON_SRC_PATH}/enum_utils.cpp
+  )
+
+
 SET(COMMON_SRC
   ${COMMON_SRC_PATH}/triple.cpp
   ${COMMON_SRC_PATH}/pair.cpp
   ${COMMON_SRC_PATH}/particle_base.cpp
-  ${COMMON_SRC_PATH}/enum_utils.cpp
   ${COMMON_SRC_PATH}/master_box_t.cpp
+  ${CONFIG_SRC}
   )
 
 SET(COMMON_HASH_SRC
@@ -73,11 +80,6 @@ SET(HDF_SRC
   ${COMMON_SRC_PATH}/attr_list_hdf.cpp
   ${COMMON_SRC_PATH}/filter_basic.cpp
   ${COMMON_WRAPPER_SRC}
-  )
-
-SET(CONFIG_SRC
-  ${COMMON_SRC_PATH}/read_config.cpp
-  ${COMMON_SRC_PATH}/enum_utils.cpp
   )
 
 

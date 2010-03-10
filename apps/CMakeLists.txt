@@ -8,7 +8,7 @@ include_directories(${TRACKING_SOURCE_DIR}/external_src/gnu_wrapper)
 
 #message(status "common source is ${COMMON_SRC}")
 
-add_executable(gofr_hdf gofr_hdf.cpp 
+add_executable(gofr gofr_hdf.cpp 
   ${COMMON_SRC} 
   ${UTIL_SRC} 
   ${HDF_SRC} 
@@ -18,8 +18,11 @@ add_executable(gofr_hdf gofr_hdf.cpp
   ${COMMON_WRAPPER_SRC} 
   )
 #message(STATUS "Found HDF: ${HDF5_LIBRARIES}")
-target_link_libraries(gofr_hdf ${HDF5_LIBRARIES} )
-set_target_properties(gofr_hdf PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_COUNT=2")
+target_link_libraries(gofr 
+  ${HDF5_LIBRARIES} 
+  ${XERCESC_LIBRARY} 
+  )
+set_target_properties(gofr PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_COUNT=2")
 
 
 
