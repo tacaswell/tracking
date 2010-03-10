@@ -52,8 +52,28 @@ class xml_data:
 
     
     def disp(self):
+        """Pretty prints the xml"""
         print self.doc.toprettyxml()
 
+    def merge_File(self,fname,stanza):
+        """Merges the given stanza into from fname into the current object"""
+        tmp_doc = xml.dom.minidom.parse(fname)
+        tmp_stanza = tmp_doc.getElementsByTagName(stanza).item(0)
+        cur_stanza = self.stanza
+        
+    
+        if self.doc.getElementsByTagName(stanza).length == 0:
+            self.add_stanza(stanza)
+        else:
+            self.stanza = self.doc.getElementsByTagName(stanza).item(0)
+            
+        prams = tmp_stanza.getElementsByTagName("pram")
+
+        for p in prams:
+            self.add_pram(p.getAttribute('key'),p.getAttribute('type'),p.getAttribute('value'))
+            
+        
+        self.stanza = cur_stanza
     def __del__(self):
         if self.fname:
             if os.path.isfile(self.fname):
@@ -61,20 +81,52 @@ class xml_data:
         
 
 def _test_fun():
+    '''
+    <?xml version="1.0" ?>
+<root>
+        <iden>
+                <pram key="a" type="int" value="1"/>
+                <pram key="b" type="float" value="3.145"/>
+                <pram key="c" type="string" value="gahh"/>
+        </iden>
+        <test>
+                <pram key="d" type="int" value="2"/>
+                <pram key="e" type="int" value="3"/>
+        </test>
+</root>
+
+<?xml version="1.0" ?>
+<root>
+        <iden>
+                <pram key="test" type="int" value="5"/>
+                <pram key="a" type="int" value="1"/>
+                <pram key="b" type="float" value="3.145"/>
+                <pram key="c" type="string" value="gahh"/>
+                <pram key="f" type="int" value="4"/>
+        </iden>
+</root>
+'''
     test = xml_data()
     test.add_stanza("iden")
     test.add_pram('a','int',1)
     test.add_pram('b','float',3.145)
     test.add_pram('c','string','gahh')
-    test.disp()
+
     test.add_stanza("test")
     test.add_pram('d','int',2)
     test.add_pram('e','int',3)
     test.disp()
     test.add_pram('f','int',4,"iden")
     test.add_pram('g','int',5,"test")
-    test.disp()
 
+    test.write_to_disk('test.xml')
+
+    test2 = xml_data()
+    test2.add_stanza("iden")
+    test2.add_pram('test','int',5)
+    test2.merge_File('test.xml','iden')
+
+    test2.disp()
 
 
 if __name__ == "__main__":
