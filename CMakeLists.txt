@@ -77,6 +77,7 @@ SET(HDF_SRC
 
 SET(CONFIG_SRC
   ${COMMON_SRC_PATH}/read_config.cpp
+  ${COMMON_SRC_PATH}/enum_utils.cpp
   )
 
 

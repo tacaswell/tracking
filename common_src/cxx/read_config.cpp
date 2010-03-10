@@ -273,7 +273,12 @@ bool Read_config::get_value(const string& key,float & val)const
 {
   int j = get_key_index(key);
   if(str2VT_s(prams_[j].type) == utilities::V_FLOAT)
-    return from_string<float> (val,prams_[j].value,std::dec);
+  {
+    if( from_string<float> (val,prams_[j].value,std::dec))
+      return true;
+    else
+      throw logic_error("Read_config:: failure to parse " + key);
+  }
   else
     throw logic_error("Read_congig::get_value, expect pram of type: float, found type: " + prams_[j].type);
 }
@@ -283,7 +288,10 @@ bool Read_config::get_value(const string& key,int & val)const
 {
   int j = get_key_index(key);
   if(str2VT_s(prams_[j].type) == utilities::V_INT)
-    return from_string<int> (val,prams_[j].value,std::dec);
+    if(from_string<int> (val,prams_[j].value,std::dec))
+      return true;
+    else 
+      throw logic_error("Read_config:: failure to parse " + key);
   else
     throw logic_error("Read_congig::get_value, expect pram of type: int, found type: " + prams_[j].type);
 }

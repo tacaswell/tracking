@@ -53,19 +53,44 @@ public:
   ~Read_config();
 
   /**
-     looks up the value of the given attribute.  Returns true if the
-     attribute is found and false if not found.  The value is returned
-     by reference in val.  The attribute must have been given in the constructor
-     to be found.
+     looks up the value of the given attribute.  The value is
+     returned by reference.  The function either returns true
+     or throws a logic_error.  This isn't all that clever, but
+     is the clashing of two styles of error checking.  At some point
+     this should be made either void, or return the value.
 
      @param attr_name attribute name
   */
   bool get_value(const std::string & attr_name,float & val)const;
+    /**
+     looks up the value of the given attribute.  The value is
+     returned by reference.  The function either returns true
+     or throws a logic_error.  This isn't all that clever, but
+     is the clashing of two styles of error checking.  At some point
+     this should be made either void, or return the value.
+
+     @param attr_name attribute name
+  */
   bool get_value(const std::string & attr_name,int & val)const;
+    /**
+     looks up the value of the given attribute.  The value is
+     returned by reference.  The function either returns true
+     or throws a logic_error.  This isn't all that clever, but
+     is the clashing of two styles of error checking.  At some point
+     this should be made either void, or return the value.
+
+     @param attr_name attribute name
+  */
   bool get_value(const std::string & attr_name,std::string & val)const;
   
 
+  /**
+     Returns true if the stanza contains a pram with the given key
+   */
   bool contains_key(const std::string& key)const;
+  /**
+     Returns the index of the given key in the internal structure
+   */
   int get_key_index(const std::string& key)const;
   
   
@@ -75,15 +100,24 @@ public:
    */
   void print()const;
 
+  /**
+     Returns the number of parsed prams
+   */
   int size() const
   {
     return prams_.size();
   }
   
+  /**
+     Returns the key at j in the internal structure
+   */
   std::string get_key(int j) const
   {
     return prams_.at(j).key;
   }
+  /**
+     Returns the type at j in the internal structure
+   */
   utilities::V_TYPE get_type(int j)const
   {
     return str2VT_s(prams_.at(j).type);
