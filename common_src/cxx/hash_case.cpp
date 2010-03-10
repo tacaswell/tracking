@@ -69,7 +69,7 @@ void hash_case::print() const{
 
 
 hash_case::hash_case(Master_box & mb,const utilities::Tuple & dims, 
-		     unsigned int ppb, int frames):inited(false){
+		     float ppb, int frames):inited(false){
   init(mb,dims,ppb,frames);
 
 }
@@ -78,7 +78,7 @@ hash_case::hash_case(Master_box & mb,const utilities::Tuple & dims,
 
 
 void hash_case::init(Master_box & mb,const utilities::Tuple & dims, 
-		     unsigned int ppb, int frames){
+		     float ppb, int frames){
 
   if(inited){
     std::cout<<"can't re init"<<std::endl;
@@ -158,7 +158,7 @@ hash_case::~hash_case(){
   std::cout<<"hc dead"<<std::endl;
 }
 
-void hash_case::rehash(unsigned int ppb){
+void hash_case::rehash(float ppb){
   for(vector<Hash_shelf*>::iterator it = h_case_.begin();
       it<h_case_.end(); ++it)
     (*it)->rehash(ppb);

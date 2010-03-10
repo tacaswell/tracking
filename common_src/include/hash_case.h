@@ -89,7 +89,7 @@ public:
 
   */
   hash_case(Master_box & mb,const utilities::Tuple & dims, 
-	    unsigned int ppb, int frames);
+	    float ppb, int frames);
 
   
   //  hash_case();
@@ -110,7 +110,7 @@ public:
      @param ppb
      new value for pixels per box
   */
-  void rehash(unsigned int ppb);
+  void rehash(float ppb);
 
   
 
@@ -279,7 +279,7 @@ protected:
   
 
   void  init(Master_box & mb,const utilities::Tuple & dims, 
-	     unsigned int ppb, int frames);
+	     float ppb, int frames);
   
 
 };
