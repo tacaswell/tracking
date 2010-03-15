@@ -1,4 +1,4 @@
-//Copyright 2009 Thomas A Caswell
+//Copyright 2009-2010 Thomas A Caswell
 //tcaswell@uchicago.edu
 //http://jfi.uchicago.edu/~tcaswell
 //
@@ -25,11 +25,15 @@
 
 #include "generic_wrapper_hdf.h"
 #include "H5Cpp.h"
+#include "attr_list_hdf.h"
+
 
 #include <iostream>
+#include <stdexcept>
 
 using utilities::Generic_wrapper_hdf;
 
+using std::logic_error;
 
 using namespace H5;
 using std::string;
@@ -38,6 +42,12 @@ using std::string;
 Generic_wrapper_hdf::Generic_wrapper_hdf(std::string fname, bool add_to_file):
   file_name_(fname),add_to_file_(add_to_file)
 {
+}
+
+Generic_wrapper_hdf::~Generic_wrapper_hdf()
+{
+  if(wrapper_open_)
+    close_wrapper();
 }
 
 
@@ -59,12 +69,15 @@ void Generic_wrapper_hdf::open_wrapper()
 
 void Generic_wrapper_hdf::close_wrapper()
 {
-  close_group();
+  if(group_open_)
+    close_group();
   
-  
-  delete file_;
-  file_ = NULL;
-  wrapper_open_= false;
+  if(wrapper_open_)
+  {
+    delete file_;
+    file_ = NULL;
+    wrapper_open_= false;
+  }
   
 }
 
@@ -86,16 +99,25 @@ void Generic_wrapper_hdf::open_group(const string & name )
   {
     throw "generic_wrapper_hdf: group creation failed";
   }
+
+  group_attrs_ = new Attr_list_hdf(group_);
   
+ 
   group_open_ = true;
   
 }
 
 void Generic_wrapper_hdf::close_group()
 {
-  delete group_;
-  group_ = NULL;
-  group_open_ = false;
+  if(group_open_)
+  {
+    delete group_attrs_;
+    group_attrs_ = NULL;
+    delete group_;
+    group_ = NULL;
+    group_open_ = false;
+  }
+  
 }
 
 void Generic_wrapper_hdf::add_dset(int rank, const int * dims, V_TYPE type, const void * data,
@@ -142,3 +164,61 @@ void Generic_wrapper_hdf::add_dset(int rank, const int * dims, V_TYPE type, cons
   // close everything
 
 }
+
+  
+void Generic_wrapper_hdf::add_meta_data(const std::string & key, float val)
+{
+  if(!group_open_)
+    throw logic_error("generic_wrapper_hdf:: can't add to a closed group");
+  group_attrs_->set_value(key,val);
+}
+void Generic_wrapper_hdf::add_meta_data(const std::string & key, const Triple & val)
+{
+    if(!group_open_)
+    throw logic_error("generic_wrapper_hdf:: can't add to a closed group");
+  group_attrs_->set_value(key,val);
+
+}
+void Generic_wrapper_hdf::add_meta_data(const std::string & key, const Pair& val)
+{
+  if(!group_open_)
+    throw logic_error("generic_wrapper_hdf:: can't add to a closed group");
+  group_attrs_->set_value(key,val);
+
+
+}
+void Generic_wrapper_hdf::add_meta_data(const std::string & key,  const std::string & val)
+{
+  if(!group_open_)
+    throw logic_error("generic_wrapper_hdf:: can't add to a closed group");
+  group_attrs_->set_value(key,val);
+}
+void Generic_wrapper_hdf::add_meta_data(const std::string & key, int val)
+{
+  if(!group_open_)
+    throw logic_error("generic_wrapper_hdf:: can't add to a closed group");
+  group_attrs_->set_value(key,val);
+}
+
+void Generic_wrapper_hdf::add_meta_data(const std::string & key, float val,const std::string & dset_name)
+{
+  throw "need to write";
+}
+void Generic_wrapper_hdf::add_meta_data(const std::string & key, const Triple & val,const std::string & dset_name)
+{
+  throw "need to write";
+}
+void Generic_wrapper_hdf::add_meta_data(const std::string & key, const Pair& val,const std::string & dset_name)
+{
+  throw "need to write";
+}
+void Generic_wrapper_hdf::add_meta_data(const std::string & key,  const std::string & val,const std::string & dset_name)
+{
+  throw "need to write";
+}
+void Generic_wrapper_hdf::add_meta_data(const std::string & key, int val,const std::string & dset_name)
+{
+  throw "need to write";
+}
+
+

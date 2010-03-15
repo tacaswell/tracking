@@ -132,7 +132,7 @@ int main(int argc, char * const argv[])
   float max_range;
   int nbins;
   string grp_name;
-  int write_comp_number,read_comp_number;
+  int write_comp_number,read_comp_number,dset_num;
 
 
   
@@ -158,6 +158,7 @@ int main(int argc, char * const argv[])
   
   Read_config comp_prams(pram_file,"comps");
   if(!(comp_prams.contains_key("read_comp")&&
+       comp_prams.contains_key("dset")&&
        comp_prams.contains_key("write_comp")))
     throw logic_error(APP_NAME + 
 		      " parameter file does not contain both read and write comp nums");
@@ -165,6 +166,7 @@ int main(int argc, char * const argv[])
   {
     comp_prams.get_value("read_comp",read_comp_number);
     comp_prams.get_value("write_comp",write_comp_number);
+    comp_prams.get_value("dset",dset_num);
   }
   catch(logic_error & e)
   {
@@ -211,7 +213,8 @@ int main(int argc, char * const argv[])
 
 
     
-    Corr_gofr gofr(nbins,(float)max_range,grp_name);
+
+    Corr_gofr gofr(nbins,max_range,grp_name,write_comp_number,dset_num,in_file);
     hcase.compute_corr(gofr);
     cout<<"computed g(r)"<<endl;
     

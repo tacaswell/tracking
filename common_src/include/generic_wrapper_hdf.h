@@ -36,13 +36,13 @@ class Group;
 
 
 namespace utilities{
+
+class Attr_list_hdf;
+
 /**
    generic_wrapper for writing to hdf files
 
 */
-
-
-
 class Generic_wrapper_hdf:public Generic_wrapper{
 public:
 
@@ -58,10 +58,24 @@ public:
   Generic_wrapper_hdf(std::string fname, bool add_to_file = true);
   
   
+  void add_meta_data(const std::string & key, float val);
+  void add_meta_data(const std::string & key, const Triple & val);
+  void add_meta_data(const std::string & key, const Pair& val);
+  void add_meta_data(const std::string & key,  const std::string & val);
+  void add_meta_data(const std::string & key, int val);
+  
+  void add_meta_data(const std::string & key, float val,const std::string & dset_name);
+  void add_meta_data(const std::string & key, const Triple & val,const std::string & dset_name);
+  void add_meta_data(const std::string & key, const Pair& val,const std::string & dset_name);
+  void add_meta_data(const std::string & key,  const std::string & val,const std::string & dset_name);
+  void add_meta_data(const std::string & key, int val,const std::string & dset_name);
+
+  ~Generic_wrapper_hdf();
   
 private:
   std::string file_name_;
 
+  
     
   bool wrapper_open_;
   bool group_open_;
@@ -73,6 +87,7 @@ private:
   H5::H5File *file_;
   H5::Group * group_;
   
+  Attr_list_hdf * group_attrs_;
   
   
   

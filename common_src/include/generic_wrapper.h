@@ -35,6 +35,8 @@ namespace utilities{
 
    This is an abstract base class 
 */
+class Pair;
+class Triple;
 
 
 
@@ -65,10 +67,49 @@ public:
    */
   virtual void add_dset(int rank,const  int * dims, V_TYPE , const void *,const std::string & name ="none" )=0;
 
-  /*
-     Add metadata to the open group
+  
+  
+  /**
+     Adds a float meta-data
    */
-  //virtual void add_metadata(std::string, const void * , V_TYPE) = 0;
+  virtual void add_meta_data(const std::string & key, float val)=0;
+  /**
+     Adds a Triple meta-data
+   */
+  virtual void add_meta_data(const std::string & key, const Triple & val)=0;
+  /**
+     Adds a Pair meta-data
+   */
+  virtual void add_meta_data(const std::string & key, const Pair& val)=0;
+  /**
+     Adds a string meta-data
+   */
+  virtual void add_meta_data(const std::string & key,  const std::string & val)=0;
+  /**
+     Adds an integer meta-data
+   */
+  virtual void add_meta_data(const std::string & key, int val)=0;
+  
+  /**
+     Adds a float meta-data for a data set
+   */
+  virtual void add_meta_data(const std::string & key, float val,const std::string & dset_name)=0;
+  /**
+     Adds a Triple meta-data for a data set
+   */
+  virtual void add_meta_data(const std::string & key, const Triple & val,const std::string & dset_name)=0;
+  /**
+     Adds a Pair meta-data for a data set
+   */
+  virtual void add_meta_data(const std::string & key, const Pair& val,const std::string & dset_name)=0;
+  /**
+     Adds a string meta-data for a data set
+   */
+  virtual void add_meta_data(const std::string & key,  const std::string & val,const std::string & dset_name)=0;
+  /**
+     Adds an integer meta-data for a data set
+   */
+  virtual void add_meta_data(const std::string & key, int val,const std::string & dset_name)=0;
   
   virtual ~Generic_wrapper(){};
   

@@ -62,7 +62,7 @@ public:
      constructor.  The maximum range is taken from particle::max_neighborhood_range_.
      The bins are spaced linearly.  
    */
-  Corr_gofr(int bins,float max,std::string &);
+  Corr_gofr(int bins,float max,const std::string &,int comp_num,int dset,const std::string & fname);
   
   void display() const;
   
@@ -101,7 +101,20 @@ private:
    */
   int parts_added_;
   
-
+  /**
+     File name of data source
+   */
+  std::string fname_;
+  
+  /**
+     Data set number
+   */
+  int dset_;
+  /**
+     Computation number
+   */
+  int comp_num_;
+  
 };
 
 }
