@@ -29,7 +29,7 @@ from xml_data import xml_data
 from datetime import date
 
 
-def _check_comps_table(key,func,conn):
+def check_comps_table(key,func,conn):
     # figure out name of file to write to
     res = conn.execute("select fout,comp_key from comps where dset_key=? and function=?;",(key,func)).fetchall()
     return res
@@ -45,7 +45,7 @@ def do_link3D(key,conn):
     prog_path = "/home/tcaswell/misc_builds/basic_rel/apps/"
     prog_name = "link3D"
     # figure out name of file to write to
-    res = _check_comps_table(key,"Iden",conn)
+    res = check_comps_table(key,"Iden",conn)
     if len(res) ==0:
         print "no entry"
         # _do_Iden(key,conn)
@@ -104,7 +104,7 @@ def do_Iden(key,conn):
     # see if the file has already been processed
     prog_path = '/home/tcaswell/misc_builds/iden_rel/iden/apps/'
     prog_name = "Iden"
-    res = _check_comps_table(key,"Iden",conn)
+    res = check_comps_table(key,"Iden",conn)
     if len(res) >0:
         print "already processed, flipping out"
         return
@@ -168,7 +168,7 @@ def do_gofr3D(key,conn):
     prog_name = "gofr3D"
 
     # see if the file has already been processed
-    res = _check_comps_table(key,"link3D",conn)
+    res = check_comps_table(key,"link3D",conn)
     if len(res) ==0:
         print "no entry"
         return
@@ -192,6 +192,7 @@ def do_gofr3D(key,conn):
     config.add_stanza("comps")
     config.add_pram("read_comp","int",str(read_comp))
     config.add_pram("write_comp","int",str(comp_num))
+    config.add_pram("dset","int",str(key))
     config.disp()
     cfile = config.write_to_tmp()
     
@@ -213,7 +214,7 @@ def do_gofr(key,conn):
     prog_name = "gofr"
 
     # see if the file has already been processed
-    res = _check_comps_table(key,"Iden",conn)
+    res = check_comps_table(key,"Iden",conn)
     if len(res) ==0:
         print "no entry"
         return
@@ -236,6 +237,7 @@ def do_gofr(key,conn):
     config.add_stanza("comps")
     config.add_pram("read_comp","int",str(read_comp))
     config.add_pram("write_comp","int",str(comp_num))
+    config.add_pram("dset","int",str(key))
     config.disp()
     cfile = config.write_to_tmp()
     print fin
@@ -261,7 +263,7 @@ def do_tracking(key,conn):
     prog_name = "tracking"
 
     # figure out name of file to write to
-    res = _check_comps_table(key,"Iden",conn)
+    res = check_comps_table(key,"Iden",conn)
     if len(res) ==0:
         print "no entry"
         # _do_Iden(key,conn)
@@ -318,7 +320,7 @@ def do_phi6(key,conn):
     prog_name = "phi6"
 
     # figure out name of file to write to
-    res = _check_comps_table(key,"Iden",conn)
+    res = check_comps_table(key,"Iden",conn)
     if len(res) ==0:
         print "no entry"
         # _do_Iden(key,conn)
