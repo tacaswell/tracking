@@ -42,7 +42,7 @@ def _make_sure_h5_exists(fname):
 
 
 def do_link3D(key,conn):
-    prog_path = "/home/tcaswell/misc_builds/basic/apps/"
+    prog_path = "/home/tcaswell/misc_builds/basic_dbg/apps/"
     prog_name = "link3D"
     # figure out name of file to write to
     res = _check_comps_table(key,"Iden",conn)
@@ -53,21 +53,30 @@ def do_link3D(key,conn):
     if len(res) >1:
         print "more than one entry, can't cope, quiting"
         return
-    fname = res[0][0]
+    (fname,read_comp) = res[0]
 
-
+    
+    
     # see if there is already a linked file
     res = conn.execute("select fout from comps where dset_key=? and function='link3D';",
                        (key,)).fetchall()
     if len(res)>0:
         print "Already linked"
         return
+
+    
+    comp_num = conn.execute("select max(comp_key) from comps;").fetchone()[0] + 1
+    
     
     config = xml_data()
     config.add_stanza("link3D")
     config.add_pram("box_side_len","float","4");
     config.add_pram("search_range","float","3.5")
     config.add_pram("min_trk_len","int","3")
+    config.add_stanza("comps")
+    config.add_pram("read_comp","int",str(read_comp))
+    config.add_pram("write_comp","int",str(comp_num))
+    config.disp()
     cname = config.write_to_tmp()
 
     fout = fname.replace(".h5","_link.h5")
