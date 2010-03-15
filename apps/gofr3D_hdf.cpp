@@ -48,7 +48,7 @@
 #include <unistd.h>
 #include <vector>
 #include "read_config.h"
-
+#include <stdexcept>
 
 using std::cout;
 using std::endl;
@@ -56,7 +56,7 @@ using std::set;
 using std::string;
 using std::cerr;
 using std::vector;
-
+using std::logic_error;
 
 using utilities::Wrapper_o_hdf;
 using utilities::Wrapper_i_hdf;
@@ -74,27 +74,27 @@ using tracking::particle;
 using tracking::hash_case;
 using tracking::Corr_gofr;
 
-
+static string APP_NAME = "gofr3D :: ";
 
 int main(int argc, char * const argv[])
 {
   
-  float max_range = 10;
-  int nbins;
-  string proc_file;
-  string out_file;
-  string grp_name;
   
+  string in_file;
+  string out_file;
+  string pram_file ;
   int optchar;
-  bool found_i=false,found_o= false,found_f=false;
+  bool found_i=false,found_o= false,found_c = false;
+
 
   
+    
   while((optchar = getopt(argc,argv,"i:o:c:")) !=-1)
   {
     switch(optchar)
     {
     case 'i':
-      proc_file = string(optarg);
+      in_file = string(optarg);
       found_i = true;
       break;
     case 'o':
@@ -102,41 +102,20 @@ int main(int argc, char * const argv[])
       found_o = true;
       break;
     case 'c':
-      {
-	vector<string> names;
-	names.push_back("max_range");
-	names.push_back("nbins");
-	names.push_back("grp_name");
-	Read_config rc(string(optarg),names,"gofr3D");
-	if(!rc.get_value("max_range",max_range))
-	{
-	  cerr<<"max_range not found"<<endl;
-	  return -1;
-	}
-	if(!rc.get_value("nbins",nbins))
-	{
-	  cerr<<"nbins not found"<<endl;
-	  return -1;
-	}
-	if(!rc.get_value("grp_name",grp_name))
-	{
-	  cerr<<"grp_name not found"<<endl;
-	  return -1;
-	}
-	
-	found_f = true;
-	break;
-      }
+      pram_file = string(optarg);
+      found_c = true;
+      break;
+      
     case '?':
     default:
-      cout<<"-i input filename"<<endl;
-      cout<<"-o output filename"<<endl;
-      cout<<"-c configuration filename"<<endl;
-    break;
+      cout<<"-i input file name"<<endl;
+      cout<<"-o output file name"<<endl;
+      cout<<"-c parameter file name"<<endl;
+      break;
     }
   }
 
-  if(!(found_i && found_o && found_f))
+  if(!(found_i && found_o && found_c))
   {
     cerr<<"input failed"<<endl;
     cout<<"-i input filename"<<endl;
@@ -145,15 +124,56 @@ int main(int argc, char * const argv[])
     return -1;
   }
   
-  
-    
-  cout<<"file to read in: "<<proc_file<<endl;
+  cout<<"file to read in: "<<in_file<<endl;
   cout<<"file that will be written to: "<<out_file<<endl;
-  cout<<"Parameters: "<<endl;
-  cout<<"  max range: "<<max_range<<endl;
-  cout<<"  nbins: "<<nbins<<endl;
 
   
+      
+  float max_range;
+  int nbins;
+  string grp_name;
+  int write_comp_number,read_comp_number;
+
+
+  
+  
+  Read_config app_prams(pram_file,"gofr3D");
+  if(!(app_prams.contains_key("max_range") &&
+       app_prams.contains_key("nbins") &&
+       app_prams.contains_key("grp_name")))
+    throw logic_error(APP_NAME + " parameter file does not contain enough parameters");
+  try
+  {
+    app_prams.get_value("max_range",max_range);
+    app_prams.get_value("nbins",nbins);
+    app_prams.get_value("grp_name",grp_name);
+  }
+  catch(logic_error & e)
+  {
+    cerr<<"error parsing the parameters"<<endl;
+    cerr<<e.what()<<endl;
+    return -1;
+  }
+  
+  
+  Read_config comp_prams(pram_file,"comps");
+  if(!(comp_prams.contains_key("read_comp")&&
+       comp_prams.contains_key("write_comp")))
+    throw logic_error(APP_NAME + 
+		      " parameter file does not contain both read and write comp nums");
+  try
+  {
+    comp_prams.get_value("read_comp",read_comp_number);
+    comp_prams.get_value("write_comp",write_comp_number);
+  }
+  catch(logic_error & e)
+  {
+    cerr<<"error parsing the computation numbers"<<endl;
+    cerr<<e.what()<<endl;
+    return -1;
+  }
+
+
 
   
   try
@@ -168,14 +188,12 @@ int main(int argc, char * const argv[])
     set<D_TYPE> data_types = set<D_TYPE>(tmp, tmp+3);
     
     /// @TODO these parameters need to be passed in
-    Wrapper_i_hdf wh(proc_file,data_types,0,1,false);
+    Wrapper_i_hdf wh(in_file,data_types,read_comp_number,0,1,false);
 
     
 
     Master_box box;
     
-    
-    //Filter_basic filt(proc_file);
     Filter_trivial filt;
     box.init(wh,filt);
     
@@ -190,18 +208,14 @@ int main(int argc, char * const argv[])
 
     cout<<"hash case filled"<<endl;
     
-// //     particle::set_neighborhood_range(101);
-// //     hcase.fill_in_neighborhood();
-    
-    
-//     //hcase.print();
+
 
     
-     Corr_gofr gofr(nbins,(float)max_range,grp_name);
-     hcase.compute_corr(gofr);
-     cout<<"computed g(r)"<<endl;
+    Corr_gofr gofr(nbins,(float)max_range,grp_name);
+    hcase.compute_corr(gofr);
+    cout<<"computed g(r)"<<endl;
     
-     //     gofr.display();
+    //    gofr.display();
 
       
     Generic_wrapper_hdf hdf_out(out_file,true);

@@ -62,6 +62,7 @@ class Wrapper_o_hdf_group{
 public:  
   typedef enum GROUP_T
     {
+      ERROR = -1,
       APPEND_GROUP=0,
       NEW_GROUP,
       FILL_GROUP

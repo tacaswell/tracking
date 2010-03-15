@@ -215,7 +215,7 @@ int main(int argc, char * argv[])
     hcase.compute_corr(gofr);
     cout<<"computed g(r)"<<endl;
     
-    gofr.display();
+    //    gofr.display();
 
       
     Generic_wrapper_hdf hdf_out(out_file,true);

@@ -162,6 +162,9 @@ void Wrapper_o_hdf::open_group(int group_indx,int p_count)
     case FILL_FILE:
       g_type = Wrapper_o_hdf_group::FILL_GROUP;
       break;
+    default:
+      g_type = Wrapper_o_hdf_group::ERROR;
+      
     }
     
 

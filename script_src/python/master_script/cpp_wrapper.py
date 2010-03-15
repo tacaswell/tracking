@@ -42,7 +42,7 @@ def _make_sure_h5_exists(fname):
 
 
 def do_link3D(key,conn):
-    prog_path = "/home/tcaswell/misc_builds/basic_dbg/apps/"
+    prog_path = "/home/tcaswell/misc_builds/basic_rel/apps/"
     prog_name = "link3D"
     # figure out name of file to write to
     res = _check_comps_table(key,"Iden",conn)
@@ -102,7 +102,7 @@ def do_link3D(key,conn):
 
 def do_Iden(key,conn):
     # see if the file has already been processed
-    prog_path = '/home/tcaswell/misc_builds/iden_dbg/iden/apps/'
+    prog_path = '/home/tcaswell/misc_builds/iden_rel/iden/apps/'
     prog_name = "Iden"
     res = _check_comps_table(key,"Iden",conn)
     if len(res) >0:
@@ -164,7 +164,7 @@ def do_Iden(key,conn):
 
 
 def do_gofr3D(key,conn):
-    prog_path = '/home/tcaswell/misc_builds/basic/apps/'
+    prog_path = '/home/tcaswell/misc_builds/basic_rel/apps/'
     prog_name = "gofr3D"
 
     # see if the file has already been processed
@@ -175,7 +175,9 @@ def do_gofr3D(key,conn):
     if len(res) >1:
         print "more than one entry, can't cope, quiting"
         return
-    fin = res[0][0]
+    (fin,read_comp) = res[0]
+
+    
 
     fout = os.path.dirname(fin) + '/gofr3D.h5'
     _make_sure_h5_exists(fout)
@@ -186,7 +188,10 @@ def do_gofr3D(key,conn):
     config.add_stanza("gofr3D")
     config.add_pram("max_range","float","9.5")
     config.add_pram("nbins","int","2000")
-    config.add_pram("grp_name","string",str(comp_num))
+    config.add_pram("grp_name","string",prog_name + "_%(#)07d"%{"#":comp_num})
+    config.add_stanza("comps")
+    config.add_pram("read_comp","int",str(read_comp))
+    config.add_pram("write_comp","int",str(comp_num))
     config.disp()
     cfile = config.write_to_tmp()
     
@@ -204,7 +209,7 @@ def do_gofr3D(key,conn):
 
 def do_gofr(key,conn):
 
-    prog_path = '/home/tcaswell/misc_builds/basic_dbg/apps/'
+    prog_path = '/home/tcaswell/misc_builds/basic_rel/apps/'
     prog_name = "gofr"
 
     # see if the file has already been processed
