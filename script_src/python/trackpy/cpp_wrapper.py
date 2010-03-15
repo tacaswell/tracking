@@ -19,13 +19,13 @@
 import os
 import os.path
 
-import parse1
+from .utils import parse1
 
 import h5py
 
 import subprocess
 import sqlite3
-from xml_data import xml_data
+from .utils import xml_data
 from datetime import date
 
 
