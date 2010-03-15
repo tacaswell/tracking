@@ -272,42 +272,7 @@ int main(int argc, char * const argv[])
     Wrapper_o_hdf hdf_w(proc_file,d_types,comp_num,Wrapper_o_hdf::FILL_FILE);
     hdf_w.initialize_wrapper();
     hcase.output_to_wrapper(hdf_w,false);
-    
-    int pram_sz = iden_prams.size();
-    
-    // deal with meta data
-    set<D_TYPE>::iterator end= d_types.end();
-    int tmpi;
-    float tmpf;
-    for(set<D_TYPE>::iterator it = d_types.begin();
-	it != end; ++it)
-    {
-      for(int j = 0; j<pram_sz; ++j)
-      {
-	V_TYPE type = iden_prams.get_type(j);
-	string tmp_key = iden_prams.get_key(j);
-	switch(type)
-	{
-	case utilities::V_INT:
-	  if(iden_prams.get_value(tmp_key,tmpi))
-	    hdf_w.add_meta_data(tmp_key,tmpi,*it);
-	  else
-	    cerr<<"failure to parse value for "<<tmp_key<<endl;
-	  break;
-	case utilities::V_FLOAT:
-	  if(iden_prams.get_value(tmp_key,tmpf))
-	    hdf_w.add_meta_data(tmp_key,tmpf,*it);
-	  else
-	    cerr<<"failure to parse value for "<<tmp_key<<endl;
-	  break;
-	default:
-	  cerr<<"not of type supported in meta data: "<<tmp_key<<','<<VT2str_s(type)<<endl;
-	}
-      }
-      
-    }
-    
-    
+    hdf_w.add_meta_data_list(iden_prams,d_types);
 
     hdf_w.finalize_wrapper();
   }
