@@ -193,18 +193,15 @@ void Wrapper_o_hdf::set_all_values(const particle* p_in)
 #if PTYPE == 1
 void Wrapper_o_hdf::set_all_values(const tracking::Track_box * in,const utilities::Triple & scale) 
 {
+  if(!group_open_)
+    throw logic_error("wrapper_o_hdf: no group open");
+
   
-  // open_particle(-1);
-  // Triple cord;
-  // float I;
-  // in->average_cord(cord,I);
-  // cord*=scale;
-  // set_value(utilities::D_XPOS,cord[0]);
-  // set_value(utilities::D_YPOS,cord[1]);
-  // set_value(utilities::D_ZPOS,cord[2]);
-  // set_value(utilities::D_I,I);
-  // close_particle();
-  throw "need to write this:  void Wrapper_o_hdf::set_all_values(const tracking::Track_box * in,const utilities::Triple & scale) ";
+  Triple cord;
+  float I;
+  in->average_cord(cord,I);
+  cord*=scale;
+  current_group_->store_particle_pos(cord,I);
   
 }
 #endif
@@ -312,33 +309,16 @@ void Wrapper_o_hdf::add_meta_data(const std::string & key, float val,bool root_g
 
 void Wrapper_o_hdf::add_meta_data(const std::string & key, const Triple & val,bool root_group )
 {
-  throw "ntw \n\t void Wrapper_o_hdf::add_meta_data(const std::string & key, const Triple & val,bool root_group )";
   
-  // if (!wrapper_open_)
-  //   throw "Wrapper_o_hdf::add_meta_data warpper not open";
+  if( root_group)
+  {
+    Group group =  file_->openGroup("/");
+    Attr_list_hdf  atr_lst(&group);
+    atr_lst.set_value(key,val);
+  }
+  else if(group_open_)
+    current_group_->set_meta_data(key,val);
   
-  
-  
-
-  // try
-  // {
-  //   hsize_t dim_c = (hsize_t) Triple::length_;
-      
-  //   DataSpace dspace =  DataSpace(1,&dim_c);
-  //   Attribute * tmpa =  
-  //     new Attribute(group->createAttribute(key,
-  // 					   PredType::NATIVE_FLOAT,
-  // 					   dspace));
-  //   tmpa->write(PredType::NATIVE_FLOAT,val.get_ptr());
-  //   delete tmpa;
-  // }
-  // catch(H5::AttributeIException)
-  // {
-  //   throw "Wrapper_o_hdf::write_meta_data trying to clobber dimension meta-data";
-  // }
-
-  // if(root_group)
-  //   delete group;
   
 }
 
@@ -349,10 +329,10 @@ void Wrapper_o_hdf::add_meta_data(const std::string & key, const Pair & val,bool
   
   if( root_group)
   {
-    Group * group =  new Group(file_->openGroup("/"));
-    Attr_list_hdf  atr_lst(group);
+    Group  group =  file_->openGroup("/");
+    Attr_list_hdf  atr_lst(&group);
     atr_lst.set_value(key,val);
-    delete group;
+
   }
   else if(group_open_)
     current_group_->set_meta_data(key,val);
@@ -363,17 +343,16 @@ void Wrapper_o_hdf::add_meta_data(const std::string & key, const Pair & val,bool
 
 void Wrapper_o_hdf::add_meta_data(const std::string & key, const std::string & val,bool root_group )
 {
+    
+  if( root_group)
+  {
+    Group  group =  file_->openGroup("/");
+    Attr_list_hdf  atr_lst(&group);
+    atr_lst.set_value(key,val);
 
-  current_group_->set_meta_data(key,val);
-  // // this needs to be fixed to be smarter
-  // if(!new_file_)
-  // {
-  //   cout<<"this hit the hack to deal with not crashing over adding meta data twice"<<endl;
-  //   return;
-  // }
- 
-  //   throw "Wrapper_o_hdf::not implemented yet";
- 
+  }
+  else if(group_open_)
+    current_group_->set_meta_data(key,val);
 }
 void Wrapper_o_hdf::add_meta_data(const std::string & key, int val,bool root_group)
 {
@@ -381,7 +360,6 @@ void Wrapper_o_hdf::add_meta_data(const std::string & key, int val,bool root_gro
   if( root_group)
   {
     Group group =  file_->openGroup("/");
-    // scope braces
     Attr_list_hdf atr_lst(&group);
     atr_lst.set_value(key,val);
   }

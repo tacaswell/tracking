@@ -75,7 +75,7 @@ Wrapper_o_hdf_group::Wrapper_o_hdf_group(CommonFG * parent, const std::string & 
 					 int comp_num,
 					 GROUP_T type
 					 ):
-  parent_(parent),comp_number_(comp_num),size_(size),added_count_(0),type_(type),d_types_add_(d_add)
+  parent_(parent),comp_number_(comp_num),size_(size),added_count_(0),group_type_(type),d_types_add_(d_add)
 {
 
   try
@@ -192,7 +192,7 @@ void Wrapper_o_hdf_group::store_particle(const particle * p_in)
 
   // set particle index
   
-  if(type_ == APPEND_GROUP)
+  if(group_type_ == APPEND_GROUP)
   {
     part_index = p_in->get_ind();
     added_count_++;
@@ -257,6 +257,56 @@ void Wrapper_o_hdf_group::store_particle(const particle * p_in)
     
 }
 
+void Wrapper_o_hdf_group::store_particle_pos(const Triple & cord,float I)
+{
+  // check to make sure group mode is appropriate 
+  if(group_type_ != NEW_GROUP)
+    throw logic_error("store_particle_pos:: incompatible group_type");
+  
+  // some sanity check to make sure that this is enough information to fill the wrapper
+  int part_index = added_count_++;
+  
+  
+  if((added_count_>size_))
+  {
+    cout<<"part_count_ "<<added_count_<<'\t';
+    cout<<"group_max_count_ "<<size_<<endl;
+    throw logic_error("wrapper_o_hdf: trying to add too many particles to group");
+  }
+    // set values to temp storage
+  for(set<D_TYPE>::const_iterator current_type = d_types_add_.begin();
+      current_type!=d_types_add_.end();++current_type)
+  {
+    //  set_value(*current_type,p_in);
+    D_TYPE type = *current_type;
+    
+    
+    complex<float> tmpc(0,0);
+    switch(type)
+    {
+    case D_XPOS:
+      float_data_.at(float_map_(type))[part_index] = cord[0];
+      break;
+    case D_YPOS:
+      float_data_.at(float_map_(type))[part_index] = cord[1];
+      break;
+    case D_ZPOS:
+      float_data_.at(float_map_(type))[part_index] = cord[2];
+      break;
+    case D_I:
+      float_data_.at(float_map_(type))[part_index] = I;
+      break;
+    default:
+      
+      throw logic_error("wapper_o_hdf_group::store_particle_pos \n\t Can not use this function with any types but X,Y,Z,I");
+    }
+
+  }
+
+  
+
+
+}
 
 
 

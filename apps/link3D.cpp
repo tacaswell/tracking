@@ -60,7 +60,7 @@
 #include <unistd.h>
 #include <vector>
 #include "read_config.h"
-
+#include <stdexcept>
 
 
 using std::cout;
@@ -69,7 +69,7 @@ using std::set;
 using std::string;
 using std::cerr;
 using std::vector;
-
+using std::logic_error;
 
 using utilities::Wrapper_o_hdf;
 using utilities::Wrapper_i_hdf;
@@ -91,91 +91,102 @@ using tracking::Track_shelf;
 using tracking::Track_box;
 
 
+const static string APP_NAME = "link3D :: ";
+
 int main(int argc, char * argv[])
 {
   
   
-  string proc_file,out_file;
+  string in_file,out_file,pram_file;
   
+
   
-  int pixel_per_box;
-  int comp_number;
+        
+  int optchar;
+  bool found_i=false,found_o= false,found_c = false;
+    
+  while((optchar = getopt(argc,argv,"i:o:c:")) !=-1)
+  {
+    switch(optchar)
+    {
+    case 'i':
+      in_file = string(optarg);
+      found_i = true;
+      break;
+    case 'o':
+      out_file = string(optarg);
+      found_o = true;
+      break;
+    case 'c':
+      pram_file = string(optarg);
+      found_c = true;
+      break;
+      
+    case '?':
+    default:
+      cout<<"-i input file name"<<endl;
+      cout<<"-o output file name"<<endl;
+      cout<<"-c parameter file name"<<endl;
+      break;
+    }
+  }
+
+  if(!(found_i && found_o && found_c))
+  {
+    cerr<<"input failed"<<endl;
+    cout<<"-i input filename"<<endl;
+    cout<<"-o output filename"<<endl;
+    cout<<"-c configuration filename"<<endl;
+    return -1;
+  }
+  
+  cout<<"file to read in: "<<in_file<<endl;
+  cout<<"file that will be written to: "<<out_file<<endl;
+
+
+    
+  float box_side_len;
+  int write_comp_number,read_comp_number;
   float search_range ;
   int min_track_length;
-
-  {
-    
-    int optchar;
-    bool found_i=false,found_o= false,found_f=false;
-
-    while((optchar = getopt(argc,argv,"i:o:c:")) !=-1)
-    {
-      switch(optchar)
-      {
-      case 'i':
-	proc_file = string(optarg);
-	found_i = true;
-	break;
-      case 'o':
-	out_file = string(optarg);
-	found_o = true;
-	break;
-      case 'c':
-	{
-	  vector<string> names;
-	  names.push_back("box_side_len");
-	  names.push_back("search_range");
-	  names.push_back("min_trk_len");
-	  Read_config rc(string(optarg),names,"link3D");
-	  if(!rc.get_value("box_side_len",pixel_per_box))
-	  {
-	    cerr<<"box_side_len not found"<<endl;
-	    return -1;
-	  }
-	  if(!rc.get_value("search_range",search_range))
-	  {
-	    cerr<<"search_range not found"<<endl;
-	    return -1;
-	  }
-	  if(!rc.get_value("min_trk_len",min_track_length))
-	  {
-	    min_track_length = 3;
-	  }
-	  if(!rc.get_value("comp_number",comp_number))
-	  {
-	    min_track_length = 3;
-	  }
-	  found_f = true;
-	  break;
-	}
-      case '?':
-      default:
-	cout<<"-i input filename"<<endl;
-	cout<<"-o output filename"<<endl;
-	cout<<"-c configuration filename"<<endl;
-	break;
-      }
-    }
-
-    if(!(found_i && found_o && found_f))
-    {
-      cerr<<"input failed"<<endl;
-      cout<<"-i input filename"<<endl;
-      cout<<"-o output filename"<<endl;
-      cout<<"-c configuration filename"<<endl;
-      return -1;
-    }
   
-    cout<<"file to read in: "<<proc_file<<endl;
-    cout<<"file that will be written to: "<<out_file<<endl;
-    cout<<"Parameters: "<<endl;
-    cout<<"  pixel_per_box: "<<pixel_per_box<<endl;
-    cout<<"  search_range: "<<search_range<<endl;
-    cout<<"  min_track_length: "<<min_track_length<<endl;
-
-
-
+  
+  Read_config app_prams(pram_file,"link3D");
+  if(!(app_prams.contains_key("box_side_len") &&
+       app_prams.contains_key("search_range") &&
+       app_prams.contains_key("min_trk_len")))
+    throw logic_error(APP_NAME + " parameter file does not contain enough parameters");
+  try
+  {
+    app_prams.get_value("box_side_len",box_side_len);
+    app_prams.get_value("search_range",search_range);
+    app_prams.get_value("min_trk_len",min_track_length);
   }
+  catch(logic_error & e)
+  {
+    cerr<<"error parsing the parameters"<<endl;
+    cerr<<e.what()<<endl;
+    return -1;
+  }
+  
+  
+  Read_config comp_prams(pram_file,"comps");
+  if(!(comp_prams.contains_key("read_comp")&&
+       comp_prams.contains_key("write_comp")))
+    throw logic_error(APP_NAME + 
+		      " parameter file does not contain both read and write comp nums");
+  try
+  {
+    comp_prams.get_value("read_comp",read_comp_number);
+    comp_prams.get_value("write_comp",write_comp_number);
+  }
+  catch(logic_error & e)
+  {
+    cerr<<"error parsing the computation numbers"<<endl;
+    cerr<<e.what()<<endl;
+    return -1;
+  }
+
   
   
   try
@@ -189,20 +200,19 @@ int main(int argc, char * argv[])
 		    utilities::D_DY,
 		    utilities::D_I,
 		    utilities::D_R2,
-		    utilities::D_MULT,
 		    utilities::D_E,
 		    utilities::D_ZPOS
-		    };
-    set<D_TYPE> data_types = set<D_TYPE>(tmp, tmp+9);
+    };
+    set<D_TYPE> data_types = set<D_TYPE>(tmp, tmp+8);
 
   
     // set up the input wrapper
-    Wrapper_i_hdf wh(proc_file,data_types);
+    Wrapper_i_hdf wh(in_file,data_types,read_comp_number);
 
 
     // fill the master_box
     Master_box box;
-    Filter_basic filt(proc_file);
+    Filter_basic filt(in_file,read_comp_number);
     //    Filter_trivial filt;
     box.init(wh,filt);
     
@@ -210,7 +220,7 @@ int main(int argc, char * argv[])
     Pair dims = wh.get_dims();
     cout<<dims<<endl;
     
-    hash_case hcase(box,dims,pixel_per_box,wh.get_num_frames());
+    hash_case hcase(box,dims,box_side_len,wh.get_num_frames());
     cout<<"hash case filled"<<endl;
     
     Track_shelf tracks;
@@ -236,11 +246,11 @@ int main(int argc, char * argv[])
 
     
     //tracks.pass_fun_to_track(&Track_box::plot_intensity);
-    Wrapper_o_hdf hdf_w(out_file,data_types2,comp_number,"frame");
+    Wrapper_o_hdf hdf_w(out_file,data_types2,write_comp_number,Wrapper_o_hdf::NEW_FILE,"frame");
     cout<<"made wrapper"<<endl;
     
 
-    hdf_w.set_compress(false);
+    
     float scale_tmp = wh.get_xy_scale();
     
     cout<<"scale_tmp: "<<scale_tmp<<endl;;

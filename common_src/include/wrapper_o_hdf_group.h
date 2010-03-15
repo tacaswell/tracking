@@ -89,7 +89,8 @@ public:
   
   void store_particle(const tracking::particle *);
   
-
+  void store_particle_pos(const Triple & cord,float I);
+  
 
 
 
@@ -155,7 +156,7 @@ private:
   /**
      Sets what sort of group to try to deal with
    */  
-  GROUP_T type_;
+  GROUP_T group_type_;
   
   /**
      The data types to add to the group, must be set at construction time
