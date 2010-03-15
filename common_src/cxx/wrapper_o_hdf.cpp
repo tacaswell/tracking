@@ -33,13 +33,14 @@
 #include "particle_base.h"
 #include "particle_track.h"
 #include "attr_list_hdf.h"
-
+#include "read_config.h"
 #include "track_box.h"
 //using namespace H5;
 
 using utilities::Wrapper_o_hdf;
 using utilities::Wrapper_o_hdf_group;
 using utilities::Attr_list_hdf;
+using utilities::Read_config;
 
 using std::string;
 using std::set;
@@ -410,4 +411,38 @@ void Wrapper_o_hdf::add_meta_data(const std::string & key, const Triple& val,D_T
 {
   local_add_meta(key,val,dset_type,wrapper_open_,comp_number_,dset_pram_group_);
   
+}
+
+void Wrapper_o_hdf::add_meta_data_list(const Read_config & config, const std::set<D_TYPE> & d_types)
+{
+  int pram_sz = config.size();
+  set<D_TYPE>::const_iterator end= d_types.end();
+  int tmpi;
+  float tmpf;
+  for(set<D_TYPE>::const_iterator it = d_types.begin();
+      it != end; ++it)
+  {
+    for(int j = 0; j<pram_sz; ++j)
+    {
+      V_TYPE type = config.get_type(j);
+      string tmp_key = config.get_key(j);
+      switch(type)
+      {
+      case utilities::V_INT:
+	config.get_value(tmp_key,tmpi);
+	add_meta_data(tmp_key,tmpi,*it);
+	break;
+      case utilities::V_FLOAT:
+	config.get_value(tmp_key,tmpf);
+	add_meta_data(tmp_key,tmpf,*it);
+	break;
+      default:
+	cerr<<"not of type supported in meta data: "<<tmp_key<<','<<VT2str_s(type)<<endl;
+      }
+    }
+      
+  }
+    
+    
+
 }

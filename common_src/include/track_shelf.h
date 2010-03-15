@@ -179,6 +179,8 @@ public:
   /**
      Outputs the particles in a track-centric format.  Assumes that the wrapper is 
      already initialized.
+
+     @param output wrapper, already initialized
    */
   void output_to_wrapper(utilities::Wrapper_out & wrapper) const;
 

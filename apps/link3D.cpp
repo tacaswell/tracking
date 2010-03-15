@@ -260,9 +260,10 @@ int main(int argc, char * argv[])
     cout<<"scale triple :"<<scale_t<<endl;
     
     Triple dim(dims[0]*scale_tmp, dims[1]*scale_tmp,wh.get_num_frames()*.2);
-    
+    hdf_w.initialize_wrapper();
     final_tracks.output_link_to_wrapper(hdf_w,scale_t,dim);
-    
+    hdf_w.add_meta_data_list(app_prams,data_types2);
+    hdf_w.finalize_wrapper();
  
   }
   catch(const char * err){

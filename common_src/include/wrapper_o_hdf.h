@@ -136,7 +136,7 @@ public:
   
   void add_meta_data(const std::string & key, int val,D_TYPE dset_type);
 
-
+  void add_meta_data_list(const Read_config & , const std::set<D_TYPE> &);
   ~Wrapper_o_hdf();
 
 private:

@@ -520,7 +520,7 @@ void Track_shelf::output_link_to_wrapper(Wrapper_out & wrapper,
 
  
   
-  wrapper.initialize_wrapper();
+
   wrapper.add_meta_data("dims",dim);
   wrapper.add_meta_data("number-of-planes",1);
   wrapper.open_group(0,track_count_);
@@ -536,5 +536,5 @@ void Track_shelf::output_link_to_wrapper(Wrapper_out & wrapper,
     
   }
   wrapper.close_group();
-  wrapper.finalize_wrapper();
+
 }

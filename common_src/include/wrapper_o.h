@@ -43,6 +43,7 @@ namespace tracking
 namespace utilities
 {
 class params;
+class Read_config;
 
 /**
    ABC for output wrappers
@@ -181,6 +182,11 @@ public:
      Adds an integer meta-data for a data set
    */
   virtual void add_meta_data(const std::string & key, int val,D_TYPE dset_type)=0;
+
+  /**
+     Adds all parameters from the Read_config object to the data sets in the set
+   */
+  virtual void add_meta_data_list(const Read_config & , const std::set<D_TYPE> &)=0;
   
 };
 
