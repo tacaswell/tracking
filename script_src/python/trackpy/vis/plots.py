@@ -16,19 +16,43 @@
 #along with this program; if not, see <http://www.gnu.org/licenses>.
 
 
-import sqlite3
+
 import trackpy.cpp_wrapper as cpp_wrapper
 import matplotlib
 import matplotlib.pyplot as plt
+import random
+import itertools
 import h5py
 
+# change to take 
+def _plot_file_frame_phi6(f,comp_number,fr_num):
+    '''
+    Takes an open hdf_file handle, f, 
+    '''
+    x = f["/frame%(#)06d"%{"#":fr_num}+"/x_%(#)07d"%{"#":comp_number}]
+    y = f["/frame%(#)06d"%{"#":fr_num}+"/y_%(#)07d"%{"#":comp_number}]
+    phi = f["/frame%(#)06d"%{"#":fr_num}+"/scaler_order_parameter_%(#)07d"%{"#":comp_number}]
+    phir = zeros(phi.shape[0])
+    phii = zeros(phi.shape[0])
+    for j in range(0,phi.shape[0]):
+        phir[j] = phi[j][0]
+        phii[j] = phi[j][1]
+        
 
-def main_prog():
-    conn = sqlite3.connect('/home/tcaswell/colloids/processed/processed_data.db')
-    
-    # ask for key?
+    plt.quiver(x,y,phir,phii)
+    plt.plot(x,y,'ro')
+    plt.show()
 
-def make_plot(key,conn):
+
+def _plot_file_frame_pos(f,comp_number, fr_num):
+    x = f["/frame%(#)06d"%{"#":fr_num}+"/x_%(#)07d"%{"#":comp_number}]
+    y = f["/frame%(#)06d"%{"#":fr_num}+"/y_%(#)07d"%{"#":comp_number}]
+    plt.plot(x,y,'ro')
+    plt.show()
+
+
+
+def make_2dv3d_plot(key,conn):
     # add error handling on all of these calls
     
     # get comp_number of gofr
@@ -68,9 +92,3 @@ def make_plot(key,conn):
     
     pass
 
-    
-
- 
-
-if __name__ =='__main__':
-    main_prog()
