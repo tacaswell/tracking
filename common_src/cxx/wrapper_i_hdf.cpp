@@ -455,16 +455,24 @@ Tuple Wrapper_i_hdf::get_dims()const
 
 float Wrapper_i_hdf::get_xy_scale() const
 {
-  float scale;
+
+  /**
+     /TODO make it actually ask the hdf for the calibration,
+   */
+  return (6.45/60);
+
+  // in principle this should ask the hdf file for the calibration
+  // and do something clever, but this is a hack
+
+  // float scale;
+  // H5File file = H5File( file_name_, H5F_ACC_RDONLY );  
+  // Group  group = Group(file.openGroup("/frame000000"));
+  // Attr_list_hdf attr_list(&group);
   
-  H5File file = H5File( file_name_, H5F_ACC_RDONLY );  
-  Group  group = Group(file.openGroup("/frame000000"));
-  Attr_list_hdf attr_list(&group);
-  
-  if(attr_list.contains_attr("spatial-calibration-x"))
-  {
-    attr_list.get_value("spatial-calibration-x",scale);
-  }
-  return(scale);
+  // if(attr_list.contains_attr("spatial-calibration-x"))
+  // {
+  //   attr_list.get_value("spatial-calibration-x",scale);
+  // }
+  // return(scale);
   
 }
