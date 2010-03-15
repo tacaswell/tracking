@@ -17,10 +17,10 @@
 
 
 import sqlite3
-import cpp_wrapper
+import trackpy.cpp_wrapper as cpp_wrapper
 import matplotlib
 import matplotlib.pyplot as plt
-
+import h5py
 
 
 def main_prog():
@@ -29,7 +29,42 @@ def main_prog():
     # ask for key?
 
 def make_plot(key,conn):
+    # add error handling on all of these calls
     
+    # get comp_number of gofr
+    res = conn.execute("select comp_key,fout from comps where dset_key == ? and function == 'gofr'",(key,)).fetchall()
+    (g_ck,g_fname) = res[0]
+        
+        
+    # get comp_number of 3D gofr
+    (g3D_ck,g3D_fname) = conn.execute("select comp_key,fout from comps where dset_key == ? and function == 'gofr3D'",(key,)).fetchone()
+
+
+    # get dset name
+    (sample_name, temp) = conn.execute("select sname,temp from dsets where key == ? ",(key,)).fetchone()
+
+    print "g(r) key: " + str(g_ck)
+    print "g(r)3D key: " + str(g3D_ck)
+    print sample_name + " " + str(temp)
+    print g_fname
+    group = h5py.File(g_fname,'r')["gofr_%(#)07d"%{"#":g_ck}]
+    print group.keys()
+
+
+    group3D = h5py.File(g3D_fname,'r')["gofr3D_%(#)07d"%{"#":g3D_ck}]
+
+
+    # make plot
+    dset_names = ['bin_count', 'bin_edges']
+    plt.figure()
+    plt.hold(True)
+    plt.plot(group[dset_names[1]][:]*6.45/60,group[dset_names[0]])
+    plt.plot(group3D[dset_names[1]],group3D[dset_names[0]])
+
+    plt.title(sample_name + " temp: " + str(temp))
+    plt.legend(['2D','3D'])
+    plt.grid(True)
+    # save plot
     
     pass
 
