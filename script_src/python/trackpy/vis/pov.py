@@ -22,32 +22,38 @@ import os.path
 import re
 import sys
 import colorsys
+import sqlite3
+import math
 
-
-
-def triple_objects(a,b,c):
+def _triple_objects(a,b,c):
     for i in range(len(a)):
         yield (a[i],b[i],c[i])
+def _quad_objects(a,b,c,d):
+    """ generator for quads"""
+    for i in range(len(a)):
+        yield (a[i],b[i],c[i],d[i])
     
 
-def _start_scene(pov_file):
+def _start_scene(pov_file,max_x,max_y,max_z):
     print >>pov_file, """
-
-#include "colors.inc"
-background {color White}
-camera {
-    location <100, 100, 100>
-    look_at  <50, 50,  50>
-    angle 30
+    #include \"colors.inc\"
+    background {color White}
+    camera {
+"""
+    print >>pov_file, 'location <' + str(max_x*3)+ ',' +str(max_y*3)+','+str(max_z*3)  + '>'
+    print >>pov_file, 'look_at  <' + str(max_x/2)+ ',' +str(max_y/2)+','+str(max_z/2)  + '>'
+    print >>pov_file, """
+    angle 21
     sky <0,0,1>
     }
-light_source { <50, 50, 300> color White}
-light_source { <50, 50, -300> color White}
-light_source { <-100, 50, 50> color White}
-light_source { <100, 50, 50> color White}
-light_source { <50, -100, 50> color White}
-light_source { <50, 100, 50> color White}
 """
+    print >>pov_file," light_source { <"+ str(max_x/2)+ ',' +str(max_y/2)+','+str(max_z*3)  +"> color White}"
+    print >>pov_file," light_source { <"+ str(max_x/2)+ ',' +str(max_y/2)+','+str(-max_z*2)  +"> color White}"
+    print >>pov_file," light_source { <"+ str(max_x/2)+ ',' +str(max_y*3)+','+str(max_z/2)  +"> color White}"
+    print >>pov_file," light_source { <"+ str(max_x/2)+ ',' +str(-max_y*2)+','+str(max_z/2)  +"> color White}"
+    print >>pov_file," light_source { <"+ str(max_x*3)+ ',' +str(max_y/2)+','+str(max_z/2)  +"> color White}"
+    print >>pov_file," light_source { <"+ str(-max_x*2)+ ',' +str(max_y/2)+','+str(max_z/2)  +"> color White}"
+
 def _end_scene(pov_file):
     pass
 
@@ -69,42 +75,67 @@ def _set_posistion(pov_file, vec,r):
     print >> pov_file, "<"+ str(vec[0])+","+str(vec[1])+","+str(vec[2])+">," + str(r)
 
 
-def main():
-    comp_num = 55;
-    fbase = "/home/tcaswell/colloids/processed/"
-    fpath = "polyNIPAM_batch_12/20100119/a/z/"
-    fname = "room_crystal_link.h5 "
-    #old = "/home/tcaswell/colloids/processed/polyNIPAM_batch_12/20090730/jammed/z/27-7_link.h5"
-    print fbase + fpath + fname
+def make_range_pov(x,y,z,I,range_x,range_y,range_z,out_name):
 
-    f = h5py.File((fbase + fpath + fname).strip())
-    #scale = 6.45/60
-    scale = 1
-    x = f["/frame000000/x_%(#)07d"%{"#":comp_num}][:]
-    y = f["/frame000000/y_%(#)07d"%{"#":comp_num}][:]
-    z = f["/frame000000/z_%(#)07d"%{"#":comp_num}][:]
-    pov_file = open("crys_pov_file.pov",'w')
+    pov_file= open(out_name,'w')
 
+    max_I = max(I)
+    _start_scene(pov_file,max(x),max(y),max(z))
+    draw_box(pov_file,(0,max(x)),(0,max(y)),(0,max(z)))
+    scale = .95
+    for (xi,yi,zi,Ii) in _quad_objects(x,y,z,I):
 
-    _start_scene(pov_file)
-
-    #for ind in range(0,20000):
-    ztop = 70
-    zbot = 30
-    xtop = 70
-    xbot = 30
-    ytop = 70
-    ybot = 30
-
-    for (xi,yi,zi) in triple_objects(x,y,z):
-
-        if zi<ztop and zi>zbot and xi <xtop and xi > xbot and yi<ytop and yi >ybot:
-
+        if zi<range_z[1] and zi>range_z[0] and xi <range_x[1] and xi > range_x[0] and yi<range_y[1] and yi >range_x[0]:
             _open_particle(pov_file)
             _set_posistion(pov_file,(xi,yi,zi),.5*scale)
-            _close_particle(pov_file,(zi-zbot)/(ztop-zbot)/2)
+            _close_particle(pov_file,Ii/max_I)
 
     _end_scene(pov_file)
 
-    f.close()
+
     pov_file.close()
+
+
+    
+
+def draw_box(pov_file,rangex,rangey,rangez):
+    for z in rangez:
+        for x in rangex:
+            print >>pov_file," cylinder{"
+            print >>pov_file,'<' +str(x)+','+str(rangey[0])+','+str(z)+'>,<'+str(x)+','+str(rangey[1])+','+str(z)+'>,.5'
+            print >>pov_file,"""
+            texture{pigment{color Yellow}}
+            }"""
+        for y in rangey:
+            print >>pov_file," cylinder{"
+            print >>pov_file,'<'+str(rangex[0])+','+str(y)+','+str(z)+'>,<'+str(rangex[1])+','+str(y)+','+str(z)+'>,.5'
+            print >>pov_file,"""
+            texture{pigment{color Blue}}
+            }"""
+    for x in rangex:
+        for y in rangey:
+            print >>pov_file," cylinder{"
+            print >>pov_file,'<'+str(x)+','+str(y)+','+str(rangez[0])+'>,<'+str(x)+','+str(y)+','+str(rangez[1])+'>,.5'
+            print >>pov_file,"""
+            texture{pigment{color Green}}
+            }"""
+
+def make_z_slices(x,y,z,I,step_sz,base_name):
+
+
+    
+
+    # x = f["/frame000000/x_%(#)07d"%{"#":comp_num}][:]
+    # y = f["/frame000000/y_%(#)07d"%{"#":comp_num}][:]
+    # z = f["/frame000000/z_%(#)07d"%{"#":comp_num}][:]
+    # # get max of ranges
+    # max_z = 15;
+    # # loop over z
+    max_z = max(z)
+    max_y = max(y)
+    max_x = max(x)
+    for zstp in range(0,math.ceil(max_z),step_sz):
+        print zstp
+        make_range_pov(x,y,z,I,(0,max_x),(0,max_y),(zstp,zstp+step_sz),base_name + '_%(#)04d'%{"#":(zstp/step_sz)} + '.pov')
+        pass
+    
