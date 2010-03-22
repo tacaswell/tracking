@@ -16,7 +16,7 @@
 #along with this program; if not, see <http://www.gnu.org/licenses>.
 
 
-
+import sqlite3
 import trackpy.cpp_wrapper as cpp_wrapper
 import matplotlib
 import matplotlib.pyplot as plt
@@ -79,16 +79,25 @@ def make_2dv3d_plot(key,conn):
 
 
     # make plot
+    istatus = plt.isinteractive();
+    if istatus:plt.ion()
     dset_names = ['bin_count', 'bin_edges']
-    plt.figure()
-    plt.hold(True)
-    plt.plot(group[dset_names[1]][:]*6.45/60,group[dset_names[0]])
-    plt.plot(group3D[dset_names[1]],group3D[dset_names[0]])
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    ax.hold(True)
+    ax.plot(group[dset_names[1]][:]*6.45/60,group[dset_names[0]])
+    ax.plot(group3D[dset_names[1]],group3D[dset_names[0]])
+    ax.set_title(sample_name + " temp: " + str(temp))
+    ax.legend(['2D','3D'])
+    ax.grid(True)
 
-    plt.title(sample_name + " temp: " + str(temp))
-    plt.legend(['2D','3D'])
-    plt.grid(True)
-    # save plot
-    
+    if istatus:
+        plt.draw()
+        plt.ion()
+
+
     pass
+    # save figure
+    
+
 
