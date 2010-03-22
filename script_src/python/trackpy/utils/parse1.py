@@ -108,7 +108,7 @@ def make_h5(fname_in,d_path,p_path):
         exit()
 
 
-    f = h5py.File(out_fname,'w')
+    f = h5py.File(out_fname,'w-')
 
     print fname
     

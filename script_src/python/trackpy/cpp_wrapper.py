@@ -25,7 +25,7 @@ import h5py
 
 import subprocess
 import sqlite3
-from .utils import xml_data
+from .utils.xml_data import xml_data
 from datetime import date
 
 
@@ -111,9 +111,11 @@ def do_Iden(key,conn):
 
     fin = conn.execute("select fname from dsets where key = ?;",(key,)).fetchone()[0]
     fout = '.'.join(fin.replace("data","processed").split('.')[:-1]) + '.h5'
-    fpram = fin.replace("tif","xml")
+    fpram = fin.replace(".tif",".xml")
     if not os.path.isfile(fpram):
         print "can not find parameter file, exiting"
+        print fin
+        print fpram
         return
 
     comp_num = conn.execute("select max(comp_key) from comps;").fetchone()[0] + 1
