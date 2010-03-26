@@ -35,7 +35,7 @@ namespace utilities{
    will be millions of these objects.  Also to make some specfic
    matlab like functions simpler to implement
 */
-template<class T,int length_>
+template<class T,int length>
 class Tuple{
 public:
   /**
@@ -211,7 +211,7 @@ public:
   Tuple(T x,T y,T z);
   
   /**
-     Takes in an array, assumes it is the length_ length_
+     Takes in an array, assumes it is the length length
   */
   Tuple(const T * );
 
@@ -228,13 +228,16 @@ public:
   */
   T * get_ptr() ;
   
-
+  /**
+     
+   */
+  const static int length_ = length;
   
   /**
-     Template for converting
+     Template for converting data types
    */
   template<class T2>
-  Tuple<T,length_>(const Tuple<T2,length_>&);
+  Tuple<T,length>(const Tuple<T2,length>&);
   
 
   /**
@@ -242,14 +245,14 @@ public:
    */
   int get_len()const
   {
-    return length_;
+    return length;
   }
   
 protected:
   /**
      pointer to data
   */
-  T data_[length_];
+  T data_[length];
 
 private:
 };
@@ -259,9 +262,9 @@ private:
    prints out the tuple to cout
    lifted almost whole cloth from c++/4.3/complex
 */
-template<typename _CharT, class _Traits,class T,int length_>
+template<typename _CharT, class _Traits,class T,int length>
 std::basic_ostream<_CharT, _Traits>&
-operator<<(std::basic_ostream<_CharT, _Traits>& __os, const Tuple<T,length_>& in)
+operator<<(std::basic_ostream<_CharT, _Traits>& __os, const Tuple<T,length>& in)
 {
 
     
@@ -281,138 +284,138 @@ operator<<(std::basic_ostream<_CharT, _Traits>& __os, const Tuple<T,length_>& in
 }
 
 
-template<class T,int length_>
-bool Tuple<T,length_>::operator==(const Tuple<T,length_>& b)const
+template<class T,int length>
+bool Tuple<T,length>::operator==(const Tuple<T,length>& b)const
 {
-  for(int j = 0;j<length_; ++j)
+  for(int j = 0;j<length; ++j)
     if(data_[j] != b.data_[j])
       return false;
   return true;
 }
 
-template<class T,int length_>
-void Tuple<T,length_>::operator= (const Tuple<T,length_>& y){
-  for(int j = 0;j<length_; ++j)
+template<class T,int length>
+void Tuple<T,length>::operator= (const Tuple<T,length>& y){
+  for(int j = 0;j<length; ++j)
     data_[j] = y.data_[j];
 }
-template<class T,int length_>
-T& Tuple<T,length_>::operator[] (int i){
-  if(i<0 || i>= length_)
+template<class T,int length>
+T& Tuple<T,length>::operator[] (int i){
+  if(i<0 || i>= length)
     throw "Tuple range error"; 		// place holder for proper error handling
   return data_[i];
 }
-template<class T,int length_>
-const T& Tuple<T,length_>::operator[] (int i) const{
-  if(i<0 || i>= length_)
+template<class T,int length>
+const T& Tuple<T,length>::operator[] (int i) const{
+  if(i<0 || i>= length)
     throw "Tuple range error"; 		// place holder for proper error handeling
   return data_[i];
 }
-template<class T,int length_>
-Tuple<T,length_> Tuple<T,length_>::operator- (){
-  Tuple<T,length_> tmp;
-  for(int j = 0;j<length_; ++j)
+template<class T,int length>
+Tuple<T,length> Tuple<T,length>::operator- (){
+  Tuple<T,length> tmp;
+  for(int j = 0;j<length; ++j)
     tmp.data_[j] = -data_[j];
   return tmp;
 }
-template<class T,int length_>
+template<class T,int length>
 
-Tuple<T,length_> Tuple<T,length_>::operator+ (const Tuple<T,length_>& y) const{
-  Tuple<T,length_> tmp;
-  for(int j = 0;j<length_; ++j)
+Tuple<T,length> Tuple<T,length>::operator+ (const Tuple<T,length>& y) const{
+  Tuple<T,length> tmp;
+  for(int j = 0;j<length; ++j)
     tmp.data_[j] = y.data_[j] + data_[j];
   return tmp;
 }
-template<class T,int length_>
-Tuple<T,length_> Tuple<T,length_>::operator+ (const T y)const{
-  Tuple<T,length_> tmp;
-  for(int j = 0;j<length_; ++j)
+template<class T,int length>
+Tuple<T,length> Tuple<T,length>::operator+ (const T y)const{
+  Tuple<T,length> tmp;
+  for(int j = 0;j<length; ++j)
     tmp.data_[j] = y + data_[j];
   return tmp;
 }
-template<class T,int length_>
-void Tuple<T,length_>::operator+= (const Tuple<T,length_>& y){
-  for(int j = 0;j<length_; ++j)
+template<class T,int length>
+void Tuple<T,length>::operator+= (const Tuple<T,length>& y){
+  for(int j = 0;j<length; ++j)
     data_[j] += y.data_[j] ;
 
 }
-template<class T,int length_>
-void Tuple<T,length_>::operator+= (const T y){
-  for(int j = 0;j<length_; ++j)
+template<class T,int length>
+void Tuple<T,length>::operator+= (const T y){
+  for(int j = 0;j<length; ++j)
     data_[j] += y ;
 
 }
 
-template<class T,int length_>
-Tuple<T,length_> Tuple<T,length_>::operator- (const Tuple<T,length_>& y) const{
-  Tuple<T,length_> tmp;
-  for(int j = 0;j<length_; ++j)
+template<class T,int length>
+Tuple<T,length> Tuple<T,length>::operator- (const Tuple<T,length>& y) const{
+  Tuple<T,length> tmp;
+  for(int j = 0;j<length; ++j)
     tmp.data_[j] = -y.data_[j] + data_[j];
   return tmp;
 }
-template<class T,int length_>
-Tuple<T,length_> Tuple<T,length_>::operator- (const T y) const{
-  Tuple<T,length_> tmp;
-  for(int j = 0;j<length_; ++j)
+template<class T,int length>
+Tuple<T,length> Tuple<T,length>::operator- (const T y) const{
+  Tuple<T,length> tmp;
+  for(int j = 0;j<length; ++j)
     tmp.data_[j] = -y + data_[j];
   return tmp;
 }
-template<class T,int length_>
-void Tuple<T,length_>::operator-= (const Tuple<T,length_>& y){
-  for(int j = 0;j<length_; ++j)
+template<class T,int length>
+void Tuple<T,length>::operator-= (const Tuple<T,length>& y){
+  for(int j = 0;j<length; ++j)
     data_[j] -= y.data_[j] ;
 
 }
-template<class T,int length_>
-void Tuple<T,length_>::operator-= (const T y){
-  for(int j = 0;j<length_; ++j)
+template<class T,int length>
+void Tuple<T,length>::operator-= (const T y){
+  for(int j = 0;j<length; ++j)
     data_[j] -= y ;
 }
 
 
-template<class T,int length_>
-Tuple<T,length_> Tuple<T,length_>::operator* (const Tuple<T,length_>& y) const{
-  Tuple<T,length_> tmp;
-  for(int j = 0;j<length_; ++j){
+template<class T,int length>
+Tuple<T,length> Tuple<T,length>::operator* (const Tuple<T,length>& y) const{
+  Tuple<T,length> tmp;
+  for(int j = 0;j<length; ++j){
     tmp.data_[j] = data_[j]*y.data_[j] ;
   }
   return tmp;
 }
-template<class T,int length_>
-Tuple<T,length_> Tuple<T,length_>::operator* (const T y) const{
-  Tuple<T,length_> tmp;
-  for(int j = 0;j<length_; ++j){
+template<class T,int length>
+Tuple<T,length> Tuple<T,length>::operator* (const T y) const{
+  Tuple<T,length> tmp;
+  for(int j = 0;j<length; ++j){
     tmp.data_[j] = data_[j] * y ;
   }
   return tmp;
 }
-template<class T,int length_>
-void Tuple<T,length_>::operator*= (const Tuple<T,length_>& y){
-  for(int j = 0;j<length_; ++j)
+template<class T,int length>
+void Tuple<T,length>::operator*= (const Tuple<T,length>& y){
+  for(int j = 0;j<length; ++j)
     data_[j] *= y.data_[j] ;
 }
-template<class T,int length_>
-void Tuple<T,length_>::operator*= (const T y){
-  for(int j = 0;j<length_; ++j)
+template<class T,int length>
+void Tuple<T,length>::operator*= (const T y){
+  for(int j = 0;j<length; ++j)
     data_[j] *= y ;
 }
 
 
 
-template<class T,int length_>
-void Tuple<T,length_>::operator/= (const Tuple<T,length_>& y){
-  for(int j = 0;j<length_; ++j)
+template<class T,int length>
+void Tuple<T,length>::operator/= (const Tuple<T,length>& y){
+  for(int j = 0;j<length; ++j)
     data_[j] /= y.data_[j] ;
 
 }
-template<class T,int length_>
-void Tuple<T,length_>::operator/= (const T y){
-  for(int j = 0;j<length_; ++j)
+template<class T,int length>
+void Tuple<T,length>::operator/= (const T y){
+  for(int j = 0;j<length; ++j)
     data_[j] /= y ;
 }
-template<class T,int length_>
-Tuple<T,length_> Tuple<T,length_>::operator/ (const Tuple<T,length_>& y) const{
-  Tuple<T,length_> tmp;
-  for(int j = 0;j<length_; ++j)
+template<class T,int length>
+Tuple<T,length> Tuple<T,length>::operator/ (const Tuple<T,length>& y) const{
+  Tuple<T,length> tmp;
+  for(int j = 0;j<length; ++j)
     tmp.data_[j] = data_[j]/y.data_[j] ;
   return tmp;
 }
@@ -420,77 +423,77 @@ Tuple<T,length_> Tuple<T,length_>::operator/ (const Tuple<T,length_>& y) const{
 
 
 
-template<class T,int length_>
-void Tuple<T,length_>::print() const{
+template<class T,int length>
+void Tuple<T,length>::print() const{
   using std::cout;
   using std::endl;
-  for(int j = 0;j<length_; ++j)
+  for(int j = 0;j<length; ++j)
     cout<<data_[j] <<"\t";
   cout<<endl;
 }
 
-template<class T,int length_>
-T Tuple<T,length_>::magnitude_sqr() const{
+template<class T,int length>
+T Tuple<T,length>::magnitude_sqr() const{
   T tmp = 0;
-  for(int j = 0;j<length_; ++j)
+  for(int j = 0;j<length; ++j)
     tmp += data_[j]*data_[j] ;
   return tmp;
 }
-template<class T,int length_>
-T Tuple<T,length_>::magnitude() const
+template<class T,int length>
+T Tuple<T,length>::magnitude() const
 {
   return sqrt(magnitude_sqr());
 }
-template<class T,int length_>
-T Tuple<T,length_>::dot(const Tuple<T,length_> & y) const
+template<class T,int length>
+T Tuple<T,length>::dot(const Tuple<T,length> & y) const
 {
   T tmp = 0;
-  for(int j = 0;j<length_; ++j)
+  for(int j = 0;j<length; ++j)
     tmp += data_[j]*y.data_[j] ;
   return tmp;
 }
 
-template<class T,int length_>
-T Tuple<T,length_>::prod()const
+template<class T,int length>
+T Tuple<T,length>::prod()const
 {
   T tmp = 1;
-  for(int j = 0;j<length_; ++j)
+  for(int j = 0;j<length; ++j)
     tmp *= data_[j];
   return tmp;
   
 }
-template<class T,int length_>
-T Tuple<T,length_>::sum()const
+template<class T,int length>
+T Tuple<T,length>::sum()const
 {
   T tmp = 0;
-  for(int j = 0;j<length_; ++j)
+  for(int j = 0;j<length; ++j)
     tmp += data_[j];
   return tmp;
 } 
-template<class T,int length_>
-void Tuple<T,length_>::make_unit(){
+template<class T,int length>
+void Tuple<T,length>::make_unit(){
   T tmp = magnitude();
-  for(int j = 0;j<length_; ++j)
+  for(int j = 0;j<length; ++j)
     data_[j] /= tmp ;
 }
-template<class T,int length_>
-Tuple<T,length_> Tuple<T,length_>::direction() const{
-  Tuple<T,length_> tmp = (*this);
+template<class T,int length>
+Tuple<T,length> Tuple<T,length>::direction() const{
+  Tuple<T,length> tmp = (*this);
   tmp.make_unit();
   return tmp;
 
 }
 
-template<class T,int length_>
-void Tuple<T,length_>::clear(){
-  for(int j = 0;j<length_; ++j)
+template<class T,int length>
+void Tuple<T,length>::clear(){
+  for(int j = 0;j<length; ++j)
     data_[j] =0 ;
 }
 
-template<class T,int length_>
-Tuple<T,length_>::Tuple(){
-  //  data_= (T*) new T[length_];
-  for(int j = 0;j<length_; ++j)
+template<class T,int length>
+Tuple<T,length>::Tuple(){
+  //  data_= (T*) new T[length];
+  for(int j = 0;j<length; ++j)
     data_[j] = 0;
   //  std::cout<<"make"<< std::endl;
 
@@ -498,54 +501,54 @@ Tuple<T,length_>::Tuple(){
 
 // tac 2009-07-17
 // added 
-template<class T,int length_>
-Tuple<T,length_>::Tuple(const Tuple<T,length_>& y){
-  for(int j = 0;j<length_; ++j)
+template<class T,int length>
+Tuple<T,length>::Tuple(const Tuple<T,length>& y){
+  for(int j = 0;j<length; ++j)
     data_[j] = y.data_[j];
 }
 
-template<class T,int length_>
+template<class T,int length>
 template<class T2>
-Tuple<T,length_>::Tuple(const Tuple<T2,length_>& y){
-  for(int j = 0;j<length_; ++j)
+Tuple<T,length>::Tuple(const Tuple<T2,length>& y){
+  for(int j = 0;j<length; ++j)
     data_[j] = (T) y[j];
 }
 
 
 // tac 2009-10-07
-// added because the constructors and destructors of Tuple<T,length_>s are taking ~5% of run time
-template<class T,int length_>
-T Tuple<T,length_>::dist_sqr(const Tuple<T,length_>& y)const
+// added because the constructors and destructors of Tuple<T,length>s are taking ~5% of run time
+template<class T,int length>
+T Tuple<T,length>::dist_sqr(const Tuple<T,length>& y)const
 {
   T out =0;
   
-  for(int j = 0;j<length_;++j)
+  for(int j = 0;j<length;++j)
   {
     out += (data_[j]-y.data_[j])*(data_[j]-y.data_[j]);
   }
   return out;
 }
 
-template<class T,int length_>
-Tuple<T,length_>::~Tuple<T,length_>(){
+template<class T,int length>
+Tuple<T,length>::~Tuple<T,length>(){
   //  std::cout<<"died"<< std::endl;
   // delete[] data_;
   //   data_ = NULL;
 }
-template<class T,int length_>
-Tuple<T,length_>::Tuple(T x,T y)
+template<class T,int length>
+Tuple<T,length>::Tuple(T x,T y)
 {
-  if(length_ != 2)
+  if(length != 2)
     throw std::logic_error("Tuple, using wrong number of arguments for this instantiation");
   data_[0] = x;
   data_[1] = y;
 }
 
 
-template<class T,int length_>
-Tuple<T,length_>::Tuple(T x,T y,T z)
+template<class T,int length>
+Tuple<T,length>::Tuple(T x,T y,T z)
 {
-  if(length_ != 3)
+  if(length != 3)
     throw std::logic_error("Tuple, using wrong number of arguments for this instantiation");
   
   data_[0] = x;
@@ -553,21 +556,21 @@ Tuple<T,length_>::Tuple(T x,T y,T z)
   data_[2] = z;
 }
 
-template<class T,int length_>
-Tuple<T,length_>::Tuple(const T * in )
+template<class T,int length>
+Tuple<T,length>::Tuple(const T * in )
 {
-  for( int j = 0;j<length_;++j)
+  for( int j = 0;j<length;++j)
     data_[j] = in[j];
 }
 
-template<class T,int length_>
-const T * Tuple<T,length_>::get_ptr() const
+template<class T,int length>
+const T * Tuple<T,length>::get_ptr() const
 {
   return data_;
 }
 
-template<class T,int length_>
-T * Tuple<T,length_>::get_ptr() 
+template<class T,int length>
+T * Tuple<T,length>::get_ptr() 
 {
   return data_;
 }
