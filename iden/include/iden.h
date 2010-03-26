@@ -43,6 +43,7 @@
 #include <string>
 
 #include "params1.h"
+#include "tuple.h"
 namespace tracking
 {
 class hash_case;
@@ -52,7 +53,7 @@ class Master_box;
 namespace utilities
 {
 class Wrapper_i_plu;
-class Pair;
+
 
 }
 
@@ -74,7 +75,7 @@ public:
   void set_fname(const std::string &);
   void set_params(const Params& param_in);
   
-  utilities::Wrapper_i_plu * fill_wrapper(utilities::Pair,int frames=0,int start=0);
+  utilities::Wrapper_i_plu * fill_wrapper(utilities::Tuple<float,2>,int frames=0,int start=0);
   
 private:
   /**

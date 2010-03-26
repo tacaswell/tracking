@@ -46,7 +46,7 @@
 #include "master_box_t.h"
 #include "particle_base.h"
 #include "hash_case.h"
-#include "pair.h"
+#include "tuple.h"
 #include "wrapper_o_hdf.h"
 #include "wrapper_i_hdf.h"
 #include "filter.h"
@@ -73,7 +73,7 @@ using utilities::Wrapper_i_hdf;
 
 using utilities::Read_config;
 
-using utilities::Pair;
+using utilities::Tuple;
 
 using utilities::Attr_list_hdf;
 
@@ -149,7 +149,7 @@ int main(int argc, char * const argv[])
     
   float hwhm,thresh;
   int feature_rad,dilation_rad, mask_rad,frame_c;
-  Pair dims;
+  Tuple<float,2> dims;
     
   int comp_num;
   string grp_name;

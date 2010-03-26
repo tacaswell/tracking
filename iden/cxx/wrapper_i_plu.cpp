@@ -33,7 +33,7 @@
 using utilities::Wrapper_i_plu;
 
 using utilities::Tuple;
-using utilities::Pair;
+
 using std::cerr;
 using std::cout;
 using std::endl;
@@ -110,7 +110,7 @@ Wrapper_i_plu::~Wrapper_i_plu()
 }
 
 
-Wrapper_i_plu::Wrapper_i_plu(int frames,Pair dims):data_(frames,NULL),frame_count_(frames,0),count_ (0),dims_(dims)
+Wrapper_i_plu::Wrapper_i_plu(int frames,Tuple<float,2> dims):data_(frames,NULL),frame_count_(frames,0),count_ (0),dims_(dims)
 {
   cout<<"data_ size: "<<data_.size()<<endl;
   
@@ -150,7 +150,7 @@ bool Wrapper_i_plu::contains_type(utilities::D_TYPE in) const
   return it != data_types_.end();
 }
 
-Tuple Wrapper_i_plu::get_dims() const
+Tuple<float,2> Wrapper_i_plu::get_dims() const
 {
-  return Pair(dims_);
+  return Tuple<float,2>(dims_);
 }

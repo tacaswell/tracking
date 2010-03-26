@@ -46,6 +46,8 @@
 #include "ipp.h"
 #include "FreeImagePlus.h"
 
+#include "tuple.h"
+
 using std::string;
 
 #include <iostream>
@@ -59,11 +61,12 @@ using iden::Iden;
 using iden::Image2D;
 
 using utilities::Wrapper_i_plu;
-using utilities::Pair;
+using utilities::Tuple;
 
 
 
-Wrapper_i_plu * Iden::fill_wrapper(Pair dims,int frames,int start)
+
+Wrapper_i_plu * Iden::fill_wrapper(Tuple<float,2> dims,int frames,int start)
 {
   
   Wrapper_i_plu * wrapper = NULL;
