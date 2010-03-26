@@ -15,33 +15,43 @@
 //You should have received a copy of the GNU General Public License
 //along with this program; if not, see <http://www.gnu.org/licenses>.
 
-#include "pair_t.h"
-#include "triple_t.h"
+#include "pair.h"
+#include "triple.h"
+#include <iostream>
+using std::endl;
+using std::cout;
 
-using utilities::Pair_t;
-using utilities::Triple_t;
+
+using utilities::Pair;
+using utilities::Triple;
 
 int main()
 {
-  Pair_t<int> test(1,2);
+  const Pair<int> test(1,2);
   test.print();
 
-  Pair_t<int> test2(1,2.5);
+const   Pair<int> test2(1,2.5);
   test2.print();
   
-  Pair_t<float> test3(1.5,2.5);
+const   Pair<float> test3(1.5,2.5);
   test3.print();
 
+const   Pair<int> test4(test3);
+  test4.print();
+  
 
-  Triple_t<int> testt(1,2,3);
+const   Triple<int> testt(1,2,3);
   testt.print();
 
-  Triple_t<int> testt2(1,2.5,3);
+const   Triple<int> testt2(1,2.5,3);
   testt2.print();
   
-  Triple_t<float> testt3(1.5,2.5,3.5);
+const   Triple<float> testt3(1.5,2.5,3.5);
   testt3.print();
 
+  cout<<testt3[0]<<'\t'<<testt3[1]<<'\t'<<testt3[2]<<endl;
+  cout<<testt3[0]<<'\t'<<testt3[1]<<'\t'<<testt3[2]<<endl;
+  
 
   return 0;
 }

@@ -13,8 +13,6 @@ SET(CONFIG_SRC
 
 
 SET(COMMON_SRC
-  ${COMMON_SRC_PATH}/triple.cpp
-  ${COMMON_SRC_PATH}/pair.cpp
   ${COMMON_SRC_PATH}/particle_base.cpp
   ${COMMON_SRC_PATH}/master_box_t.cpp
   ${CONFIG_SRC}
@@ -126,8 +124,12 @@ if(COMPILE_IDEN)
 endif(COMPILE_IDEN)
 
 if(COMPILE_TEST)
-  add_subdirectory(testing)
   SET(CMAKE_CXX_FLAGS "-ansi -D_GNU_SOURCE -fPIC -fno-omit-frame-pointer -pthread -Wall ")
+  MESSAGE (STATUS "tried to set the CXX flages")
+  MESSAGE (STATUS "${CMAKE_CXX_FLAGS}")
+
+  add_subdirectory(testing)
+
 endif(COMPILE_TEST)
 
 

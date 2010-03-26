@@ -219,7 +219,7 @@ void Attr_list_hdf::set_value(const std::string & key,  const std::string &   va
 
 
 
-utilities::Pair Attr_list_hdf::get_value(const std::string & key,utilities::Pair  & value_out) const 
+utilities::Pair<float> Attr_list_hdf::get_value(const std::string & key,utilities::Pair<float>  & value_out) const 
 {
   Attribute  tmpa =  Attribute(obj_->openAttribute(key));
   H5T_class_t type_class = tmpa.getTypeClass();
@@ -229,18 +229,18 @@ utilities::Pair Attr_list_hdf::get_value(const std::string & key,utilities::Pair
   if(type_class == H5T_FLOAT && 
      space_type == H5S_SIMPLE  && 
      dspace.getSimpleExtentNdims() == 1 && 
-     dspace.getSimpleExtentNpoints() == Pair::length_)
+     dspace.getSimpleExtentNpoints() == Pair<float>::length_)
     tmpa.read(PredType::NATIVE_FLOAT,value_out.get_ptr());
   else
     throw invalid_argument("output does not match attribute dtype");
   
   
   
-  return Pair(value_out);
+  return Pair<float>(value_out);
 
 }
 
-void Attr_list_hdf::set_value(const std::string & key,  const Pair &   value_in,bool over_write) 
+void Attr_list_hdf::set_value(const std::string & key,  const Pair<float> &   value_in,bool over_write) 
 {
   if(contains_attr(key))
   {
@@ -252,7 +252,7 @@ void Attr_list_hdf::set_value(const std::string & key,  const Pair &   value_in,
       H5S_class_t space_type = dspace.getSimpleExtentType();
   
       if(type_class == H5T_FLOAT && space_type == H5S_SIMPLE  && 
-	 dspace.getSimpleExtentNdims() == 1 && dspace.getSimpleExtentNpoints() == Pair::length_)
+	 dspace.getSimpleExtentNdims() == 1 && dspace.getSimpleExtentNpoints() == Pair<float>::length_)
 	tmpa.write(PredType::NATIVE_FLOAT,value_in.get_ptr());
       
       else
@@ -261,15 +261,15 @@ void Attr_list_hdf::set_value(const std::string & key,  const Pair &   value_in,
     else
     {
       // check to see if they match
-      Pair tmp ;
+      Pair<float> tmp ;
       get_value(key,tmp);
       if(!(tmp == value_in))
-	throw invalid_argument("attribute name already exists and values don't match: Pair");
+	throw invalid_argument("attribute name already exists and values don't match: Pair<float>");
     }
   }
   else
   {
-    hsize_t dim_c = (hsize_t) Pair::length_;
+    hsize_t dim_c = (hsize_t) Pair<float>::length_;
     DataSpace dspace =  DataSpace(1,&dim_c);
     Attribute  tmpa =  obj_->createAttribute(key,PredType::NATIVE_FLOAT,dspace);
     tmpa.write(PredType::NATIVE_FLOAT,value_in.get_ptr());
@@ -277,7 +277,7 @@ void Attr_list_hdf::set_value(const std::string & key,  const Pair &   value_in,
 }
 
 
-utilities::Triple Attr_list_hdf::get_value(const std::string & key,utilities::Triple  & value_out) const 
+utilities::Triple<float> Attr_list_hdf::get_value(const std::string & key,utilities::Triple<float>  & value_out) const 
 {
   Attribute  tmpa =  Attribute(obj_->openAttribute(key));
   H5T_class_t type_class = tmpa.getTypeClass();
@@ -287,18 +287,18 @@ utilities::Triple Attr_list_hdf::get_value(const std::string & key,utilities::Tr
   if(type_class == H5T_FLOAT && 
      space_type == H5S_SIMPLE  && 
      dspace.getSimpleExtentNdims() == 1 && 
-     dspace.getSimpleExtentNpoints() == Triple::length_)
+     dspace.getSimpleExtentNpoints() == Triple<float>::length_)
     tmpa.read(PredType::NATIVE_FLOAT,value_out.get_ptr());
   else
     throw invalid_argument("output does not match attribute dtype");
   
   
   
-  return Triple(value_out);
+  return Triple<float>(value_out);
 
 }
 
-void Attr_list_hdf::set_value(const std::string & key,  const Triple &   value_in,bool over_write) 
+void Attr_list_hdf::set_value(const std::string & key,  const Triple<float> &   value_in,bool over_write) 
 {
   if(contains_attr(key))
   {
@@ -310,7 +310,7 @@ void Attr_list_hdf::set_value(const std::string & key,  const Triple &   value_i
       H5S_class_t space_type = dspace.getSimpleExtentType();
   
       if(type_class == H5T_FLOAT && space_type == H5S_SIMPLE  && 
-	 dspace.getSimpleExtentNdims() == 1 && dspace.getSimpleExtentNpoints() == Triple::length_)
+	 dspace.getSimpleExtentNdims() == 1 && dspace.getSimpleExtentNpoints() == Triple<float>::length_)
 	tmpa.write(PredType::NATIVE_FLOAT,value_in.get_ptr());
       else
       	throw invalid_argument("output does not match attribute dtype");
@@ -318,15 +318,15 @@ void Attr_list_hdf::set_value(const std::string & key,  const Triple &   value_i
     else
     {
       // check to see if they match
-      Triple tmp ;
+      Triple<float> tmp ;
       get_value(key,tmp);
       if(!(tmp == value_in))
-	throw invalid_argument("attribute name already exists and values don't match: Triple");
+	throw invalid_argument("attribute name already exists and values don't match: Triple<float>");
     }
   }
   else
   {
-    hsize_t dim_c = (hsize_t) Triple::length_;
+    hsize_t dim_c = (hsize_t) Triple<float>::length_;
     DataSpace dspace =  DataSpace(1,&dim_c);
     Attribute  tmpa =  obj_->createAttribute(key,PredType::NATIVE_FLOAT,dspace);
     tmpa.write(PredType::NATIVE_FLOAT,value_in.get_ptr());

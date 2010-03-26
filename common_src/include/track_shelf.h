@@ -26,7 +26,7 @@
 #define TRACK_SHELF
 
 #include <map>
-
+#include "triple.h"
 
 //forward declare histogram
 namespace utilities{
@@ -37,7 +37,7 @@ class Cell;
 class Counted_vector;
 class Generic_wrapper_base;
 class Wrapper_out;
-class Triple;
+
 
 }
 
@@ -61,7 +61,7 @@ public:
      The first particle in the track
    */
   void add_new_track(particle_track* first_part);
-
+  
   /**
     adds a pointer to a track_box to the shelf.  The shelf takes
     responsibility for deleting the track when done.
@@ -190,8 +190,8 @@ public:
      for use with 3D linking.  This should be sub-classed
    */
   void output_link_to_wrapper(utilities::Wrapper_out & wrapper, 
-			      const utilities::Triple & scale_t,
-			      const utilities::Triple & dim) const;
+			      const utilities::Triple<float> & scale_t,
+			      const utilities::Triple<float> & dim) const;
 
 
   /**

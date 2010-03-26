@@ -38,7 +38,7 @@ using std::cout;
 using std::endl;
 using std::complex;
 
-using utilities::Tuple;
+using utilities::Tuplef;
 using utilities::Wrapper_in;
 //int particle_base
 float particle_base::max_neighborhood_range_ = 0;
@@ -57,7 +57,7 @@ particle_base::particle_base( int i_ind,int frame):ind_(i_ind),frame_(frame){
 
 // tac 2009-07-17
 // added
-particle_base::particle_base( int i_ind,Tuple pos,int frame)
+particle_base::particle_base( int i_ind,Tuplef pos,int frame)
   :ind_(i_ind),position_(pos),frame_(frame){
   priv_init();
 }
@@ -178,12 +178,12 @@ complex<float> particle_base::get_value(utilities::D_TYPE type,complex<float>&da
 
 
 
-float particle_base::get_r(const utilities::Tuple & origin) const{
+float particle_base::get_r(const utilities::Tuplef & origin) const{
   return (position_ - origin).magnitude();
 }
 
-float particle_base::get_theta(const utilities::Tuple & origin) const{
-  Tuple tmp =  (position_ - origin);
+float particle_base::get_theta(const utilities::Tuplef & origin) const{
+  Tuplef tmp =  (position_ - origin);
   return atan2(tmp[1], tmp[0]);
 }
 
@@ -335,7 +335,7 @@ complex<float> particle_base::compute_phi_6()const
   for(vector<const particle*>::const_iterator cur_nei = neighborhood_.begin();
       cur_nei!=myend;++cur_nei)
   {
-    Tuple tmp = (*cur_nei)->get_position()-position_;
+    Tuplef tmp = (*cur_nei)->get_position()-position_;
     // angle made with the y-axis (I think, doesn't really matter for this
     float theta6 = atan2(tmp[0],tmp[1])*6;
     phi6 += exp(i*theta6);

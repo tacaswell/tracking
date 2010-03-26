@@ -1,4 +1,4 @@
-//Copyright 2008,2009 Thomas A Caswell
+//Copyright 2008-2010 Thomas A Caswell
 //tcaswell@uchicago.edu
 //http://jfi.uchicago.edu/~tcaswell
 //
@@ -36,8 +36,8 @@
 //local includes
 #include "part_def.h"
 
-#include "pair.h"
-#include "triple.h"
+
+
 #include "enum_utils.h"
 
 
@@ -77,7 +77,7 @@ public:
   /**
      Constructor that takes the position of the particle. 
    */
-  particle_base(int ind, utilities::Tuple pos,int frame=0);
+  particle_base(int ind, utilities::Tuplef pos,int frame=0);
   
   
 
@@ -112,7 +112,7 @@ public:
   /**
      returns a tuple of the particle's position
    */
-  const utilities::Tuple & get_position() const{
+  const utilities::Tuplef & get_position() const{
     return position_;}
   /**
      returns the index of the current particle
@@ -137,12 +137,12 @@ public:
      Returns the distance of the particle from the specified origin
      @param origin the cordinates of the new origin
    */
-  float get_r(const utilities::Tuple & origin) const;
+  float get_r(const utilities::Tuplef & origin) const;
   /**
      Returns the angle in the plane from the Y-axis
      @param origin the cordinates of the new origin
    */
-  float get_theta(const utilities::Tuple & origin) const;
+  float get_theta(const utilities::Tuplef & origin) const;
 
 
   /**
@@ -266,7 +266,7 @@ protected:
      problem of taking more memory, but it might help the time.
      This will also make keeping track of the displacements.
    */
-  utilities::Tuple position_;
+  utilities::Tuplef position_;
   
   /**
      The frame of the particle

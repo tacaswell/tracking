@@ -1,4 +1,4 @@
-//Copyright 2008,2009 Thomas A Caswell
+//Copyright 2008-2010 Thomas A Caswell
 //tcaswell@uchicago.edu
 //http://jfi.uchicago.edu/~tcaswell
 //
@@ -88,7 +88,7 @@ public:
      the number of frames.  It is assumed that the frames are numbered [0-frames)
 
   */
-  hash_case(Master_box & mb,const utilities::Tuple & dims, 
+  hash_case(Master_box & mb,const utilities::Tuplef & dims, 
 	    float ppb, int frames);
 
   
@@ -278,7 +278,7 @@ protected:
 	    
   
 
-  void  init(Master_box & mb,const utilities::Tuple & dims, 
+  void  init(Master_box & mb,const utilities::Tuplef & dims, 
 	     float ppb, int frames);
   
 

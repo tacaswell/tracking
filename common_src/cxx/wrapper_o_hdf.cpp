@@ -27,20 +27,30 @@
 #include <sstream>
 #include <stdexcept>
 
-#include "wrapper_o_hdf.h"
-#include "wrapper_o_hdf_group.h"
-#include "H5Cpp.h"
-#include "particle_base.h"
+
 #include "particle_track.h"
+
+
 #include "attr_list_hdf.h"
 #include "read_config.h"
 #include "track_box.h"
+
+
+#include "wrapper_o_hdf.h"
+#include "wrapper_o_hdf_group.h"
+#include "H5Cpp.h"
+
+
 //using namespace H5;
 
 using utilities::Wrapper_o_hdf;
 using utilities::Wrapper_o_hdf_group;
 using utilities::Attr_list_hdf;
 using utilities::Read_config;
+using utilities::Triple;
+
+
+
 
 using std::string;
 using std::set;
@@ -107,12 +117,12 @@ void Wrapper_o_hdf::initialize_wrapper()
   try
   {
     
-  if(file_type_ == NEW_FILE_OVR)
-    file_ = new H5File(file_name_,H5F_ACC_TRUNC);
-  else if(file_type_ == NEW_FILE)
-    file_ = new H5File(file_name_,H5F_ACC_EXCL);
-  else if(file_type_ == APPEND_FILE || file_type_ == FILL_FILE)
-    file_ = new H5File(file_name_,H5F_ACC_RDWR);
+    if(file_type_ == NEW_FILE_OVR)
+      file_ = new H5File(file_name_,H5F_ACC_TRUNC);
+    else if(file_type_ == NEW_FILE)
+      file_ = new H5File(file_name_,H5F_ACC_EXCL);
+    else if(file_type_ == APPEND_FILE || file_type_ == FILL_FILE)
+      file_ = new H5File(file_name_,H5F_ACC_RDWR);
   }
   catch(...)
   {
@@ -195,13 +205,13 @@ void Wrapper_o_hdf::set_all_values(const particle* p_in)
 
 
 #if PTYPE == 1
-void Wrapper_o_hdf::set_all_values(const tracking::Track_box * in,const utilities::Triple & scale) 
+void Wrapper_o_hdf::set_all_values(const tracking::Track_box * in,const utilities::Triple<float> & scale) 
 {
   if(!group_open_)
     throw logic_error("wrapper_o_hdf: no group open");
 
   
-  Triple cord;
+  Triple<float> cord;
   float I;
   in->average_cord(cord,I);
   cord*=scale;
@@ -260,7 +270,7 @@ void Wrapper_o_hdf::reset_wrapper(params * param)
        
 void Wrapper_o_hdf::print()const
 {
- throw "not implemented";
+  throw "not implemented";
 } 
 
 
@@ -311,7 +321,7 @@ void Wrapper_o_hdf::add_meta_data(const std::string & key, float val,bool root_g
     
 }
 
-void Wrapper_o_hdf::add_meta_data(const std::string & key, const Triple & val,bool root_group )
+void Wrapper_o_hdf::add_meta_data(const std::string & key, const Triple<float> & val,bool root_group )
 {
   
   if( root_group)
@@ -327,7 +337,7 @@ void Wrapper_o_hdf::add_meta_data(const std::string & key, const Triple & val,bo
 }
 
 
-void Wrapper_o_hdf::add_meta_data(const std::string & key, const Pair & val,bool root_group )
+void Wrapper_o_hdf::add_meta_data(const std::string & key, const Pair<float> & val,bool root_group )
 {
 
   
@@ -405,15 +415,14 @@ void Wrapper_o_hdf::add_meta_data(const std::string & key, const string& val,D_T
   local_add_meta(key,val,dset_type,wrapper_open_,comp_number_,dset_pram_group_);
   
 }
-void Wrapper_o_hdf::add_meta_data(const std::string & key, const Pair& val,D_TYPE dset_type)
+void Wrapper_o_hdf::add_meta_data(const std::string & key, const Pair<float>& val,D_TYPE dset_type)
 {
   local_add_meta(key,val,dset_type,wrapper_open_,comp_number_,dset_pram_group_);
   
 }
-void Wrapper_o_hdf::add_meta_data(const std::string & key, const Triple& val,D_TYPE dset_type)
+void Wrapper_o_hdf::add_meta_data(const std::string & key, const Triple<float>& val,D_TYPE dset_type)
 {
   local_add_meta(key,val,dset_type,wrapper_open_,comp_number_,dset_pram_group_);
-  
 }
 
 void Wrapper_o_hdf::add_meta_data_list(const Read_config & config, const std::set<D_TYPE> & d_types)

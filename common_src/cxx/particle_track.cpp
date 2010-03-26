@@ -59,7 +59,7 @@ particle_track::particle_track(int i_ind,int frame)
 
 }
 
-particle_track::particle_track(int i_ind,utilities::Tuple pos,unsigned int frame)
+particle_track::particle_track(int i_ind,utilities::Tuplef pos,unsigned int frame)
   :particle_base(i_ind,pos,frame),
    n_pos_link(NULL),
    p_pos_link(NULL),
@@ -272,12 +272,12 @@ float particle_track::distancesq_corrected(const particle_track* part_in)const{
 
 }
 
- const utilities::Tuple particle_track::get_corrected_forward_disp()const
+ const utilities::Tuplef particle_track::get_corrected_forward_disp()const
 {
   if (shelf_ ==NULL)
     {
       throw "shelf not defined";
-      return utilities::Tuple();
+      return utilities::Tuplef();
     }
   return forward_disp_ - shelf_->get_mean_forward_disp();
 }
@@ -306,12 +306,12 @@ bool particle_track::has_next()const
   return true;
 }
   
-const utilities::Tuple particle_track::get_corrected_pos()const
+const utilities::Tuplef particle_track::get_corrected_pos()const
 {
   if (shelf_ ==NULL)
     {
       throw "shelf not defined";
-      return utilities::Tuple();
+      return utilities::Tuplef();
     }
   return position_ - shelf_->get_cum_forward_disp();
 }

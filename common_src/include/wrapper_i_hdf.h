@@ -109,7 +109,7 @@ public:
 
   bool contains_type(D_TYPE type) const ;
 
-  Tuple get_dims() const;
+  Tuplef get_dims() const;
 
 
   

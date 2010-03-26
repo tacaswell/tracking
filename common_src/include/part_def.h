@@ -1,4 +1,4 @@
-//Copyright 2009 Thomas A Caswell
+//Copyright 2009,2010 Thomas A Caswell
 //tcaswell@uchicago.edu
 //http://jfi.uchicago.edu/~tcaswell
 //
@@ -46,14 +46,17 @@ typedef particle_track particle;
 #ifndef DEFINE_DIMENSION_COUNT
 #define DEFINE_DIMENSION_COUNT
 
+
+#include "pair.h"
+#include "triple.h"
 namespace utilities
 {
-class Triple;
-class Pair;
 #if   DIM_COUNT == 2
-typedef Pair Tuple;
+typedef Pair<int> Tuplei;
+typedef Pair<float> Tuplef;
 #elif DIM_COUNT == 3
-typedef Triple Tuple;
+typedef Triple<int> Tuplei;
+typedef Triple<float> Tuplef;
 #endif
 }
 

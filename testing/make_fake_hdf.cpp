@@ -127,9 +127,9 @@ public:
     return d_types_.find(in) != d_types_.end();
   };
 
-  Tuple get_dims() const
+  Tuplef get_dims() const
   {
-    return Tuple();
+    return Tuplef();
   }
   
 
@@ -205,7 +205,7 @@ int main(int argc, const char * argv[])
     cout<<box.size()<<endl;
     
 
-    hash_case hcase(box,Pair(p_c+1,p_c + 1),(p_c+1)/10 + 1,frame_c);
+    hash_case hcase(box,Pair<float>(p_c+1,p_c + 1),(p_c+1)/10 + 1,frame_c);
     string fname = "test.hdf";
 
     

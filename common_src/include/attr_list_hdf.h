@@ -74,11 +74,11 @@ public:
   float get_value(const std::string & key, float & value_out) const ;
   void set_value(const std::string & key,  const float & value_in,bool over_write = false) ;
   
-  utilities::Pair get_value(const std::string & key, utilities::Pair & value_out) const ;
-  void set_value(const std::string & key,  const utilities::Pair & value_in,bool over_write = false) ;
+  utilities::Pair<float> get_value(const std::string & key, utilities::Pair<float> & value_out) const ;
+  void set_value(const std::string & key,  const utilities::Pair<float> & value_in,bool over_write = false) ;
 
-  utilities::Triple get_value(const std::string & key, utilities::Triple & value_out) const ;
-  void set_value(const std::string & key,  const utilities::Triple & value_in,bool over_write = false) ;
+  utilities::Triple<float> get_value(const std::string & key, utilities::Triple<float> & value_out) const ;
+  void set_value(const std::string & key,  const utilities::Triple<float> & value_in,bool over_write = false) ;
   
   std::string get_value(const std::string & key,std::string & value_out)const;
   void set_value(const std::string & key,const std::string & value_out,bool over_write = false);

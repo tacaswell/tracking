@@ -46,9 +46,9 @@ int main(int argc, const char * argv[])
   try
   {
 #if DIM_COUNT == 2
-    Hash_shelf test_shelf(Pair(100,100),10,0);
+    Hash_shelf test_shelf(Pair<float>(100,100),10,0);
 #elif DIM_COUNT == 3
-    Hash_shelf test_shelf(Triple(100,100,100),10,0);
+    Hash_shelf test_shelf(Triple<float>(100,100,100),10,0);
 #endif
     test_shelf.test();
     

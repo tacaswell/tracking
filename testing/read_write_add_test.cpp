@@ -118,7 +118,7 @@ int main()
 
     cout<<"master_box contains "<<box.size()<<" particles"<<endl;
     
-    Pair dim_tmp = wrapper_in.get_dims();
+    Pair<float> dim_tmp = wrapper_in.get_dims();
     
     int frame_tmp = wrapper_in.get_num_frames();
     

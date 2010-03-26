@@ -46,7 +46,7 @@ add_executable(hdf_add add_to_hdf_test.cpp
   ${GNU_PLOT_SRC} 
   )
 set_target_properties(hdf_add PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_COUNT=2;TESTING")
-target_link_libraries(hdf_add ${HDF5_LIBRARIES} )
+target_link_libraries(hdf_add ${HDF5_LIBRARIES} ${XERCESC_LIBRARY})
 
 
 add_executable(fake_hdf make_fake_hdf.cpp
@@ -81,4 +81,4 @@ set_target_properties(read_write_add_test PROPERTIES COMPILE_DEFINITIONS  "PTYPE
 target_link_libraries(read_write_add_test ${HDF5_LIBRARIES}  ${XERCESC_LIBRARY} )
 
 add_executable(template_test template_testing.cpp)
-set_target_properties(template_test PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_COUNT=2;TESTING")
+set_target_properties(template_test PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_COUNT=3;TESTING")

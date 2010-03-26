@@ -52,7 +52,8 @@ using namespace tracking;
 
 
 using utilities::Coarse_grain_array;
-using utilities::Tuple;
+using utilities::Tuplef;
+using utilities::Tuplei;
 using utilities::Null_field;
 using utilities::Ll_range_error;
 using utilities::Wrapper_out;
@@ -95,7 +96,7 @@ void Hash_shelf::push(particle * p){
 
 
 
-Hash_shelf::Hash_shelf(utilities::Tuple imgsz, 
+Hash_shelf::Hash_shelf(utilities::Tuplef imgsz, 
 		       float upb, 
 		       int i_frame,
 		       float z_offset
@@ -113,7 +114,7 @@ Hash_shelf::Hash_shelf(utilities::Tuple imgsz,
 void Hash_shelf::priv_init()
 {
   
-  int k = Tuple::length_;
+  int k = Tuplef::length_;
   hash_dims_.clear();
   hash_.clear();
 
@@ -187,7 +188,7 @@ void Hash_shelf::shelf_to_list(std::list<const particle*> &tmp) const{
 }
 
 
-void Hash_shelf::compute_mean_forward_disp(utilities::Tuple & cum_disp_in){
+void Hash_shelf::compute_mean_forward_disp(utilities::Tuplef & cum_disp_in){
   cumulative_disp_ = cum_disp_in;
   mean_forward_disp_.clear();
   int count = 0;
@@ -260,10 +261,10 @@ bool Hash_shelf::step_forwards(int n, const Hash_shelf* & dest)const{
 
 
 // may have trouble with int/float changes
-int Hash_shelf::tuple_to_indx(const Tuple & cord)const
+int Hash_shelf::tuple_to_indx(const Tuplei & cord)const
 {
   unsigned int indx = 0;
-  int length = Tuple::length_;
+  int length = Tuplei::length_;
   for(int j = 0;j<length;++j)
   {
     if(cord[j]>=hash_dims_[j])
@@ -283,10 +284,10 @@ int Hash_shelf::tuple_to_indx(const Tuple & cord)const
 
 
 
-Tuple Hash_shelf::indx_to_tuple(int indx) const
+Tuplei Hash_shelf::indx_to_tuple(int indx) const
 {
-  Tuple cord ;
-  for(int j = 0;j<Tuple::length_;++j)
+  Tuplei cord ;
+  for(int j = 0;j<Tuplei::length_;++j)
   {
     int tmp_prod = 1;
     for(int k = 0;k<(j);++k)
@@ -295,13 +296,13 @@ Tuple Hash_shelf::indx_to_tuple(int indx) const
     }
     cord[j] = (indx/tmp_prod)%((int)hash_dims_[j]);
   }
-  return Tuple(cord);
+  return Tuplei(cord);
   
 }
-Tuple Hash_shelf::range_indx_to_tuple(int indx,const Tuple& side) const
+Tuplei Hash_shelf::range_indx_to_tuple(int indx,const Tuplei& side) const
 {
-  Tuple cord ;
-  for(int j = 0;j<Tuple::length_;++j)
+  Tuplei cord ;
+  for(int j = 0;j<Tuplei::length_;++j)
   {
     int tmp_prod = 1;
     for(int k = 0;k<(j);++k)
@@ -310,7 +311,7 @@ Tuple Hash_shelf::range_indx_to_tuple(int indx,const Tuple& side) const
     }
     cord[j] = (indx/tmp_prod)%((int)side[j]);
   }
-  return Tuple(cord);
+  return Tuplei(cord);
   
 }
   
@@ -318,8 +319,9 @@ Tuple Hash_shelf::range_indx_to_tuple(int indx,const Tuple& side) const
 unsigned int Hash_shelf::hash_function(const particle* p) const
 {
 
-  Tuple cur_pos = p->get_position();
+  Tuplef cur_pos = p->get_position();
   cur_pos/=upb_;
+  
   return tuple_to_indx(cur_pos);
   
 
@@ -330,14 +332,14 @@ void Hash_shelf::test()
 {
   cout<<hash_dims_<<endl;
   
-  Tuple base;
+  Tuplei base;
 #if DIM_COUNT == 2
-  Tuple inc1 = Tuple(1,0);
-  Tuple inc2 = Tuple(0,1);
+  Tuplei inc1 = Tuplei(1,0);
+  Tuplei inc2 = Tuplei(0,1);
 #elif DIM_COUNT == 3
-  Tuple inc1 = Tuple(1,0,0);
-  Tuple inc2 = Tuple(0,1,0);
-  Tuple inc3 = Tuple(0,0,1);
+  Tuplei inc1 = Tuplei(1,0,0);
+  Tuplei inc2 = Tuplei(0,1,0);
+  Tuplei inc3 = Tuplei(0,0,1);
 #endif
   
   cout<<tuple_to_indx(base)<<'\t'<<base<<endl;
@@ -382,10 +384,10 @@ void Hash_shelf::get_region(int n,vector<const particle*> & out_vector,int range
 {
   bool testing = false;
   
-  Tuple center = indx_to_tuple(n);
-  Tuple bottom_corner, top_corner;
+  Tuplei center = indx_to_tuple(n);
+  Tuplei bottom_corner, top_corner;
   // check top and bottom corners are in range
-  for(int j = 0;j<Tuple::length_;++j)
+  for(int j = 0;j<Tuplei::length_;++j)
   {
     bottom_corner[j] = (((center[j]-range)>=0)?(center[j]-range):0);
     top_corner[j] = (((center[j]+range)<hash_dims_[j])?(center[j]+range):hash_dims_[j]-1);
@@ -396,7 +398,7 @@ void Hash_shelf::get_region(int n,vector<const particle*> & out_vector,int range
     cout<<"top: "<<top_corner<<endl;
   }
   
-  Tuple region_sides = (top_corner - bottom_corner) +1;
+  Tuplei region_sides = (top_corner - bottom_corner) +1;
   int region_sz = (int)region_sides.prod();
   
   if(testing)
@@ -409,7 +411,7 @@ void Hash_shelf::get_region(int n,vector<const particle*> & out_vector,int range
   
   for(int j = 0;j<region_sz;++j)
   {
-    Tuple tmp = range_indx_to_tuple(j,region_sides);
+    Tuplei tmp = range_indx_to_tuple(j,region_sides);
     tmp += bottom_corner;
     if(testing)
        cout<<j <<'\t'<<tmp<<endl;
@@ -429,23 +431,23 @@ void Hash_shelf::get_region(int n,vector<const particle*> & out_vector,int range
 
 void Hash_shelf::get_region(int n,list< particle*> & out_vector,int range) const
 {
-  Tuple center = indx_to_tuple(n);
-  Tuple bottom_corner, top_corner;
+  Tuplei center = indx_to_tuple(n);
+  Tuplei bottom_corner, top_corner;
   // check top and bottom corners are in range
-  for(int j = 0;j<Tuple::length_;++j)
+  for(int j = 0;j<Tuplei::length_;++j)
   {
     bottom_corner[j] = (((center[j]-range)>=0)?(center[j]-range):0);
     top_corner[j] = (((center[j]+range)<=hash_dims_[j])?(center[j]+range):hash_dims_[j]);
   }
   
     
-  Tuple region_sides = top_corner - bottom_corner;
+  Tuplei region_sides = top_corner - bottom_corner;
   int region_sz = (int)region_sides.prod();
   
   
   for(int j = 0;j<region_sz;++j)
   {
-    Tuple tmp = range_indx_to_tuple(j,region_sides);
+    Tuplei tmp = range_indx_to_tuple(j,region_sides);
     tmp += bottom_corner;
     
     int tmp_indx = tuple_to_indx(tmp);
@@ -489,23 +491,23 @@ void Hash_shelf::print()const
 
 void Hash_shelf::get_region(particle* n,hash_box * out_box,int range) const
 {
-  Tuple center = indx_to_tuple(hash_function(n));
-  Tuple bottom_corner, top_corner;
+  Tuplei center = indx_to_tuple(hash_function(n));
+  Tuplei bottom_corner, top_corner;
   // check top and bottom corners are in range
-  for(int j = 0;j<Tuple::length_;++j)
+  for(int j = 0;j<Tuplei::length_;++j)
   {
     bottom_corner[j] = (((center[j]-range)>=0)?(center[j]-range):0);
     top_corner[j] = (((center[j]+range)<=hash_dims_[j])?(center[j]+range):hash_dims_[j]);
   }
   
     
-  Tuple region_sides = top_corner - bottom_corner;
+  Tuplei region_sides = top_corner - bottom_corner;
   int region_sz = (int)region_sides.prod();
   
   
   for(int j = 0;j<region_sz;++j)
   {
-    Tuple tmp = range_indx_to_tuple(j,region_sides);
+    Tuplei tmp = range_indx_to_tuple(j,region_sides);
     tmp += bottom_corner;
     
     int tmp_indx = tuple_to_indx(tmp);

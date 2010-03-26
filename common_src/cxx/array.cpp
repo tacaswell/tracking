@@ -34,7 +34,7 @@ using namespace utilities;
 using std::cout;
 using std::endl;
 Array::Array(int rows)
-  :rows_(rows),cols_(Tuple::length_),data_(rows_*cols_),cur_index_(0){
+  :rows_(rows),cols_(Tuplef::length_),data_(rows_*cols_),cur_index_(0){
   if(rows_<1)
     throw "you are being stupid, too few rows";
 }
@@ -48,7 +48,7 @@ void Array::print(){
   }
 }
 
-void Array::push(const Tuple&  tuple_in){
+void Array::push(const Tuplef&  tuple_in){
   if((cur_index_) == rows_)
   {
     cout<<cur_index_<<" "<<rows_<<endl;

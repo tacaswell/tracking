@@ -35,7 +35,8 @@
 
 using namespace tracking;
 using utilities::Array;
-using utilities::Tuple;
+using utilities::Tuplei;
+using utilities::Tuplef;
 using utilities::Triple;
 
 
@@ -179,7 +180,7 @@ void Track_box::plot_intensity() const
   {
     cur_part->get_value(utilities::D_I,inten_data[j]);
     cur_part->get_value(utilities::D_ZPOS,z_data[j]);
-    Tuple pos = cur_part->get_position();
+    Tuplef pos = cur_part->get_position();
     cur_part = cur_part->get_next();
     x_data[j] = pos[0];
     y_data[j] = pos[1];
@@ -423,7 +424,7 @@ void Track_box::trim_track(int start,int length)
   
 }
 
-void Track_box::average_cord(Triple & cord, float & tot_I)const
+void Track_box::average_cord(Triple<float> & cord, float & tot_I)const
 {
   tot_I = 0;
   float x_m=0,y_m=0,z_m=0;
@@ -431,7 +432,7 @@ void Track_box::average_cord(Triple & cord, float & tot_I)const
   const particle_track * cur_part = t_first_;
   float I_tmp =0;
   float z_tmp =0;
-  Tuple xy;
+  Tuplef xy;
   
   while(cur_part != NULL)
   {

@@ -433,7 +433,7 @@ void Track_shelf::initial_corrected_pos_to_wrapper(utilities::Generic_wrapper_ba
     data_out_wrapper->start_new_row();
     // note trickiness
     working_track_ptr = ((*(working_track++)).second)->get_first();
-    const utilities::Tuple i_pos = working_track_ptr->get_corrected_pos();
+    const utilities::Tuplef i_pos = working_track_ptr->get_corrected_pos();
     
     data_out_wrapper->append_to_row(i_pos[0]);
     data_out_wrapper->append_to_row(i_pos[1]);
@@ -460,7 +460,7 @@ void Track_shelf::corrected_tracks_out(Cell & output, utilities::Generic_wrapper
     data_out_wrapper->start_new_row();
 
     working_track_ptr = ((*(working_track)).second)->get_first();
-    const utilities::Tuple i_pos = working_track_ptr->get_corrected_pos();
+    const utilities::Tuplef i_pos = working_track_ptr->get_corrected_pos();
     
     data_out_wrapper->append_to_row(i_pos[0]);
     data_out_wrapper->append_to_row(i_pos[1]);
@@ -514,8 +514,8 @@ void Track_shelf::split_to_parts(Track_shelf & output_shelf)
 
 
 void Track_shelf::output_link_to_wrapper(Wrapper_out & wrapper,
-					 const Triple& scale_t,
-					 const utilities::Triple & dim) const
+					 const Triple<float>& scale_t,
+					 const utilities::Triple<float> & dim) const
 {
 
  

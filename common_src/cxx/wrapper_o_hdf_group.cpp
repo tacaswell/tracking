@@ -35,10 +35,13 @@
 
 
 #include "track_box.h"
+#include "triple.h"
+
 //using namespace H5;
 
 
 using utilities::Wrapper_o_hdf_group;
+
 
 using std::string;
 using std::set;
@@ -257,7 +260,7 @@ void Wrapper_o_hdf_group::store_particle(const particle * p_in)
     
 }
 
-void Wrapper_o_hdf_group::store_particle_pos(const Triple & cord,float I)
+void Wrapper_o_hdf_group::store_particle_pos(const Triple<float> & cord_in,float I)
 {
   // check to make sure group mode is appropriate 
   if(group_type_ != NEW_GROUP)
@@ -265,6 +268,13 @@ void Wrapper_o_hdf_group::store_particle_pos(const Triple & cord,float I)
   
   // some sanity check to make sure that this is enough information to fill the wrapper
   int part_index = added_count_++;
+  
+  
+  
+  // float testf = cord_in[0];
+  // const utilities::Triple<int> test(1,2,3);
+  // test.print();
+  // testf = test[0];
   
   
   if((added_count_>size_))
@@ -285,13 +295,13 @@ void Wrapper_o_hdf_group::store_particle_pos(const Triple & cord,float I)
     switch(type)
     {
     case D_XPOS:
-      float_data_.at(float_map_(type))[part_index] = cord[0];
+      float_data_.at(float_map_(type))[part_index] = cord_in[0];
       break;
     case D_YPOS:
-      float_data_.at(float_map_(type))[part_index] = cord[1];
+      float_data_.at(float_map_(type))[part_index] = cord_in[1];
       break;
     case D_ZPOS:
-      float_data_.at(float_map_(type))[part_index] = cord[2];
+      float_data_.at(float_map_(type))[part_index] = cord_in[2];
       break;
     case D_I:
       float_data_.at(float_map_(type))[part_index] = I;

@@ -42,7 +42,8 @@ using tracking::Track_box;
 
 using utilities::Wrapper_out;
 using utilities::Triple;
-using utilities::Tuple;
+using utilities::Tuplei;
+using utilities::Tuplef;
 
 using tracking::Corr;
 
@@ -261,14 +262,14 @@ void Hash_shelf::compute_corr(Corr & in)const
 {
 
   float range = in.get_max_range();
-  unsigned int buffer = (unsigned int)ceil(range/upb_);
+  int buffer = (unsigned int)ceil(range/upb_);
   //  cout<<"buffer range "<<buffer<<endl;
   
   
   
-  Tuple bottom_corner, top_corner;
+  Tuplei bottom_corner, top_corner;
   // check top and bottom corners are in range
-  for(int j = 0;j<Tuple::length_;++j)
+  for(int j = 0;j<Tuplei::length_;++j)
   {
     if(buffer>=hash_dims_[j])
       throw "Hash_shelf::compute_corr buffer is bigger than a hash dimension" ;
@@ -280,13 +281,13 @@ void Hash_shelf::compute_corr(Corr & in)const
   }
   
     
-  Tuple region_sides = top_corner - bottom_corner;
+  Tuplei region_sides = top_corner - bottom_corner;
   int region_sz = (int)region_sides.prod();
   
   
   for(int j = 0;j<region_sz;++j)
   {
-    Tuple tmp = range_indx_to_tuple(j,region_sides);
+    Tuplei tmp = range_indx_to_tuple(j,region_sides);
     tmp += bottom_corner;
     
     int tmp_indx = tuple_to_indx(tmp);

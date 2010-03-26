@@ -44,7 +44,7 @@ using H5::PredType;
 using H5::Attribute;
 using H5::Group;
 
-using utilities::Tuple;
+using utilities::Tuplef;
 using utilities::Wrapper_i_hdf;
 using utilities::D_TYPE;
 using utilities::Attr_list_hdf;
@@ -427,10 +427,10 @@ string Wrapper_i_hdf::format_name(int in)
 }
 
 
-Tuple Wrapper_i_hdf::get_dims()const
+Tuplef Wrapper_i_hdf::get_dims()const
 {
   
-  Tuple tmp;
+  Tuplef tmp;
   
 
   H5File file =  H5File( file_name_, H5F_ACC_RDONLY );  
@@ -449,7 +449,7 @@ Tuple Wrapper_i_hdf::get_dims()const
   {
     attr_list.get_value("dims",tmp);
   }
-  return Tuple(tmp);
+  return Tuplef(tmp);
   
 }
 

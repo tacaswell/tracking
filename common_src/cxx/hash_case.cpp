@@ -44,7 +44,8 @@
 using namespace tracking;
 
 
-using utilities::Tuple;
+using utilities::Tuplei;
+using utilities::Tuplef;
 
 using utilities::Wrapper_out;
 
@@ -68,7 +69,7 @@ void hash_case::print() const{
 // }
 
 
-hash_case::hash_case(Master_box & mb,const utilities::Tuple & dims, 
+hash_case::hash_case(Master_box & mb,const utilities::Tuplef & dims, 
 		     float ppb, int frames):inited(false){
   init(mb,dims,ppb,frames);
 
@@ -77,7 +78,7 @@ hash_case::hash_case(Master_box & mb,const utilities::Tuple & dims,
 
 
 
-void hash_case::init(Master_box & mb,const utilities::Tuple & dims, 
+void hash_case::init(Master_box & mb,const utilities::Tuplef & dims, 
 		     float ppb, int frames){
 
   if(inited){
@@ -166,7 +167,7 @@ void hash_case::rehash(float ppb){
 
 
 void hash_case:: compute_mean_disp(){
-  Tuple cum_disp;
+  Tuplef cum_disp;
   for(vector<Hash_shelf*>::iterator it = h_case_.begin();
       it<h_case_.end(); ++it){
     (*it)->compute_mean_forward_disp(cum_disp);  

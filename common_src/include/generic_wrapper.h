@@ -27,16 +27,16 @@
 #define GWRAPPER_BASE2
 
 #include "enum_utils.h"
-
+#include "pair.h"
+#include "triple.h"
 namespace utilities{
+
 /**
    Try two at a generic wrapper function.  This is based much more on the
    capabilities of hdf files, not shoving stuff back to matlab
 
    This is an abstract base class 
 */
-class Pair;
-class Triple;
 
 
 
@@ -76,11 +76,11 @@ public:
   /**
      Adds a Triple meta-data
    */
-  virtual void add_meta_data(const std::string & key, const Triple & val)=0;
+  virtual void add_meta_data(const std::string & key, const Triple<float> & val)=0;
   /**
      Adds a Pair meta-data
    */
-  virtual void add_meta_data(const std::string & key, const Pair& val)=0;
+  virtual void add_meta_data(const std::string & key, const Pair<float>& val)=0;
   /**
      Adds a string meta-data
    */
@@ -97,11 +97,11 @@ public:
   /**
      Adds a Triple meta-data for a data set
    */
-  virtual void add_meta_data(const std::string & key, const Triple & val,const std::string & dset_name)=0;
+  virtual void add_meta_data(const std::string & key, const Triple<float> & val,const std::string & dset_name)=0;
   /**
      Adds a Pair meta-data for a data set
    */
-  virtual void add_meta_data(const std::string & key, const Pair& val,const std::string & dset_name)=0;
+  virtual void add_meta_data(const std::string & key, const Pair<float>& val,const std::string & dset_name)=0;
   /**
      Adds a string meta-data for a data set
    */

@@ -64,9 +64,9 @@ public:
   /**
      Returns the image dimensions of the shelf
    */
-  utilities::Tuple get_img_dims()const
+  utilities::Tuplef get_img_dims()const
   {
-    return utilities::Tuple(img_dims_);
+    return utilities::Tuplef(img_dims_);
   }
   
 
@@ -87,7 +87,7 @@ public:
   /**
      Constructor 
    */
-  Hash_shelf(utilities::Tuple imgsz, float upb,int i_frame,float z_offset = 0);
+  Hash_shelf(utilities::Tuplef imgsz, float upb,int i_frame,float z_offset = 0);
   
 
 
@@ -180,19 +180,19 @@ public:
      with possible flows in the sample.  Particles with out forward
      tracking data are ignored.
   */
-  void compute_mean_forward_disp(utilities::Tuple & cum_disp);
+  void compute_mean_forward_disp(utilities::Tuplef & cum_disp);
   /**
      Getter function for mean forward displacement from the
      previous shelf in a case.
    */
-  const utilities::Tuple& get_mean_forward_disp() const{
+  const utilities::Tuplef& get_mean_forward_disp() const{
     return mean_forward_disp_;
   }
   /**
      Getter function for mean forward displacement from the
      first shelf in a case.
   */
-  const utilities::Tuple&  get_cum_forward_disp() const{
+  const utilities::Tuplef&  get_cum_forward_disp() const{
     return cumulative_disp_;
   }
 
@@ -271,12 +271,12 @@ protected:
      The mean displacement of the plane.  The definition of velocity
      is $v_i = x_{i +1} - x_i$ hence the 'forward' velocity
    */
-  utilities::Tuple mean_forward_disp_;
+  utilities::Tuplef mean_forward_disp_;
 
   /**
      Cumlative displacement vector
   */
-  utilities::Tuple cumulative_disp_;
+  utilities::Tuplef cumulative_disp_;
 
   /**
      Pointer to the next shelf in the case
@@ -292,12 +292,12 @@ protected:
   /**
      Dimensions of the hash table
    */
-  utilities::Tuple hash_dims_;
+  utilities::Tuplei hash_dims_;
   
   /**
      Dimensions of the image
    */
-  utilities::Tuple img_dims_;
+  utilities::Tuplef img_dims_;
   /**
      size of the side of each hash box
    */
@@ -312,17 +312,17 @@ private:
   /**
      converts a coordinate tuple in the hash shelf to an index
    */
-  int tuple_to_indx(const utilities::Tuple& cord)const;
+  int tuple_to_indx(const utilities::Tuplei& cord)const;
   
   /**
      converts an index in the hash shelf to a coordinate tuple 
    */
-  utilities::Tuple indx_to_tuple(int indx) const;
+  utilities::Tuplei indx_to_tuple(int indx) const;
   
   /**
      converts an arbitrary 
    */
-  utilities::Tuple range_indx_to_tuple(int indx,const utilities::Tuple& side) const;
+  utilities::Tuplei range_indx_to_tuple(int indx,const utilities::Tuplei& side) const;
   
   /**
      private initialization function

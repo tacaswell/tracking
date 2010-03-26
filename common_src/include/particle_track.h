@@ -1,4 +1,4 @@
-//Copyright 2008,2009 Thomas A Caswell
+//Copyright 2008-2010 Thomas A Caswell
 //tcaswell@uchicago.edu
 //http://jfi.uchicago.edu/~tcaswell
 //
@@ -64,7 +64,7 @@ public:
      constructor that does not require any calls to the wrapper to get
      set up.
    */
-  particle_track(int i_ind,utilities::Tuple pos,unsigned int frame);
+  particle_track(int i_ind,utilities::Tuplef pos,unsigned int frame);
 
 
   ///Destructor
@@ -110,13 +110,13 @@ public:
   /**
      Returns the uncorrected forward displacement
    */
-  const utilities::Tuple& get_raw_forward_disp()const
+  const utilities::Tuplef& get_raw_forward_disp()const
   {return forward_disp_;}
 
   /**
      Returns the corrected forward displacement
    */
-  const utilities::Tuple get_corrected_forward_disp()const;
+  const utilities::Tuplef get_corrected_forward_disp()const;
   
   /**
     Returns true if there is a particle n steps forward and
@@ -174,7 +174,7 @@ public:
   /**
      returns the position with the cumulative distribution subtracted off
    */
-  const utilities::Tuple get_corrected_pos()const;
+  const utilities::Tuplef get_corrected_pos()const;
   
     
   /**
@@ -210,7 +210,7 @@ private:
   /**
      The foward displacement vector
    */
-  utilities::Tuple forward_disp_;
+  utilities::Tuplef forward_disp_;
 
   
   bool step_backwards(int n, particle_track* & next);

@@ -1,4 +1,4 @@
-//Copyright 2008,2009 Thomas A Caswell
+//Copyright 2008-2010 Thomas A Caswell
 //tcaswell@uchicago.edu
 //http://jfi.uchicago.edu/~tcaswell
 //
@@ -44,6 +44,7 @@ namespace utilities
 {
 class params;
 class Read_config;
+
 
 /**
    ABC for output wrappers
@@ -102,7 +103,7 @@ public:
   /**
      sets all of the values that the wrapper knows about by asking the particle
    */
-  virtual void set_all_values(const tracking::Track_box *,const utilities::Triple &) = 0;
+  virtual void set_all_values(const tracking::Track_box *,const utilities::Triple<float> &) = 0;
 #endif
   /**
      Closes the currently open group.
@@ -148,11 +149,11 @@ public:
   /**
      Adds a Triple meta-data
    */
-  virtual void add_meta_data(const std::string & key, const Triple & val,bool root_group=true)=0;
+  virtual void add_meta_data(const std::string & key, const Triple<float> & val,bool root_group=true)=0;
   /**
      Adds a Pair meta-data
    */
-  virtual void add_meta_data(const std::string & key, const Pair& val,bool root_group=true)=0;
+  virtual void add_meta_data(const std::string & key, const Pair<float>& val,bool root_group=true)=0;
   /**
      Adds a string meta-data
    */
@@ -169,11 +170,11 @@ public:
   /**
      Adds a Triple meta-data for a data set
    */
-  virtual void add_meta_data(const std::string & key, const Triple & val,D_TYPE dset_type)=0;
+  virtual void add_meta_data(const std::string & key, const Triple<float> & val,D_TYPE dset_type)=0;
   /**
      Adds a Pair meta-data for a data set
    */
-  virtual void add_meta_data(const std::string & key, const Pair& val,D_TYPE dset_type)=0;
+  virtual void add_meta_data(const std::string & key, const Pair<float>& val,D_TYPE dset_type)=0;
   /**
      Adds a string meta-data for a data set
    */

@@ -118,7 +118,7 @@ int main()
 
 
     cout<<"=== Pair Test ==="<<endl;
-    Pair p,p2;
+    Pair<float> p,p2;
     cout<<"--- Read test"<<endl;
     cout<<"expect: (1.2,3.4)"<<endl;
     p2 = al.get_value("pair_test",p);
@@ -129,7 +129,7 @@ int main()
     p2.clear();
 
     cout<<"--- Write test"<<endl;
-    al.set_value("pair_w_test", Pair(5.6,7.8));
+    al.set_value("pair_w_test", Pair<float>(5.6,7.8));
     cout<<"expect: (5.6,7.8)"<<endl;
     p2 = al.get_value("pair_w_test",p);
     cout<<"ref val: "<<p<<endl;
@@ -139,7 +139,7 @@ int main()
     p2.clear();
 
     cout<<"--- Over write test"<<endl;
-    al.set_value("pair_test", Pair(9.0,1.2),true);
+    al.set_value("pair_test", Pair<float>(9.0,1.2),true);
     cout<<"expect: (9.0,1.2)"<<endl;
     p2 = al.get_value("pair_test",p);
     cout<<"ref val: "<<p<<endl;
@@ -147,7 +147,7 @@ int main()
 
 
     cout<<"=== Triple Test ==="<<endl;
-    Triple t,t2;
+    Triple<float> t,t2;
     cout<<"--- Read test"<<endl;
     cout<<"expect: (1.2,3.4,5.6)"<<endl;
     t2 = al.get_value("triple_test",t);
@@ -158,7 +158,7 @@ int main()
     t2.clear();
 
     cout<<"--- Write test"<<endl;
-    al.set_value("triple_w_test", Triple(7.8,9.0,1.2));
+    al.set_value("triple_w_test", Triple<float>(7.8,9.0,1.2));
     cout<<"expect: (7.8,9.0,1.2)"<<endl;
     t2 = al.get_value("triple_w_test",t);
     cout<<"ref val: "<<t<<endl;
@@ -168,7 +168,7 @@ int main()
     t2.clear();
 
     cout<<"--- Over write test"<<endl;
-    al.set_value("triple_test", Triple(3.4,5.6,7.8),true);
+    al.set_value("triple_test", Triple<float>(3.4,5.6,7.8),true);
     cout<<"expect: (3.4,5.6,7.8)"<<endl;
     t2 = al.get_value("triple_test",t);
     cout<<"ref val: "<<t<<endl;

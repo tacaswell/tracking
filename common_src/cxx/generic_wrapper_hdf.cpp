@@ -172,14 +172,14 @@ void Generic_wrapper_hdf::add_meta_data(const std::string & key, float val)
     throw logic_error("generic_wrapper_hdf:: can't add to a closed group");
   group_attrs_->set_value(key,val);
 }
-void Generic_wrapper_hdf::add_meta_data(const std::string & key, const Triple & val)
+void Generic_wrapper_hdf::add_meta_data(const std::string & key, const Triple<float> & val)
 {
     if(!group_open_)
     throw logic_error("generic_wrapper_hdf:: can't add to a closed group");
   group_attrs_->set_value(key,val);
 
 }
-void Generic_wrapper_hdf::add_meta_data(const std::string & key, const Pair& val)
+void Generic_wrapper_hdf::add_meta_data(const std::string & key, const Pair<float>& val)
 {
   if(!group_open_)
     throw logic_error("generic_wrapper_hdf:: can't add to a closed group");
@@ -204,11 +204,11 @@ void Generic_wrapper_hdf::add_meta_data(const std::string & key, float val,const
 {
   throw "need to write";
 }
-void Generic_wrapper_hdf::add_meta_data(const std::string & key, const Triple & val,const std::string & dset_name)
+void Generic_wrapper_hdf::add_meta_data(const std::string & key, const Triple<float> & val,const std::string & dset_name)
 {
   throw "need to write";
 }
-void Generic_wrapper_hdf::add_meta_data(const std::string & key, const Pair& val,const std::string & dset_name)
+void Generic_wrapper_hdf::add_meta_data(const std::string & key, const Pair<float>& val,const std::string & dset_name)
 {
   throw "need to write";
 }

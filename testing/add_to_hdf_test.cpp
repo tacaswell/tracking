@@ -100,9 +100,11 @@ int main(int argc, const char * argv[])
     set<D_TYPE> d2;
     d2.insert(utilities::D_INDEX);
     
+    string gname = "frame";
     
-    Wrapper_o_hdf hdf_w(fname,d2,0,"frame",
-			false,false,false);
+    Wrapper_o_hdf hdf_w(fname,d2,0,Wrapper_o_hdf::APPEND_FILE,gname);
+    
+			
 
     
     try

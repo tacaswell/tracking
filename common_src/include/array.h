@@ -1,4 +1,4 @@
-//Copyright 2009 Thomas A Caswell
+//Copyright 2009,2010 Thomas A Caswell
 //tcaswell@uchicago.edu
 //http://jfi.uchicago.edu/~tcaswell
 //
@@ -43,7 +43,7 @@ public:
   /**
      Adds a tuple to the end of the array
    */
-  void push(const Tuple& tuple_in);
+  void push(const Tuplef& tuple_in);
   /**
      Sensible printing
    */

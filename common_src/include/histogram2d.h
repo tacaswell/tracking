@@ -89,7 +89,7 @@ public:
   
   ~Histogram2D(){};
 
-  void add_data_point(const utilities::Pair & in );
+  void add_data_point(const utilities::Pair<float> & in );
   
 protected:
   /**

@@ -103,9 +103,9 @@ public:
     return d_types_.find(in) != d_types_.end();
   };
 
-  Tuple get_dims() const
+  Tuplef get_dims() const
   {
-    return Tuple();
+    return Tuplef();
   }
   
 

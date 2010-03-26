@@ -36,10 +36,7 @@
 #include "data_map.h"
 #include "part_def.h"
 
-
-#include "triple.h"
-#include "pair.h"
-
+#include "triple_tmp.h"
 
 namespace H5
 {
@@ -96,7 +93,7 @@ public:
   
   void set_all_values(const tracking::particle *);
 #if PTYPE == 1
-  void set_all_values(const tracking::Track_box *,const utilities::Triple &);
+  void set_all_values(const tracking::Track_box *,const utilities::Triple<float> &);
 #endif
   void set_value(D_TYPE,const tracking::particle *);
   
@@ -120,17 +117,21 @@ public:
   
 
   void add_meta_data(const std::string & key, float val,bool root_group = true);
-  void add_meta_data(const std::string & key, const Pair & val,bool root_group = true);
-  void add_meta_data(const std::string & key, const Triple & val,bool root_group = true);
+  void add_meta_data(const std::string & key, const Pair<float> & val,bool root_group = true);
+  void add_meta_data(const std::string & key, const Triple<float> & val,bool root_group = true);
+  void add_meta_data(const std::string & key, const Triple_tmp<float>& val,D_TYPE dset_type);
+  
+
   void add_meta_data(const std::string & key,  const std::string & val,bool root_group = true);
+
   void add_meta_data(const std::string & key, int val,bool root_group = true);
 
   
   void add_meta_data(const std::string & key, float val,D_TYPE dset_type);
   
-  void add_meta_data(const std::string & key, const Pair & val,D_TYPE dset_type);
+  void add_meta_data(const std::string & key, const Pair<float> & val,D_TYPE dset_type);
   
-  void add_meta_data(const std::string & key, const Triple & val,D_TYPE dset_type);
+  void add_meta_data(const std::string & key, const Triple<float> & val,D_TYPE dset_type);
   
   void add_meta_data(const std::string & key,  const std::string & val,D_TYPE dset_type);
   

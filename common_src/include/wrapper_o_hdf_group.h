@@ -32,16 +32,14 @@
 #include <vector>
 #include <set>
 
-#include "H5Cpp.h"
-#include "attr_list_hdf.h"
-#include "enum_utils.h"
-#include "wrapper_o.h"
-#include "data_map.h"
+
 #include "part_def.h"
+#include "attr_list_hdf.h"
+#include "data_map.h"
+#include "H5Cpp.h"
 
 
-#include "triple.h"
-#include "pair.h"
+
 
 
 namespace H5
@@ -90,7 +88,7 @@ public:
   
   void store_particle(const tracking::particle *);
   
-  void store_particle_pos(const Triple & cord,float I);
+  void store_particle_pos(const utilities::Triple<float> & cord,float I);
   
 
 
