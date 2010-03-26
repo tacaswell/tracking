@@ -35,8 +35,6 @@
 #include "particle_track.h"
 #include "generic_wrapper.h"
 
-#include "pair.h"
-#include "triple.h"
 #include "gnuplot_i.hpp"
 
 #include <cmath>

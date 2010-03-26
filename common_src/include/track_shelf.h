@@ -26,8 +26,7 @@
 #define TRACK_SHELF
 
 #include <map>
-#include "triple.h"
-
+#include "tuple.h"
 //forward declare histogram
 namespace utilities{
 class Histogram;
@@ -190,8 +189,8 @@ public:
      for use with 3D linking.  This should be sub-classed
    */
   void output_link_to_wrapper(utilities::Wrapper_out & wrapper, 
-			      const utilities::Triple<float> & scale_t,
-			      const utilities::Triple<float> & dim) const;
+			      const utilities::Tuple<float,3> & scale_t,
+			      const utilities::Tuple<float,3> & dim) const;
 
 
   /**

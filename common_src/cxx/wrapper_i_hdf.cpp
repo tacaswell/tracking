@@ -25,8 +25,6 @@
 
 #include "wrapper_i_hdf.h"
 #include "master_box_t.h"
-#include "pair.h"
-#include "triple.h"
 #include "particle_base.h"
 #include "enum_utils.h"
 #include "attr_list_hdf.h"

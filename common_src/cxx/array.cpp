@@ -24,8 +24,6 @@
 //the resulting work.
 #include <iostream>
 
-#include "pair.h"
-#include "triple.h"
 #include "array.h"
 
 #include "generic_wrapper_base.h"

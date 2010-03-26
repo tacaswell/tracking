@@ -28,8 +28,6 @@
 #include <typeinfo>
 #include <iostream>
 #include "exception.h"
-#include "pair.h"
-#include "triple.h"
 #include "hash_shelf.h"
 
 using namespace tracking;

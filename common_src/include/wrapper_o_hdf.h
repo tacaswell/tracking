@@ -93,7 +93,7 @@ public:
   
   void set_all_values(const tracking::particle *);
 #if PTYPE == 1
-  void set_all_values(const tracking::Track_box *,const utilities::Triple<float> &);
+  void set_all_values(const tracking::Track_box *,const utilities::Tuple<float,3> &);
 #endif
   void set_value(D_TYPE,const tracking::particle *);
   
@@ -117,8 +117,8 @@ public:
   
 
   void add_meta_data(const std::string & key, float val,bool root_group = true);
-  void add_meta_data(const std::string & key, const Pair<float> & val,bool root_group = true);
-  void add_meta_data(const std::string & key, const Triple<float> & val,bool root_group = true);
+  void add_meta_data(const std::string & key, const Tuple<float,2> & val,bool root_group = true);
+  void add_meta_data(const std::string & key, const Tuple<float,3> & val,bool root_group = true);
   
   
 
@@ -129,9 +129,9 @@ public:
   
   void add_meta_data(const std::string & key, float val,D_TYPE dset_type);
   
-  void add_meta_data(const std::string & key, const Pair<float> & val,D_TYPE dset_type);
+  void add_meta_data(const std::string & key, const Tuple<float,2> & val,D_TYPE dset_type);
   
-  void add_meta_data(const std::string & key, const Triple<float> & val,D_TYPE dset_type);
+  void add_meta_data(const std::string & key, const Tuple<float,3> & val,D_TYPE dset_type);
   
   void add_meta_data(const std::string & key,  const std::string & val,D_TYPE dset_type);
   

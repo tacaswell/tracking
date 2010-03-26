@@ -27,8 +27,7 @@
 #define GWRAPPER_BASE2
 
 #include "enum_utils.h"
-#include "pair.h"
-#include "triple.h"
+#include "tuple.h"
 namespace utilities{
 
 /**
@@ -76,11 +75,11 @@ public:
   /**
      Adds a Triple meta-data
    */
-  virtual void add_meta_data(const std::string & key, const Triple<float> & val)=0;
+  virtual void add_meta_data(const std::string & key, const Tuple<float,3> & val)=0;
   /**
      Adds a Pair meta-data
    */
-  virtual void add_meta_data(const std::string & key, const Pair<float>& val)=0;
+  virtual void add_meta_data(const std::string & key, const Tuple<float,2>& val)=0;
   /**
      Adds a string meta-data
    */
@@ -97,11 +96,11 @@ public:
   /**
      Adds a Triple meta-data for a data set
    */
-  virtual void add_meta_data(const std::string & key, const Triple<float> & val,const std::string & dset_name)=0;
+  virtual void add_meta_data(const std::string & key, const Tuple<float,3> & val,const std::string & dset_name)=0;
   /**
      Adds a Pair meta-data for a data set
    */
-  virtual void add_meta_data(const std::string & key, const Pair<float>& val,const std::string & dset_name)=0;
+  virtual void add_meta_data(const std::string & key, const Tuple<float,2>& val,const std::string & dset_name)=0;
   /**
      Adds a string meta-data for a data set
    */

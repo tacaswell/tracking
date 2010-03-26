@@ -43,7 +43,6 @@
 
 #include "particle_base.h"
 #include "hash_case.h"
-#include "pair.h"
 
 #include "wrapper_i_hdf.h"
 #include "wrapper_o_hdf.h"
@@ -62,7 +61,6 @@ using std::cerr;
 using utilities::Wrapper_i_hdf;
 using utilities::Wrapper_o_hdf;
 
-using utilities::Pair;
 using utilities::Filter_trivial;
 using utilities::D_TYPE;
 

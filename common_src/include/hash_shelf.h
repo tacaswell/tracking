@@ -35,8 +35,6 @@
 
 
 #include "part_def.h"
-#include "pair.h"
-#include "triple.h"
 
 namespace utilities{
 class Coarse_grain_array;

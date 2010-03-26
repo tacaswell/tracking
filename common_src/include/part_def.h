@@ -47,17 +47,11 @@ typedef particle_track particle;
 #define DEFINE_DIMENSION_COUNT
 
 
-#include "pair.h"
-#include "triple.h"
+#include "tuple.h"
 namespace utilities
 {
-#if   DIM_COUNT == 2
-typedef Pair<int> Tuplei;
-typedef Pair<float> Tuplef;
-#elif DIM_COUNT == 3
-typedef Triple<int> Tuplei;
-typedef Triple<float> Tuplef;
-#endif
+typedef Tuple<int,DIM_COUNT> Tuplei;
+typedef Tuple<float,DIM_COUNT> Tuplef;
 }
 
 

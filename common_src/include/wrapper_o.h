@@ -103,7 +103,7 @@ public:
   /**
      sets all of the values that the wrapper knows about by asking the particle
    */
-  virtual void set_all_values(const tracking::Track_box *,const utilities::Triple<float> &) = 0;
+  virtual void set_all_values(const tracking::Track_box *,const utilities::Tuple<float,3> &) = 0;
 #endif
   /**
      Closes the currently open group.
@@ -149,11 +149,11 @@ public:
   /**
      Adds a Triple meta-data
    */
-  virtual void add_meta_data(const std::string & key, const Triple<float> & val,bool root_group=true)=0;
+  virtual void add_meta_data(const std::string & key, const Tuple<float,3> & val,bool root_group=true)=0;
   /**
      Adds a Pair meta-data
    */
-  virtual void add_meta_data(const std::string & key, const Pair<float>& val,bool root_group=true)=0;
+  virtual void add_meta_data(const std::string & key, const Tuple<float,2>& val,bool root_group=true)=0;
   /**
      Adds a string meta-data
    */
@@ -170,11 +170,11 @@ public:
   /**
      Adds a Triple meta-data for a data set
    */
-  virtual void add_meta_data(const std::string & key, const Triple<float> & val,D_TYPE dset_type)=0;
+  virtual void add_meta_data(const std::string & key, const Tuple<float,3> & val,D_TYPE dset_type)=0;
   /**
      Adds a Pair meta-data for a data set
    */
-  virtual void add_meta_data(const std::string & key, const Pair<float>& val,D_TYPE dset_type)=0;
+  virtual void add_meta_data(const std::string & key, const Tuple<float,2>& val,D_TYPE dset_type)=0;
   /**
      Adds a string meta-data for a data set
    */

@@ -28,7 +28,7 @@
 #ifndef TRACK_BOX
 #define TRACK_BOX
 #include <vector>
-#include "triple.h"
+#include "tuple.h"
 namespace utilities{
 class Array;
 class Wrapper_out;
@@ -136,7 +136,7 @@ public:
      returns the intensity weighted average position used for link3D.  This really
      should be sub-classed
    */
-  void average_cord(utilities::Triple<float> & pos,float & I) const ;
+  void average_cord(utilities::Tuple<float,3> & pos,float & I) const ;
   
 
 protected:

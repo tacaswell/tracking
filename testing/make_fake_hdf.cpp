@@ -43,7 +43,7 @@
 
 #include "particle_base.h"
 #include "hash_case.h"
-#include "pair.h"
+
 
 #include "wrapper_o_hdf.h"
 #include "filter.h"
@@ -166,8 +166,8 @@ using std::exception;
 
 using utilities::Wrapper_i_dummy;
 using utilities::Wrapper_o_hdf;
+using utilities::Tuple;
 
-using utilities::Pair;
 using utilities::Filter_trivial;
 using utilities::D_TYPE;
 
@@ -205,7 +205,7 @@ int main(int argc, const char * argv[])
     cout<<box.size()<<endl;
     
 
-    hash_case hcase(box,Pair<float>(p_c+1,p_c + 1),(p_c+1)/10 + 1,frame_c);
+    hash_case hcase(box,Tuple<float,2>(p_c+1,p_c + 1),(p_c+1)/10 + 1,frame_c);
     string fname = "test.hdf";
 
     

@@ -43,7 +43,6 @@
 
 #include "particle_base.h"
 #include "hash_case.h"
-#include "pair.h"
 
 #include "wrapper_o_hdf.h"
 #include "wrapper_i_hdf.h"
@@ -77,8 +76,8 @@ using std::exception;
 
 using utilities::Wrapper_i_hdf;
 using utilities::Wrapper_o_hdf;
+using utilities::Tuple;
 
-using utilities::Pair;
 using utilities::Filter_trivial;
 using utilities::D_TYPE;
 
@@ -118,7 +117,7 @@ int main()
 
     cout<<"master_box contains "<<box.size()<<" particles"<<endl;
     
-    Pair<float> dim_tmp = wrapper_in.get_dims();
+    Tuple<float,2> dim_tmp = wrapper_in.get_dims();
     
     int frame_tmp = wrapper_in.get_num_frames();
     

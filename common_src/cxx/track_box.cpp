@@ -28,7 +28,6 @@
 
 #include "part_def.h"
 
-#include "pair.h"
 #include "track_shelf.h"
 
 #include "gnuplot_i.hpp"
@@ -37,7 +36,7 @@ using namespace tracking;
 using utilities::Array;
 using utilities::Tuplei;
 using utilities::Tuplef;
-using utilities::Triple;
+using utilities::Tuple;
 
 
 using std::vector;
@@ -424,7 +423,7 @@ void Track_box::trim_track(int start,int length)
   
 }
 
-void Track_box::average_cord(Triple<float> & cord, float & tot_I)const
+void Track_box::average_cord(Tuple<float,3> & cord, float & tot_I)const
 {
   tot_I = 0;
   float x_m=0,y_m=0,z_m=0;

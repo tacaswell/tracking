@@ -41,7 +41,7 @@ using tracking::Track_box;
 
 
 using utilities::Wrapper_out;
-using utilities::Triple;
+
 using utilities::Tuplei;
 using utilities::Tuplef;
 

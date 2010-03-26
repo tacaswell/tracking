@@ -47,7 +47,7 @@ using utilities::Wrapper_o_hdf;
 using utilities::Wrapper_o_hdf_group;
 using utilities::Attr_list_hdf;
 using utilities::Read_config;
-using utilities::Triple;
+
 
 
 
@@ -205,13 +205,13 @@ void Wrapper_o_hdf::set_all_values(const particle* p_in)
 
 
 #if PTYPE == 1
-void Wrapper_o_hdf::set_all_values(const tracking::Track_box * in,const utilities::Triple<float> & scale) 
+void Wrapper_o_hdf::set_all_values(const tracking::Track_box * in,const utilities::Tuple<float,3> & scale) 
 {
   if(!group_open_)
     throw logic_error("wrapper_o_hdf: no group open");
 
   
-  Triple<float> cord;
+  Tuple<float,3> cord;
   float I;
   in->average_cord(cord,I);
   cord*=scale;
@@ -321,7 +321,7 @@ void Wrapper_o_hdf::add_meta_data(const std::string & key, float val,bool root_g
     
 }
 
-void Wrapper_o_hdf::add_meta_data(const std::string & key, const Triple<float> & val,bool root_group )
+void Wrapper_o_hdf::add_meta_data(const std::string & key, const Tuple<float,3> & val,bool root_group )
 {
   
   if( root_group)
@@ -337,7 +337,7 @@ void Wrapper_o_hdf::add_meta_data(const std::string & key, const Triple<float> &
 }
 
 
-void Wrapper_o_hdf::add_meta_data(const std::string & key, const Pair<float> & val,bool root_group )
+void Wrapper_o_hdf::add_meta_data(const std::string & key, const Tuple<float,2> & val,bool root_group )
 {
 
   
@@ -415,12 +415,12 @@ void Wrapper_o_hdf::add_meta_data(const std::string & key, const string& val,D_T
   local_add_meta(key,val,dset_type,wrapper_open_,comp_number_,dset_pram_group_);
   
 }
-void Wrapper_o_hdf::add_meta_data(const std::string & key, const Pair<float>& val,D_TYPE dset_type)
+void Wrapper_o_hdf::add_meta_data(const std::string & key, const Tuple<float,2>& val,D_TYPE dset_type)
 {
   local_add_meta(key,val,dset_type,wrapper_open_,comp_number_,dset_pram_group_);
   
 }
-void Wrapper_o_hdf::add_meta_data(const std::string & key, const Triple<float>& val,D_TYPE dset_type)
+void Wrapper_o_hdf::add_meta_data(const std::string & key, const Tuple<float,3>& val,D_TYPE dset_type)
 {
   local_add_meta(key,val,dset_type,wrapper_open_,comp_number_,dset_pram_group_);
 }

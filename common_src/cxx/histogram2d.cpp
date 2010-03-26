@@ -25,8 +25,6 @@
 #include "histogram2d.h"
 #include <iostream>
 #include "generic_wrapper_base.h"
-#include "triple.h"
-#include "pair.h"
 
 using namespace utilities;
 

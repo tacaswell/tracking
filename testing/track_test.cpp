@@ -43,7 +43,6 @@
 
 #include "particle_track.h"
 #include "hash_case.h"
-#include "pair.h"
 
 #include "wrapper_i_dummy.h"
 #include "filter.h"
@@ -67,7 +66,6 @@ using std::cerr;
 
 using utilities::Wrapper_i_dummy;
 
-using utilities::Pair;
 using utilities::Filter_trivial;
 using utilities::D_TYPE;
 

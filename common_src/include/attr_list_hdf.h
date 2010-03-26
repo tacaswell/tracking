@@ -21,9 +21,7 @@
 
 #include <list>
 #include <string>
-#include "pair.h"
-#include "triple.h"
-
+#include "tuple.h"
 // forward declare classes
 namespace H5
 {
@@ -74,11 +72,11 @@ public:
   float get_value(const std::string & key, float & value_out) const ;
   void set_value(const std::string & key,  const float & value_in,bool over_write = false) ;
   
-  utilities::Pair<float> get_value(const std::string & key, utilities::Pair<float> & value_out) const ;
-  void set_value(const std::string & key,  const utilities::Pair<float> & value_in,bool over_write = false) ;
+  utilities::Tuple<float,2> get_value(const std::string & key, utilities::Tuple<float,2> & value_out) const ;
+  void set_value(const std::string & key,  const utilities::Tuple<float,2> & value_in,bool over_write = false) ;
 
-  utilities::Triple<float> get_value(const std::string & key, utilities::Triple<float> & value_out) const ;
-  void set_value(const std::string & key,  const utilities::Triple<float> & value_in,bool over_write = false) ;
+  utilities::Tuple<float,3> get_value(const std::string & key, utilities::Tuple<float,3> & value_out) const ;
+  void set_value(const std::string & key,  const utilities::Tuple<float,3> & value_in,bool over_write = false) ;
   
   std::string get_value(const std::string & key,std::string & value_out)const;
   void set_value(const std::string & key,const std::string & value_out,bool over_write = false);

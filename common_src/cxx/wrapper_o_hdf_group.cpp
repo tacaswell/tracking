@@ -35,7 +35,6 @@
 
 
 #include "track_box.h"
-#include "triple.h"
 
 //using namespace H5;
 
@@ -260,7 +259,7 @@ void Wrapper_o_hdf_group::store_particle(const particle * p_in)
     
 }
 
-void Wrapper_o_hdf_group::store_particle_pos(const Triple<float> & cord_in,float I)
+void Wrapper_o_hdf_group::store_particle_pos(const Tuple<float,3> & cord_in,float I)
 {
   // check to make sure group mode is appropriate 
   if(group_type_ != NEW_GROUP)
@@ -272,7 +271,7 @@ void Wrapper_o_hdf_group::store_particle_pos(const Triple<float> & cord_in,float
   
   
   // float testf = cord_in[0];
-  // const utilities::Triple<int> test(1,2,3);
+  // const utilities::Tuple<int,3> test(1,2,3);
   // test.print();
   // testf = test[0];
   

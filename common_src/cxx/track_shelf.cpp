@@ -52,7 +52,7 @@ using utilities::Array;
 using utilities::Cell;
 
 using utilities::Wrapper_out;
-using utilities::Triple;
+using utilities::Tuple;
 
 using namespace tracking;
 
@@ -514,8 +514,8 @@ void Track_shelf::split_to_parts(Track_shelf & output_shelf)
 
 
 void Track_shelf::output_link_to_wrapper(Wrapper_out & wrapper,
-					 const Triple<float>& scale_t,
-					 const utilities::Triple<float> & dim) const
+					 const Tuple<float,3>& scale_t,
+					 const utilities::Tuple<float,3> & dim) const
 {
 
  

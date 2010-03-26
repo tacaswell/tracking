@@ -21,8 +21,6 @@
 #include <stdexcept> // out_of_range exception
 #include <iostream>
 #include <vector>
-#include "pair.h"
-#include "triple.h"
 #include "array.h"
 #include "cell.h"
 

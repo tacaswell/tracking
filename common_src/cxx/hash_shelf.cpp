@@ -43,8 +43,6 @@
 #include "master_box_t.h"
 #include "particle_base.h"
 #include "particle_track.h"
-#include "pair.h"
-#include "triple.h"
 
 #include "corr.h"
 

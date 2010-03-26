@@ -88,7 +88,7 @@ public:
   
   void store_particle(const tracking::particle *);
   
-  void store_particle_pos(const utilities::Triple<float> & cord,float I);
+  void store_particle_pos(const utilities::Tuple<float,3> & cord,float I);
   
 
 

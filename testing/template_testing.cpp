@@ -15,42 +15,61 @@
 //You should have received a copy of the GNU General Public License
 //along with this program; if not, see <http://www.gnu.org/licenses>.
 
-#include "pair.h"
-#include "triple.h"
+#include "tuple.h"
+
+#include "ndarray.h"
 #include <iostream>
 using std::endl;
 using std::cout;
 
 
-using utilities::Pair;
-using utilities::Triple;
+using utilities::Tuple;
+using utilities::ND_Array;
 
 int main()
 {
-  const Pair<int> test(1,2);
-  test.print();
 
-const   Pair<int> test2(1,2.5);
-  test2.print();
+  bool tuple_test = true;
+  bool array_test = true;
+  if(tuple_test)
+  {
+    
+    const Tuple<int,2> test(1,2);
+    test.print();
+
+    const   Tuple<int,2> test2(1,2.5);
+    test2.print();
   
-const   Pair<float> test3(1.5,2.5);
-  test3.print();
+    const   Tuple<float,2> test3(1.5,2.5);
+    test3.print();
 
-const   Pair<int> test4(test3);
-  test4.print();
+    const   Tuple<int,2> test4(test3);
+    test4.print();
   
 
-const   Triple<int> testt(1,2,3);
-  testt.print();
+    const   Tuple<int,3> testt(1,2,3);
+    testt.print();
 
-const   Triple<int> testt2(1,2.5,3);
-  testt2.print();
+    const   Tuple<int,3> testt2(1,2.5,3);
+    testt2.print();
   
-const   Triple<float> testt3(1.5,2.5,3.5);
-  testt3.print();
+    const   Tuple<float,3> testt3(1.5,2.5,3.5);
+    testt3.print();
 
-  cout<<testt3[0]<<'\t'<<testt3[1]<<'\t'<<testt3[2]<<endl;
-  cout<<testt3[0]<<'\t'<<testt3[1]<<'\t'<<testt3[2]<<endl;
+    cout<<testt3[0]<<'\t'<<testt3[1]<<'\t'<<testt3[2]<<endl;
+    cout<<testt3[0]<<'\t'<<testt3[1]<<'\t'<<testt3[2]<<endl;
+  }
+  if(array_test)
+  {
+    Tuple<int,2> test(10,10);
+    ND_Array<int,Tuple<int,2> >atest(test);
+    atest.print();
+    
+    Tuple<int,3> testt(10,10,10);
+    ND_Array<int,Tuple<int,3> >atestt(testt);
+    atestt.print();
+    
+  }
   
 
   return 0;
