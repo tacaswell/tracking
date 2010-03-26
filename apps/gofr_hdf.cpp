@@ -41,7 +41,7 @@
 
 #include "particle_base.h"
 #include "hash_case.h"
-#include "pair.h"
+
 #include "wrapper_o_hdf.h"
 #include "wrapper_i_hdf.h"
 #include "filter.h"
@@ -64,7 +64,7 @@ using std::logic_error;
 using utilities::Wrapper_o_hdf;
 using utilities::Wrapper_i_hdf;
 
-using utilities::Pair;
+using utilities::Tuple;
 using utilities::Filter_basic;
 using utilities::Filter_trivial;
 using utilities::D_TYPE;
@@ -207,7 +207,7 @@ int main(int argc, char * argv[])
     
     cout<<"total number of particles is: "<<box.size()<<endl;;
     
-    Pair dims = wh.get_dims();
+    Tuple<float,2> dims = wh.get_dims();
     hash_case hcase(box,dims,max_range,wh.get_num_frames());
 
     cout<<"hash case filled"<<endl;

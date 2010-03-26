@@ -43,7 +43,7 @@
 
 #include "particle_base.h"
 #include "hash_case.h"
-#include "pair.h"
+
 #include "wrapper_o_hdf.h"
 #include "wrapper_i_hdf.h"
 #include "filter.h"
@@ -74,12 +74,12 @@ using std::logic_error;
 using utilities::Wrapper_o_hdf;
 using utilities::Wrapper_i_hdf;
 
-using utilities::Pair;
+using utilities::Tuple;
 using utilities::Filter_basic;
 using utilities::Filter_trivial;
 using utilities::D_TYPE;
 using utilities::Generic_wrapper_hdf;
-using utilities::Triple;
+
 using utilities::Read_config;
 
 
@@ -217,7 +217,7 @@ int main(int argc, char * argv[])
     box.init(wh,filt);
     
  
-    Pair dims = wh.get_dims();
+    Tuple<float,2> dims = wh.get_dims();
     cout<<dims<<endl;
     
     hash_case hcase(box,dims,box_side_len,wh.get_num_frames());
@@ -256,10 +256,10 @@ int main(int argc, char * argv[])
     cout<<"scale_tmp: "<<scale_tmp<<endl;;
     
 
-    Triple scale_t(scale_tmp,scale_tmp,1.0f);
+    Tuple<float,3> scale_t(scale_tmp,scale_tmp,1.0f);
     cout<<"scale triple :"<<scale_t<<endl;
     
-    Triple dim(dims[0]*scale_tmp, dims[1]*scale_tmp,wh.get_num_frames()*.2);
+    Tuple<float,3> dim(dims[0]*scale_tmp, dims[1]*scale_tmp,wh.get_num_frames()*.2);
     hdf_w.initialize_wrapper();
     final_tracks.output_link_to_wrapper(hdf_w,scale_t,dim);
     hdf_w.add_meta_data_list(app_prams,data_types2);

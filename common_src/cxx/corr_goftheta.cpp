@@ -47,7 +47,7 @@ using std::acos;
 
 
 using utilities::Generic_wrapper;
-using utilities::Tuple;
+using utilities::Tuplef;
 
 
 using tracking::Corr_goftheta;
@@ -101,7 +101,7 @@ void Corr_goftheta::compute(const particle * p_in,const vector<const particle*> 
   
 
   
-  Tuple p_in_pos = p_in->get_position();
+  Tuplef p_in_pos = p_in->get_position();
   
   vector<const particle*> nhood;
   trim_nhood(p_in,nhood_in,nhood);
@@ -120,7 +120,7 @@ void Corr_goftheta::compute(const particle * p_in,const vector<const particle*> 
     if(p_in == part_ptr_outer)
       continue;
     
-    Tuple p_outer_pos = p_in_pos - part_ptr_outer->get_position();
+    Tuplef p_outer_pos = p_in_pos - part_ptr_outer->get_position();
     if(p_outer_pos.magnitude() ==0 )
       continue;
     
@@ -135,7 +135,7 @@ void Corr_goftheta::compute(const particle * p_in,const vector<const particle*> 
       if(p_in == part_ptr_inner)
 	continue;
       
-      Tuple p_inner_pos = (p_in_pos - part_ptr_inner->get_position());
+      Tuplef p_inner_pos = (p_in_pos - part_ptr_inner->get_position());
       if(p_inner_pos.magnitude() == 0)
 	continue;
       
