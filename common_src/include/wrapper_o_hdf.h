@@ -36,7 +36,7 @@
 #include "data_map.h"
 #include "part_def.h"
 
-#include "triple_tmp.h"
+
 
 namespace H5
 {
@@ -119,7 +119,7 @@ public:
   void add_meta_data(const std::string & key, float val,bool root_group = true);
   void add_meta_data(const std::string & key, const Pair<float> & val,bool root_group = true);
   void add_meta_data(const std::string & key, const Triple<float> & val,bool root_group = true);
-  void add_meta_data(const std::string & key, const Triple_tmp<float>& val,D_TYPE dset_type);
+  
   
 
   void add_meta_data(const std::string & key,  const std::string & val,bool root_group = true);

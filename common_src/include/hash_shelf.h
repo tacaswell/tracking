@@ -293,11 +293,18 @@ protected:
      Dimensions of the hash table
    */
   utilities::Tuplei hash_dims_;
+  /**
+     The cumulative dimensions for index to cord conversions
+   */
+  utilities::Tuplei hash_cum_dim_;
   
   /**
      Dimensions of the image
    */
   utilities::Tuplef img_dims_;
+
+  
+  
   /**
      size of the side of each hash box
    */

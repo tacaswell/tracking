@@ -65,6 +65,7 @@ using std::list;
 using std::cout;
 using std::endl;
 using std::vector;
+using std::logic_error;
 
 
 
@@ -114,22 +115,33 @@ Hash_shelf::Hash_shelf(utilities::Tuplef imgsz,
 void Hash_shelf::priv_init()
 {
   
-  int k = Tuplef::length_;
+  int rank = Tuplef::length_;
   hash_dims_.clear();
   hash_.clear();
 
   int hash_dim_prod = 1;
   
-  for(int j = 0; j<k;++j)
+  for(int j = 0; j<rank;++j)
   {
     hash_dims_[j] = ceil(img_dims_[j]/upb_);
     
-	// (((int)(img_dims_[j]))%upb_==0?
-	//  ((int)img_dims_[j])/upb_:
-	//  (((int)img_dims_[j])/upb_)+1);
-      hash_dim_prod*=hash_dims_[j];
-      
+    // (((int)(img_dims_[j]))%upb_==0?
+    //  ((int)img_dims_[j])/upb_:
+    //  (((int)img_dims_[j])/upb_)+1);
+    hash_dim_prod*=hash_dims_[j];
+    
+    
+    unsigned int tmp_prod = 1;
+    for(int k = 0;k<(j);++k)
+    {
+      tmp_prod*=hash_dims_[k];
     }
+    hash_cum_dim_[j] = tmp_prod;
+    
+      
+  }
+  
+
 
   hash_.reserve(hash_dim_prod);
   for(int j = 0; j<hash_dim_prod;j++)
@@ -270,14 +282,8 @@ int Hash_shelf::tuple_to_indx(const Tuplei & cord)const
     if(cord[j]>=hash_dims_[j])
       throw "Hash_shelf::tuple_to_indx cord out of hash dimensions";
     
-    unsigned int tmp_prod = 1;
-    for(int k = 0;k<(j);++k)
-    {
-      tmp_prod*=hash_dims_[k];
-    }
-
     
-    indx += ((unsigned int)cord[j])*tmp_prod;
+    indx += ((unsigned int)cord[j])*hash_cum_dim_[j];
   }
   return indx;
 }
@@ -286,15 +292,13 @@ int Hash_shelf::tuple_to_indx(const Tuplei & cord)const
 
 Tuplei Hash_shelf::indx_to_tuple(int indx) const
 {
+  if(!(indx <(int) hash_.size()))
+    throw logic_error("index is greater than hash length");
+  
   Tuplei cord ;
   for(int j = 0;j<Tuplei::length_;++j)
   {
-    int tmp_prod = 1;
-    for(int k = 0;k<(j);++k)
-    {
-      tmp_prod*=hash_dims_[k];
-    }
-    cord[j] = (indx/tmp_prod)%((int)hash_dims_[j]);
+    cord[j] = (indx/hash_cum_dim_[j])%((int)hash_dims_[j]);
   }
   return Tuplei(cord);
   
@@ -322,7 +326,22 @@ unsigned int Hash_shelf::hash_function(const particle* p) const
   Tuplef cur_pos = p->get_position();
   cur_pos/=upb_;
   
-  return tuple_to_indx(cur_pos);
+  unsigned int indx = 0;
+  int length = Tuplef::length_;
+  for(int j = 0;j<length;++j)
+  {
+    if(cur_pos[j]>=hash_dims_[j])
+      throw "Hash_shelf::tuple_to_indx cord out of hash dimensions";
+    
+    
+    indx += ((unsigned int)cur_pos[j])*hash_cum_dim_[j];
+  }
+  return indx;
+  
+// tac 2010-03-25 Changed to copying the code from this function to
+// avoid extra casts to and from 
+
+  //return tuple_to_indx(cur_pos);
   
 
 }
