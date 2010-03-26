@@ -19,12 +19,17 @@
 
 #include "ndarray.h"
 #include <iostream>
+#include <complex>
 using std::endl;
 using std::cout;
+using std::complex;
 
 
 using utilities::Tuple;
 using utilities::ND_Array;
+
+
+typedef Tuple<int,2> pair;
 
 int main()
 {
@@ -61,13 +66,44 @@ int main()
   }
   if(array_test)
   {
-    Tuple<int,2> test(10,10);
+    Tuple<int,2> test(10,5);
     ND_Array<int,Tuple<int,2> >atest(test);
+    atest.fill_test();
+    
+    atest.print();
+    atest(pair(0,0)) = 123456;
     atest.print();
     
-    Tuple<int,3> testt(10,10,10);
-    ND_Array<int,Tuple<int,3> >atestt(testt);
-    atestt.print();
+    int t = atest(pair(0,1));
+    cout<<"t "<<t<<endl;
+    t = 654321;
+    cout<<"t "<<t<<endl;
+    atest.print();
+
+    
+    ND_Array<Tuple<float,2>,Tuple<int,2> >ctest(test);
+    for(int j = 0;j<10;++j)
+      for(int k = 0;k<5;++k)
+	ctest(pair(j,k)) = pair(j,k);
+    
+    ctest.print();
+    
+    
+
+    // Tuple<int,3> testt(10,3,2);
+    // ND_Array<int,Tuple<int,3> >atestt(testt);
+    // try
+    // {
+    //   atestt.fill_test();
+      
+    //   atestt.print();
+    // }
+    // catch(char const * e)
+    // {
+    //   cout<<e<<endl;
+    // }
+    
+    
     
   }
   
