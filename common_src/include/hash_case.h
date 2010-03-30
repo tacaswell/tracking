@@ -53,6 +53,8 @@ class track_list;
 class Master_box;
 
 class Corr;
+class Accumulator;
+
 /**
    Class to hold sets of Hash_shelf.  This is used as a structure to organize
    the hash tables by time frame.  
@@ -234,6 +236,13 @@ public:
      passes a Corr object down the pyramid
    */
   void compute_corr(tracking::Corr &) const ;
+
+    
+  /**
+     Passes an Accumulator object down the pyramid
+   */
+  void compute_accum(Accumulator & in)const;
+
 
   /**
      fills in the neighborhoods for all of the particles

@@ -52,6 +52,8 @@ class hash_box;
 class Master_box;
 
 class Corr;
+class Accumulator;
+
 /**
    Class to implement the hash table
 */
@@ -154,7 +156,7 @@ public:
      /pram range how big of a region to extract
   */
   void get_region( int n,std::vector<const particle*> & out_vector,int range) const ;
-  
+  ///@}
   /**
      returns the plane number of this shelf
    */  
@@ -162,6 +164,7 @@ public:
   {
     return plane_number_;
   }
+  
   
   /**
      Converts the whole shelf to a list of const pointers
@@ -239,7 +242,11 @@ public:
    */
   void compute_corr(tracking::Corr &) const ;
   
-
+  /**
+     Passes an Accumulator object down the pyramid
+   */
+  void compute_accum(Accumulator & in)const;
+  
 
   /**
      Testing function to verify that the hash function 
@@ -252,6 +259,7 @@ public:
      linking code is written
    */
   std::list<particle_track*> * shelf_to_list() const;
+
 
 
   

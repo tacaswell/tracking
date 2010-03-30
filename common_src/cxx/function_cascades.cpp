@@ -29,7 +29,7 @@
 #include "particle_track.h"
 #include "wrapper_o.h"
 #include "corr.h"
-
+#include "accum_sofq.h"
 
 using tracking::hash_box;
 using tracking::Hash_shelf;
@@ -244,6 +244,32 @@ void hash_case::pass_fun_to_shelf(void(Hash_shelf::*fun)()const)const
 }
 
 
+void hash_case::compute_accum(Accumulator & in)const
+{
+  vector<Hash_shelf*>::const_iterator end_it = h_case_.end();
+  for(vector<Hash_shelf*>::const_iterator shelf_it = h_case_.begin();
+      shelf_it!= end_it;++shelf_it)
+    (*shelf_it)->compute_accum(in);
+}
+
+
+void Hash_shelf::compute_accum(Accumulator & in) const
+{
+  vector<hash_box*>::const_iterator end_it = hash_.end();
+  for(vector<hash_box*>::const_iterator box_it = hash_.begin();
+      box_it != end_it; ++box_it)
+    (*box_it)->compute_accum(in);
+}
+
+void hash_box::compute_accum(Accumulator & in)const
+{
+  vector<particle*>::const_iterator end_it = contents_.end();
+  for(vector<particle*>::const_iterator part_it = contents_.begin();
+      part_it != end_it;++part_it)
+    in.add_particle(*part_it);
+  
+
+}
 
 
 
