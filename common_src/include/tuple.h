@@ -200,7 +200,11 @@ public:
      Destructor
   */
   ~Tuple();
-  
+  /**
+     Uniform constructor
+   */
+  Tuple(T x);
+
   /**
      hard coded 2-D constructor 
   */
@@ -535,6 +539,15 @@ Tuple<T,length>::~Tuple<T,length>(){
   // delete[] data_;
   //   data_ = NULL;
 }
+
+template<class T,int length>
+Tuple<T,length>::Tuple(T x)
+{
+  for(int j = 0; j<length;++j)
+    data_[j] = x;
+}
+
+
 template<class T,int length>
 Tuple<T,length>::Tuple(T x,T y)
 {
