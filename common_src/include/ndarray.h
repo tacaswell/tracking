@@ -67,8 +67,14 @@ public:
      this assumes that the type is int or similar
    */
   void fill_test();
+  /**
+     Rank of matrix
+   */
+  const static int rank_ =  T_dim::length_;
   
+
 private:
+  
   // pointer to the data
   T * data_ptr_;
   // The dimensions
@@ -101,14 +107,12 @@ const T& ND_Array<T,T_dim>::operator()(T_dim pos)const
 template <class T,class T_dim>
 ND_Array<T,T_dim>::ND_Array(T_dim dims)
 {
-  int rank = dims.get_len();
-  
   int dim_prod = 1;
   
   dims_ = dims;
   
   
-  for(int j = 0; j<rank;++j)
+  for(int j = 0; j<rank_;++j)
   {
     dim_prod*=dims_[j];
     
@@ -186,8 +190,8 @@ void ND_Array<T,T_dim>::print() const
 template <class T,class T_dim>
 bool ND_Array<T,T_dim>::increment_cord(T_dim & cord)const
 {
-  int rank = T_dim::length_;
-  for(int j = rank-1;j>1;--j)
+
+  for(int j = rank_-1;j>1;--j)
   {
     if(cord[j]+1 < dims_[j])
     {
