@@ -11,6 +11,13 @@ SET(CONFIG_SRC
   ${COMMON_SRC_PATH}/enum_utils.cpp
   )
 
+SET(UTIL_SRC
+  ${COMMON_SRC_PATH}/array.cpp
+  ${COMMON_SRC_PATH}/cell.cpp
+  ${COMMON_SRC_PATH}/coarse_grain_array.cpp
+  ${COMMON_SRC_PATH}/counted_vector.cpp
+)
+
 
 SET(COMMON_SRC
   ${COMMON_SRC_PATH}/particle_base.cpp
@@ -23,6 +30,7 @@ SET(COMMON_HASH_SRC
   ${COMMON_SRC_PATH}/hash_case.cpp
   ${COMMON_SRC_PATH}/hash_shelf.cpp
   ${COMMON_SRC_PATH}/function_cascades.cpp
+  ${UTIL_SRC}
   )
 
 SET(COMMON_TRACK_SRC
@@ -35,13 +43,6 @@ SET(COMMON_TRACK_SRC
 
 SET(HASH_TRACK_SRC
     ${COMMON_SRC_PATH}/hash_track_funs.cpp 
-)
-
-SET(UTIL_SRC
-  ${COMMON_SRC_PATH}/array.cpp
-  ${COMMON_SRC_PATH}/cell.cpp
-  ${COMMON_SRC_PATH}/coarse_grain_array.cpp
-  ${COMMON_SRC_PATH}/counted_vector.cpp
 )
 
 SET(UTIL_SRC_GNU
