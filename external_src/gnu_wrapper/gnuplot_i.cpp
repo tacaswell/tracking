@@ -1,4 +1,9 @@
 #include "gnuplot_i.hpp"
+
+using gnuplot::Gnuplot;
+using gnuplot::GnuplotException;
+
+
 //------------------------------------------------------------------------------
 //
 // initialize static data
@@ -1387,7 +1392,7 @@ void Gnuplot::remove_tmpfiles(){
 using std::endl;
 using std::cout;
 
-void wait_for_key ()
+void gnuplot::wait_for_key ()
 {
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__TOS_WIN__)  // every keypress registered, also arrow keys
     cout << endl << "Press any key to continue..." << endl;

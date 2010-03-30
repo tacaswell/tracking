@@ -37,6 +37,10 @@
 
 #include "gnuplot_i.hpp"
 
+using gnuplot::Gnuplot;
+using gnuplot::GnuplotException;
+using gnuplot::wait_for_key;
+
 
 using std::vector;
 using std::string;

@@ -56,6 +56,10 @@
 
 //declare classes in global namespace
 
+namespace gnuplot
+{
+
+
 
 class GnuplotException : public std::runtime_error
 {
@@ -588,5 +592,6 @@ class Gnuplot
 };
 
 void wait_for_key();
+}
 
 #endif
