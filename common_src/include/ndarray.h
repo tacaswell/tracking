@@ -34,7 +34,7 @@ namespace utilities{
 /**
    A N-D array (set by the 
 */
-template <class T,class T_dim>
+template <class T,int N>
 class ND_Array{
 public:
   /**
@@ -48,13 +48,24 @@ public:
   /**
      Returns a reference to at element
    */
-  T& operator()(T_dim pos);
+  T& operator()(const Tuple<int,N> & pos);
   /**
      Returns a const reference to at element
    */
-  const T& operator()(T_dim pos)const;
+  const T& operator()(const Tuple<int,N> & pos)const;
   
-  ND_Array(T_dim dim);
+  
+  /**
+     Returns a reference to at element
+   */
+  T& operator()(int pos);
+  /**
+     Returns a const reference to at element
+   */
+  const T& operator()(int pos)const;
+  
+
+  ND_Array(const Tuple<int,N> & dim);
   ~ND_Array();
   
   /**
@@ -70,7 +81,8 @@ public:
   /**
      Rank of matrix
    */
-  const static int rank_ =  T_dim::length_;
+  const static int rank_ =  N;
+  
   
 
 private:
@@ -78,44 +90,72 @@ private:
   /// pointer to the data
   T * data_ptr_;
   /// The dimensions
-  T_dim dims_;
+  const Tuple<int,N>  dims_;
+  /**
+     Pointer to the data in dims_
+   */
+  const int * dims_ptr_;
+  
   /// the cumulative dimensions 
-  T_dim cum_dims_;
-
+  Tuple<int,N>  cum_dims_;
+  /**
+     Pointer to data in cum_dims_
+   */
+  const int * cum_dims_ptr_;
+  
   /**
      Total number of elements
    */
   int elm_count_;
   
   
-  int cord_to_indx(const T_dim& pos) const;
-  T_dim indx_to_cord(int indx) const;
+  int cord_to_indx(const Tuple<int,N> & pos) const;
+  Tuple<int,N>  indx_to_cord(int indx) const;
   
   /**
      Inrements to the next 2-D plane to 
    */
-  bool increment_cord(T_dim & cord)const;
+  bool increment_cord( Tuple<int,N> & cord)const;
   
   
   
 };
-template <class T,class T_dim>
-T& ND_Array<T,T_dim>::operator()(T_dim pos)
+template <class T,int N>
+T& ND_Array<T,N>::operator()(const Tuple<int,N> & pos)
 {
   return data_ptr_[cord_to_indx(pos)];
 }
-template <class T,class T_dim>
-const T& ND_Array<T,T_dim>::operator()(T_dim pos)const
+template <class T,int N>
+const T& ND_Array<T,N>::operator()(const Tuple<int,N> & pos)const
 {
   return data_ptr_[cord_to_indx(pos)];
 }
 
-template <class T,class T_dim>
-ND_Array<T,T_dim>::ND_Array(T_dim dims)
+
+template <class T,int N>
+T& ND_Array<T,N>::operator()(int pos)
+{
+  if(!(pos < elm_count_))
+     throw std::out_of_range("posistion out of range");
+  return data_ptr_[pos];
+}
+
+template <class T,int N>
+const T& ND_Array<T,N>::operator()(int pos) const
+{
+  if(!(pos < elm_count_))
+     throw std::out_of_range("posistion out of range");
+  return data_ptr_[pos];
+}
+
+
+template <class T,int N>
+ND_Array<T,N>::ND_Array(const Tuple<int,N> & dims):
+  dims_(dims),cum_dims_(0)
 {
   int dim_prod = 1;
   
-  dims_ = dims;
+  
   
   
   for(int j = 0; j<rank_;++j)
@@ -133,45 +173,50 @@ ND_Array<T,T_dim>::ND_Array(T_dim dims)
   elm_count_ = dims_.prod();
   
   data_ptr_= new T[dim_prod] ;
+  dims_ptr_ = dims_.get_ptr();
+  cum_dims_ptr_ = cum_dims_.get_ptr();
+  
 
 }
 
-template <class T,class T_dim>
-ND_Array<T,T_dim>::~ND_Array()
+template <class T,int N>
+ND_Array<T,N>::~ND_Array()
 {
   delete [] data_ptr_;
 }
 
-template <class T,class T_dim>
-int ND_Array<T,T_dim>::cord_to_indx(const T_dim & in)const
+template <class T,int N>
+int ND_Array<T,N>::cord_to_indx(const Tuple<int,N> & in)const
 {
   int indx = 0;
   
   for(int j = 0; j<rank_;++j)
   {
-    if (in[j]>dims_[j])
+    int tmp = in[j];
+    
+    if (tmp>dims_ptr_[j])
       throw std::out_of_range("cord out of dimensions");
-    indx +=in[j]*cum_dims_[j];
+    indx +=tmp*cum_dims_ptr_[j];
   }
   return indx;
 
 }
-template <class T,class T_dim>
-T_dim ND_Array<T,T_dim>::indx_to_cord(int indx)const
+template <class T,int N>
+Tuple<int,N> ND_Array<T,N>::indx_to_cord(int indx)const
 {
   if(!(indx<elm_count_))
     throw std::out_of_range("Index out of range");
   
-  T_dim cord;
-  for(int j = 0;j<T_dim::length_;++j)
-    cord[j] = (indx/cum_dims_[j])%dims_[j];
+  const Tuple<int,N> & cord;
+  for(int j = 0;j<N;++j)
+    cord[j] = (indx/cum_dims_ptr_[j])%dims_ptr_[j];
   
-  return T_dim(cord);
+  return  Tuple<int,N> (cord);
   
 }
 
-template <class T,class T_dim>
-void ND_Array<T,T_dim>::fill_test() 
+template <class T,int N>
+void ND_Array<T,N>::fill_test() 
 {
   int max = dims_.prod();
   for(int j= 0; j<max;++j)
@@ -180,13 +225,13 @@ void ND_Array<T,T_dim>::fill_test()
 }
 
 
-template <class T,class T_dim>
-void ND_Array<T,T_dim>::print() const
+template <class T,int N>
+void ND_Array<T,N>::print() const
 {
   using std::cout;
   using std::endl;
 
-  T_dim plane;
+  Tuple<int,N>  plane;
   do
   {
     cout<<"plane "<<plane<<endl;
@@ -207,13 +252,13 @@ void ND_Array<T,T_dim>::print() const
       
 }
 
-template <class T,class T_dim>
-bool ND_Array<T,T_dim>::increment_cord(T_dim & cord)const
+template <class T,int N>
+bool ND_Array<T,N>::increment_cord(Tuple<int,N> & cord)const
 {
 
   for(int j = rank_-1;j>1;--j)
   {
-    if(cord[j]+1 < dims_[j])
+    if(cord[j]+1 < dims_ptr_[j])
     {
       ++cord[j];
       return true;
