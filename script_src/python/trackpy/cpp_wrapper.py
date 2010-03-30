@@ -366,3 +366,51 @@ def do_phi6(key,conn):
     
     pass
 
+
+def do_sofq(key,conn):
+    prog_path = '/home/tcaswell/misc_builds/basic_rel/apps/'
+    prog_name = "sofq"
+    
+    # see if the file has already been processed
+    res = check_comps_table(key,"Iden",conn)
+    if len(res) ==0:
+        print "no entry"
+        return
+    if len(res) >1:
+        print "more than one entry, can't cope, quiting"
+        return
+    (fin,read_comp) = res[0]
+    
+
+    fout = os.path.dirname(fin) + '/sofq.h5'
+    #_make_sure_h5_exists(fout)
+    
+    comp_num = conn.execute("select max(comp_key) from comps;").fetchone()[0] + 1
+
+    config = xml_data()
+    config.add_stanza("sofq")
+    config.add_pram("max_range","float",".2")
+    config.add_pram("nbins","int","100")
+    config.add_stanza("comps")
+    config.add_pram("read_comp","int",str(read_comp))
+    config.add_pram("write_comp","int",str(comp_num))
+    config.add_pram("dset","int",str(key))
+    config.disp()
+    cfile = config.write_to_tmp()
+    print fin
+    print fout
+
+    
+    rc = subprocess.call(["time",prog_path + prog_name,'-i',fin,'-o',fout, '-c',cfile ])
+    print rc
+
+    # if it works, then returns zero
+    if rc == 0:
+        print "entering into database"
+        conn.execute("insert into comps (comp_key,dset_key,date,fin,fout,function)"
+                     +"values (?,?,?,?,?,?);",
+                     (comp_num,key,date.today().isoformat(),fin,fout,prog_name))
+        conn.commit()
+    else:
+        print "ERROR!!!"
+    
