@@ -29,7 +29,7 @@
 
 #include <vector>
 #include <string>
-
+#include <complex>
 #include "accumulator.h"
 #include "ndarray.h"
 
@@ -40,11 +40,11 @@ namespace tracking
 /**
    simple g(r) computation
  */
-class Corr_sofq : public Accumulator
+class Accum_sofq : public Accumulator
 {
 public:
   // basic inherited stuff
-  void compute(const particle *,const std::vector<const particle*> & ) ;
+  void add_particle(const particle *) ;
   void out_to_wrapper(utilities::Generic_wrapper & ) const ;
 
   // special stuff
@@ -52,11 +52,18 @@ public:
   /**
      constructor,will gain arguments 
    */
-  Corr_sofq(const utilities::Tuplef& max_q,const utilities::Tuplei& n_bins);
-  ~Corr_sofq();
-  
+  Accum_sofq(const utilities::Tuplef& max_q,const utilities::Tuplei& n_bins);
+  ~Accum_sofq();
+
+  /**
+     Returns an array with the magnitudes of the complex s(q) values 
+   */
+  void get_magnitude(utilities::ND_Array<float,utilities::Tuplei>& in)const;
   
   void display() const;
+  
+  const utilities::Tuplei & get_n_bins() const
+  {return n_bins_;}
   
   
 
@@ -79,7 +86,7 @@ private:
   /**
      Array to hold the values
    */
-  utilities::ND_Array<utilities::Tuplef,utilities::Tuplei> s_of_q_;
+  utilities::ND_Array<std::complex<float>,utilities::Tuplei> s_of_q_;
 
 
   /**

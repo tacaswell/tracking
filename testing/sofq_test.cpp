@@ -17,20 +17,26 @@
 
 
 #include "accum_sofq.h"
-#include "particle_base.h"
 
 
-using tracking::Corr_sofq;
+
+using tracking::Accum_sofq;
 using utilities::Tuplef;
 using utilities::Tuplei;
+using tracking::particle;
+
 
 int main()
 {
   
   Tuplei bins(10);
-  Tuplef range(5);
+  Tuplef range(.5);
   
-  Corr_sofq test(range,bins);
+  Accum_sofq test(range,bins);
+  particle * dummy = NULL;
+  test.add_particle(dummy);
+  
+  test.display();
   
   
 

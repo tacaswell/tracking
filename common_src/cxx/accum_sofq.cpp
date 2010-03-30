@@ -29,62 +29,128 @@
 #include "particle_track.h"
 #include <iostream>
 
+
+
 using std::cout;
 using std::endl;
 
 
 using utilities::Tuplef;
 using utilities::Tuplei;
-using tracking::Corr_sofq;
+using utilities::ND_Array;
+
+using tracking::Accum_sofq;
+
+using std::exp;
+using std::complex;
+using std::abs;
 
 
-void Corr_sofq::compute(const particle *,const std::vector<const particle*> & ) 
+void Accum_sofq::add_particle(const particle * p_in) 
 {
+  //Tuplef pos = p_in->get_position();
+  Tuplef pos(0,1);
+  
+  complex<float> i (0,1);
+  float pi = 4.0*atan(1.0);
+  
+  
+  Tuplei indx;
+  do
+  {
+    s_of_q_(indx) = exp(2*pi*i*(q_(indx).dot(pos)));
+  }
+  while(step_indx(indx));
+
   
   return;
   
 }
 
-void Corr_sofq::out_to_wrapper(utilities::Generic_wrapper & ) const 
+void Accum_sofq::out_to_wrapper(utilities::Generic_wrapper & ) const 
 {
   return;
   
 }
 
-Corr_sofq::Corr_sofq(const utilities::Tuplef& max_q,const utilities::Tuplei & n_bins):
+Accum_sofq::Accum_sofq(const utilities::Tuplef& max_q,const utilities::Tuplei & n_bins):
   n_bins_(n_bins),max_range_(max_q),q_(n_bins_),s_of_q_(n_bins_)
 {
-
-  
-  // fill in q values
-  q_.print();
-  
   Tuplei indx;
   do
   {
     q_(indx) = max_range_*(Tuplef(indx+Tuplei(1))/Tuplef(n_bins_));
   }
   while(step_indx(indx));
+}
+
+Accum_sofq::~Accum_sofq()
+{
+  
+
+}
+
+  
+void Accum_sofq::display() const
+{
+  cout<<"q array"<<endl;
   q_.print();
+  cout<<"----------"<<endl;
+  cout<<"s(q) array"<<endl;
+  ND_Array<float,Tuplei> abs_array(n_bins_);
+  get_magnitude(abs_array);
+  s_of_q_.print();
+  abs_array.print();
+  
+  
+
+  // Gnuplot g;
+  // cout << "displaying image data" << endl;
+  // const int iWidth  = width_;
+  // const int iHeight = height_;
+  // //  const int iWidth  = 500;
+  // //  const int iHeight = 200;
+  
+  // g.set_xrange(0,iWidth).set_yrange(0,iHeight).set_cbrange(0,255);
+
+  // g.cmd("set palette gray");
+  // unsigned char ucPicBuf[iWidth*iHeight];
+  // // generate a greyscale image
+  // Ipp32f max = -1;
+  // ippiMax_32f_C1R(imagedata_,stepsize_,ROIfull_,&max);
+  // cout<<"Max: "<<max<<endl;
+  // for(int oIndex = 0; oIndex < iHeight; oIndex++)
+  // {
+  //   for(int iIndex = 0;iIndex<iWidth;++iIndex)
+  //   {
+  //     *(ucPicBuf + iIndex +iWidth*oIndex) =
+  // 	(unsigned char)(((*(imagedata_ +iIndex +stepsize_/sizeof(Ipp32f) * oIndex))/max)*255);
+  //   }
+  // }
+  // g.plot_image(ucPicBuf,iWidth,iHeight,"greyscale");
+  // wait_for_key();
+  // g.remove_tmpfiles();
+  
+
+
 
 }
 
-Corr_sofq::~Corr_sofq()
+void Accum_sofq::get_magnitude(utilities::ND_Array<float,Tuplei>& out)const
 {
-  
+  // make sure input and storage array are same size
+
+  Tuplei indx;
+  do
+  {
+    out(indx) = abs(s_of_q_(indx));
+  }
+  while(step_indx(indx));  
 
 }
 
-  
-void Corr_sofq::display() const
-{
-  
 
-}
-
-
-
-bool Corr_sofq::step_indx(utilities::Tuplei & indx) const
+bool Accum_sofq::step_indx(utilities::Tuplei & indx) const
 {
   
   for(int j = 0;j<rank_;++j)
