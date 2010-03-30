@@ -17,28 +17,123 @@
 
 
 #include "accum_sofq.h"
+#include <set>
+#include "enum_utils.h"
+#include "wrapper_i.h"
+#include "filter.h"
+#include "master_box_t.h"
+#include "hash_case.h"
+#include <cstdlib>
+
+using std::rand;
 
 
+namespace utilities{
+/**
+   Wrapper class for testing purposes
+*/
+class Wrapper_i_dummy:public Wrapper_in{
+private:
+  std::set<D_TYPE> d_types_;
+  int frames_;
+  int count_;
+  const static int x_max_ = 10;
+  const static int y_max_ = 10;
+  mutable int counter_;
+public:
+  int get_value(int& out,int ind,D_TYPE type, int frame) const {
+    if(type == D_FRAME)
+      out = frame;
+    else
+      out = counter_++;
+    return out;
+  }
+  float get_value(float& out,int ind,D_TYPE type, int frame) const {
+
+    
+    if(type == D_XPOS)
+      out = ind % x_max_;
+    else if(type == D_YPOS)
+      out = ind / x_max_;
+    else
+      out = ind ;
+    return out;
+  }
+  std::complex<float> get_value(std::complex<float>& out,int ind,D_TYPE type, int frame) const 
+  {return out;}
+  std::set<D_TYPE> get_data_types() const {return d_types_;}
+  int get_num_entries(int frame) const {return count_;};
+  int get_num_frames() const {return frames_;};
+  bool contains_type(D_TYPE in) const{return d_types_.find(in) != d_types_.end();};
+  Tuplef get_dims() const{return Tuplef();}
+  ~Wrapper_i_dummy(){};
+  Wrapper_i_dummy(const std::set<utilities::D_TYPE>& d_types,int count,int frames):
+    d_types_(d_types),frames_(frames),count_(count),counter_(0){}
+};
+}
 
 using tracking::Accum_sofq;
 using utilities::Tuplef;
 using utilities::Tuplei;
 using tracking::particle;
 
+using utilities::Filter_trivial;
+using utilities::D_TYPE;
+using std::set;
+using utilities::Wrapper_i_dummy;
+
+using tracking::Master_box;
+using tracking::particle;
+using tracking::hash_case;
+
+using std::cout;
+using std::endl;
+
+using utilities::Tuple;
+
 
 int main()
 {
   
-  Tuplei bins(10);
-  Tuplef range(.5);
+  Tuplei bins(30,30);
+  Tuplef range(4);
   
-  Accum_sofq test(range,bins);
-  particle * dummy = NULL;
-  test.add_particle(dummy);
+  // Accum_sofq test(range,bins);
+  // particle * dummy = NULL;
+  // test.add_particle(dummy);
   
-  test.display();
+  // test.display();
   
   
+        
+  // set up data types to import form the input
+  D_TYPE tmp[] = {utilities::D_XPOS,
+		  utilities::D_YPOS
+  };
+  set<D_TYPE> data_types = set<D_TYPE>(tmp, tmp+2);
+    
+  int frame_c = 10;
+  
+  int p_c = 98;
+    
+    
+  Wrapper_i_dummy wrapper_in = Wrapper_i_dummy(data_types,p_c,frame_c);
+  Filter_trivial filt;
+  Master_box box;
+  box.init(wrapper_in,filt);
+  cout<<box.size()<<endl;
+  
+  hash_case hcase(box,Tuple<float,2>(10+1,10 + 1), 1,frame_c);
+
+
+  
+  
+  
+  Accum_sofq test2(range,bins);
+  hcase.compute_accum(test2);
+  test2.display();
+  
+
 
   return -1;
 

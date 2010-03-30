@@ -30,6 +30,11 @@
 #include <iostream>
 
 
+#include "gnuplot_i.hpp"
+
+using gnuplot::Gnuplot;
+using gnuplot::GnuplotException;
+using gnuplot::wait_for_key;
 
 using std::cout;
 using std::endl;
@@ -48,8 +53,8 @@ using std::abs;
 
 void Accum_sofq::add_particle(const particle * p_in) 
 {
-  //Tuplef pos = p_in->get_position();
-  Tuplef pos(0,1);
+  Tuplef pos = p_in->get_position();
+  
   
   complex<float> i (0,1);
   float pi = 4.0*atan(1.0);
@@ -58,7 +63,12 @@ void Accum_sofq::add_particle(const particle * p_in)
   Tuplei indx;
   do
   {
-    s_of_q_(indx) = exp(2*pi*i*(q_(indx).dot(pos)));
+
+    s_of_q_(indx) += exp(2*pi*i*(q_(indx).dot(pos)));
+    // cout<<pos<<'.'<<q_(indx)<<endl;
+    // cout<<q_(indx).dot(pos)<<endl;
+    // cout<<exp(2*pi*i*(q_(indx).dot(pos)))<<endl;
+    // cout<<"---------------"<<endl;
   }
   while(step_indx(indx));
 
@@ -93,43 +103,49 @@ Accum_sofq::~Accum_sofq()
   
 void Accum_sofq::display() const
 {
-  cout<<"q array"<<endl;
-  q_.print();
-  cout<<"----------"<<endl;
-  cout<<"s(q) array"<<endl;
+  // cout<<"q array"<<endl;
+  // q_.print();
+  // cout<<"----------"<<endl;
+  // cout<<"s(q) array"<<endl;
   ND_Array<float,Tuplei> abs_array(n_bins_);
   get_magnitude(abs_array);
-  s_of_q_.print();
-  abs_array.print();
+  // s_of_q_.print();
+  // abs_array.print();
   
   
+  if(rank_ == 2)
+  {
+    
+    Gnuplot g;
+    cout << "displaying s(q) data" << endl;
+    const int iWidth  = n_bins_[0];
+    const int iHeight = n_bins_[1];
+    g.set_xrange(0,iWidth).set_yrange(0,iHeight).set_cbrange(0,255);
 
-  // Gnuplot g;
-  // cout << "displaying image data" << endl;
-  // const int iWidth  = width_;
-  // const int iHeight = height_;
-  // //  const int iWidth  = 500;
-  // //  const int iHeight = 200;
-  
-  // g.set_xrange(0,iWidth).set_yrange(0,iHeight).set_cbrange(0,255);
-
-  // g.cmd("set palette gray");
-  // unsigned char ucPicBuf[iWidth*iHeight];
-  // // generate a greyscale image
-  // Ipp32f max = -1;
-  // ippiMax_32f_C1R(imagedata_,stepsize_,ROIfull_,&max);
-  // cout<<"Max: "<<max<<endl;
-  // for(int oIndex = 0; oIndex < iHeight; oIndex++)
-  // {
-  //   for(int iIndex = 0;iIndex<iWidth;++iIndex)
-  //   {
-  //     *(ucPicBuf + iIndex +iWidth*oIndex) =
-  // 	(unsigned char)(((*(imagedata_ +iIndex +stepsize_/sizeof(Ipp32f) * oIndex))/max)*255);
-  //   }
-  // }
-  // g.plot_image(ucPicBuf,iWidth,iHeight,"greyscale");
-  // wait_for_key();
-  // g.remove_tmpfiles();
+    g.cmd("set palette gray");
+    unsigned char ucPicBuf[iWidth*iHeight];
+    // generate a greyscale image
+    float max = -1;
+    Tuplei indx;
+    do
+    {
+      if(abs_array(indx) > max)
+	max = abs_array(indx);
+    }
+    while(step_indx(indx));
+    
+    for(int oIndex = 0; oIndex < iHeight; oIndex++)
+    {
+      for(int iIndex = 0;iIndex<iWidth;++iIndex)
+      {
+	*(ucPicBuf + iIndex +iWidth*oIndex) =
+	  (unsigned char)(255*(abs_array(Tuplei(iIndex,oIndex))/max));
+      }
+    }
+    g.plot_image(ucPicBuf,iWidth,iHeight,"greyscale");
+    wait_for_key();
+    g.remove_tmpfiles();
+  }
   
 
 
