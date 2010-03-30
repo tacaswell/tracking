@@ -1,4 +1,4 @@
-//Copyright 2009 Thomas A Caswell
+//Copyright 2009,2010 Thomas A Caswell
 //tcaswell@uchicago.edu
 //http://jfi.uchicago.edu/~tcaswell
 //
@@ -53,7 +53,7 @@ namespace tracking
 
 /**
    An ABC of objects that can be handed into hash_case and calculates
-   correlation functions.  Both types of function need to be defined.
+   correlation functions. 
  */
 class Corr
 {
