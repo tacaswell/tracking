@@ -123,14 +123,8 @@ int main()
   box.init(wrapper_in,filt);
   cout<<box.size()<<endl;
   
-  hash_case hcase(box,Tuple<float,2>(10+1,10 + 1), 1,frame_c);
-
-
-  
-  
-  
   Accum_sofq test2(range,bins);
-  hcase.compute_accum(test2);
+  box.compute_accum(test2);
   test2.display();
   
 

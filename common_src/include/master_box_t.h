@@ -40,17 +40,17 @@ class Wrapper_in;
 class params;
 class Filter;
 
+
 }
 
 
 namespace tracking{
+class Accumulator;
 /**
-   Templated class to hold the master list of all particles to be processed by
+   Class to hold the master list of all particles to be processed by
    the code.  
  
 */
-
-
 class Master_box{
   
 public:
@@ -101,6 +101,11 @@ public:
      initialization to take in a wrapper
    */
   void init(const utilities::Wrapper_in & w_in,utilities::Filter & filt);
+  
+  /**
+     Puts all of the particles in to the Accumulator
+   */
+  void compute_accum(tracking::Accumulator & in)const;
   
 
   ~Master_box();

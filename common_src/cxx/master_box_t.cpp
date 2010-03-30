@@ -25,7 +25,7 @@
 
 
 #include "master_box_t.h"
-
+#include "accumulator.h"
 #include "particle_base.h"
 #include "particle_track.h"
 #include "params.h"
@@ -37,6 +37,8 @@
 using namespace tracking;
 using std::endl;
 using std::cout;
+using tracking::Accumulator;
+using std::vector;
 
 
 
@@ -151,4 +153,14 @@ Master_box::~Master_box(){
 //   std::cout<<"mb dead"<<std::endl;
 }
 
+
+void Master_box::compute_accum(Accumulator & in)const
+{
+  vector<particle*>::const_iterator end_it = particle_vec_.end();
+  for(vector<particle*>::const_iterator part_it = particle_vec_.begin();
+      part_it != end_it;++part_it)
+    in.add_particle(*part_it);
+  
+
+}
 
