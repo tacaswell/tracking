@@ -19,7 +19,6 @@ SET(COMMON_SRC
   )
 
 SET(COMMON_HASH_SRC
-  ${COMMON_SRC_PATH}/gofr_free.cpp
   ${COMMON_SRC_PATH}/hash_box.cpp
   ${COMMON_SRC_PATH}/hash_case.cpp
   ${COMMON_SRC_PATH}/hash_shelf.cpp
