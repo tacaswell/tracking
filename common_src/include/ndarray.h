@@ -75,12 +75,18 @@ public:
 
 private:
   
-  // pointer to the data
+  /// pointer to the data
   T * data_ptr_;
-  // The dimensions
+  /// The dimensions
   T_dim dims_;
-  // the cumulative dimensions 
+  /// the cumulative dimensions 
   T_dim cum_dims_;
+
+  /**
+     Total number of elements
+   */
+  int elm_count_;
+  
   
   int cord_to_indx(const T_dim& pos) const;
   T_dim indx_to_cord(int indx) const;
@@ -124,8 +130,10 @@ ND_Array<T,T_dim>::ND_Array(T_dim dims)
     }
     cum_dims_[j] = tmp_prod;
   }
-
+  elm_count_ = dims_.prod();
+  
   data_ptr_= new T[dim_prod] ;
+
 }
 
 template <class T,class T_dim>
@@ -137,11 +145,23 @@ ND_Array<T,T_dim>::~ND_Array()
 template <class T,class T_dim>
 int ND_Array<T,T_dim>::cord_to_indx(const T_dim & in)const
 {
-  return (in*cum_dims_).sum();
+  int indx = 0;
+  
+  for(int j = 0; j<rank_;++j)
+  {
+    if (in[j]>dims_[j])
+      throw std::out_of_range("cord out of dimensions");
+    indx +=in[j]*cum_dims_[j];
+  }
+  return indx;
+
 }
 template <class T,class T_dim>
 T_dim ND_Array<T,T_dim>::indx_to_cord(int indx)const
 {
+  if(!(indx<elm_count_))
+    throw std::out_of_range("Index out of range");
+  
   T_dim cord;
   for(int j = 0;j<T_dim::length_;++j)
     cord[j] = (indx/cum_dims_[j])%dims_[j];
