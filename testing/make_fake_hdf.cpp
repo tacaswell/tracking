@@ -73,85 +73,27 @@ private:
   int frames_;
   int count_;
   mutable int counter_;
-  
-  
 public:
-
-  int                 get_value(int& out,
-				int ind,D_TYPE type, int frame) const {
-    if(type == D_FRAME)
-    {
-      out = frame;
-    }
-    else
-    {
-      out = counter_++;
-    }
-    
-
+  int get_value(int& out,int ind,D_TYPE type, int frame) const {
+    if(type == D_FRAME){out = frame;}
+    else{out = counter_++;}
     return out;
   }
-  
-  float               get_value(float& out,
-				int ind,D_TYPE type, int frame) const 
-  {
-    //int perd = 4;
-    //    out = sin(ind*(3.14/perd))*sin((3.14/perd)*ind);
+  float get_value(float& out,int ind,D_TYPE type, int frame) const {
     out = ind ;
-    
     return out;
   }
-  
-  std::complex<float> get_value(std::complex<float>& out,
-				int ind,D_TYPE type, int frame) const 
-  {
-    return out;
-  }
-  
-
-
-  std::set<D_TYPE>    get_data_types() const 
-  {
-    return d_types_;
-  }
-  
-
-
-
+  std::complex<float> get_value(std::complex<float>& out,int ind,D_TYPE type, int frame) const 
+  {return out;}
+  std::set<D_TYPE> get_data_types() const {return d_types_;}
   int get_num_entries(int frame) const {return count_;};
-
   int get_num_frames() const {return frames_;};
-
-  bool contains_type(D_TYPE in) const
-  {
-    return d_types_.find(in) != d_types_.end();
-  };
-
-  Tuplef get_dims() const
-  {
-    return Tuplef();
-  }
-  
-
-
-  
+  bool contains_type(D_TYPE in) const{return d_types_.find(in) != d_types_.end();};
+  Tuplef get_dims() const{return Tuplef();}
   ~Wrapper_i_dummy(){};
-  
- 
   Wrapper_i_dummy(const std::set<utilities::D_TYPE>& d_types,int count,int frames):
-    d_types_(d_types),frames_(frames),count_(count),counter_(0)
-  {
-  }
-  
-
-
-
-  
-
-  
-  
+    d_types_(d_types),frames_(frames),count_(count),counter_(0){}
 };
-
 }
 
 
