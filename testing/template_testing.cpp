@@ -67,7 +67,7 @@ int main()
   if(array_test)
   {
     Tuple<int,2> test(10,5);
-    ND_Array<int,Tuple<int,2> >atest(test);
+    ND_Array<int,2 >atest(test);
     atest.fill_test();
     
     atest.print();
@@ -81,7 +81,7 @@ int main()
     atest.print();
 
     
-    ND_Array<Tuple<float,2>,Tuple<int,2> >ctest(test);
+    ND_Array<Tuple<float,2>,2 >ctest(test);
     for(int j = 0;j<10;++j)
       for(int k = 0;k<5;++k)
 	ctest(pair(j,k)) = pair(j,k);

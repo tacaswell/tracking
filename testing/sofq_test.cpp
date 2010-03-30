@@ -95,7 +95,7 @@ using utilities::Tuple;
 int main()
 {
   
-  Tuplei bins(30,30);
+  Tuplei bins(300,300);
   Tuplef range(4);
   
   // Accum_sofq test(range,bins);
@@ -112,7 +112,7 @@ int main()
   };
   set<D_TYPE> data_types = set<D_TYPE>(tmp, tmp+2);
     
-  int frame_c = 10;
+  int frame_c = 1;
   
   int p_c = 98;
     

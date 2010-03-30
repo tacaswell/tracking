@@ -58,7 +58,7 @@ public:
   /**
      Returns an array with the magnitudes of the complex s(q) values 
    */
-  void get_magnitude(utilities::ND_Array<float,utilities::Tuplei>& in)const;
+  void get_magnitude(utilities::ND_Array<float,utilities::Tuplei::length_>&)const;
   
   void display() const;
   
@@ -71,22 +71,26 @@ private:
   /**
      number of bins
    */
-  utilities::Tuplei n_bins_;
+  const utilities::Tuplei n_bins_;
   /**
      maximum range
    */
   utilities::Tuplef max_range_;
 
+  /**
+     Total number of bins
+   */
+  int total_bins_;
   
   /**
      Array to hold the q-values
    */
-  utilities::ND_Array<utilities::Tuplef,utilities::Tuplei> q_;
+  utilities::ND_Array<utilities::Tuplef,utilities::Tuplei::length_> q_;
   
   /**
      Array to hold the values
    */
-  utilities::ND_Array<std::complex<float>,utilities::Tuplei> s_of_q_;
+  utilities::ND_Array<std::complex<float>,utilities::Tuplei::length_> s_of_q_;
 
 
   /**
@@ -121,7 +125,7 @@ private:
   /**
      Rank of array
    */
-  const static int rank_ =   utilities::ND_Array<utilities::Tuplef,utilities::Tuplei>::rank_;
+  const static int rank_ =   utilities::ND_Array<utilities::Tuplef,utilities::Tuplei::length_>::rank_;
   
   
 };

@@ -60,8 +60,8 @@ void Accum_sofq::add_particle(const particle * p_in)
   float pi = 4.0*atan(1.0);
   
   
-  Tuplei indx;
-  do
+  
+  for(int indx = 0; indx<total_bins_;++indx)
   {
 
     s_of_q_(indx) += exp(2*pi*i*(q_(indx).dot(pos)));
@@ -70,7 +70,7 @@ void Accum_sofq::add_particle(const particle * p_in)
     // cout<<exp(2*pi*i*(q_(indx).dot(pos)))<<endl;
     // cout<<"---------------"<<endl;
   }
-  while(step_indx(indx));
+  
 
   
   return;
@@ -84,7 +84,11 @@ void Accum_sofq::out_to_wrapper(utilities::Generic_wrapper & ) const
 }
 
 Accum_sofq::Accum_sofq(const utilities::Tuplef& max_q,const utilities::Tuplei & n_bins):
-  n_bins_(n_bins),max_range_(max_q),q_(n_bins_),s_of_q_(n_bins_)
+  n_bins_(n_bins),
+  max_range_(max_q),
+  total_bins_(n_bins.prod()),
+  q_(n_bins_),
+  s_of_q_(n_bins_)
 {
   Tuplei indx;
   do
@@ -92,6 +96,7 @@ Accum_sofq::Accum_sofq(const utilities::Tuplef& max_q,const utilities::Tuplei & 
     q_(indx) = max_range_*(Tuplef(indx+Tuplei(1))/Tuplef(n_bins_));
   }
   while(step_indx(indx));
+  
 }
 
 Accum_sofq::~Accum_sofq()
@@ -107,7 +112,7 @@ void Accum_sofq::display() const
   // q_.print();
   // cout<<"----------"<<endl;
   // cout<<"s(q) array"<<endl;
-  ND_Array<float,Tuplei> abs_array(n_bins_);
+  ND_Array<float,Tuplei::length_> abs_array(n_bins_);
   get_magnitude(abs_array);
   // s_of_q_.print();
   // abs_array.print();
@@ -152,7 +157,7 @@ void Accum_sofq::display() const
 
 }
 
-void Accum_sofq::get_magnitude(utilities::ND_Array<float,Tuplei>& out)const
+void Accum_sofq::get_magnitude(utilities::ND_Array<float,Tuplei::length_>& out)const
 {
   // make sure input and storage array are same size
 
