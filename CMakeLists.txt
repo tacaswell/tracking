@@ -52,6 +52,7 @@ SET(UTIL_SRC_GNU
 SET(CORR_SRC
   ${COMMON_SRC_PATH}/corr_gofr.cpp
   ${COMMON_SRC_PATH}/corr_goftheta.cpp
+  ${COMMON_SRC_PATH}/accum_sofq.cpp
 )
 
 SET(COMMON_WRAPPER_SRC

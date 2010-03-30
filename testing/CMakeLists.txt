@@ -82,3 +82,11 @@ target_link_libraries(read_write_add_test ${HDF5_LIBRARIES}  ${XERCESC_LIBRARY} 
 
 add_executable(template_test template_testing.cpp)
 set_target_properties(template_test PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_COUNT=3;TESTING")
+
+add_executable(sofq_test sofq_test.cpp
+  ${COMMON_SRC}
+  ${CORR_SRC}
+  ${GNU_PLOT_SRC}
+  )
+target_link_libraries(sofq_test ${HDF5_LIBRARIES}  ${XERCESC_LIBRARY} )
+set_target_properties(sofq_test PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_COUNT=3;TESTING")
