@@ -16,6 +16,7 @@ add_executable(gofr gofr_hdf.cpp
   ${GNU_PLOT_SRC}
   ${COMMON_HASH_SRC} 
   ${COMMON_WRAPPER_SRC} 
+  ${CONFIG_SRC}
   )
 #message(STATUS "Found HDF: ${HDF5_LIBRARIES}")
 target_link_libraries(gofr 
