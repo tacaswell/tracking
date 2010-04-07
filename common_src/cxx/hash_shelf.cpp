@@ -66,6 +66,8 @@ using std::vector;
 using std::logic_error;
 
 
+const int max_hash_dim_prod = 100*100*100;
+
 
 void Hash_shelf::push(particle * p){
   try{
@@ -138,6 +140,9 @@ void Hash_shelf::priv_init()
     
       
   }
+  
+  if(hash_dim_prod > max_hash_dim_prod)
+    throw std::invalid_argument("The hashing size given will make too many hash boxes, dieing ungracefully");
   
 
 
