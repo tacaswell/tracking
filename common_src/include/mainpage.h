@@ -156,6 +156,11 @@ work with matlab on a windows machine, but might work as a stand alone. (There
 are lots of couts in the code which matlab in linux can cope with, but matlab
 on windows apparently can't (according to matlab documentation)).
 
+
+The code is also being tracked on 
+<a href="http://github.com/tacaswell/tracking">github</a>
+
+
 The current 'stable' version is 0.2 and is available at 
 <KBD>svn://innoue.uchicago.edu/tracking/tags/tracking-0.2</KBD>
 or as a <a
