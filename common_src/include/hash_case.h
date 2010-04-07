@@ -243,6 +243,11 @@ public:
    */
   void compute_accum(Accumulator & in)const;
 
+  /**
+     Passes an Accumulator vector down the pyramid, one accumulator per hash_shelf 
+   */
+  void compute_accum(std::vector<Accumulator*> & in)const;
+  
 
   /**
      fills in the neighborhoods for all of the particles

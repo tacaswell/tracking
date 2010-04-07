@@ -56,7 +56,7 @@ using std::list;
 using std::map;
 
 using std::exception;
-
+using std::invalid_argument;
 
 
 // hash output chain
@@ -250,6 +250,18 @@ void hash_case::compute_accum(Accumulator & in)const
   for(vector<Hash_shelf*>::const_iterator shelf_it = h_case_.begin();
       shelf_it!= end_it;++shelf_it)
     (*shelf_it)->compute_accum(in);
+}
+
+
+void hash_case::compute_accum(vector<Accumulator*> & in)const
+{
+  if(in.size() != h_case_.size())
+    throw std::invalid_argument("accumulator and case size do not match");
+  vector<Accumulator*>::iterator accum_it = in.begin();
+  vector<Hash_shelf*>::const_iterator end_it = h_case_.end();
+  for(vector<Hash_shelf*>::const_iterator shelf_it = h_case_.begin();
+      shelf_it!= end_it;++shelf_it,++accum_it)
+    (*shelf_it)->compute_accum(*(*accum_it));
 }
 
 
