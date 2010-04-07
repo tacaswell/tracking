@@ -55,15 +55,19 @@ using std::vector;
 const std::complex<float> Accum_sofq::i_ = complex<float>(0,1);
 const float Accum_sofq::pi_ = 4.0*atan(1.0);
 
-Accum_sofq::Accum_sofq(const utilities::Tuple<float,2>& q_range, utilities::Tuplef q, const int n_bins):
+Accum_sofq::Accum_sofq(const utilities::Tuple<float,2>& q_range, const utilities::Tuplef q, const int n_bins):
   n_bins_(n_bins),
   q_range_(q_range),
   q_step_((q_range[1]-q_range[0])/(n_bins_-1)),
-  q_(q),
-  s_of_q_(n_bins_)
+  q_(q.direction()),
+  s_of_q_(n_bins_),
+  parts_added_(0)
 {
   
-  cout<<"made accum_sofq!!"<<endl;
+  cout<<"q_range : "<<q_range_<<endl;
+  cout<<"q_step : "<<q_step_<<endl;
+  cout<<"q: "<<q_<<endl;
+  
   
   
 }
@@ -76,10 +80,11 @@ void Accum_sofq::add_particle(const particle * p_in)
   float q_tmp = q_range_[0];
   for(unsigned int j = 0; j<n_bins_;++j)
   {
-    s_of_q_[j] += exp(2*pi_*i_*arg*(q_tmp))/q_tmp;
+    s_of_q_[j] += exp(2*pi_*i_*arg*(q_tmp));
     q_tmp +=q_step_;
     
   }
+  ++parts_added_;
   
   
 
@@ -103,7 +108,10 @@ Accum_sofq::~Accum_sofq()
   
 void Accum_sofq::display() const
 {
-  vector<float>tmp(n_bins_) ;
+
+  cout<<"parts added: "<<parts_added_<<endl;
+  
+  vector<float>tmp(n_bins_,0) ;
   get_magnitude_sqr(tmp);
   vector<float>q_tmp(n_bins_) ;
   float q_sum = q_range_[0];
@@ -112,6 +120,7 @@ void Accum_sofq::display() const
     q_tmp[j] = q_sum;
     q_sum += q_step_;
   }
+  
   
   
     
@@ -129,12 +138,16 @@ void Accum_sofq::get_magnitude_sqr(vector<float>& out)const
   out.clear();
   if(out.size() != n_bins_)
     out.resize(n_bins_);
+
+  float prts_sq = (float)parts_added_*(float)parts_added_;
   
+
   for(unsigned int j = 0;j<n_bins_;++j)
   {
     complex<float> tmp_s = s_of_q_[j];
     
-    out[j] = tmp_s.real()*tmp_s.real() + tmp_s.imag()*tmp_s.imag();
+    out[j] = (tmp_s.real()*tmp_s.real() + tmp_s.imag()*tmp_s.imag())/prts_sq;
+    
   }
   
 }

@@ -93,3 +93,12 @@ add_executable(sofq_ND_test sofq_ND_test.cpp
   ${COMMON_HASH_SRC}
   )
 set_target_properties(sofq_ND_test PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_COUNT=2;TESTING")
+
+
+add_executable(sofq_test sofq_test.cpp
+  ${COMMON_SRC}
+  ${CORR_SRC}
+  ${GNU_PLOT_SRC}
+  ${COMMON_HASH_SRC}
+  )
+set_target_properties(sofq_test PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_COUNT=2;TESTING")

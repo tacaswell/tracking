@@ -24,7 +24,7 @@
 #include "master_box_t.h"
 #include "hash_case.h"
 #include <cstdlib>
-
+#include "particle_base.h"
 using std::rand;
 
 
@@ -37,10 +37,11 @@ private:
   std::set<D_TYPE> d_types_;
   int frames_;
   int count_;
-  const static int x_max_ = 10;
-  const static int y_max_ = 10;
+
   mutable int counter_;
 public:
+  const static int x_max_ = 500;
+  const static int y_max_ = 500;
   int get_value(int& out,int ind,D_TYPE type, int frame) const {
     if(type == D_FRAME)
       out = frame;
@@ -95,8 +96,7 @@ using utilities::Tuple;
 int main()
 {
   
-  Tuplei bins(300,300);
-  Tuplef range(4);
+
   
   // Accum_sofq test(range,bins);
   // particle * dummy = NULL;
@@ -114,7 +114,7 @@ int main()
     
   int frame_c = 1;
   
-  int p_c = 98;
+  int p_c = Wrapper_i_dummy::x_max_ * Wrapper_i_dummy::y_max_;
     
     
   Wrapper_i_dummy wrapper_in = Wrapper_i_dummy(data_types,p_c,frame_c);
@@ -123,7 +123,16 @@ int main()
   box.init(wrapper_in,filt);
   cout<<box.size()<<endl;
   
-  Accum_sofq test2(range,bins);
+  
+
+  
+  Tuple<float,2>q_range(1./10,2);
+  Tuplef q1(1,1) ;
+  int bins = 500;
+
+  
+
+  Accum_sofq test2(q_range,q1,bins);
   box.compute_accum(test2);
   test2.display();
   
