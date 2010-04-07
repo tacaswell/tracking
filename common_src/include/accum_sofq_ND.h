@@ -24,8 +24,8 @@
 //this Program grant you additional permission to convey the resulting
 //work.
 
-#ifndef CORR_SOFQ
-#define CORR_SOFQ
+#ifndef CORR_SOFQ_ND
+#define CORR_SOFQ_ND
 
 #include <vector>
 #include <string>
@@ -40,7 +40,7 @@ namespace tracking
 /**
    simple g(r) computation
  */
-class Accum_sofq : public Accumulator
+class Accum_sofq_ND : public Accumulator
 {
 public:
   // basic inherited stuff
@@ -52,8 +52,8 @@ public:
   /**
      constructor,will gain arguments 
    */
-  Accum_sofq(const utilities::Tuplef& max_q,const utilities::Tuplei& n_bins);
-  ~Accum_sofq();
+  Accum_sofq_ND(const utilities::Tuplef& max_q,const utilities::Tuplei& n_bins);
+  ~Accum_sofq_ND();
 
   /**
      Returns an array with the magnitudes of the complex s(q) values 

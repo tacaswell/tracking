@@ -25,7 +25,7 @@
 //work.
 
 
-#include "accum_sofq.h"
+#include "accum_sofq_ND.h"
 #include "particle_track.h"
 #include <iostream>
 
@@ -44,14 +44,14 @@ using utilities::Tuplef;
 using utilities::Tuplei;
 using utilities::ND_Array;
 
-using tracking::Accum_sofq;
+using tracking::Accum_sofq_ND;
 
 using std::exp;
 using std::complex;
 using std::abs;
 
 
-void Accum_sofq::add_particle(const particle * p_in) 
+void Accum_sofq_ND::add_particle(const particle * p_in) 
 {
   Tuplef pos = p_in->get_position();
   
@@ -77,13 +77,13 @@ void Accum_sofq::add_particle(const particle * p_in)
   
 }
 
-void Accum_sofq::out_to_wrapper(utilities::Generic_wrapper & ) const 
+void Accum_sofq_ND::out_to_wrapper(utilities::Generic_wrapper & ) const 
 {
   return;
   
 }
 
-Accum_sofq::Accum_sofq(const utilities::Tuplef& max_q,const utilities::Tuplei & n_bins):
+Accum_sofq_ND::Accum_sofq_ND(const utilities::Tuplef& max_q,const utilities::Tuplei & n_bins):
   n_bins_(n_bins),
   max_range_(max_q),
   total_bins_(n_bins.prod()),
@@ -99,14 +99,14 @@ Accum_sofq::Accum_sofq(const utilities::Tuplef& max_q,const utilities::Tuplei & 
   
 }
 
-Accum_sofq::~Accum_sofq()
+Accum_sofq_ND::~Accum_sofq_ND()
 {
   
 
 }
 
   
-void Accum_sofq::display() const
+void Accum_sofq_ND::display() const
 {
   // cout<<"q array"<<endl;
   // q_.print();
@@ -157,7 +157,7 @@ void Accum_sofq::display() const
 
 }
 
-void Accum_sofq::get_magnitude(utilities::ND_Array<float,Tuplei::length_>& out)const
+void Accum_sofq_ND::get_magnitude(utilities::ND_Array<float,Tuplei::length_>& out)const
 {
   // make sure input and storage array are same size
 
@@ -171,7 +171,7 @@ void Accum_sofq::get_magnitude(utilities::ND_Array<float,Tuplei::length_>& out)c
 }
 
 
-bool Accum_sofq::step_indx(utilities::Tuplei & indx) const
+bool Accum_sofq_ND::step_indx(utilities::Tuplei & indx) const
 {
   
   for(int j = 0;j<rank_;++j)

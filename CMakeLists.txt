@@ -22,7 +22,7 @@ SET(UTIL_SRC
 SET(COMMON_SRC
   ${COMMON_SRC_PATH}/particle_base.cpp
   ${COMMON_SRC_PATH}/master_box_t.cpp
-  ${CONFIG_SRC}
+  ${COMMON_SRC_PATH}/enum_utils.cpp
   )
 
 SET(COMMON_HASH_SRC
@@ -52,7 +52,7 @@ SET(UTIL_SRC_GNU
 SET(CORR_SRC
   ${COMMON_SRC_PATH}/corr_gofr.cpp
   ${COMMON_SRC_PATH}/corr_goftheta.cpp
-  ${COMMON_SRC_PATH}/accum_sofq.cpp
+  ${COMMON_SRC_PATH}/accum_sofq_ND.cpp
 )
 
 SET(COMMON_WRAPPER_SRC

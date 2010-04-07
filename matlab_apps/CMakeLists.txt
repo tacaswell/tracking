@@ -27,6 +27,7 @@ SET(MATLAB_IDEN_SRC
   ${IDEN_SRC_PATH}/params1_mex.cpp
 )
 
+set(ENV{FREEIMAGE_ROOT} "/home/tcaswell/local_installs/usr/")
 find_package(FreeImage REQUIRED)
 find_package(IPP REQUIRED)
 find_package(Matlab REQUIRED)
@@ -55,8 +56,10 @@ add_library(matlab_process SHARED
   )
 set_target_properties(matlab_process PROPERTIES COMPILE_DEFINITIONS  
   "PTYPE=0;DIM_COUNT=2;MATLAB_MEX_FILE")
-target_link_libraries(matlab_process ${IPP_LIBRARIES} )
-target_link_libraries(matlab_process ${FreeImage_LIBRARIES})
+target_link_libraries(matlab_process 
+  ${IPP_LIBRARIES} 
+  ${FreeImage_LIBRARIES}
+  )
 
 
 
