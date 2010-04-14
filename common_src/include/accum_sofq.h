@@ -68,6 +68,15 @@ public:
      Plots to screen using gnuplot
    */
   void display() const;
+
+  /**
+     Fills a vector with the q values used.  Out is cleared and
+     resized as needed.
+     @pram[out] out vector of q values
+   */
+  void get_q_vec(std::vector<float> &out)const;
+  
+
   
   int  get_n_bins() const
   {return n_bins_;}

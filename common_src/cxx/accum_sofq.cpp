@@ -100,6 +100,20 @@ Accum_sofq::~Accum_sofq()
 
 }
 
+
+void Accum_sofq::get_q_vec(vector<float> &out)const
+{
+  out.clear();
+  out.resize(n_bins_);
+  float q_sum = q_range_[0];
+  for(unsigned int j = 0;j<n_bins_;++j)
+  {
+    out[j] = q_sum;
+    q_sum += q_step_;
+  }
+  
+}
+
   
 void Accum_sofq::display() const
 {
@@ -109,17 +123,12 @@ void Accum_sofq::display() const
   vector<float>tmp(n_bins_,0) ;
   get_magnitude_sqr(tmp);
   vector<float>q_tmp(n_bins_) ;
-  float q_sum = q_range_[0];
-  for(unsigned int j = 0;j<n_bins_;++j)
-  {
-    q_tmp[j] = q_sum;
-    q_sum += q_step_;
-  }
+  get_q_vec(q_tmp);
   
   
   
     
-  Gnuplot g(q_tmp,tmp,"g(r)","steps");
+  Gnuplot g(q_tmp,tmp,"s(q)","steps");
   g.set_grid();
   wait_for_key();
 
