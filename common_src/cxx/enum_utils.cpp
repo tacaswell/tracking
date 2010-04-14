@@ -161,6 +161,17 @@ std::string format_dset_name(D_TYPE type,int comp_num)
 }
 
 
+std::string format_name(const std::string & name ,int comp_num)
+{
+  std::ostringstream o;
+  o.width(format_padding_);
+  o.fill('0');
+  o<<std::right<<comp_num;
+  return  name +"_"+  o.str();
+
+}
+
+
 
 
 /**

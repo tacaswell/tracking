@@ -107,6 +107,11 @@ D_TYPE DT2str_s(std::string in);
    Helper function to format dset names with computation numbers attached
  */
 std::string format_dset_name(D_TYPE type,int comp_num);
+/**
+   Helper function to format computation numbers on to strings.
+ */
+std::string format_name(const std::string & name ,int comp_num);
+
 
 /**
    Helper function to make v_types to strings
