@@ -64,11 +64,6 @@ Accum_sofq::Accum_sofq(const utilities::Tuple<float,2>& q_range, const utilities
   parts_added_(0)
 {
   
-  cout<<"q_range : "<<q_range_<<endl;
-  cout<<"q_step : "<<q_step_<<endl;
-  cout<<"q: "<<q_<<endl;
-  
-  
   
 }
 
