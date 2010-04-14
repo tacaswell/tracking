@@ -4,7 +4,7 @@ project(TRACKING)
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
 set(COMMON_SRC_PATH ${PROJECT_SOURCE_DIR}/common_src/cxx)
-
+set(EXTERNAL_SRC_PATH ${PROJECT_SOURCE_DIR}/external_src)
 
 SET(CONFIG_SRC
   ${COMMON_SRC_PATH}/read_config.cpp
@@ -82,6 +82,10 @@ SET(HDF_SRC
   ${COMMON_WRAPPER_SRC}
   )
 
+set(SQL_CODE
+  ${EXTERNAL_SRC_PATH}/sqlite-3.6.23.1/sqlite3.c
+  ${COMMON_SRC_PATH}/sql_handler.cpp
+)
 
 SET(ENV{HDF5_ROOT} "/home/tcaswell/local_installs")
 SET(HDF5_USE_STATIC_LIBRARIES FALSE)
@@ -89,6 +93,12 @@ find_package(HDF5 REQUIRED CXX)
 include_directories(${HDF_INCLUDE_DIR})
 MESSAGE (STATUS "Found HDF5: ${HDF5_LIBRARIES}")
 MESSAGE (STATUS "Found HDF5: ${HDF5_INCLUDE_DIRS}")
+
+
+
+find_package(Boost COMPONENTS date_time REQUIRED)
+MESSAGE (STATUS "${Boost_LIBRARIES}")
+
 
 set(ENV{XERCESC_ROOT} "/home/tcaswell/local_installs")
 find_package(XercesC REQUIRED)
@@ -98,6 +108,9 @@ include_directories(${XERCESC_INCLUDE_DIR})
 include_directories(${TRACKING_SOURCE_DIR}/common_src/include)
 
 
+find_library(dl_LIBRARY
+  NAMES dl)
+MESSAGE (STATUS "Found DL: ${dl_LIBRARY}")
 
 if( (NOT MATLAB_MEX_FILE) AND (NOT  COMPILE_IDEN ) AND (NOT COMPILE_TEST))
   set(COMPILE_BASIC 1)
@@ -126,7 +139,7 @@ if(COMPILE_IDEN)
 endif(COMPILE_IDEN)
 
 if(COMPILE_TEST)
-  SET(CMAKE_CXX_FLAGS "-ansi -D_GNU_SOURCE -fPIC -fno-omit-frame-pointer -pthread -Wall ")
+  SET(CMAKE_CXX_FLAGS "-ansi -D_GNU_SOURCE -fPIC -fno-omit-frame-pointer -pthread -Wall")
   MESSAGE (STATUS "tried to set the CXX flages")
   MESSAGE (STATUS "${CMAKE_CXX_FLAGS}")
 

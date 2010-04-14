@@ -102,3 +102,11 @@ add_executable(sofq_test sofq_test.cpp
   ${COMMON_HASH_SRC}
   )
 set_target_properties(sofq_test PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_COUNT=2;TESTING")
+
+add_executable(sql_test sql_test.cpp
+  ${SQL_CODE}
+)
+set_target_properties(sql_test PROPERTIES COMPILE_DEFINITIONS  "TESTING")
+target_link_libraries(sql_test ${Boost_LIBRARIES} ${dl_LIBRARY})
+
+
