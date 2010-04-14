@@ -61,18 +61,23 @@ public:
   void add_meta_data(const std::string & key, float val);
   void add_meta_data(const std::string & key, const Tuple<float,3> & val);
   void add_meta_data(const std::string & key, const Tuple<float,2>& val);
-  void add_meta_data(const std::string & key,  const std::string & val);
+  void add_meta_data(const std::string & key, const std::string & val);
   void add_meta_data(const std::string & key, int val);
   
   void add_meta_data(const std::string & key, float val,const std::string & dset_name);
   void add_meta_data(const std::string & key, const Tuple<float,3> & val,const std::string & dset_name);
   void add_meta_data(const std::string & key, const Tuple<float,2>& val,const std::string & dset_name);
-  void add_meta_data(const std::string & key,  const std::string & val,const std::string & dset_name);
+  void add_meta_data(const std::string & key, const std::string & val,const std::string & dset_name);
   void add_meta_data(const std::string & key, int val,const std::string & dset_name);
 
   ~Generic_wrapper_hdf();
   
 private:
+  template<class T>
+  void add_meta_data_priv(const std::string & key, const T & val,const std::string & dset_name);
+  template<class T>
+  void add_meta_data_priv(const std::string & key, const T& val);
+  
   std::string file_name_;
 
   

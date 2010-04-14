@@ -137,7 +137,7 @@ void Generic_wrapper_hdf::add_dset(int rank, const int * dims, V_TYPE type, cons
 
   
   // sort out type
-  // make data set
+
 
   DataType hdf_type,mem_type;
   
@@ -155,70 +155,77 @@ void Generic_wrapper_hdf::add_dset(int rank, const int * dims, V_TYPE type, cons
     throw "generic_wrapper_hdf: un implemented types";
   }
   
-  
+  // make data set
   DataSet dset = group_ ->createDataSet(name,hdf_type,dspace);
+  // shove in data
   dset.write(data,mem_type,dspace,dspace);
   
-  // shove in data
-
-  // close everything
+  // close everything is taken care of as all variables on stack
 
 }
 
   
 void Generic_wrapper_hdf::add_meta_data(const std::string & key, float val)
 {
-  if(!group_open_)
-    throw logic_error("generic_wrapper_hdf:: can't add to a closed group");
-  group_attrs_->set_value(key,val);
+  add_meta_data_priv(key,val);
 }
 void Generic_wrapper_hdf::add_meta_data(const std::string & key, const Tuple<float,3> & val)
 {
-    if(!group_open_)
-    throw logic_error("generic_wrapper_hdf:: can't add to a closed group");
-  group_attrs_->set_value(key,val);
-
+  add_meta_data_priv(key,val);
 }
 void Generic_wrapper_hdf::add_meta_data(const std::string & key, const Tuple<float,2>& val)
 {
-  if(!group_open_)
-    throw logic_error("generic_wrapper_hdf:: can't add to a closed group");
-  group_attrs_->set_value(key,val);
-
-
+  add_meta_data_priv(key,val);
 }
 void Generic_wrapper_hdf::add_meta_data(const std::string & key,  const std::string & val)
 {
-  if(!group_open_)
-    throw logic_error("generic_wrapper_hdf:: can't add to a closed group");
-  group_attrs_->set_value(key,val);
+  add_meta_data_priv(key,val);
 }
 void Generic_wrapper_hdf::add_meta_data(const std::string & key, int val)
 {
-  if(!group_open_)
-    throw logic_error("generic_wrapper_hdf:: can't add to a closed group");
-  group_attrs_->set_value(key,val);
+  add_meta_data_priv(key,val);
 }
 
 void Generic_wrapper_hdf::add_meta_data(const std::string & key, float val,const std::string & dset_name)
 {
-  throw "need to write";
+  add_meta_data_priv(key,val,dset_name);
 }
 void Generic_wrapper_hdf::add_meta_data(const std::string & key, const Tuple<float,3> & val,const std::string & dset_name)
-{
-  throw "need to write";
+{ 
+  add_meta_data_priv(key,val,dset_name);
 }
 void Generic_wrapper_hdf::add_meta_data(const std::string & key, const Tuple<float,2>& val,const std::string & dset_name)
 {
-  throw "need to write";
+  add_meta_data_priv(key,val,dset_name);
 }
 void Generic_wrapper_hdf::add_meta_data(const std::string & key,  const std::string & val,const std::string & dset_name)
 {
-  throw "need to write";
+  add_meta_data_priv(key,val,dset_name);
 }
 void Generic_wrapper_hdf::add_meta_data(const std::string & key, int val,const std::string & dset_name)
 {
-  throw "need to write";
+  add_meta_data_priv(key,val,dset_name);
 }
 
 
+template<class T>
+void Generic_wrapper_hdf::add_meta_data_priv(const std::string & key, const T& val,const std::string & dset_name)
+{
+  
+  if(!group_open_)
+      throw logic_error("generic_wrapper_hdf:: can't add to a closed group");
+  // open data set
+  DataSet dset = group_ ->openDataSet(dset_name);
+  // make attr wrapper for group
+  Attr_list_hdf dset_attr(&dset);
+  // shove in meta data
+  dset_attr.set_value(key,val);
+}
+
+template<class T>
+void Generic_wrapper_hdf::add_meta_data_priv(const std::string & key, const T& val)
+{
+  if(!group_open_)
+    throw logic_error("generic_wrapper_hdf:: can't add to a closed group");
+  group_attrs_->set_value(key,val);
+}
