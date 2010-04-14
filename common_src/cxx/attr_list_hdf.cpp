@@ -218,8 +218,8 @@ void Attr_list_hdf::set_value(const std::string & key,  const std::string &   va
 }
 
 
-
-utilities::Tuple<float,2> Attr_list_hdf::get_value(const std::string & key,utilities::Tuple<float,2>  & value_out) const 
+template<int N>
+utilities::Tuple<float,N> Attr_list_hdf::get_value(const std::string & key,utilities::Tuple<float,N>  & value_out) const 
 {
   Attribute  tmpa =  Attribute(obj_->openAttribute(key));
   H5T_class_t type_class = tmpa.getTypeClass();
@@ -236,11 +236,12 @@ utilities::Tuple<float,2> Attr_list_hdf::get_value(const std::string & key,utili
   
   
   
-  return Tuple<float,2>(value_out);
+  return Tuple<float,N>(value_out);
 
 }
 
-void Attr_list_hdf::set_value(const std::string & key,  const Tuple<float,2> &   value_in,bool over_write) 
+template<int N>
+void Attr_list_hdf::set_value(const std::string & key,  const Tuple<float,N> &   value_in,bool over_write) 
 {
   if(contains_attr(key))
   {
@@ -261,10 +262,10 @@ void Attr_list_hdf::set_value(const std::string & key,  const Tuple<float,2> &  
     else
     {
       // check to see if they match
-      Tuple<float,2> tmp ;
+      Tuple<float,N> tmp ;
       get_value(key,tmp);
       if(!(tmp == value_in))
-	throw invalid_argument("attribute name already exists and values don't match: Tuple<float,2>");
+	throw invalid_argument("attribute name already exists and values don't match: Tuple<float,N>");
     }
   }
   else
@@ -276,62 +277,6 @@ void Attr_list_hdf::set_value(const std::string & key,  const Tuple<float,2> &  
   }
 }
 
-
-utilities::Tuple<float,3> Attr_list_hdf::get_value(const std::string & key,utilities::Tuple<float,3>  & value_out) const 
-{
-  Attribute  tmpa =  Attribute(obj_->openAttribute(key));
-  H5T_class_t type_class = tmpa.getTypeClass();
-  DataSpace dspace = tmpa.getSpace();
-  H5S_class_t space_type = dspace.getSimpleExtentType();
-  
-  if(type_class == H5T_FLOAT && 
-     space_type == H5S_SIMPLE  && 
-     dspace.getSimpleExtentNdims() == 1 && 
-     dspace.getSimpleExtentNpoints() == Tuple<float,3>::length_)
-    tmpa.read(PredType::NATIVE_FLOAT,value_out.get_ptr());
-  else
-    throw invalid_argument("output does not match attribute dtype");
-  
-  
-  
-  return Tuple<float,3>(value_out);
-
-}
-
-void Attr_list_hdf::set_value(const std::string & key,  const Tuple<float,3> &   value_in,bool over_write) 
-{
-  if(contains_attr(key))
-  {
-    if( over_write)
-    {
-      Attribute  tmpa =  Attribute(obj_->openAttribute(key));
-      H5T_class_t type_class = tmpa.getTypeClass();
-      DataSpace dspace = tmpa.getSpace();
-      H5S_class_t space_type = dspace.getSimpleExtentType();
-  
-      if(type_class == H5T_FLOAT && space_type == H5S_SIMPLE  && 
-	 dspace.getSimpleExtentNdims() == 1 && dspace.getSimpleExtentNpoints() == Tuple<float,3>::length_)
-	tmpa.write(PredType::NATIVE_FLOAT,value_in.get_ptr());
-      else
-      	throw invalid_argument("output does not match attribute dtype");
-    }
-    else
-    {
-      // check to see if they match
-      Tuple<float,3> tmp ;
-      get_value(key,tmp);
-      if(!(tmp == value_in))
-	throw invalid_argument("attribute name already exists and values don't match: Tuple<float,3>");
-    }
-  }
-  else
-  {
-    hsize_t dim_c = (hsize_t) Tuple<float,3>::length_;
-    DataSpace dspace =  DataSpace(1,&dim_c);
-    Attribute  tmpa =  obj_->createAttribute(key,PredType::NATIVE_FLOAT,dspace);
-    tmpa.write(PredType::NATIVE_FLOAT,value_in.get_ptr());
-  }
-}
 
 
 
@@ -367,3 +312,12 @@ unsigned int Attr_list_hdf::get_value(const std::string & key, unsigned int & va
     throw invalid_argument("output does not match attribute dtype");
   return value_out;
 }
+
+
+template void Attr_list_hdf::set_value(const std::string & key,  const Tuple<float,2> &   value_in,bool over_write) ;
+template void Attr_list_hdf::set_value(const std::string & key,  const Tuple<float,3> &   value_in,bool over_write) ;
+
+template utilities::Tuple<float,2> Attr_list_hdf::get_value(const std::string & key,utilities::Tuple<float,2>  & value_out) const ;
+
+template utilities::Tuple<float,3> Attr_list_hdf::get_value(const std::string & key,utilities::Tuple<float,3>  & value_out) const ;
+
