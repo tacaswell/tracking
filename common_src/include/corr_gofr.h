@@ -36,8 +36,13 @@
 #include <vector>
 #include <string>
 #include "corr.h"
-#include "generic_wrapper.h"
 
+
+
+namespace utilities
+{
+class Generic_wrapper;
+}
 
 
 namespace tracking
