@@ -176,11 +176,14 @@ int main(int argc,  char *  argv[])
 
     // output everything back to the hdf file
 
-  
+    cout<<"finished computation"<<endl;
+    
+
     set<D_TYPE> d2;
     d2.insert(utilities::D_S_ORDER_PARAMETER);
+    d2.insert(utilities::D_N_SIZE);
 
-  
+    
     Wrapper_o_hdf hdf_w(out_file,d2,write_comp_num,
 			Wrapper_o_hdf::APPEND_FILE,
 			"frame");
@@ -193,6 +196,7 @@ int main(int argc,  char *  argv[])
     try
     {
       hdf_w.initialize_wrapper();
+      cout<<"inited wrapper"<<endl;
       hcase.output_to_wrapper(hdf_w);
       hdf_w.add_meta_data_list(app_prams,d2);
       hdf_w.finalize_wrapper();
@@ -203,6 +207,12 @@ int main(int argc,  char *  argv[])
       std::cerr<<err<<endl;
       return -1;
     }
+    catch(std::exception & e)
+    {
+      cout<<"caught std excetp"<<endl;
+      cout<<e.what()<<endl;
+    }
+    
     catch(...)
     {
       std::cerr<<"unknown error type"<<endl;
