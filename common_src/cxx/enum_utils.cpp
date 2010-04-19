@@ -98,6 +98,9 @@ std::string DT2str_s(D_TYPE in)
   case D_MULT:
     out = "multiplicity";
     return out;
+  case D_N_SIZE:
+    out = "neighborhood_size";
+    return out;
   default:
     throw("unknown type");
   }
@@ -126,6 +129,7 @@ V_TYPE v_type(D_TYPE in)
   case D_ORGX: 
   case D_ORGY: 
   case D_MULT:
+  case D_N_SIZE:
     return V_INT;
 
     // float data types

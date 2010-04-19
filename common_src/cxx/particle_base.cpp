@@ -150,6 +150,9 @@ int particle_base::get_value(utilities::D_TYPE type,int & data_io  ) const
   case utilities::D_INDEX:
     data_io = ind_;
     break;
+  case utilities::D_N_SIZE:
+    data_io = neighborhood_.size();
+    break;
   default:
     wrapper_in_->get_value(data_io,ind_,type,frame_);
   }

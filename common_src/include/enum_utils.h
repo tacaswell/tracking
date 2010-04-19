@@ -43,7 +43,8 @@ typedef enum W_TYPE{
 
 /**
    Enumeration for data types (where type is the physical meaning of
-   the data)
+   the data).  If you add to this you MUST update the count below this,
+   add the D_TYPE to the V_TYPE conversion function, and D2Str function.
 */
 typedef enum D_TYPE {
   D_INDEX=0, 
@@ -69,14 +70,17 @@ typedef enum D_TYPE {
   D_TRACKID,
   D_S_ORDER_PARAMETER,
   D_MULT,
+
+  D_N_SIZE, 			// neighborhood size
 } D_TYPE;
 
 
 /**
    Number of enumerated data types.  This needs to be right for the
-   flat wrappers to work properly
+   flat wrappers to work properly.  If this is wrong, there will be
+   buffer overflow which will screw you over.
  */
-const int D_TYPE_COUNT = 18;
+const int D_TYPE_COUNT = 19;
 
 /**
    Enumeration for the type of value the data is (ie float, int,complex)
