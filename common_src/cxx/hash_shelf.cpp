@@ -407,30 +407,9 @@ void Hash_shelf::get_region(int n,vector<const particle*> & out_vector,int range
   bool testing = false;
   
   Tuplei center = indx_to_tuple(n);
-  Tuplei bottom_corner, top_corner;
-  // check top and bottom corners are in range
-  for(int j = 0;j<Tuplei::length_;++j)
-  {
-    bottom_corner[j] = (((center[j]-range)>=0)?(center[j]-range):0);
-    top_corner[j] = (((center[j]+range)<hash_dims_[j])?(center[j]+range):hash_dims_[j]-1);
-  }
-  if(testing)
-  {
-    cout<<"bottom: "<<bottom_corner<<endl;
-    cout<<"top: "<<top_corner<<endl;
-  }
-  
-  Tuplei region_sides = (top_corner - bottom_corner) +1;
+  Tuplei bottom_corner, top_corner,region_sides;
+  make_region_corners(center,bottom_corner,top_corner,region_sides,range);
   int region_sz = (int)region_sides.prod();
-  
-  if(testing)
-  {
-    
-    cout<<"region_sides: "<<region_sides<<endl;
-    cout<<"region_sz: "<<region_sz<<endl;
-  }
-  
-  
   for(int j = 0;j<region_sz;++j)
   {
     Tuplei tmp = range_indx_to_tuple(j,region_sides);
@@ -454,16 +433,8 @@ void Hash_shelf::get_region(int n,vector<const particle*> & out_vector,int range
 void Hash_shelf::get_region(int n,list< particle*> & out_vector,int range) const
 {
   Tuplei center = indx_to_tuple(n);
-  Tuplei bottom_corner, top_corner;
-  // check top and bottom corners are in range
-  for(int j = 0;j<Tuplei::length_;++j)
-  {
-    bottom_corner[j] = (((center[j]-range)>=0)?(center[j]-range):0);
-    top_corner[j] = (((center[j]+range)<=hash_dims_[j])?(center[j]+range):hash_dims_[j]);
-  }
-  
-    
-  Tuplei region_sides = top_corner - bottom_corner;
+  Tuplei bottom_corner, top_corner,region_sides;
+  make_region_corners(center,bottom_corner,top_corner,region_sides,range);
   int region_sz = (int)region_sides.prod();
   
   
@@ -509,21 +480,37 @@ void Hash_shelf::print()const
   
 }
 
+void Hash_shelf::make_region_corners(const Tuplei & center, 
+				     Tuplei & bottom_corner,
+				     Tuplei & top_corner,
+				     Tuplei & region_sides,
+				     const int range)const
+{
+  // check top and bottom corners are in range
+  for(int j = 0;j<Tuplei::length_;++j)
+  {
+    bottom_corner[j] = (((center[j]-range)>=0)?(center[j]-range):0);
+    top_corner[j] = (((center[j]+range)<hash_dims_[j])?(center[j]+range):hash_dims_[j]-1);
+  }
+  region_sides = top_corner - bottom_corner +1;
+  
+#ifdef TESTING
+  {
+    cout<<"bottom: "<<bottom_corner<<endl;
+    cout<<"top: "<<top_corner<<endl;
+    cout<<"region_sides: "<<region_sides<<endl;
+    cout<<"region_sz: "<<region_sides.prod()<<endl;
+  }
+#endif
+
+}
 
 
 void Hash_shelf::get_region(particle* n,hash_box * out_box,int range) const
 {
   Tuplei center = indx_to_tuple(hash_function(n));
-  Tuplei bottom_corner, top_corner;
-  // check top and bottom corners are in range
-  for(int j = 0;j<Tuplei::length_;++j)
-  {
-    bottom_corner[j] = (((center[j]-range)>=0)?(center[j]-range):0);
-    top_corner[j] = (((center[j]+range)<=hash_dims_[j])?(center[j]+range):hash_dims_[j]);
-  }
-  
-    
-  Tuplei region_sides = top_corner - bottom_corner;
+  Tuplei bottom_corner, top_corner,region_sides;
+  make_region_corners(center,bottom_corner,top_corner,region_sides,range);
   int region_sz = (int)region_sides.prod();
   
   

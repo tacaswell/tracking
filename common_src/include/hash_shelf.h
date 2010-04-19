@@ -341,7 +341,17 @@ private:
      private initialization function
    */
   void priv_init();
+
+  /**
+     does the computation to get a region of size 2*range +1 around the center
+   */
+  void make_region_corners(const utilities::Tuplei & center, 
+			   utilities::Tuplei & bottom_corner,
+			   utilities::Tuplei & top_corner,
+			   utilities::Tuplei & region_sides,
+			   const int range)const;
   
+
   
   
 };
