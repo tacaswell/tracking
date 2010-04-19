@@ -19,21 +19,37 @@
 #include <sqlite3.h>
 #include "boost/date_time/gregorian/gregorian.hpp"
 #include <iostream>
-
+#include <stdexcept>
 
 using utilities::SQL_handler;
 using std::string;
 using std::cout;
+using std::cerr;
 using std::endl;
+using std::invalid_argument;
+
 
 using namespace boost::gregorian;
 
 
 SQL_handler::SQL_handler(const string & db_name)
 {
+  // open database
   int rc = sqlite3_open(db_name.c_str(), &db_);
-  cout<<rc<<endl;
-
+  if(rc!=SQLITE_OK)
+  {
+    cerr<<"SQL error"<<endl;
+    throw "failed to open database";
+    
+  }
+  // set foreign key pragma
+  char * err;
+  rc = sqlite3_exec(db_,"PRAGMA foreign_keys = ON;",NULL,NULL,&err);
+  if(rc!=SQLITE_OK)
+  {
+    fprintf(stderr, "SQL error: %s\n", err);
+    sqlite3_free(err);
+  }
 }
 
 SQL_handler::~SQL_handler()
@@ -41,11 +57,14 @@ SQL_handler::~SQL_handler()
   sqlite3_close(db_);
 }
 
+
 void SQL_handler::add_comp(int dset_key,const string &fin,const string & fout,const string & function)
 {
   char * err = NULL;
+
   int rc;
 
+  // assemble command string
   std::ostringstream o;
   o<<"insert into comps (dset_key,date,fin,fout,function) values (";
   o<<dset_key<<',';
@@ -53,11 +72,17 @@ void SQL_handler::add_comp(int dset_key,const string &fin,const string & fout,co
   o<<"'"<<fin<<"','"<<fout<<"','"<<function<<"');";
   
   
-
+  // shove into data base
   rc = sqlite3_exec(db_,o.str().c_str(),NULL,NULL,&err);
+  // check result
   if(rc!=SQLITE_OK)
   {
     fprintf(stderr, "SQL error: %s\n", err);
+    string str_err = err;
     sqlite3_free(err);
+    throw invalid_argument(str_err);
   }
+
+
+  
 }

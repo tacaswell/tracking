@@ -29,7 +29,13 @@ int main()
   
   SQL_handler test(db_name);
 
-  test.add_comp(1,"input","output","test_fun");
+  try
+  {
+    test.add_comp(1,"input","output","test_fun");
+  }
+  catch(...)
+  {
+  }
   
 
 
