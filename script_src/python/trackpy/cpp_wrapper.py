@@ -214,7 +214,7 @@ def do_gofr(key,conn):
 
     prog_path = '/home/tcaswell/misc_builds/basic_rel/apps/'
     prog_name = "gofr"
-
+    
     # see if the file has already been processed
     res = check_comps_table(key,"Iden",conn)
     if len(res) ==0:
@@ -230,7 +230,7 @@ def do_gofr(key,conn):
     _make_sure_h5_exists(fout)
     
     comp_num = conn.execute("select max(comp_key) from comps;").fetchone()[0] + 1
-
+    
     config = xml_data()
     config.add_stanza("gofr")
     config.add_pram("max_range","float","100")
@@ -318,7 +318,7 @@ def do_tracking(key,conn):
 
 
 def do_phi6(key,conn):
-    prog_path = '/home/tcaswell/misc_builds/basic/apps/'
+    prog_path = '/home/tcaswell/misc_builds/basic_dbg/apps/'
     prog_name = "phi6"
 
     # figure out name of file to write to
@@ -332,35 +332,42 @@ def do_phi6(key,conn):
         return
     (fname,read_comp) = res[0]
     
-
-    srange = raw_input("enter search range: ")
+    
+    comp_num = conn.execute("select max(comp_key) from comps;").fetchone()[0] + 1
+    
+    
+    #srange = raw_input("enter search range: ")
+    srange = 13
     
     config = xml_data()
     config.add_stanza("phi6")
     config.add_pram("neighbor_range","float",srange)
-    config.add_pram("grp_name","string","frame")
+    config.add_stanza("comps")
+    config.add_pram("read_comp","int",str(read_comp))
+    config.add_pram("write_comp","int",str(comp_num))
     config.disp()
+    
     cname = config.write_to_tmp()
-
+    
         
     comp_num = conn.execute("select max(comp_key) from comps;").fetchone()[0] + 1
 
-    fout = fname
+
     # look
     
     print fname
-    print fout
+
 
 
     
-    rc = subprocess.call(["time",prog_path + prog_name,'-i',fname,'-o',fout, '-c',cname ])
+    rc = subprocess.call(["time",prog_path + prog_name,'-i',fname,'-o',fname, '-c',cname ])
     print rc
 
     # if it works, then returns zero
     if rc == 0:
         print "entering into database"
         conn.execute("insert into comps (dset_key,date,fin,fout,function) values (?,?,?,?,?);",
-                     (key,date.today().isoformat(),fname,fout,prog_name))
+                     (key,date.today().isoformat(),fname,fname,prog_name))
         conn.commit()
 
     

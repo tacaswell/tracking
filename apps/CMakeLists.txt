@@ -91,6 +91,22 @@ set_target_properties(sofq PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_COUNT=2"
 
 
 
+add_executable(phi6 phi6.cpp ${COMMON_SRC}
+ ${UTIL_SRC}
+ ${HDF_SRC}
+ ${CORR_SRC}
+ ${GNU_PLOT_SRC}
+ ${COMMON_HASH_SRC} 
+ ${COMMON_WRAPPER_SRC} 
+ ${CONFIG_SRC}
+)
+target_link_libraries(phi6
+  ${HDF5_LIBRARIES} 
+  ${XERCESC_LIBRARY} 
+)
+set_target_properties(phi6 PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_COUNT=2")
+
+
 
 # add_executable(tracking tracking.cpp ${COMMON_SRC}
 #  ${UTIL_SRC}
@@ -110,18 +126,3 @@ set_target_properties(sofq PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_COUNT=2"
 # set_target_properties(tracking PROPERTIES COMPILE_DEFINITIONS  "PTYPE=1;DIM_COUNT=2")
 
 
-
-# add_executable(phi6 phi6.cpp ${COMMON_SRC}
-#  ${UTIL_SRC}
-#  ${HDF_SRC}
-#  ${CORR_SRC}
-#  ${GNU_PLOT_SRC}
-#  ${COMMON_HASH_SRC} 
-#  ${COMMON_WRAPPER_SRC} 
-#  ${CONFIG_SRC}
-# )
-# target_link_libraries(phi6
-#   ${HDF5_LIBRARIES} 
-#   ${XERCESC_LIBRARY} 
-# )
-# set_target_properties(phi6 PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_COUNT=2")

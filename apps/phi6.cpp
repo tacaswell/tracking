@@ -14,35 +14,16 @@
 //
 //You should have received a copy of the GNU General Public License
 //along with this program; if not, see <http://www.gnu.org/licenses>.
-//
-//Additional permission under GNU GPL version 3 section 7
-//
-//If you modify this Program, or any covered work, by linking or
-//combining it with MATLAB (or a modified version of that library),
-//containing parts covered by the terms of MATLAB User License, the
-//licensors of this Program grant you additional permission to convey
-//the resulting work.
-// 
-//If you modify this Program, or any covered work, by linking or
-//combining it with IPP (or a modified version of that library),
-//containing parts covered by the terms of End User License Agreement
-//for the Intel(R) Software Development Products, the licensors of
-//this Program grant you additional permission to convey the resulting
-//work.
-//
-//If you modify this Program, or any covered work, by linking or
-//combining it with FreeImage (or a modified version of that library),
-//containing parts covered by the terms of End User License Agreement
-//for FreeImage Public License, the licensors of
-//this Program grant you additional permission to convey the resulting
+
 #include <iostream>
 #include <map>
 #include <vector>
+#include <stdexcept>
 #include "master_box_t.h"
 
 #include "particle_base.h"
 #include "hash_case.h"
-#include "pair.h"
+
 #include "wrapper_o_hdf.h"
 #include "wrapper_i_hdf.h"
 #include "filter.h"
@@ -54,6 +35,7 @@
 #include "read_config.h"
 //#include "gnuplot_i.hpp" //Gnuplot class handles POSIX-Pipe-communication with Gnuplot
 
+#include "cl_parse.h"
 using std::cout;
 using std::endl;
 using std::set;
@@ -61,17 +43,19 @@ using std::string;
 using std::cerr;
 using std::map;
 using std::vector;
+using std::logic_error;
 
 
 using utilities::Wrapper_o_hdf;
 using utilities::Wrapper_i_hdf;
 
-using utilities::Pair;
+
 using utilities::Filter_basic;
 using utilities::Filter_trivial;
 using utilities::D_TYPE;
 using utilities::Generic_wrapper_hdf;
 using utilities::Read_config;
+using utilities::CL_parse;
 
 
 using tracking::Master_box;
@@ -80,83 +64,80 @@ using tracking::hash_case;
 using tracking::Hash_shelf;
 using tracking::Corr_gofr;
 
-int main(int argc, char * const argv[])
-{
+const static string APP_NAME = "phi6";
 
+
+int main(int argc,  char *  argv[])
+{
+  
    
   string in_file; //= "test.h5";	
   string out_file; //= "test.h5";	
-  string grp_name; //= "frame";
+  string pram_file; //= "frame";
   
   float neighbor_range ;
   
-
-  
-  
-  int optchar;
-  bool found_i=false,found_o= false,found_f=false;
-
-  
-  while((optchar = getopt(argc,argv,"i:o:c:")) !=-1)
+  try
   {
-    switch(optchar)
-    {
-    case 'i':
-      in_file = string(optarg);
-      found_i = true;
-      break;
-    case 'o':
-      out_file = string(optarg);
-      found_o = true;
-      break;
-    case 'c':
-      {
-  	vector<string> names;
-  	names.push_back("neighbor_range");
-	names.push_back("grp_name");
-  	Read_config rc(string(optarg),names,"phi6");
-  	if(!rc.get_value("neighbor_range",neighbor_range))
-  	{
-  	  cerr<<"neighbor_range not found"<<endl;
-  	  return -1;
-  	}
-  	if(!rc.get_value("grp_name",grp_name))
-  	{
-  	  cerr<<"grp_name not found"<<endl;
-  	  return -1;
-  	}
-	
-  	found_f = true;
-  	break;
-      }
-    case '?':
-    default:
-      cout<<"-i input filename"<<endl;
-      cout<<"-o output filename"<<endl;
-      cout<<"-c configuration filename"<<endl;
-    break;
-    }
+    CL_parse cl(argc,argv);
+    cl.parse();
+    cl.get_fin(in_file);
+    cl.get_fout(out_file);
+    cl.get_fpram(pram_file);
   }
-
-  if(!(found_i && found_o && found_f))
+  catch(std::invalid_argument &e )
   {
-    cerr<<"input failed"<<endl;
-    cout<<"-i input filename"<<endl;
-    cout<<"-o output filename"<<endl;
-    cout<<"-c configuration filename"<<endl;
+    cout<<e.what()<<endl;
     return -1;
   }
-  
   
 
   // add check to make sure the input and output are the same file
     
   cout<<"file to read in: "<<in_file<<endl;
   cout<<"file that will be written to: "<<out_file<<endl;
-  cout<<"Parameters: "<<endl;
-  cout<<"  neighbor range: "<<neighbor_range<<endl;
+  cout<<"pram file: "<<pram_file<<endl;
 
 
+  
+  Read_config app_prams(pram_file,"phi6");
+  if(!(app_prams.contains_key("neighbor_range")))
+     throw logic_error(APP_NAME + " parameter file does not contain enough parameters");
+  try
+  {
+    app_prams.get_value("neighbor_range",neighbor_range);
+  }
+  catch(logic_error & e)
+  {
+    cerr<<"error parsing the parameters"<<endl;
+    cerr<<e.what()<<endl;
+    return -1;
+  }
+  
+  int read_comp_num, write_comp_num;
+  Read_config comp_prams(pram_file,"comps");
+  if(!(comp_prams.contains_key("read_comp")&&
+       comp_prams.contains_key("write_comp")))
+    throw logic_error(APP_NAME + 
+		      " parameter file does not contain both read and write comp nums");
+  try
+  {
+    comp_prams.get_value("read_comp",read_comp_num);
+    comp_prams.get_value("write_comp",write_comp_num);
+   
+  }
+  catch(logic_error & e)
+  {
+    cerr<<"error parsing the computation numbers"<<endl;
+    cerr<<e.what()<<endl;
+    return -1;
+  }
+  
+     
+
+  cout<<"neighbor_range: "<<neighbor_range<<endl;
+  
+  
 
   // make hcase
 
@@ -167,12 +148,12 @@ int main(int argc, char * const argv[])
     //nonsense to get the map set up
     map<utilities::D_TYPE, int> contents;
     utilities::D_TYPE tmp[] = {utilities::D_XPOS,
-			       utilities::D_YPOS};
+  			       utilities::D_YPOS};
     set<D_TYPE> data_types = set<D_TYPE>(tmp,tmp+2);
     
       
     // set up the input wrapper
-    Wrapper_i_hdf wh(in_file,data_types);
+    Wrapper_i_hdf wh(in_file,data_types,read_comp_num);
   
 
     // fill the master_box
@@ -200,13 +181,21 @@ int main(int argc, char * const argv[])
     d2.insert(utilities::D_S_ORDER_PARAMETER);
 
   
-    Wrapper_o_hdf hdf_w(out_file,d2,"frame",
-			false,false,false);
+    Wrapper_o_hdf hdf_w(out_file,d2,write_comp_num,
+			Wrapper_o_hdf::APPEND_FILE,
+			"frame");
+    
+    
 
+    cout<<"made output wrapper"<<endl;
+    
     
     try
     {
+      hdf_w.initialize_wrapper();
       hcase.output_to_wrapper(hdf_w);
+      hdf_w.add_meta_data_list(app_prams,d2);
+      hdf_w.finalize_wrapper();
     }
     catch(const char * err)
     {
