@@ -7,6 +7,7 @@ set(COMMON_SRC_PATH ${PROJECT_SOURCE_DIR}/common_src/cxx)
 set(EXTERNAL_SRC_PATH ${PROJECT_SOURCE_DIR}/external_src)
 
 SET(CONFIG_SRC
+  ${COMMON_SRC_PATH}/cl_parse.cpp
   ${COMMON_SRC_PATH}/read_config.cpp
   ${COMMON_SRC_PATH}/enum_utils.cpp
   )
