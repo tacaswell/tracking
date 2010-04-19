@@ -391,7 +391,13 @@ void hash_case::fill_in_neighborhood()
 void Hash_shelf::fill_in_neighborhood()
 {
   //  cout<<"particle_count_"<<particle_count_<<endl;
-  
+      
+  int buffer = (int)ceil(particle::get_max_range()/upb_);
+  if(buffer<1)
+  {
+    buffer = 1;
+  }
+
   list<particle*> current_box;
   list<particle*> current_region;
   
@@ -400,22 +406,13 @@ void Hash_shelf::fill_in_neighborhood()
     current_region.clear();
     current_box.clear();
     
-    int buffer = (int)ceil(particle::get_max_range()/upb_);
-    if(buffer<1)
-    {
-      buffer = 1;
-    }
-    
     hash_[j]->box_to_list(current_box);
     if(current_box.empty())
-    {
       continue;
-    }
+  
     
     get_region(j,current_region,buffer);
 
-
-    
     for(list<particle*>::iterator box_part = current_box.begin();
 	box_part != current_box.end();++box_part)
     {
