@@ -30,6 +30,7 @@
 #include "wrapper_o.h"
 #include "corr.h"
 #include "accum_sofq.h"
+#include "accum_case.h"
 
 using tracking::hash_box;
 using tracking::Hash_shelf;
@@ -44,6 +45,7 @@ using utilities::Wrapper_out;
 
 using utilities::Tuplei;
 using utilities::Tuplef;
+using utilities::Accum_case;
 
 using tracking::Corr;
 
@@ -253,15 +255,13 @@ void hash_case::compute_accum(Accumulator & in)const
 }
 
 
-void hash_case::compute_accum(vector<Accumulator*> & in)const
+void hash_case::compute_accum(Accum_case & in )const
 {
   if(in.size() != h_case_.size())
     throw std::invalid_argument("accumulator and case size do not match");
-  vector<Accumulator*>::iterator accum_it = in.begin();
-  vector<Hash_shelf*>::const_iterator end_it = h_case_.end();
-  for(vector<Hash_shelf*>::const_iterator shelf_it = h_case_.begin();
-      shelf_it!= end_it;++shelf_it,++accum_it)
-    (*shelf_it)->compute_accum(*(*accum_it));
+
+  for(unsigned int j = 0; j<in.size();++j)
+    h_case_[j]->compute_accum(*in[j]);
 }
 
 

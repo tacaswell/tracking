@@ -42,6 +42,7 @@ class Histogram2D;
 class Wrapper_out;
 class Cell;
 class Counted_vector;
+class Accum_case;
 
 
 }
@@ -244,9 +245,9 @@ public:
   void compute_accum(Accumulator & in)const;
 
   /**
-     Passes an Accumulator vector down the pyramid, one accumulator per hash_shelf 
+     Passes an Accumulator_case down the pyramid, one accumulator per hash_shelf 
    */
-  void compute_accum(std::vector<Accumulator*> & in)const;
+  void compute_accum(utilities::Accum_case & )const;
   
 
   /**
