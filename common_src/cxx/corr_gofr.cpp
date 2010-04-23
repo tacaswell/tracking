@@ -93,14 +93,11 @@ Corr_gofr::Corr_gofr(int bins,float max,const string& name,int comp_num,int dset
   if(bins <1)
     throw "number of bins must be greater than 0";
   
-//   if(max_range_>particle::get_neighborhood_range())
-//     throw "maximum range past what particles know about";
-  
   float bin_sz = max_range_/bins;
   for( int j= 0;j<bins;++j)
   {
-    bin_count_.at(j) = 0;
-    bin_edges_.at(j) = j*bin_sz;
+    bin_count_[j] = 0;
+    bin_edges_[j] = j*bin_sz;
   }
 }
 
