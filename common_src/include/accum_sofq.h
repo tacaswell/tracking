@@ -54,8 +54,13 @@ public:
      @param[in] q the direction \f$\hat{q}\f$ to take s(q) along,
      does not need to be a unit vector
      @param[in] n_bins the number of bins to use
+     @param[in] comp_num the computation number
+     @param[in] dset the dset number
+     @param[in] units of q , ie inverse pixels or inverse microns
   */
-  Accum_sofq(const utilities::Tuple<float,2>& q_range, utilities::Tuplef q, const int n_bins);
+  Accum_sofq(const utilities::Tuple<float,2>& q_range, 
+	     utilities::Tuplef q, 
+	     const int n_bins);
   ~Accum_sofq();
 
   /**
@@ -112,30 +117,16 @@ private:
 
 
   /**
-     name of group for writing out to a wrapper
-  */
-  std::string name_;
-
-  /**
      count of the number of particles added
   */
   int parts_added_;
-  
-  /**
-     File name of data source
-  */
-  std::string fname_;
-  
-  /**
-     Data set number
-  */
-  int dset_;
-  /**
-     Computation number
-  */
-  int comp_num_;
-  
 
+  /**
+     the units of q
+   */
+  std::string units_;
+  
+  
   
   const static std::complex<float> i_;
   const static float pi_;

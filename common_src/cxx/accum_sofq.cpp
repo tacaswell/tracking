@@ -32,6 +32,7 @@
 
 #include "gnuplot_i.hpp"
 
+#include "generic_wrapper.h"
 using gnuplot::Gnuplot;
 using gnuplot::GnuplotException;
 using gnuplot::wait_for_key;
@@ -51,11 +52,15 @@ using std::complex;
 using std::abs;
 using std::vector;
 
+using utilities::Generic_wrapper;
+
 
 const std::complex<float> Accum_sofq::i_ = complex<float>(0,1);
 const float Accum_sofq::pi_ = 4.0*atan(1.0);
 
-Accum_sofq::Accum_sofq(const utilities::Tuple<float,2>& q_range, const utilities::Tuplef q, const int n_bins):
+Accum_sofq::Accum_sofq(const utilities::Tuple<float,2>& q_range, 
+		       const utilities::Tuplef q, 
+		       const int n_bins):
   n_bins_(n_bins),
   q_range_(q_range),
   q_step_((q_range[1]-q_range[0])/(n_bins_-1)),
@@ -88,9 +93,44 @@ void Accum_sofq::add_particle(const particle * p_in)
   
 }
 
-void Accum_sofq::out_to_wrapper(utilities::Generic_wrapper & ) const 
+void Accum_sofq::out_to_wrapper(utilities::Generic_wrapper & wrap) const 
 {
-  return;
+
+  // get values to put in to wrapper
+  vector<float>tmp(n_bins_,0) ;
+  get_magnitude_sqr(tmp);
+  
+  vector<float>q_tmp(n_bins_) ;
+  get_q_vec(q_tmp);
+  
+
+  
+  const float * data_ptr = NULL;
+  
+  int nbins = n_bins_;
+  
+  
+  data_ptr = &tmp.front();
+  wrap.add_dset(1,&nbins,utilities::V_FLOAT,data_ptr,"sofq");
+
+  data_ptr = &q_tmp.front();
+  wrap.add_dset(1,&nbins,utilities::V_FLOAT,data_ptr,"q_vec");
+
+  // logistic information
+  // wrap.add_meta_data("comp_num",comp_num_);
+  // wrap.add_meta_data("dset",dset_);
+  // wrap.add_meta_data("data_file",fname_);
+  
+  
+  wrap.add_meta_data("q0",q_);
+
+  //wrap.add_meta_data("units",units_,"q_vec");
+  
+
+
+
+
+
   
 }
 
@@ -130,6 +170,8 @@ void Accum_sofq::display() const
     
   Gnuplot g(q_tmp,tmp,"s(q)","steps");
   g.set_grid();
+  g.replot();
+  
   wait_for_key();
 
 
