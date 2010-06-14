@@ -121,8 +121,9 @@ def make_h5(fname_in,d_path,p_path):
     #g = f.create_group("frame{0:06d}".format(0))
     g = f.create_group("frame%(#)06d"%{"#":0})
 
+    null_path = open('/dev/null','w')
 
-    a = subprocess.Popen(["tiffinfo","-0",fname] ,stdout=subprocess.PIPE)
+    a = subprocess.Popen(["tiffinfo","-0",fname] ,stdout=subprocess.PIPE,stderr=null_path)
     tiff_string = (a.stdout).readlines();
     tiff_string = "".join(tiff_string)
 
@@ -150,7 +151,7 @@ def make_h5(fname_in,d_path,p_path):
 
 
     for frame in range(1,frame_count):
-        a = subprocess.Popen(["tiffinfo","-"+str(frame),fname] ,stdout=subprocess.PIPE)
+        a = subprocess.Popen(["tiffinfo","-"+str(frame),fname] ,stdout=subprocess.PIPE,stderr=null_path)
         tiff_string = (a.stdout).readlines();
         tiff_string = "".join(tiff_string)
         xml_str = tiff_string[(tiff_string.find("<MetaData>")):(10 + tiff_string.rfind("MetaData>"))]
