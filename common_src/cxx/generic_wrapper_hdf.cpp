@@ -89,7 +89,7 @@ void Generic_wrapper_hdf::close_wrapper()
 
 void Generic_wrapper_hdf::open_group(const string & name )
 {
-  std::cout<<"opened group"<<std::endl;
+
   if(!wrapper_open_)
     throw "generic_wrapper_hdf: wrapper not open";
   
@@ -118,7 +118,7 @@ void Generic_wrapper_hdf::open_group(const string & name )
 
 void Generic_wrapper_hdf::close_group()
 {
-  std::cout<<"closed group"<<std::endl;
+
   
   if(group_open_)
   {
