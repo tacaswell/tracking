@@ -67,7 +67,9 @@ class xml_data:
         else:
             self.stanza = self.doc.getElementsByTagName(stanza).item(0)
             
-        prams = tmp_stanza.getElementsByTagName("pram")
+        prams = tmp_stanza.getElementsByTagName("param")
+
+        
 
         for p in prams:
             self.add_pram(p.getAttribute('key'),p.getAttribute('type'),p.getAttribute('value'))
