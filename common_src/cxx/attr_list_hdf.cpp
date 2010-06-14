@@ -229,7 +229,7 @@ utilities::Tuple<float,N> Attr_list_hdf::get_value(const std::string & key,utili
   if(type_class == H5T_FLOAT && 
      space_type == H5S_SIMPLE  && 
      dspace.getSimpleExtentNdims() == 1 && 
-     dspace.getSimpleExtentNpoints() == Tuple<float,2>::length_)
+     dspace.getSimpleExtentNpoints() == Tuple<float,N>::length_)
     tmpa.read(PredType::NATIVE_FLOAT,value_out.get_ptr());
   else
     throw invalid_argument("output does not match attribute dtype");
@@ -253,7 +253,7 @@ void Attr_list_hdf::set_value(const std::string & key,  const Tuple<float,N> &  
       H5S_class_t space_type = dspace.getSimpleExtentType();
   
       if(type_class == H5T_FLOAT && space_type == H5S_SIMPLE  && 
-	 dspace.getSimpleExtentNdims() == 1 && dspace.getSimpleExtentNpoints() == Tuple<float,2>::length_)
+	 dspace.getSimpleExtentNdims() == 1 && dspace.getSimpleExtentNpoints() == Tuple<float,N>::length_)
 	tmpa.write(PredType::NATIVE_FLOAT,value_in.get_ptr());
       
       else
@@ -270,7 +270,7 @@ void Attr_list_hdf::set_value(const std::string & key,  const Tuple<float,N> &  
   }
   else
   {
-    hsize_t dim_c = (hsize_t) Tuple<float,2>::length_;
+    hsize_t dim_c = (hsize_t) Tuple<float,N>::length_;
     DataSpace dspace =  DataSpace(1,&dim_c);
     Attribute  tmpa =  obj_->createAttribute(key,PredType::NATIVE_FLOAT,dspace);
     tmpa.write(PredType::NATIVE_FLOAT,value_in.get_ptr());
