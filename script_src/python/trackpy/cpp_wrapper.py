@@ -70,8 +70,8 @@ def do_link3D(key,conn):
     
     config = xml_data()
     config.add_stanza("link3D")
-    config.add_pram("box_side_len","float","4");
-    config.add_pram("search_range","float","3.5")
+    config.add_pram("box_side_len","float","4.5");
+    config.add_pram("search_range","float","4")
     config.add_pram("min_trk_len","int","3")
     config.add_stanza("comps")
     config.add_pram("read_comp","int",str(read_comp))
@@ -110,6 +110,10 @@ def do_Iden(key,conn):
         return
 
     fin = conn.execute("select fname from dsets where key = ?;",(key,)).fetchone()[0]
+    if os.path.isfile(fin.replace('.tif','-file002.tif')):
+        print "multi-part tiff, can't cope yet"
+        return
+    
     fout = '.'.join(fin.replace("data","processed").split('.')[:-1]) + '.h5'
     fpram = fin.replace(".tif",".xml")
     if not os.path.isfile(fpram):
@@ -375,7 +379,7 @@ def do_phi6(key,conn):
 
 
 def do_sofq(key,conn):
-    prog_path = '/home/tcaswell/misc_builds/basic_rel/apps/'
+    prog_path = '/home/tcaswell/misc_builds/basic_dbg/apps/'
     prog_name = "sofq"
     
     # see if the file has already been processed
@@ -390,14 +394,14 @@ def do_sofq(key,conn):
     
 
     fout = os.path.dirname(fin) + '/sofq.h5'
-    #_make_sure_h5_exists(fout)
+    _make_sure_h5_exists(fout)
     
     comp_num = conn.execute("select max(comp_key) from comps;").fetchone()[0] + 1
 
     config = xml_data()
     config.add_stanza("sofq")
-    config.add_pram("max_range","float",".2")
-    config.add_pram("nbins","int","100")
+    
+    config.add_pram("nbins","int","200")
     config.add_stanza("comps")
     config.add_pram("read_comp","int",str(read_comp))
     config.add_pram("write_comp","int",str(comp_num))
@@ -412,7 +416,8 @@ def do_sofq(key,conn):
     print rc
 
     # if it works, then returns zero
-    if rc == 0:
+    #if rc == 0:
+    if False:
         print "entering into database"
         conn.execute("insert into comps (comp_key,dset_key,date,fin,fout,function)"
                      +"values (?,?,?,?,?,?);",
