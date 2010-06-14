@@ -208,7 +208,7 @@ int main(int argc, char * argv[])
     cout<<"total number of particles is: "<<box.size()<<endl;;
     
     Tuple<float,2> dims = wh.get_dims();
-    hash_case hcase(box,dims,max_range,wh.get_num_frames());
+    hash_case hcase(box,dims,max_range/2,wh.get_num_frames());
 
     cout<<"hash case filled"<<endl;
     
