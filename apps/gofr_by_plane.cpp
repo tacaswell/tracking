@@ -47,6 +47,7 @@
 #include "read_config.h"
 #include "cl_parse.h"
 
+#include "enum_utils.h"
 //#include "gnuplot_i.hpp" //Gnuplot class handles POSIX-Pipe-communication with Gnuplot
 
 using std::cout;
@@ -81,24 +82,24 @@ int main(int argc, char * argv[])
 {
 
   		   
-  string in_file = "/home/tcaswell/colloids/processed/polyNIPAM_batch_12/20100524/4/exp2/27-3_26-7_27-2_slow.h5" ;
-  string out_file = "g_by_plane.h5";
+  string in_file; 
+  string out_file;
   string pram_file ;
   
   
-  // try
-  // {
-  //   CL_parse cl(argc,argv);
-  //   cl.parse();
-  //   cl.get_fin(in_file);
-  //   cl.get_fout(out_file);
-  //   cl.get_fpram(pram_file);
-  // }
-  // catch(std::invalid_argument &e )
-  // {
-  //   cout<<e.what()<<endl;
-  //   return -1;
-  // }
+  try
+  {
+    CL_parse cl(argc,argv);
+    cl.parse();
+    cl.get_fin(in_file);
+    cl.get_fout(out_file);
+    cl.get_fpram(pram_file);
+  }
+  catch(std::invalid_argument &e )
+  {
+    cout<<e.what()<<endl;
+    return -1;
+  }
   
 
   cout<<"file to read in: "<<in_file<<endl;
@@ -107,46 +108,38 @@ int main(int argc, char * argv[])
   // parsing of parameters
 
 
-  float max_range = 50;
-  int nbins = 1000;
-  string grp_name = "test";
- 
-  // Read_config app_prams(pram_file,"gofr");
-  // if(!(app_prams.contains_key("max_range") &&
-  //      app_prams.contains_key("nbins") &&
-  //      app_prams.contains_key("grp_name")))
-  //   throw logic_error(APP_NAME + " parameter file does not contain enough parameters");
-  // try
-  // {
-  //   app_prams.get_value("max_range",max_range);
-  //   app_prams.get_value("nbins",nbins);
-  //   app_prams.get_value("grp_name",grp_name);
-  // }
-  // catch(logic_error & e)
-  // {
-  //   cerr<<"error parsing the parameters"<<endl;
-  //   cerr<<e.what()<<endl;
-  //   return -1;
-  // }
+  float max_range;
+  int nbins,comp_count;
+  string grp_name;
+  Read_config app_prams(pram_file,"gofr_by_plane");
+  try
+  {
+    app_prams.get_value("max_range",max_range);
+    app_prams.get_value("nbins",nbins);
+    app_prams.get_value("grp_name",grp_name);
+    app_prams.get_value("comp_count",comp_count);
+  }
+  catch(logic_error & e)
+  {
+    cerr<<"error parsing the parameters"<<endl;
+    cerr<<e.what()<<endl;
+    return -1;
+  }
   
-  int read_comp_num =361 , write_comp_num = 0,dset_num = 108;
-  // Read_config comp_prams(pram_file,"comps");
-  // if(!(comp_prams.contains_key("read_comp")&&
-  //      comp_prams.contains_key("write_comp")))
-  //   throw logic_error(APP_NAME + 
-  // 		      " parameter file does not contain both read and write comp nums");
-  // try
-  // {
-  //   comp_prams.get_value("read_comp",read_comp_num);
-  //   comp_prams.get_value("write_comp",write_comp_num);
-  //   comp_prams.get_value("dset",dset_num);
-  // }
-  // catch(logic_error & e)
-  // {
-  //   cerr<<"error parsing the computation numbers"<<endl;
-  //   cerr<<e.what()<<endl;
-  //   return -1;
-  // }
+  int read_comp_num , write_comp_num, dset_num ;
+  Read_config comp_prams(pram_file,"comps");
+  try
+  {
+    comp_prams.get_value("read_comp",read_comp_num);
+    comp_prams.get_value("write_comp",write_comp_num);
+    comp_prams.get_value("dset",dset_num);
+  }
+  catch(logic_error & e)
+  {
+    cerr<<"error parsing the computation numbers"<<endl;
+    cerr<<e.what()<<endl;
+    return -1;
+  }
   
 
 
@@ -184,15 +177,15 @@ int main(int argc, char * argv[])
 
     cout<<"hash case filled"<<endl;
     
-    Corr_case gofr_c((tracking::Corr_gofr*)NULL,25,max_range,nbins,write_comp_num,dset_num);
+    Corr_case gofr_c((tracking::Corr_gofr*)NULL,comp_count,max_range,nbins,write_comp_num,dset_num);
     hcase.compute_corr(gofr_c);
     cout<<"computed g(r)"<<endl;
     
     //    gofr.display();
 
       
-    Generic_wrapper_hdf hdf_out(out_file,false);
-    gofr_c.out_to_wrapper(hdf_out,grp_name);
+    Generic_wrapper_hdf hdf_out(out_file,true);
+    gofr_c.out_to_wrapper(hdf_out,utilities::format_name(grp_name,write_comp_num));
     cout<<"wrote out g(r)"<<endl;
 
     
