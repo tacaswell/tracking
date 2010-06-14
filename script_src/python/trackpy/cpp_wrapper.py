@@ -70,8 +70,8 @@ def do_link3D(key,conn):
     
     config = xml_data()
     config.add_stanza("link3D")
-    config.add_pram("box_side_len","float","4.5");
-    config.add_pram("search_range","float","4")
+    config.add_pram("box_side_len","float","5.5");
+    config.add_pram("search_range","float","5")
     config.add_pram("min_trk_len","int","3")
     config.add_stanza("comps")
     config.add_pram("read_comp","int",str(read_comp))
@@ -192,7 +192,7 @@ def do_gofr3D(key,conn):
 
     config = xml_data()
     config.add_stanza("gofr3D")
-    config.add_pram("max_range","float","9.5")
+    config.add_pram("max_range","float","5")
     config.add_pram("nbins","int","2000")
     config.add_pram("grp_name","string",prog_name + "_%(#)07d"%{"#":comp_num})
     config.add_stanza("comps")
