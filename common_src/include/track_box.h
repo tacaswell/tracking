@@ -62,7 +62,7 @@ public:
   /**
      Returns a pointer to the last particle in the track
    */
-  particle_track * get_last(int n) const{
+  particle_track * get_last() const{
     return t_last_;
   }
 

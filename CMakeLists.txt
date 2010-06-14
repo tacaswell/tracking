@@ -133,7 +133,7 @@ endif(MATLAB_MEX_FILE)
 
 if(COMPILE_BASIC)
   MESSAGE(STATUS "making basic functionality")
-  SET(CMAKE_CXX_FLAGS "-ansi -D_GNU_SOURCE -fPIC -fno-omit-frame-pointer -pthread -Wall ")
+  SET(CMAKE_CXX_FLAGS "-ansi -D_GNU_SOURCE -fPIC -fno-omit-frame-pointer -pthread -Wall -Wextra ")
   add_subdirectory(apps)
 endif(COMPILE_BASIC)
 

@@ -41,7 +41,7 @@ using std::cerr;
 using std::endl;
 
 Filter_basic::Filter_basic(float ecut,float rg_cut,float shift_cut):
-  e_cut_(e_cut_),rg_cut_(rg_cut),shift_cut_(shift_cut),wrap_(NULL)
+  e_cut_(ecut),rg_cut_(rg_cut),shift_cut_(shift_cut),wrap_(NULL)
 {
 }
 

@@ -219,7 +219,7 @@ void Corr_goftheta::out_to_wrapper(Generic_wrapper & in,const string& name)const
   normalize(tmp);
   
   in.open_wrapper();
-  in.open_group(name_);
+  in.open_group(name);
   //in.add_metadata();
   
   const float * yar = &tmp.front();

@@ -99,10 +99,7 @@ void Wrapper_i_hdf::make_dtype_pairs(int comp_nuber)
 
 
 void Wrapper_i_hdf::priv_init(int fr_count)
-{
-  if (start_ <0)
-    throw invalid_argument("wrapper_i_hdf: start must be positive");
-  
+{ 
   
   try
   {
