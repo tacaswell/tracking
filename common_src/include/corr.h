@@ -80,6 +80,28 @@ public:
   
 };
 
+/**
+   A subclass of Corr that does nothing
+ */
+class Dummy_corr:public Corr
+{
+public:
+  void compute(const particle *,const std::vector<const particle*> & ) {};
+
+
+  void out_to_wrapper(utilities::Generic_wrapper & ) const {};
+  virtual float get_max_range() const{return size_;};
+
+  ~Dummy_corr(){};
+  Dummy_corr(float in):size_(in){};
+  
+  
+private:
+  float size_;
+  
+};
+
+  
 
 }
 

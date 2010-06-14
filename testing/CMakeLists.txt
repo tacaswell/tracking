@@ -112,3 +112,10 @@ set_target_properties(sql_test PROPERTIES COMPILE_DEFINITIONS  "TESTING")
 target_link_libraries(sql_test ${Boost_LIBRARIES} ${dl_LIBRARY})
 
 
+
+add_executable(corr_test corr_test.cpp
+  ${COMMON_SRC} 
+  ${UTIL_SRC} 
+  ${COMMON_HASH_SRC}
+  )
+set_target_properties(corr_test PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_COUNT=2;TESTING")
