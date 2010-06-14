@@ -155,39 +155,37 @@ void Corr_gofr::normalize(vector<float> & out)const
 #if DIM_COUNT == 2
   float avg = (count_sum)/(pi*max_range_*max_range_);
 #elif DIM_COUNT == 3
-  float avg = (count_sum)/(pi*max_range_*max_range_*max_range_*4/3);
+  float avg = (count_sum)/(pi*max_range_*max_range_*max_range_*4.0/3.0);
 #endif
-
+  
   out.resize(n_bins_);
-#if DIM_COUNT == 2
-  float norm_factor = ((bin_edges_[1]*bin_edges_[1]*3.14159)*avg);
-#elif DIM_COUNT ==3
-  float norm_factor = ((bin_edges_[1]*bin_edges_[1]*bin_edges_[1]*3.14159)*avg)*4/3;
-#endif
-  out[0] = bin_count_[0]/norm_factor;
-  
-  
-  for(int j = 1;j<(n_bins_-1);++j)
-  {
 
+  float front,back,norm_factor;
+  // tac 2010-05-27
+  // I don't see why the first one is a special case, as bin_edges_[0] should be 0
+  
+  for(int j = 0;j<(n_bins_-1);++j)
+  {
+    // made it easier to read/more efficient
+    front = bin_edges_[j+1];
+    back = bin_edges_[j];
+    
 #if DIM_COUNT == 2
-    norm_factor = ( avg * 3.14159*(bin_edges_[j+1]*bin_edges_[j+1] 
-					 - bin_edges_[j]*bin_edges_[j]));
+    norm_factor = ( avg * pi*(front * front - back*back));
 #elif DIM_COUNT ==3
-    norm_factor = ( avg * 3.14159*(bin_edges_[j+1]*bin_edges_[j+1] *bin_edges_[j+1] 
-					 - bin_edges_[j]*bin_edges_[j]*bin_edges_[j]))*4/3;
+    norm_factor = ( avg * pi*(front * front * front - back * back * back))*4/3;
 #endif
     out[j] = bin_count_[j]/norm_factor;
-  
   }
 
+  // handle last bin separately
+  front = max_range_;
+  back = bin_edges_[n_bins_-1];
+      
 #if DIM_COUNT == 2
-  norm_factor = ( avg * 3.14159*(max_range_*max_range_ 
-				 - bin_edges_[n_bins_-1]*bin_edges_[n_bins_-1]));
+  norm_factor = ( avg * pi*(front * front - back*back));
 #elif DIM_COUNT ==3
-  norm_factor =  ( avg * 3.14159*
-		   (max_range_*max_range_*max_range_ 
-		    - bin_edges_[n_bins_-1]*bin_edges_[n_bins_-1]*bin_edges_[n_bins_-1]))*4/3;
+  norm_factor = ( avg * pi*(front * front * front - back * back * back))*4/3;
 #endif
   out[n_bins_-1] = bin_count_[n_bins_-1]/norm_factor;
   
