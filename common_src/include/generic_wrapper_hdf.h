@@ -49,7 +49,11 @@ public:
   
   void open_wrapper();
   void close_wrapper();
-
+  bool is_open()const
+  {
+    return wrapper_open_;
+  }
+  
   void open_group(const std::string & name = "none");
   void close_group();
   

@@ -103,10 +103,18 @@ Corr_gofr::Corr_gofr(int bins,float max,int comp_num,int dset):
 
 void Corr_gofr::out_to_wrapper(Generic_wrapper & in,const std::string & g_name)const
 {
+  bool opened_wrapper = false;
+  
   vector<float> tmp;
   normalize(tmp);
 
-  in.open_wrapper();
+  if(!in.is_open())
+  {
+    in.open_wrapper();
+    opened_wrapper = true;
+    
+  }
+  
   in.open_group(g_name);
   //in.add_metadata();
   
@@ -119,9 +127,10 @@ void Corr_gofr::out_to_wrapper(Generic_wrapper & in,const std::string & g_name)c
   in.add_meta_data("comp_num",comp_num_);
   in.add_meta_data("dset",dset_);
 
+  in.close_group();
   
-
-  in.close_wrapper();
+  if(opened_wrapper)
+    in.close_wrapper();
   
 }
 

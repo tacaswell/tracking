@@ -54,6 +54,7 @@ class track_list;
 class Master_box;
 
 class Corr;
+class Corr_case;
 class Accumulator;
 
 /**
@@ -237,6 +238,12 @@ public:
      passes a Corr object down the pyramid
    */
   void compute_corr(tracking::Corr &) const ;
+
+    
+  /**
+     Passes a Corr_case down the pyramid
+   */
+  void compute_corr(tracking::Corr_case &) const ;
 
     
   /**

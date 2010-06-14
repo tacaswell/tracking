@@ -31,11 +31,14 @@
 #include "corr.h"
 #include "accum_sofq.h"
 #include "accum_case.h"
-
+#include "corr_case.h"
 using tracking::hash_box;
 using tracking::Hash_shelf;
 using tracking::hash_case;
 using tracking::particle;
+
+using tracking::Corr_case;
+
 
 using tracking::Track_shelf;
 using tracking::Track_box;
@@ -262,6 +265,23 @@ void hash_case::compute_accum(Accum_case & in )const
 
   for(unsigned int j = 0; j<in.size();++j)
     h_case_[j]->compute_accum(*in[j]);
+}
+
+
+void hash_case::compute_corr(Corr_case & in )const
+{
+  unsigned int hc_sz = h_case_.size();
+  unsigned int cc_sz = in.size();
+  
+  if (cc_sz > hc_sz)
+    throw "the corr_case has more planes than the hash case";
+  
+  unsigned int step = hc_sz/cc_sz;
+  unsigned int max_i = hc_sz- hc_sz%step;
+  
+  
+  for(unsigned int j = 0; j<max_i;++j)
+    h_case_[j]->compute_corr(*in[j/step]);
 }
 
 

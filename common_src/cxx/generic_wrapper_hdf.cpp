@@ -40,7 +40,8 @@ using std::string;
 
   
 Generic_wrapper_hdf::Generic_wrapper_hdf(std::string fname, bool add_to_file):
-  file_name_(fname),add_to_file_(add_to_file)
+  file_name_(fname),wrapper_open_(false),group_open_(false),dset_open_(false),add_to_file_(add_to_file),
+  file_(NULL),group_(NULL),group_attrs_(NULL)
 {
 }
 
@@ -53,16 +54,20 @@ Generic_wrapper_hdf::~Generic_wrapper_hdf()
 
 void Generic_wrapper_hdf::open_wrapper()
 {
-  // if there is a file to add to open it read/write
-  if(add_to_file_)
-    file_ = new H5File(file_name_,H5F_ACC_RDWR);
-  else
-    // if there is not a file to add to try to make a new one
-    // and die if there is already a file
-    //    file_ = new H5File(file_name_,H5F_ACC_EXCL);
-    file_ = new H5File(file_name_,H5F_ACC_TRUNC);
-  
-  wrapper_open_ = true;
+  if(!wrapper_open_)
+  {
+    // if there is a file to add to open it read/write
+    if(add_to_file_)
+      file_ = new H5File(file_name_,H5F_ACC_RDWR);
+    else
+    {
+      // if there is not a file to add to try to make a new one
+      // and die if there is already a file
+      file_ = new H5File(file_name_,H5F_ACC_EXCL);
+      //file_ = new H5File(file_name_,H5F_ACC_TRUNC);
+    }
+    wrapper_open_ = true;
+  }
   
 }
 
@@ -84,13 +89,17 @@ void Generic_wrapper_hdf::close_wrapper()
 
 void Generic_wrapper_hdf::open_group(const string & name )
 {
-
+  std::cout<<"opened group"<<std::endl;
   if(!wrapper_open_)
     throw "generic_wrapper_hdf: wrapper not open";
   
   if(name=="none")
     throw "generic_wrapper_hdf: need to give a name";
   
+  if(group_open_)
+    throw "generic_wrapper_hdf::open_group: there is already an open group";
+  
+
   try
   {
     group_ = new Group(file_->createGroup(name));
@@ -109,6 +118,8 @@ void Generic_wrapper_hdf::open_group(const string & name )
 
 void Generic_wrapper_hdf::close_group()
 {
+  std::cout<<"closed group"<<std::endl;
+  
   if(group_open_)
   {
     delete group_attrs_;

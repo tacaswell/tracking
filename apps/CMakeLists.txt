@@ -74,20 +74,21 @@ target_link_libraries(gofr3D
 set_target_properties(gofr3D PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_COUNT=3")
 
 
-add_executable(sofq sofq.cpp 
-  ${COMMON_SRC}
-  ${HDF_SRC}
-  ${CORR_SRC}
-  ${GNU_PLOT_SRC}
-  ${COMMON_HASH_SRC} 
-  ${COMMON_WRAPPER_SRC} 
-  ${CONFIG_SRC}
-)
-target_link_libraries(sofq
-  ${HDF5_LIBRARIES} 
-  ${XERCESC_LIBRARY} 
-)
-set_target_properties(sofq PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_COUNT=2")
+# add_executable(sofq sofq.cpp 
+#   ${COMMON_SRC}
+#   ${HDF_SRC}
+#   ${CORR_SRC}
+#   ${GNU_PLOT_SRC}
+#   ${COMMON_HASH_SRC} 
+#   ${COMMON_WRAPPER_SRC} 
+#   ${CONFIG_SRC}
+#   ${ACCUM_SCR}
+# )
+# target_link_libraries(sofq
+#   ${HDF5_LIBRARIES} 
+#   ${XERCESC_LIBRARY} 
+# )
+# set_target_properties(sofq PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_COUNT=2")
 
 
 
@@ -126,3 +127,20 @@ set_target_properties(phi6 PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_COUNT=2"
 # set_target_properties(tracking PROPERTIES COMPILE_DEFINITIONS  "PTYPE=1;DIM_COUNT=2")
 
 
+
+add_executable(gofr_by_plane gofr_by_plane.cpp 
+  ${COMMON_SRC} 
+  ${UTIL_SRC} 
+  ${HDF_SRC} 
+  ${CORR_SRC}
+  ${GNU_PLOT_SRC}
+  ${COMMON_HASH_SRC} 
+  ${COMMON_WRAPPER_SRC} 
+  ${CONFIG_SRC}
+  )
+#message(STATUS "Found HDF: ${HDF5_LIBRARIES}")
+target_link_libraries(gofr_by_plane
+  ${HDF5_LIBRARIES} 
+  ${XERCESC_LIBRARY} 
+  )
+set_target_properties(gofr_by_plane PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_COUNT=2")

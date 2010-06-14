@@ -46,10 +46,17 @@ public:
      Initializes the wrapper
    */
   virtual void open_wrapper() =0;
+  
   /**
      closes and cleans up the wrapper
    */
   virtual void close_wrapper() = 0;
+
+  /**
+     Returns if the wrapper is open or not
+   */
+  virtual bool is_open() const = 0;
+  
 
   /**
      Opens a group in the wrapper, ie a group in hdf or a cell in matlab
