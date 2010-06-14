@@ -1,4 +1,4 @@
-//Copyright 2009 Thomas A Caswell
+//Copyright 2009,2010 Thomas A Caswell
 //tcaswell@uchicago.edu
 //http://jfi.uchicago.edu/~tcaswell
 //
@@ -349,23 +349,12 @@ void hash_box::compute_corr(Corr & in )const
   }
   else
   {
-    
-    
-
     if(shelf_ ==NULL || hash_indx_ == -1)
       throw "hash_box: box not part of a shelf";
 
     vector <const particle *> nhood;
-    shelf_->get_region_px(hash_indx_,nhood,(int)(in.get_max_range()));
+    shelf_->get_region_px(hash_indx_,nhood,in.get_max_range());
     
-    
-    
-    
-    
-    
-    // vector<particle*>::const_iterator myend = contents_.end();
-    //     for(vector<particle*>::const_iterator it = contents_.begin();
-    // 	it!=myend;++it)
     int max_j = contents_.size();
     for(int j = 0; j<max_j;++j)
     {

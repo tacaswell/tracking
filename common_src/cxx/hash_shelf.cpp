@@ -459,7 +459,7 @@ void Hash_shelf::get_region(int n,list< particle*> & out_vector,int range) const
 void Hash_shelf::get_region_px( int n, std::vector<const particle*> & out ,
 		    float range_in_units) const
 {
-  get_region(n,out,ceil(range_in_units/upb_));
+  get_region(n,out,(int)ceil(range_in_units/upb_));
 
 }
 
