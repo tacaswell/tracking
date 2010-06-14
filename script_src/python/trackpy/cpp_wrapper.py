@@ -28,6 +28,8 @@ import sqlite3
 from .utils.xml_data import xml_data
 from datetime import date
 
+_rel_path = "/home/tcaswell/misc_builds/basic_rel/apps/"
+_dbg_path = "/home/tcaswell/misc_builds/basic_dbg/apps/"
 
 def check_comps_table(key,func,conn):
     # figure out name of file to write to
@@ -42,7 +44,6 @@ def _make_sure_h5_exists(fname):
 
 
 def do_link3D(key,conn):
-    prog_path = "/home/tcaswell/misc_builds/basic_rel/apps/"
     prog_name = "link3D"
     # figure out name of file to write to
     res = check_comps_table(key,"Iden",conn)
@@ -73,36 +74,11 @@ def do_link3D(key,conn):
     config.add_pram("box_side_len","float","5.5");
     config.add_pram("search_range","float","5")
     config.add_pram("min_trk_len","int","3")
-    config.add_stanza("comps")
-    config.add_pram("read_comp","int",str(read_comp))
-    config.add_pram("write_comp","int",str(comp_num))
-    config.disp()
-    cname = config.write_to_tmp()
-
-    fout = fname.replace(".h5","_link.h5")
-
-    # look
-    
-    print fname
-    print fout
-
-
-    
-    rc = subprocess.call(["time",prog_path + prog_name,'-i',fname,'-o',fout, '-c',cname ])
-    print rc
-
-    # if it works, then returns zero
-    if rc == 0:
-        print "entering into database"
-        conn.execute("insert into comps (dset_key,date,fin,fout,function) values (?,?,?,?,?);",
-                     (key,date.today().isoformat(),fname,fout,prog_name))
-        conn.commit()
-
+    _call_fun(config,read_comp,fin,fout,key,prog_name,rel,conn)
 
 
 def do_Iden(key,conn):
     # see if the file has already been processed
-    prog_path = '/home/tcaswell/misc_builds/iden_rel/iden/apps/'
     prog_name = "Iden"
     res = check_comps_table(key,"Iden",conn)
     if len(res) >0:
@@ -170,7 +146,6 @@ def do_Iden(key,conn):
 
 
 def do_gofr3D(key,conn):
-    prog_path = '/home/tcaswell/misc_builds/basic_rel/apps/'
     prog_name = "gofr3D"
 
     # see if the file has already been processed
@@ -195,28 +170,9 @@ def do_gofr3D(key,conn):
     config.add_pram("max_range","float","5")
     config.add_pram("nbins","int","2000")
     config.add_pram("grp_name","string",prog_name + "_%(#)07d"%{"#":comp_num})
-    config.add_stanza("comps")
-    config.add_pram("read_comp","int",str(read_comp))
-    config.add_pram("write_comp","int",str(comp_num))
-    config.add_pram("dset","int",str(key))
-    config.disp()
-    cfile = config.write_to_tmp()
+    _call_fun(config,read_comp,fin,fout,key,prog_name,rel,conn)
     
-    
-    rc = subprocess.call(["time",prog_path + prog_name,'-i',fin,'-o',fout, '-c',cfile ])
-    print rc
-
-    # if it works, then returns zero
-    if rc == 0:
-        print "entering into database"
-        conn.execute("insert into comps (comp_key,dset_key,date,fin,fout,function)"
-                     +"values (?,?,?,?,?,?);",
-                     (comp_num,key,date.today().isoformat(),fin,fout,prog_name))
-        conn.commit()
-
 def do_gofr(key,conn):
-
-    prog_path = '/home/tcaswell/misc_builds/basic_rel/apps/'
     prog_name = "gofr"
     
     # see if the file has already been processed
@@ -240,32 +196,9 @@ def do_gofr(key,conn):
     config.add_pram("max_range","float","100")
     config.add_pram("nbins","int","2000")
     config.add_pram("grp_name","string",prog_name + "_%(#)07d"%{"#":comp_num})
-    config.add_stanza("comps")
-    config.add_pram("read_comp","int",str(read_comp))
-    config.add_pram("write_comp","int",str(comp_num))
-    config.add_pram("dset","int",str(key))
-    config.disp()
-    cfile = config.write_to_tmp()
-    print fin
-    print fout
-
-    
-    rc = subprocess.call(["time",prog_path + prog_name,'-i',fin,'-o',fout, '-c',cfile ])
-    print rc
-
-    # if it works, then returns zero
-    if rc == 0:
-        print "entering into database"
-        conn.execute("insert into comps (comp_key,dset_key,date,fin,fout,function)"
-                     +"values (?,?,?,?,?,?);",
-                     (comp_num,key,date.today().isoformat(),fin,fout,prog_name))
-        conn.commit()
-    else:
-        print "ERROR!!!"
-    
+    _call_fun(config,read_comp,fin,fout,key,prog_name,rel,conn)
 
 def do_tracking(key,conn):
-    prog_path = '/home/tcaswell/misc_builds/basic_git/apps/'
     prog_name = "tracking"
 
     # figure out name of file to write to
@@ -287,38 +220,7 @@ def do_tracking(key,conn):
     config.add_pram("search_range","float",srange)
     config.add_pram("box_side_len","float",srange)
     config.add_pram("min_trk_len","int","10")
-    config.disp()
-    cname = config.write_to_tmp()
-
-        
-    comp_num = conn.execute("select max(comp_key) from comps;").fetchone()[0] + 1
-
-    fout = fname.replace(".h5","_tracks_" + str(comp_num) + ".h5")
-
-
-
-
-    # look
-    
-    print fname
-    print fout
-
-
-    
-    rc = subprocess.call(["time",prog_path + prog_name,'-i',fname,'-o',fout, '-c',cname ])
-    print rc
-
-    # if it works, then returns zero
-    if rc == 0:
-        print "entering into database"
-        conn.execute("insert into comps (dset_key,date,fin,fout,function) values (?,?,?,?,?);",
-                     (key,date.today().isoformat(),fname,fout,prog_name))
-        conn.commit()
-
-    
-    pass
-
-
+    _call_fun(config,read_comp,fin,fout,key,prog_name,rel,conn)
 
 
 def do_phi6(key,conn):
@@ -346,40 +248,12 @@ def do_phi6(key,conn):
     config = xml_data()
     config.add_stanza("phi6")
     config.add_pram("neighbor_range","float",srange)
-    config.add_stanza("comps")
-    config.add_pram("read_comp","int",str(read_comp))
-    config.add_pram("write_comp","int",str(comp_num))
-    config.disp()
+
+    _call_fun(config,read_comp,fin,fout,key,prog_name,rel,conn)
     
-    cname = config.write_to_tmp()
-    
-        
-    comp_num = conn.execute("select max(comp_key) from comps;").fetchone()[0] + 1
 
+def do_sofq(key,conn,rel = True):
 
-    # look
-    
-    print fname
-
-
-
-    
-    rc = subprocess.call(["time",prog_path + prog_name,'-i',fname,'-o',fname, '-c',cname ])
-    print rc
-
-    # if it works, then returns zero
-    if rc == 0:
-        print "entering into database"
-        conn.execute("insert into comps (dset_key,date,fin,fout,function) values (?,?,?,?,?);",
-                     (key,date.today().isoformat(),fname,fname,prog_name))
-        conn.commit()
-
-    
-    pass
-
-
-def do_sofq(key,conn):
-    prog_path = '/home/tcaswell/misc_builds/basic_dbg/apps/'
     prog_name = "sofq"
     
     # see if the file has already been processed
@@ -400,8 +274,44 @@ def do_sofq(key,conn):
 
     config = xml_data()
     config.add_stanza("sofq")
-    
     config.add_pram("nbins","int","200")
+    
+    _call_fun(config,read_comp,fin,fout,key,prog_name,rel,conn)
+    
+def do_gofr_by_plane(key,conn,rel = True):
+    prog_name = "gofr_by_plane"
+    
+    # see if the file has already been processed
+    res = check_comps_table(key,"Iden",conn)
+    if len(res) ==0:
+        print "no entry"
+        return
+    if len(res) >1:
+        print "more than one entry, can't cope, quiting"
+        return
+    (fin,read_comp) = res[0]
+    
+
+    fout = os.path.dirname(fin) + '/gofr_by_planes.h5'
+    
+    _make_sure_h5_exists(fout)
+    
+
+    comp_num = conn.execute("select max(comp_key) from comps;").fetchone()[0] + 1
+    
+    config = xml_data()
+    config.add_stanza("gofr_by_plane")
+    config.add_pram("nbins","int","1000")
+    config.add_pram("max_range","float","100")
+    config.add_pram("comp_count","int","25")
+    config.add_pram("grp_name","string","gofr_by_plane")
+    
+    _call_fun(config,read_comp,fin,fout,key,prog_name,rel,conn)
+    
+    
+def _call_fun(config,read_comp,fin,fout,key,prog_name,rel,conn):
+    
+    comp_num = conn.execute("select max(comp_key) from comps;").fetchone()[0] + 1
     config.add_stanza("comps")
     config.add_pram("read_comp","int",str(read_comp))
     config.add_pram("write_comp","int",str(comp_num))
@@ -411,15 +321,15 @@ def do_sofq(key,conn):
     print fin
     print fout
 
-    
+    if rel: prog_path = _rel_path
+    else: prog_path = _dbg_path
     rc = subprocess.call(["time",prog_path + prog_name,'-i',fin,'-o',fout, '-c',cfile ])
     print rc
 
     # if it works, then returns zero
-    #if rc == 0:
-    if False:
+    if rc == 0:
         print "entering into database"
-        conn.execute("insert into comps (comp_key,dset_key,date,fin,fout,function)"
+        conn.execute("insert into comps (comp_key,dset_key,date,fin,fout,function) "
                      +"values (?,?,?,?,?,?);",
                      (comp_num,key,date.today().isoformat(),fin,fout,prog_name))
         conn.commit()
