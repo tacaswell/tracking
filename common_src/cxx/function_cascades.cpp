@@ -277,7 +277,7 @@ void hash_case::compute_corr(Corr_case & in )const
     throw "the corr_case has more planes than the hash case";
   
   unsigned int step = hc_sz/cc_sz;
-  unsigned int max_i = hc_sz- hc_sz%step;
+  unsigned int max_i = cc_sz * step;
   
   
   for(unsigned int j = 0; j<max_i;++j)
