@@ -68,7 +68,7 @@ public:
   /**
      outputs the result of the computation to the wrapper
    */
-  virtual void out_to_wrapper(utilities::Generic_wrapper & ) const =0;
+  virtual void out_to_wrapper(utilities::Generic_wrapper &,const std::string & ) const =0;
   /**
      returns the maximum range that the Corr object looks out to.  This is needed so
      that the Hash_shelf can properly limit the particles that it hands in

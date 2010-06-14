@@ -86,9 +86,9 @@ void Corr_gofr::compute(const particle * p_in,const vector<const particle*> & nh
 
 
 
-Corr_gofr::Corr_gofr(int bins,float max,const string& name,int comp_num,int dset, const string & fname):
+Corr_gofr::Corr_gofr(int bins,float max,int comp_num,int dset):
   bin_count_(bins),bin_edges_(bins),n_bins_(bins),
-  max_range_(max),name_(name),parts_added_(0),fname_(fname),dset_(dset),comp_num_(comp_num)
+  max_range_(max),parts_added_(0),dset_(dset),comp_num_(comp_num)
 {
   if(bins <1)
     throw "number of bins must be greater than 0";
@@ -101,13 +101,13 @@ Corr_gofr::Corr_gofr(int bins,float max,const string& name,int comp_num,int dset
   }
 }
 
-void Corr_gofr::out_to_wrapper(Generic_wrapper & in)const
+void Corr_gofr::out_to_wrapper(Generic_wrapper & in,const std::string & g_name)const
 {
   vector<float> tmp;
   normalize(tmp);
-  
+
   in.open_wrapper();
-  in.open_group(name_);
+  in.open_group(g_name);
   //in.add_metadata();
   
   const float * yar = &tmp.front();
@@ -118,7 +118,7 @@ void Corr_gofr::out_to_wrapper(Generic_wrapper & in)const
 
   in.add_meta_data("comp_num",comp_num_);
   in.add_meta_data("dset",dset_);
-  in.add_meta_data("data_file",fname_);
+
   
 
   in.close_wrapper();

@@ -214,7 +214,7 @@ int main(int argc, char * const argv[])
 
     
 
-    Corr_gofr gofr(nbins,max_range,grp_name,write_comp_number,dset_num,in_file);
+    Corr_gofr gofr(nbins,max_range,write_comp_number,dset_num);
     hcase.compute_corr(gofr);
     cout<<"computed g(r)"<<endl;
     
@@ -222,7 +222,7 @@ int main(int argc, char * const argv[])
 
       
     Generic_wrapper_hdf hdf_out(out_file,true);
-    gofr.out_to_wrapper(hdf_out);
+    gofr.out_to_wrapper(hdf_out,grp_name);
     cout<<"wrote out g(r)"<<endl;
 
     

@@ -213,7 +213,7 @@ Corr_goftheta::Corr_goftheta(int bins,float max,string& name):
   
 }
 
-void Corr_goftheta::out_to_wrapper(Generic_wrapper & in)const
+void Corr_goftheta::out_to_wrapper(Generic_wrapper & in,const string& name)const
 {
   vector<float> tmp;
   normalize(tmp);

@@ -51,7 +51,7 @@ public:
   // basic inherited stuff
   void compute(const particle *,const std::vector<const particle*> & ) ;
   
-  void out_to_wrapper(utilities::Generic_wrapper & ) const ;
+  void out_to_wrapper(utilities::Generic_wrapper &,const std::string& name ) const ;
 
   
   /**

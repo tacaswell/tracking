@@ -55,7 +55,7 @@ class Corr_gofr:public Corr
 public:
   // basic inherited stuff
   void compute(const particle *,const std::vector<const particle*> & ) ;
-  void out_to_wrapper(utilities::Generic_wrapper & ) const ;
+  void out_to_wrapper(utilities::Generic_wrapper &,const std::string & ) const ;
 
   // special stuff
   /**
@@ -67,7 +67,7 @@ public:
      constructor.  The maximum range is taken from particle::max_neighborhood_range_.
      The bins are spaced linearly.  
    */
-  Corr_gofr(int bins,float max,const std::string &,int comp_num,int dset,const std::string & fname);
+  Corr_gofr(int bins,float max,int comp_num,int dset);
   
   void display() const;
   
@@ -97,19 +97,10 @@ private:
   float max_range_;
 
   /**
-     name of group for writing out to a wrapper
-   */
-  std::string name_;
-
-  /**
      count of the number of particles added
    */
   int parts_added_;
   
-  /**
-     File name of data source
-   */
-  std::string fname_;
   
   /**
      Data set number
