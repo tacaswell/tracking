@@ -126,7 +126,9 @@ void Corr_gofr::out_to_wrapper(Generic_wrapper & in,const std::string & g_name)c
 
   in.add_meta_data("comp_num",comp_num_);
   in.add_meta_data("dset",dset_);
-
+  in.add_meta_data("max_range",max_range_);
+  in.add_meta_data("nbins",n_bins_);
+  
   in.close_group();
   
   if(opened_wrapper)

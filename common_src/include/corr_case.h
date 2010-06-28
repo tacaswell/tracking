@@ -31,6 +31,7 @@
 //this Program grant you additional permission to convey the resulting
 
 #include <vector>
+#include <map>
 #include "part_def.h"
 
 namespace utilities
@@ -98,10 +99,18 @@ public:
   ~Corr_case();
   
 private:
-  int frame_count_;
+  /**
+     Vector of correlation objects
+   */
   std::vector< tracking::Corr*> corr_vec_;
-  int comp_num_;
-  int dset_;
+  /**
+     map of float parameters fed to the corr objects
+   */
+  std::map <std::string,float> prams_float_;
+  /**
+     map of integer parameters fed to the corr objects
+   */
+  std::map <std::string ,int> prams_int_;
   
 
 

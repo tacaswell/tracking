@@ -39,8 +39,12 @@ using utilities::Generic_wrapper;
 
 using std::string;
 using std::vector;
+using std::map;
+using std::pair;
+
 using tracking::Corr;
 using tracking::Corr_case;
+
 
 
 
@@ -54,6 +58,9 @@ Corr_case::Corr_case(const tracking::Corr_gofr*,
   for(int j = 0; j<comp_count;j++)
     corr_vec_[j] = new Corr_gofr(n_bins,max_range,comp_num,dset_num);
   
+  prams_float_.insert(pair<string,float>("max_range",max_range));
+  prams_int_.insert(pair<string,int>("nbins",n_bins));
+
 
 }
 
@@ -75,7 +82,14 @@ void Corr_case::out_to_wrapper(Generic_wrapper & in,const string & base_name)con
   
   in.open_wrapper();
   in.open_group(base_name);
-  // shove in meta-data about the whole set
+  // adding top level meta-data
+  for(map<string,float>::const_iterator it = prams_float_.begin();
+      it != prams_float_.end();++it)
+    in.add_meta_data((*it).first,(*it).second);
+  for(map<string,int>::const_iterator it = prams_int_.begin();
+      it != prams_int_.end();++it)
+    in.add_meta_data((*it).first,(*it).second);
+  
   in.close_group();
   
   for(unsigned int j = 0; j<corr_vec_.size();++j)
