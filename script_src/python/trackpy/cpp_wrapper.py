@@ -43,7 +43,7 @@ def _make_sure_h5_exists(fname):
         f.close()
 
 
-def do_link3D(key,conn):
+def do_link3D(key,conn,pram_i, pram_f, pram_s = None, rel = True,):
     prog_name = "link3D"
     # figure out name of file to write to
     res = check_comps_table(key,"Iden",conn)
@@ -74,7 +74,7 @@ def do_link3D(key,conn):
     config.add_pram("box_side_len","float","5.5");
     config.add_pram("search_range","float","5")
     config.add_pram("min_trk_len","int","3")
-    _call_fun(config,read_comp,fin,fout,key,prog_name,rel,conn)
+    
 
 
 def do_Iden(key,conn):
@@ -170,7 +170,7 @@ def do_gofr3D(key,conn):
     config.add_pram("max_range","float","5")
     config.add_pram("nbins","int","2000")
     config.add_pram("grp_name","string",prog_name + "_%(#)07d"%{"#":comp_num})
-    _call_fun(config,read_comp,fin,fout,key,prog_name,rel,conn)
+
     
 def do_gofr(key,conn):
     prog_name = "gofr"
@@ -196,9 +196,9 @@ def do_gofr(key,conn):
     config.add_pram("max_range","float","100")
     config.add_pram("nbins","int","2000")
     config.add_pram("grp_name","string",prog_name + "_%(#)07d"%{"#":comp_num})
-    _call_fun(config,read_comp,fin,fout,key,prog_name,rel,conn)
 
-def do_tracking(key,conn):
+
+def do_tracking(key,conn,pram_i, pram_f, pram_s = None, rel = True,):
     prog_name = "tracking"
 
     # figure out name of file to write to
@@ -220,7 +220,7 @@ def do_tracking(key,conn):
     config.add_pram("search_range","float",srange)
     config.add_pram("box_side_len","float",srange)
     config.add_pram("min_trk_len","int","10")
-    _call_fun(config,read_comp,fin,fout,key,prog_name,rel,conn)
+
 
 
 def do_phi6(key,conn):
@@ -249,7 +249,7 @@ def do_phi6(key,conn):
     config.add_stanza("phi6")
     config.add_pram("neighbor_range","float",srange)
 
-    _call_fun(config,read_comp,fin,fout,key,prog_name,rel,conn)
+
     
 
 def do_sofq(key,conn,rel = True):
@@ -276,11 +276,14 @@ def do_sofq(key,conn,rel = True):
     config.add_stanza("sofq")
     config.add_pram("nbins","int","200")
     
-    _call_fun(config,read_comp,fin,fout,key,prog_name,rel,conn)
-    
-def do_gofr_by_plane(key,conn,rel = True):
+
+
+
+def do_gofr_by_plane(key,conn,pram_i, pram_f, pram_s = None, rel = True,):
     prog_name = "gofr_by_plane"
-    
+    required_pram_i = ['nbins','comp_count']
+    required_pram_f = ['max_rng']
+    required_pram_s = ['grp_name']
     # see if the file has already been processed
     res = check_comps_table(key,"Iden",conn)
     if len(res) ==0:
@@ -290,34 +293,64 @@ def do_gofr_by_plane(key,conn,rel = True):
         print "more than one entry, can't cope, quiting"
         return
     (fin,read_comp) = res[0]
-    
-
     fout = os.path.dirname(fin) + '/gofr_by_planes.h5'
-    
-    _make_sure_h5_exists(fout)
+     _make_sure_h5_exists(fout)
     
 
-    comp_num = conn.execute("select max(comp_key) from comps;").fetchone()[0] + 1
+    comp_prams = {'read_comp':read_comp,'dset':key}
+    comp_prams['write_comp'] =conn.execute("select max(comp_key) from comps;"
+                                           ).fetchone()[0] + 1
+    
+    if pram_s is None:
+        pram_s = {'grp_name':prog_name}
+    try:
+        _call_fun(conn,
+                  prog_name,fin,fout,
+                  comp_prams,
+                  required_pram_i,pram_i,
+                  required_pram_f,pram_f,
+                  required_pram_s,pram_s)
+    expect KeyError, ke:
+        print "Parameter: " ,ke,' not found'
+    
+    
+
+    
+def _call_fun(conn,
+                prog_name,fin,fout,
+                comp_pram,
+                req_i_pram,
+                i_pram,
+                req_f_pram,
+                f_pram,
+                req_s_pram = None,
+                s_pram = None,
+                rel = True):
+    
+    req_comp_prams = ['read_comp','write_comp','dset']
     
     config = xml_data()
-    config.add_stanza("gofr_by_plane")
-    config.add_pram("nbins","int","1000")
-    config.add_pram("max_range","float","100")
-    config.add_pram("comp_count","int","25")
-    config.add_pram("grp_name","string","gofr_by_plane")
     
-    _call_fun(config,read_comp,fin,fout,key,prog_name,rel,conn)
+    config.add_stanza(prog_name)
+    if req_i_pram in not None :
+        for p in req_i_pram:
+            config.add_stanza(p,'int',i_pram[p])
+    if req_f_pram in not None :
+        for p in req_f_pram:
+            config.add_stanza(p,'float',f_pram[p])
+    if req_s_pram in not None :
+        for p in req_s_pram:
+            config.add_stanza(p,'string',s_pram[p])
+
     
-    
-def _call_fun(config,read_comp,fin,fout,key,prog_name,rel,conn):
-    
-    comp_num = conn.execute("select max(comp_key) from comps;").fetchone()[0] + 1
     config.add_stanza("comps")
-    config.add_pram("read_comp","int",str(read_comp))
-    config.add_pram("write_comp","int",str(comp_num))
-    config.add_pram("dset","int",str(key))
+    
+    for p in req_comp_prams:
+            config.add_stanza(p,'int',comp_pram[p])
+
     config.disp()
     cfile = config.write_to_tmp()
+
     print fin
     print fout
 
@@ -332,7 +365,12 @@ def _call_fun(config,read_comp,fin,fout,key,prog_name,rel,conn):
         conn.execute("insert into comps (comp_key,dset_key,date,fin,fout,function) "
                      +"values (?,?,?,?,?,?);",
                      (comp_num,key,date.today().isoformat(),fin,fout,prog_name))
+
+        if fun is not None:
+            fun(key,comp_num,conn)
+        
         conn.commit()
     else:
         print "ERROR!!!"
     
+
