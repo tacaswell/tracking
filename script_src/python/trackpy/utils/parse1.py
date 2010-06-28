@@ -94,10 +94,12 @@ def _parse_region(h5obj):
     
 
 
-def make_h5(fname_in,d_path,p_path):
-    fname = d_path + fname_in + '.tif'
+def make_h5(fin,fout):
+    fname = fin
 
-    out_fname  = p_path + fname_in + '.h5'
+    out_fname = fout
+
+
 
 
 
@@ -113,7 +115,7 @@ def make_h5(fname_in,d_path,p_path):
     print fname
     
     _add_name(f,fname.encode('ascii'))
-    _parse_temp(f,fname_in)
+    _parse_temp(f,fname)
 
 
 

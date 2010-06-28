@@ -31,6 +31,30 @@ from datetime import date
 _rel_path = "/home/tcaswell/misc_builds/basic_rel/apps/"
 _dbg_path = "/home/tcaswell/misc_builds/basic_dbg/apps/"
 
+
+def add_gofr_plane_mdata(comp_pram,i_pram,f_pram,s_pram):
+    """Writes the meta data for g(r) by plane to the table """
+    prams = (comp_pram['dset'],comp_pram['write_comp'],i_pram['nbins'],
+             f_pram['max_range'],i_pram['comp_count'],comp_pram['read_comp'])
+    conn.execute("insert into gofr_by_plane_prams" +
+                 " (dset_key,comp_key,'nbins','max_range','comp_count',iden_key) " +
+                 "values (?,?,?,?,?,?);",params)
+    conn.commit()
+
+
+def add_gofr_mdata(comp_pram,i_pram,f_pram,s_pram):
+
+    prams = (comp_pram['dset'],comp_pram['write_comp'],i_pram['nbins'],
+             f_pram['max_range'],comp_pram['read_comp'])
+    conn.execute("insert into gofr_prams" +
+                 " (dset_key,comp_key,'nbins','max_range',iden_key) " +
+                 "values (?,?,?,?,?);",params)
+    conn.commit()
+
+
+
+_prog_to_fun_lookup = {'gofr_by_plane':add_gofr_plane_mdata,'gofr':add_gofr_mdata}
+
 def check_comps_table(key,func,conn):
     # figure out name of file to write to
     res = conn.execute("select fout,comp_key from comps where dset_key=? and function=?;",(key,func)).fetchall()
@@ -45,6 +69,10 @@ def _make_sure_h5_exists(fname):
 
 def do_link3D(key,conn,pram_i, pram_f, pram_s = None, rel = True,):
     prog_name = "link3D"
+    req_f_pram = ["box_side_len", "search_range"    ]
+    req_i_pram = ["min_trk_len"]
+
+    
     # figure out name of file to write to
     res = check_comps_table(key,"Iden",conn)
     if len(res) ==0:
@@ -66,31 +94,35 @@ def do_link3D(key,conn,pram_i, pram_f, pram_s = None, rel = True,):
         return
 
     
-    comp_num = conn.execute("select max(comp_key) from comps;").fetchone()[0] + 1
+    try:
+        _call_fun(conn,
+                  prog_name,fin,fout,
+                  comp_prams,
+                  required_pram_i,pram_i,
+                  required_pram_f,pram_f)
+    except KeyError, ke:
+        print "Parameter: " ,ke,' not found'
     
     
-    config = xml_data()
-    config.add_stanza("link3D")
-    config.add_pram("box_side_len","float","5.5");
-    config.add_pram("search_range","float","5")
-    config.add_pram("min_trk_len","int","3")
+
     
 
 
 def do_Iden(key,conn):
     # see if the file has already been processed
     prog_name = "Iden"
+    prog_path = "/home/tcaswell/misc_builds/iden_rel/iden/apps/"
     res = check_comps_table(key,"Iden",conn)
-    if len(res) >0:
-        print "already processed, flipping out"
-        return
-
     fin = conn.execute("select fname from dsets where key = ?;",(key,)).fetchone()[0]
     if os.path.isfile(fin.replace('.tif','-file002.tif')):
         print "multi-part tiff, can't cope yet"
         return
     
     fout = '.'.join(fin.replace("data","processed").split('.')[:-1]) + '.h5'
+    if len(res) >0:
+        fout = fout.replace(".h5","-" + str(len(res)) + ".h5")
+
+
     fpram = fin.replace(".tif",".xml")
     if not os.path.isfile(fpram):
         print "can not find parameter file, exiting"
@@ -124,15 +156,11 @@ def do_Iden(key,conn):
 
     
 
-    # format name
-    # funny string stuff to match parse1 calls
-    base_name = '.'.join(os.path.basename(fin).split('.')[:-1])
-    data_path = os.path.dirname(fin)  + '/'
     proc_path = os.path.dirname(fout)  + '/'
     if not os.path.exists(proc_path):
         os.makedirs(proc_path,0751)
 
-    parse1.make_h5(base_name,data_path,proc_path)
+    parse1.make_h5(fin,fout)
 
     rc = subprocess.call(["time",prog_path + prog_name,'-i',fin,'-o',fout,'-c',fxml ])
     print rc
@@ -171,32 +199,49 @@ def do_gofr3D(key,conn):
     config.add_pram("nbins","int","2000")
     config.add_pram("grp_name","string",prog_name + "_%(#)07d"%{"#":comp_num})
 
+
     
-def do_gofr(key,conn):
+    
+def do_gofr(key,conn,pram_i, pram_f, pram_s = None, rel = True,):
     prog_name = "gofr"
-    
+    required_pram_i = ['nbins']
+    required_pram_f = ['max_range']
+    required_pram_s = ['grp_name']
+
     # see if the file has already been processed
     res = check_comps_table(key,"Iden",conn)
     if len(res) ==0:
         print "no entry"
         return
-    if len(res) >1:
-        print "more than one entry, can't cope, quiting"
-        return
-    (fin,read_comp) = res[0]
+    ## if len(res) >1:
+    ##     print "more than one entry, can't cope, quiting"
+    ##     return
+    (fin,read_comp) = res[-1]
     
 
     fout = os.path.dirname(fin) + '/gofr.h5'
     _make_sure_h5_exists(fout)
     
-    comp_num = conn.execute("select max(comp_key) from comps;").fetchone()[0] + 1
-    
-    config = xml_data()
-    config.add_stanza("gofr")
-    config.add_pram("max_range","float","100")
-    config.add_pram("nbins","int","2000")
-    config.add_pram("grp_name","string",prog_name + "_%(#)07d"%{"#":comp_num})
+    comp_prams = {'read_comp':read_comp,'dset':key}
+    comp_prams['write_comp'] =conn.execute("select max(comp_key) from comps;"
+                                           ).fetchone()[0] + 1
 
+        
+    if pram_s is None:
+        pram_s = {'grp_name':prog_name}
+
+
+    
+    try:
+        _call_fun(conn,
+                  prog_name,fin,fout,
+                  comp_prams,
+                  required_pram_i,pram_i,
+                  required_pram_f,pram_f,
+                  required_pram_s,pram_s)
+    except KeyError, ke:
+        print "Parameter: " ,ke,' not found'
+    
 
 def do_tracking(key,conn,pram_i, pram_f, pram_s = None, rel = True,):
     prog_name = "tracking"
@@ -278,11 +323,10 @@ def do_sofq(key,conn,rel = True):
     
 
 
-
 def do_gofr_by_plane(key,conn,pram_i, pram_f, pram_s = None, rel = True,):
     prog_name = "gofr_by_plane"
     required_pram_i = ['nbins','comp_count']
-    required_pram_f = ['max_rng']
+    required_pram_f = ['max_range']
     required_pram_s = ['grp_name']
     # see if the file has already been processed
     res = check_comps_table(key,"Iden",conn)
@@ -294,7 +338,7 @@ def do_gofr_by_plane(key,conn,pram_i, pram_f, pram_s = None, rel = True,):
         return
     (fin,read_comp) = res[0]
     fout = os.path.dirname(fin) + '/gofr_by_planes.h5'
-     _make_sure_h5_exists(fout)
+    _make_sure_h5_exists(fout)
     
 
     comp_prams = {'read_comp':read_comp,'dset':key}
@@ -303,6 +347,8 @@ def do_gofr_by_plane(key,conn,pram_i, pram_f, pram_s = None, rel = True,):
     
     if pram_s is None:
         pram_s = {'grp_name':prog_name}
+
+
     try:
         _call_fun(conn,
                   prog_name,fin,fout,
@@ -310,10 +356,10 @@ def do_gofr_by_plane(key,conn,pram_i, pram_f, pram_s = None, rel = True,):
                   required_pram_i,pram_i,
                   required_pram_f,pram_f,
                   required_pram_s,pram_s)
-    expect KeyError, ke:
+    except KeyError, ke:
         print "Parameter: " ,ke,' not found'
     
-    
+
 
     
 def _call_fun(conn,
@@ -326,27 +372,48 @@ def _call_fun(conn,
                 req_s_pram = None,
                 s_pram = None,
                 rel = True):
+    """
+    prog_name : the name of the analysis program to be called
+    
+    fin : the hdf file to be read into
+    
+    fout : the hdf file to write the results to
+    
+    comp_pram : a dictionary of the computation/logistic parameters
+    
+    req_[ifs]_pram : list of required [integer,float,string]
+                     parameters to be passed to the program, the
+                     string list is optional
+    
+    [ifs]_pram : dictionary of [integer,float,string] parameters to be
+                 passed to the program, must include the parameters in
+                 the req_[ifs]_pram list.  The string dictionary is
+                 optional.
+             
+    rel : bool that sets if debugging or release version of the program 
+
+    """
     
     req_comp_prams = ['read_comp','write_comp','dset']
     
     config = xml_data()
     
     config.add_stanza(prog_name)
-    if req_i_pram in not None :
+    if req_i_pram is not None :
         for p in req_i_pram:
-            config.add_stanza(p,'int',i_pram[p])
-    if req_f_pram in not None :
+            config.add_pram(p,'int',i_pram[p])
+    if req_f_pram is not None :
         for p in req_f_pram:
-            config.add_stanza(p,'float',f_pram[p])
-    if req_s_pram in not None :
+            config.add_pram(p,'float',f_pram[p])
+    if req_s_pram is not None :
         for p in req_s_pram:
-            config.add_stanza(p,'string',s_pram[p])
+            config.add_pram(p,'string',s_pram[p])
 
     
     config.add_stanza("comps")
     
     for p in req_comp_prams:
-            config.add_stanza(p,'int',comp_pram[p])
+            config.add_pram(p,'int',comp_pram[p])
 
     config.disp()
     cfile = config.write_to_tmp()
@@ -364,10 +431,10 @@ def _call_fun(conn,
         print "entering into database"
         conn.execute("insert into comps (comp_key,dset_key,date,fin,fout,function) "
                      +"values (?,?,?,?,?,?);",
-                     (comp_num,key,date.today().isoformat(),fin,fout,prog_name))
-
-        if fun is not None:
-            fun(key,comp_num,conn)
+                     (comp_pram['write_comp'],key,date.today().isoformat(),fin,fout,prog_name))
+        
+        if prog_name in _prog_to_fun_lookup:
+            _prog_to_fun_lookup[prog_name](comp_pram,i_pram,f_pram,s_pram)
         
         conn.commit()
     else:
