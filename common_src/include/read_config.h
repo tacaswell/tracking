@@ -54,34 +54,25 @@ public:
 
   /**
      looks up the value of the given attribute.  The value is
-     returned by reference.  The function either returns true
-     or throws a logic_error.  This isn't all that clever, but
-     is the clashing of two styles of error checking.  At some point
-     this should be made either void, or return the value.
+     returned by reference.  The function returns the value.
 
      @param attr_name attribute name
   */
-  bool get_value(const std::string & attr_name,float & val)const;
+  float get_value(const std::string & attr_name,float & val)const;
+    /**
+     looks up the value of the given attribute.  The value is returned
+     by reference.  The function either returns the value.
+
+     @param attr_name attribute name
+  */
+ int get_value(const std::string & attr_name,int & val)const;
     /**
      looks up the value of the given attribute.  The value is
-     returned by reference.  The function either returns true
-     or throws a logic_error.  This isn't all that clever, but
-     is the clashing of two styles of error checking.  At some point
-     this should be made either void, or return the value.
+     returned by reference.  The function returns as well the value.
 
      @param attr_name attribute name
   */
-  bool get_value(const std::string & attr_name,int & val)const;
-    /**
-     looks up the value of the given attribute.  The value is
-     returned by reference.  The function either returns true
-     or throws a logic_error.  This isn't all that clever, but
-     is the clashing of two styles of error checking.  At some point
-     this should be made either void, or return the value.
-
-     @param attr_name attribute name
-  */
-  bool get_value(const std::string & attr_name,std::string & val)const;
+  std::string get_value(const std::string & attr_name,std::string & val)const;
   
 
   /**

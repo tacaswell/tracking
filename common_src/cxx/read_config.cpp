@@ -269,13 +269,13 @@ bool Read_config::contains_key(const string& key) const
 }
 
 
-bool Read_config::get_value(const string& key,float & val)const
+float Read_config::get_value(const string& key,float & val)const
 {
   int j = get_key_index(key);
   if(str2VT_s(prams_[j].type) == utilities::V_FLOAT)
   {
     if( from_string<float> (val,prams_[j].value,std::dec))
-      return true;
+      return val;
     else
       throw logic_error("Read_config:: failure to parse " + key);
   }
@@ -284,12 +284,12 @@ bool Read_config::get_value(const string& key,float & val)const
 }
 
 
-bool Read_config::get_value(const string& key,int & val)const
+int Read_config::get_value(const string& key,int & val)const
 {
   int j = get_key_index(key);
   if(str2VT_s(prams_[j].type) == utilities::V_INT)
     if(from_string<int> (val,prams_[j].value,std::dec))
-      return true;
+      return val;
     else 
       throw logic_error("Read_config:: failure to parse " + key);
   else
@@ -298,13 +298,13 @@ bool Read_config::get_value(const string& key,int & val)const
 
 
 
-bool Read_config::get_value(const string& key,string & val)const
+string Read_config::get_value(const string& key,string & val)const
 {
   int j = get_key_index(key);
   if(str2VT_s(prams_[j].type) == utilities::V_STRING)
   {
     val = prams_[j].value;
-    return true;
+    return val;
   }
   else
     throw logic_error("Read_congig::get_value, expect pram of type: string, found type: " + prams_[j].type);
