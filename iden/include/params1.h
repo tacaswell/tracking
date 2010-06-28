@@ -77,7 +77,7 @@ public:
   /** 
       Constructor 
   */
-  Params(int,float,int,float,int);
+  Params(int,float,int,float,int,float);
   
   const Params &operator=(const Params &);	/*//overloaded assignment operator*/
 
@@ -94,7 +94,9 @@ public:
   {return pctle_threshold_;}
   int get_mask_radius() const
   {return mask_radius_;}
-
+  int get_top_cut() const
+  {return top_cut_;}
+  
 	
 private:
   
@@ -103,8 +105,7 @@ private:
   int dilation_radius_;	/*//radius for dilation mask, in pixels*/
   float pctle_threshold_;	/*//percentile brightness to cutoff images*/
   int mask_radius_;		/*//radius for kernels for calculating mass, x and y positions, r^2, etc.*/
-
-  /*//2--output images for stacks 1, 1001, 2001, etc.; 3--prints out number of particles in each slice*/
+  float top_cut_;		// the percent of bright pixels to truncate off the top
 };
 }
 

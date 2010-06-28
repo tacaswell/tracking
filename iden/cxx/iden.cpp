@@ -133,7 +133,7 @@ Wrapper_i_plu * Iden::fill_wrapper(Tuple<float,2> dims,int frames,int start)
     
     // trim off the top .1% of the pixels to deal with outliers
     ///TODO make this a parameter
-    image_in.trim_max(.001);
+    image_in.trim_max(params_.get_top_cut());
  
 
     // clear the input data

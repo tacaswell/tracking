@@ -65,9 +65,9 @@ using iden::Params;
 Params::~Params()
 {
 }
-Params::Params(int fr,float hwhm,int di,float pt,int mr):
+Params::Params(int fr,float hwhm,int di,float pt,int mr,float top_cut):
   feature_radius_(fr),
-  hwhm_length_(hwhm),dilation_radius_(di),pctle_threshold_(pt),mask_radius_(mr)
+  hwhm_length_(hwhm),dilation_radius_(di),pctle_threshold_(pt),mask_radius_(mr),top_cut_(top_cut)
 {
 }
 
@@ -89,7 +89,7 @@ const Params &Params::operator =(const Params &Parameters)
     dilation_radius_ = Parameters.get_dilation_radius();
     pctle_threshold_ = Parameters.get_pctle_threshold();
     mask_radius_ = Parameters.get_mask_radius();
-		
+    top_cut_ = Parameters.get_top_cut();
   }
   else {
     cout << "Error: Parameters cannot be assigned to self!" << endl;

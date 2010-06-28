@@ -147,7 +147,7 @@ int main(int argc, char * const argv[])
   cout<<"file to read in: "<<data_file<<endl;
   cout<<"file that will be written to: "<<proc_file<<endl;
     
-  float hwhm,thresh;
+  float hwhm,thresh,top_cut;
   int feature_rad,dilation_rad, mask_rad,frame_c;
   Tuple<float,2> dims;
     
@@ -192,18 +192,26 @@ int main(int argc, char * const argv[])
        iden_prams.contains_key("p_rad") &&
        iden_prams.contains_key("hwhm") &&
        iden_prams.contains_key("d_rad") &&
+       iden_prams.contains_key("top_cut") &&
        iden_prams.contains_key("mask_rad")))
     throw logic_error("process:: parameter file does not contain enough parameters");
-  if(!iden_prams.get_value("threshold",thresh))
-    throw logic_error("process :: failure to parse threshold value");
-  if(!iden_prams.get_value("p_rad",feature_rad))
-    throw logic_error("process :: failure to parse p_rad value");
-  if(!iden_prams.get_value("hwhm",hwhm))
-    throw logic_error("process :: failure to parse hwhm value");
-  if(!iden_prams.get_value("d_rad",dilation_rad))
-    throw logic_error("process :: failure to parse dilation radius");
-  if(!iden_prams.get_value("mask_rad",mask_rad))
-    throw logic_error("process :: failure to parse mask radius");
+  try
+  {
+    iden_prams.get_value("threshold",thresh);
+    iden_prams.get_value("p_rad",feature_rad);
+    iden_prams.get_value("hwhm",hwhm);
+    iden_prams.get_value("d_rad",dilation_rad);
+    iden_prams.get_value("mask_rad",mask_rad);
+    iden_prams.get_value("top_cut",top_cut);
+  }
+  catch(logic_error & e)
+  {
+    cerr<<"error parsing the parameters"<<endl;
+    cerr<<e.what()<<endl;
+    return -1;
+  }
+
+
   
   // read parameters from xml that have do to with logistics
   Read_config comp_prams(pram_file,"comp");
@@ -217,7 +225,7 @@ int main(int argc, char * const argv[])
     
 
   
-  Params p(feature_rad,hwhm,dilation_rad,thresh,mask_rad);
+  Params p(feature_rad,hwhm,dilation_rad,thresh,mask_rad,top_cut);
   p.PrintOutParameters(std::cout);
   cout<<frame_c<<endl;
     
