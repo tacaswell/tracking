@@ -28,15 +28,13 @@ int main()
   string db_name("test.db");
   
   SQL_handler test(db_name);
+  int a = 1;
 
-  try
-  {
-    test.add_comp(1,"input","output","test_fun");
-  }
-  catch(...)
-  {
-  }
+  cout<<a<<endl;
   
+  
+  
+  test.add_comp(1,15,"input","output","test_fun");
 
 
 }

@@ -27,6 +27,8 @@ struct sqlite3;
 
 namespace utilities
 {
+class Read_config;
+
 /**
    Class to wrap around the sqlite3 interface to deal with making connections to
    data basese, cleaning up after them etc.  Will have both functions do to 
@@ -38,10 +40,12 @@ public:
   SQL_handler(const std::string& db_name);
   ~SQL_handler();
   void add_comp(int dset_key,
+		int comp_key,
 		const std::string &fin,
 		const std::string & fout,
 		const std::string & function);
-  
+  void add_iden_comp_prams(const Read_config & prams,int dset_key,int comp_key);
+
 private:
   sqlite3 * db_;
   
