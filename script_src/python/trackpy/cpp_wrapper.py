@@ -32,7 +32,7 @@ _rel_path = "/home/tcaswell/misc_builds/basic_rel/apps/"
 _dbg_path = "/home/tcaswell/misc_builds/basic_dbg/apps/"
 
 
-def add_gofr_plane_mdata(comp_pram,i_pram,f_pram,s_pram):
+def add_gofr_plane_mdata(comp_pram,i_pram,f_pram,s_pram,conn):
     """Writes the meta data for g(r) by plane to the table """
     prams = (comp_pram['dset'],comp_pram['write_comp'],i_pram['nbins'],
              f_pram['max_range'],i_pram['comp_count'],comp_pram['read_comp'])
@@ -42,9 +42,9 @@ def add_gofr_plane_mdata(comp_pram,i_pram,f_pram,s_pram):
     conn.commit()
 
 
-def add_gofr_mdata(comp_pram,i_pram,f_pram,s_pram):
+def add_gofr_mdata(comp_pram,i_pram,f_pram,s_pram,conn):
 
-    prams = (comp_pram['dset'],comp_pram['write_comp'],i_pram['nbins'],
+    params = (comp_pram['dset'],comp_pram['write_comp'],i_pram['nbins'],
              f_pram['max_range'],comp_pram['read_comp'])
     conn.execute("insert into gofr_prams" +
                  " (dset_key,comp_key,'nbins','max_range',iden_key) " +
@@ -132,16 +132,28 @@ def do_Iden(key,conn):
 
     comp_num = conn.execute("select max(comp_key) from comps;").fetchone()[0] + 1
 
-
+    hwhm = 1.2
+    p_rad = 4
     prams = xml_data()
     prams.add_stanza("comp")
     prams.add_pram("number","int",comp_num)
-    prams.merge_File(fpram,"iden")
+    #prams.merge_File(fpram,"iden")
+    prams.add_stanza("iden")
+    prams.add_pram("threshold" ,"float" ,"2.000000")
+    prams.add_pram("hwhm" ,"float" ,hwhm)
+    prams.add_pram("shift_cut" ,"float" ,"1.500000")
+    prams.add_pram("rg_cut" ,"float" ,"7.500000")
+    prams.add_pram("e_cut" ,"float" ,"0.600000")
+    prams.add_pram("top_cut" ,"float" ,"0.010000")
+    prams.add_pram("p_rad" ,"int" ,"4")
+    prams.add_pram("d_rad" ,"int" ,"4")
+    prams.add_pram("mask_rad" ,"int" ,"4")
+
     
     fxml = prams.write_to_tmp()
 
     prams.disp()
-    prams.write_to_disk('/home/tcaswell/misc_builds/iden_dbg/iden/apps/pram2.xml')
+    # prams.write_to_disk('/home/tcaswell/misc_builds/iden_dbg/iden/apps/pram2.xml')
     # ask for confirmation
     print "will processess"
     print fin
@@ -167,9 +179,14 @@ def do_Iden(key,conn):
 
     # if it works, then returns zero
     if rc == 0:
+        params = (key,comp_num,2,0.01,p_rad,hwhm,4,4,1.5,7.5,.6)
         print "entering into database"
         conn.execute("insert into comps (dset_key,date,fin,fout,function) values (?,?,?,?,?);",
                      (key,date.today().isoformat(),fin,fout,prog_name))
+            
+        conn.execute("insert into Iden_prams" +
+                     " (dset_key,comp_key,threshold,top_cut,p_rad,hwhm,d_rad,mask_rad,shift_cut,rg_cut,e_cut) " +
+                     "values (?,?,?,?,?,?,?,?,?,?,?);",params)
         conn.commit()
 
 
@@ -202,22 +219,27 @@ def do_gofr3D(key,conn):
 
     
     
-def do_gofr(key,conn,pram_i, pram_f, pram_s = None, rel = True,):
+def do_gofr(comp_key,write_key,conn,pram_i, pram_f, pram_s = None, rel = True,):
+    """
+    Computes gofr 
+
+    """
     prog_name = "gofr"
     required_pram_i = ['nbins']
     required_pram_f = ['max_range']
     required_pram_s = ['grp_name']
 
     # see if the file has already been processed
-    res = check_comps_table(key,"Iden",conn)
-    if len(res) ==0:
-        print "no entry"
-        return
-    ## if len(res) >1:
-    ##     print "more than one entry, can't cope, quiting"
-    ##     return
-    (fin,read_comp) = res[-1]
+    res = conn.execute("select fout,dset_key from comps where comp_key=? ;",
+                       (comp_key,)).fetchone()
+    read_comp = comp_key
+
+    print res
+    print comp_key
+    if res is None:
+        raise utils.dbase_error('no entry found')
     
+    (fin,key) = res
 
     fout = os.path.dirname(fin) + '/gofr.h5'
     _make_sure_h5_exists(fout)
@@ -229,6 +251,7 @@ def do_gofr(key,conn,pram_i, pram_f, pram_s = None, rel = True,):
         
     if pram_s is None:
         pram_s = {'grp_name':prog_name}
+
 
 
     
@@ -329,6 +352,7 @@ def do_gofr_by_plane(key,conn,pram_i, pram_f, pram_s = None, rel = True,):
     required_pram_f = ['max_range']
     required_pram_s = ['grp_name']
     # see if the file has already been processed
+    
     res = check_comps_table(key,"Iden",conn)
     if len(res) ==0:
         print "no entry"
@@ -427,14 +451,15 @@ def _call_fun(conn,
     print rc
 
     # if it works, then returns zero
+    #if False:
     if rc == 0:
         print "entering into database"
         conn.execute("insert into comps (comp_key,dset_key,date,fin,fout,function) "
                      +"values (?,?,?,?,?,?);",
-                     (comp_pram['write_comp'],key,date.today().isoformat(),fin,fout,prog_name))
+                     (comp_pram['write_comp'],comp_pram['dset'],date.today().isoformat(),fin,fout,prog_name))
         
         if prog_name in _prog_to_fun_lookup:
-            _prog_to_fun_lookup[prog_name](comp_pram,i_pram,f_pram,s_pram)
+            _prog_to_fun_lookup[prog_name](comp_pram,i_pram,f_pram,s_pram,conn)
         
         conn.commit()
     else:
