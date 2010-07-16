@@ -197,7 +197,7 @@ void Wrapper_o_hdf_group::store_particle(const particle * p_in)
   if(group_type_ == APPEND_GROUP)
   {
     part_index = p_in->get_ind();
-    added_count_++;
+    ++added_count_;
   }
   else
     part_index = added_count_++;
