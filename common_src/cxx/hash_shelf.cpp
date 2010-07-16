@@ -127,7 +127,7 @@ void Hash_shelf::priv_init()
   
   for(int j = 0; j<rank;++j)
   {
-    hash_dims_[j] = ceil(img_dims_[j]/upb_);
+    hash_dims_[j] = (int)ceil(img_dims_[j]/upb_);
     
     // (((int)(img_dims_[j]))%upb_==0?
     //  ((int)img_dims_[j])/upb_:
@@ -166,7 +166,7 @@ void Hash_shelf::priv_init()
      @param UPB
      new pixel per box value
    */
-void Hash_shelf::rehash(unsigned int UPB){
+void Hash_shelf::rehash(float UPB){
   list<particle*> tmp;
   shelf_to_list(tmp);
   upb_ = UPB;
