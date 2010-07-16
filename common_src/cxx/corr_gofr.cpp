@@ -35,13 +35,6 @@
 #include "particle_track.h"
 #include "generic_wrapper.h"
 
-#include "gnuplot_i.hpp"
-
-using gnuplot::Gnuplot;
-using gnuplot::GnuplotException;
-using gnuplot::wait_for_key;
-
- 
 
 using std::vector;
 using std::string;
@@ -138,21 +131,6 @@ void Corr_gofr::out_to_wrapper(Generic_wrapper & in,const std::string & g_name)c
   
 }
 
-
- 
-void Corr_gofr::display()const
-{
-
-  vector<float> tmp;
-  normalize(tmp);
-  
-  Gnuplot g(bin_edges_,tmp,"g(r)","steps");
-  g.set_grid();
-  wait_for_key();
-  
-
-
-}
 
 void Corr_gofr::normalize(vector<float> & out)const
 {

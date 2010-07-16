@@ -35,11 +35,6 @@
 #include "particle_track.h"
 #include "generic_wrapper.h"
 
-#include "gnuplot_i.hpp"
-
-using gnuplot::Gnuplot;
-using gnuplot::GnuplotException;
-using gnuplot::wait_for_key;
 
 
 #include <cmath>
@@ -232,20 +227,6 @@ void Corr_goftheta::out_to_wrapper(Generic_wrapper & in,const string& name)const
   
 }
 
-
-void Corr_goftheta::display()const
-{
-
-  vector<float> tmp;
-  normalize(tmp);
-  
-  Gnuplot g(bin_edges_,tmp,"g(theta)","steps");
-  g.set_grid().replot();
-  wait_for_key();
-  
-
-
-}
 
 void Corr_goftheta::normalize(std::vector<float> & out) const
 {
