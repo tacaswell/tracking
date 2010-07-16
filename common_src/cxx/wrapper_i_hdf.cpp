@@ -330,7 +330,7 @@ int Wrapper_i_hdf::get_value(int& out,
 			     int ind,D_TYPE type, int frame) const 
 {
   if(!contains_type(type))
-    throw "wrapper_i_hdf: wrapper does not contain this type";
+    throw "wrapper_i_hdf: wrapper does not contain " + DT2str_s(type);
   
   
   if(v_type(type) != V_INT)
@@ -345,7 +345,8 @@ float Wrapper_i_hdf::get_value(float& out,
 			       int ind,D_TYPE type, int frame) const 
 {
   if(!contains_type(type))
-    throw "wrapper_i_hdf: wrapper does not contain this type";
+    throw "wrapper_i_hdf: wrapper does not contain " + DT2str_s(type);
+  
   
   if(v_type(type) != V_FLOAT)
     throw "wrapper_i_hdf: wrong data type, not float";
@@ -370,7 +371,7 @@ std::complex<float> Wrapper_i_hdf::get_value(std::complex<float>& out,
 					     int ind,D_TYPE type, int frame) const 
 {
   if(!contains_type(type))
-    throw "wrapper_i_hdf: wrapper does not contain this type";
+    throw "wrapper_i_hdf: wrapper does not contain " + DT2str_s(type);
   
   if(v_type(type) != V_COMPLEX)
     throw "wrapper_i_hdf: wrong data type, not complex";
