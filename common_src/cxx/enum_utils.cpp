@@ -61,10 +61,10 @@ std::string DT2str_s(D_TYPE in)
   case D_E: 
     out = std::string("eccentricity") ; 
     return out;
-  case D_NEXT: 
+  case D_NEXT_INDX: 
     out = std::string("next_part") ; 
     return out;
-  case D_PREV: 
+  case D_PREV_INDX: 
     out = std::string("prev_part") ; 
     return out; 
   case D_DX: 
@@ -85,9 +85,6 @@ std::string DT2str_s(D_TYPE in)
   case D_ZPOS: 
     out = std::string("z") ; 
     return out;
-    return out;
-  case D_UNQID: 
-    out = std::string("unique_id") ; 
     return out;
   case D_TRACKID: 
     out = std::string("track_id") ; 
@@ -122,9 +119,8 @@ V_TYPE v_type(D_TYPE in)
     // integer data types
   case D_INDEX: 
   case D_FRAME: 
-  case D_NEXT:
-  case D_PREV: 
-  case D_UNQID:
+  case D_NEXT_INDX:
+  case D_PREV_INDX: 
   case D_TRACKID:
   case D_ORGX: 
   case D_ORGY: 

@@ -86,8 +86,8 @@ void hash_case::init(Master_box & mb,const utilities::Tuplef & dims,
     
 
   
-  mb.append_to_data_types(utilities::D_NEXT);
-  mb.append_to_data_types(utilities::D_PREV);
+  // mb.append_to_data_types(utilities::D_NEXT);
+  // mb.append_to_data_types(utilities::D_PREV);
   
   
   h_case_.resize(frames);

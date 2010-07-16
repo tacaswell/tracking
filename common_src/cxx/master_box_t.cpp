@@ -90,7 +90,7 @@ void Master_box::priv_init()
   
   
   data_types = in_wrapper_->get_data_types();
-  data_types.insert(utilities::D_UNQID);
+  
 
   
   particle::intialize_wrapper_in(in_wrapper_);

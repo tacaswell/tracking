@@ -47,31 +47,37 @@ typedef enum W_TYPE{
    add the D_TYPE to the V_TYPE conversion function, and D2Str function.
 */
 typedef enum D_TYPE {
-  D_INDEX=0, 
-  D_XPOS, 
-  D_YPOS, 
-  D_FRAME, 
+  D_INDEX=0, 			// index of particle in case,
+				// (frame,indx) is unique and should
+				// be persistent in wrappers (wrapper)
 
-  D_I, 
-  D_R2, 
-  D_E,
-  
-  D_NEXT,
-  D_PREV, 
-  
-  D_DX, 
-  D_DY, 
-  D_ORGX, 
-  D_ORGY, 
-  
-  D_ZPOS,
-  D_UNQID,
+  D_XPOS, 			// x-position (plu)
+  D_YPOS, 			// y-position (plu)
+  D_FRAME, 			// frame (wrapper)
 
-  D_TRACKID,
-  D_S_ORDER_PARAMETER,
-  D_MULT,
+  D_I, 				// integrated intensity (plu)
+  D_R2, 			// radius of gyration (plu)
+  D_E,				// eccentricity (plu)
+  
+  D_NEXT_INDX,			// index of the next particle in the
+				// track (track)
+  D_PREV_INDX, 			// index of the previous particle in
+				// the track (track)
+  
+  D_DX, 			// x-shift (plu)
+  D_DY, 			// y-shift (plu)
+  D_ORGX, 			// original x-position (computed)
+  D_ORGY, 			// original y-position (computed)
+  
+  D_ZPOS,			// z-position (link or meta-data)
 
-  D_N_SIZE, 			// neighborhood size
+  D_TRACKID,			// track id (track)
+  D_S_ORDER_PARAMETER,		// scalar order parameter (computed)
+  D_MULT,			// multiplicity (plu)
+
+  D_N_SIZE, 			// neighborhood size (computed)
+
+  
 } D_TYPE;
 
 
@@ -80,7 +86,7 @@ typedef enum D_TYPE {
    flat wrappers to work properly.  If this is wrong, there will be
    buffer overflow which will screw you over.
  */
-const int D_TYPE_COUNT = 19;
+const int D_TYPE_COUNT = 18;
 
 /**
    Enumeration for the type of value the data is (ie float, int,complex)
