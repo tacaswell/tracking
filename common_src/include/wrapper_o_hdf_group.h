@@ -75,6 +75,7 @@ public:
   
   Wrapper_o_hdf_group(H5::CommonFG * parent, const std::string & g_name,
 		      std::set<D_TYPE>,
+		      int p_count,
 		      int size,
 		      int comp_num,
 		      GROUP_T type);
@@ -141,9 +142,18 @@ private:
      the reference number from the database 
   */
   int comp_number_;
+
   /**
-     the number of particles to be added to the group, this must be known at
-     creation time
+     the number of particles to be added to the group, this is used as a check
+     to make sure that particles don't get left out.
+  */
+  int p_count_;
+
+
+  /**
+     the size of the to array that data will be added to, this must be known at
+     creation time and must match the size of the under lying wrapper if appending
+     to a wrapper.
   */
   int size_;
 

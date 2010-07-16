@@ -90,7 +90,7 @@ void Hash_shelf::output_to_wrapper(Wrapper_out & wrapper) const
   
   cout<<particle_count_<<"particles"<<endl;
   
-  wrapper.open_group(plane_number_,particle_count_);
+  wrapper.open_group(plane_number_,particle_count_,max_part_indx_ + 1);
   // try
   // {
   //   wrapper.add_meta_data("z-position",z_offset_,false);

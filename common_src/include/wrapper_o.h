@@ -88,9 +88,13 @@ public:
 
 
   /**
-     Opens a group to put particles into
+     Opens a group to put particles into. 
+
+     @param group the index of the group to be opened
+     @param p_count the number of particles to expect
+     @param wrapper_size the size of the group of the underlying wrapper, if <0, then set equal to p_count
    */
-  virtual void open_group(int group = 0,int p_count=0) = 0;
+  virtual void open_group(int group = 0,int p_count =0, int wrapper_size=-1) = 0;
   
   
   /**

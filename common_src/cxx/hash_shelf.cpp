@@ -74,6 +74,10 @@ void Hash_shelf::push(particle * p){
     //cout<<hash_function(p)<<endl;
     
     (hash_.at(hash_function(p)))->push(p);
+    int tmp_ind = p->get_ind();
+    if(tmp_ind > max_part_indx_)
+      max_part_indx_ = tmp_ind;
+    
   }
   catch (std::exception& e)    {
     cout << e.what() << endl;

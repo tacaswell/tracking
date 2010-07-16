@@ -296,6 +296,12 @@ protected:
   unsigned int particle_count_;
 
   /**
+     Number of particles in the input wrapper.  needed to use filters
+     and to write back out to the same file
+   */
+  int max_part_indx_;
+  
+  /**
      Dimensions of the hash table
    */
   utilities::Tuplei hash_dims_;

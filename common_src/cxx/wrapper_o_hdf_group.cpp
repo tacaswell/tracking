@@ -73,11 +73,12 @@ const int Wrapper_o_hdf_group::csize_ = 400;
 
 Wrapper_o_hdf_group::Wrapper_o_hdf_group(CommonFG * parent, const std::string & g_name,
 					 std::set<D_TYPE> d_add,
+					 int p_count,
 					 int size,
 					 int comp_num,
 					 GROUP_T type
 					 ):
-  parent_(parent),comp_number_(comp_num),size_(size),added_count_(0),group_type_(type),d_types_add_(d_add)
+  parent_(parent),comp_number_(comp_num),p_count_(p_count),size_(size),added_count_(0),group_type_(type),d_types_add_(d_add)
 {
 
   try
@@ -205,10 +206,11 @@ void Wrapper_o_hdf_group::store_particle(const particle * p_in)
 
 
   // do sanity checks
-  if((added_count_>size_))
+  if((added_count_>p_count_))
   {
     cout<<"part_count_ "<<added_count_<<'\t';
-    cout<<"group_max_count_ "<<size_<<endl;
+    cout<<"group_max_count_ "<<p_count_<<endl;
+    cout<<"wrapper_size "<<size_<<endl;
     throw logic_error("wrapper_o_hdf: trying to add too many particles to group");
   }
   if(part_index == -1)
@@ -276,10 +278,10 @@ void Wrapper_o_hdf_group::store_particle_pos(const Tuple<float,3> & cord_in,floa
   // testf = test[0];
   
   
-  if((added_count_>size_))
+  if((added_count_>p_count_))
   {
     cout<<"part_count_ "<<added_count_<<'\t';
-    cout<<"group_max_count_ "<<size_<<endl;
+    cout<<"group_max_count_ "<<p_count_<<endl;
     throw logic_error("wrapper_o_hdf: trying to add too many particles to group");
   }
     // set values to temp storage
@@ -322,7 +324,7 @@ void Wrapper_o_hdf_group::store_particle_pos(const Tuple<float,3> & cord_in,floa
 void Wrapper_o_hdf_group::write_to_disk()
 {
   // make sure the particle is closed
-  if(added_count_ != size_)
+  if(added_count_ != p_count_)
     throw logic_error("not enough particles added");
   
     

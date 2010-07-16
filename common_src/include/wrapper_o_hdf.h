@@ -87,7 +87,7 @@ public:
   
     
   void initialize_wrapper();
-  void open_group(int,int);
+  void open_group(int,int,int);
 
 
   

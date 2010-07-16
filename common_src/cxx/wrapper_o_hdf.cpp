@@ -151,8 +151,10 @@ void Wrapper_o_hdf::initialize_wrapper()
   wrapper_open_ = true;
 }
 
-void Wrapper_o_hdf::open_group(int group_indx,int p_count)
+void Wrapper_o_hdf::open_group(int group_indx,int p_count,int wrapper_size)
 {
+  if (wrapper_size <0)
+    wrapper_size = p_count;
   
   if(wrapper_open_)
   {
@@ -182,6 +184,7 @@ void Wrapper_o_hdf::open_group(int group_indx,int p_count)
 					     format_name(group_indx),
 					     d_types_add_,
 					     p_count,
+					     wrapper_size,
 					     comp_number_,
 					     g_type);
   }
