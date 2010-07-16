@@ -65,7 +65,8 @@ public:
 	    float max_range, 
 	    const int n_bins,
 	    int comp_num,
-	    int dset_num);
+	    int dset_num,
+	    int read_comp_num);
   
   /**
      Averages the values in a vector of Accum_sofq and writes 

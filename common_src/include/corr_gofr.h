@@ -63,11 +63,12 @@ public:
    */
   void normalize(std::vector<float> & gofr) const;
   
+  
   /**
      constructor.  The maximum range is taken from particle::max_neighborhood_range_.
      The bins are spaced linearly.  
    */
-  Corr_gofr(int bins,float max,int comp_num,int dset);
+  Corr_gofr(int bins,float max,int comp_num,int dset,int read_comp);
   
   void display() const;
   
@@ -110,6 +111,10 @@ private:
      Computation number
    */
   int comp_num_;
+  /**
+     Iden comp number
+   */
+  int read_comp_;
   
 };
 

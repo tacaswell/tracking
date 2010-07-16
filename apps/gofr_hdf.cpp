@@ -51,6 +51,7 @@
 
 #include "read_config.h"
 
+#include "enum_utils.h"
 //#include "gnuplot_i.hpp" //Gnuplot class handles POSIX-Pipe-communication with Gnuplot
 
 using std::cout;
@@ -71,6 +72,8 @@ using utilities::D_TYPE;
 using utilities::Generic_wrapper_hdf;
 
 using utilities::Read_config;
+
+using utilities::format_name;
 
 
 using tracking::Master_box;
@@ -149,6 +152,7 @@ int main(int argc, char * argv[])
     app_prams.get_value("max_range",max_range);
     app_prams.get_value("nbins",nbins);
     app_prams.get_value("grp_name",grp_name);
+
   }
   catch(logic_error & e)
   {
@@ -212,7 +216,7 @@ int main(int argc, char * argv[])
 
     cout<<"hash case filled"<<endl;
     
-    Corr_gofr gofr(nbins,max_range,write_comp_num,dset_num);
+    Corr_gofr gofr(nbins,max_range,write_comp_num,dset_num,read_comp_num);
     hcase.compute_corr(gofr);
     cout<<"computed g(r)"<<endl;
     
@@ -220,7 +224,7 @@ int main(int argc, char * argv[])
 
       
     Generic_wrapper_hdf hdf_out(out_file,true);
-    gofr.out_to_wrapper(hdf_out,grp_name);
+    gofr.out_to_wrapper(hdf_out,format_name(grp_name,write_comp_num));
     cout<<"wrote out g(r)"<<endl;
 
     

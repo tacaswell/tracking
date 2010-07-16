@@ -1,4 +1,4 @@
-//Copyright 2009 Thomas A Caswell
+//Copyright 2009-2010 Thomas A Caswell
 //tcaswell@uchicago.edu
 //http://jfi.uchicago.edu/~tcaswell
 //
@@ -41,6 +41,7 @@ using gnuplot::Gnuplot;
 using gnuplot::GnuplotException;
 using gnuplot::wait_for_key;
 
+ 
 
 using std::vector;
 using std::string;
@@ -86,9 +87,9 @@ void Corr_gofr::compute(const particle * p_in,const vector<const particle*> & nh
 
 
 
-Corr_gofr::Corr_gofr(int bins,float max,int comp_num,int dset):
+Corr_gofr::Corr_gofr(int bins,float max,int comp_num,int dset,int read_comp):
   bin_count_(bins),bin_edges_(bins),n_bins_(bins),
-  max_range_(max),parts_added_(0),dset_(dset),comp_num_(comp_num)
+  max_range_(max),parts_added_(0),dset_(dset),comp_num_(comp_num),read_comp_(read_comp)
 {
   if(bins <1)
     throw "number of bins must be greater than 0";
@@ -125,6 +126,7 @@ void Corr_gofr::out_to_wrapper(Generic_wrapper & in,const std::string & g_name)c
   in.add_dset(1,&n_bins_,utilities::V_FLOAT,yar,"bin_edges");
 
   in.add_meta_data("comp_num",comp_num_);
+  in.add_meta_data("iden_key",read_comp_);
   in.add_meta_data("dset",dset_);
   in.add_meta_data("max_range",max_range_);
   in.add_meta_data("nbins",n_bins_);
@@ -137,6 +139,7 @@ void Corr_gofr::out_to_wrapper(Generic_wrapper & in,const std::string & g_name)c
 }
 
 
+ 
 void Corr_gofr::display()const
 {
 
