@@ -341,3 +341,43 @@ void particle_track::clear_data_backward()
   }
   
 }
+
+  
+int particle_track::get_value(utilities::D_TYPE type,int & val) const
+{
+  if(v_type(type) != utilities::V_INT)
+    throw "particle_base: wrong V_TYPE";
+ 
+  switch(type)
+  {
+  case utilities::D_NEXT_INDX:
+    if(next_ !=NULL) val = next_->get_ind();
+    else val = -1;
+    break;
+  case utilities::D_PREV_INDX:
+    if(prev_ !=NULL)val = prev_->get_ind();
+    else val = -1;
+    break;
+  case utilities::D_TRACKID:
+    if(track_!= NULL) val = track_->get_id();
+    else val = -1;
+    break;
+  default:
+    particle_base::get_value(type,val);
+  }
+  
+  return val;
+
+}
+
+  
+float particle_track::get_value(utilities::D_TYPE type,float &val) const
+{
+  return particle_base::get_value(type,val);
+}
+
+std::complex<float> particle_track::get_value(utilities::D_TYPE type,
+			      std::complex<float>& val) const
+{
+  return particle_base::get_value(type,val);
+}

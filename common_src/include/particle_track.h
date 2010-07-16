@@ -188,6 +188,13 @@ public:
   */
   std::list<std::pair<particle_track*, float> >* p_pos_link;
 
+      
+  float get_value(utilities::D_TYPE type,float & val) const;
+  int get_value(utilities::D_TYPE type,int &val) const;
+  std::complex<float> get_value(utilities::D_TYPE type,
+   				std::complex<float>& val) const;
+
+
 
 private:
   ///next particle in track
@@ -291,6 +298,8 @@ private:
      ==NULL
    */
   void clear_data_backward();
+
+
 };
 }
 #endif
