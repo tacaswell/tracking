@@ -37,7 +37,7 @@
 namespace utilities
 {
 class Wrapper_in;
-class params;
+
 class Filter;
 
 
@@ -76,11 +76,6 @@ public:
     data_types.insert(type);
   }
 
-  
-  ///Constructor for a Master_box based on
-  ///data read in from a txt file
-  Master_box(utilities::params* prams_in);
-
 
   Master_box();
     
@@ -90,11 +85,6 @@ public:
 
   ///Cleans up hanging lists from the tracking procedure
   void clean_pos_link();
-
-  /**
-     public facing initilization attemting to deal with matlab
-   */
-  void init(utilities::params* prams_in);
 
 
   /**

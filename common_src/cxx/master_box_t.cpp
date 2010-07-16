@@ -28,7 +28,7 @@
 #include "accumulator.h"
 #include "particle_base.h"
 #include "particle_track.h"
-#include "params.h"
+
 
 #include "wrapper_i.h"
 #include "filter.h"
@@ -42,27 +42,10 @@ using std::vector;
 
 
 
-Master_box::Master_box(utilities::params* params_in )
-  :in_wrapper_(NULL),own_wrapper_(false){
-  
-  init(params_in);
-
-}
 Master_box::Master_box()
   :in_wrapper_(NULL),own_wrapper_(false){
   
 
-}
-void Master_box::init(utilities::params* params_in){
-  if(in_wrapper_!=NULL){
-    std::cout<<"can't re-initialize"<<std::endl;
-    return;
-  }
-  own_wrapper_ = true;
-  
-  in_wrapper_ = params_in->make_wrapper_in();
-  
-  priv_init();
 }
 
 
