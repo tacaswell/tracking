@@ -94,7 +94,7 @@ public:
   {return pctle_threshold_;}
   int get_mask_radius() const
   {return mask_radius_;}
-  int get_top_cut() const
+  float get_top_cut() const
   {return top_cut_;}
   
 	
