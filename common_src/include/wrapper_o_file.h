@@ -27,7 +27,7 @@
 
 #ifndef WRAPPER_O_FILE
 #define WRAPPER_O_FILE
-namespace tracking{
+namespace utilities{
 //set up to use stl
 using std::string;
 using std::vector;
