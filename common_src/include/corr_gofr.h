@@ -59,10 +59,14 @@ public:
 
   // special stuff
   /**
-     normalize G(r) to the average
+     normalize g(r) to the average and area etc
    */
   void normalize(std::vector<float> & gofr) const;
   
+  /**
+     Returns the bin edges
+   */
+  void get_bin_edges(std::vector<float> & out) const;
   
   /**
      constructor.  The maximum range is taken from particle::max_neighborhood_range_.

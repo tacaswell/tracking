@@ -182,3 +182,8 @@ void Corr_gofr::normalize(vector<float> & out)const
   out[n_bins_-1] = bin_count_[n_bins_-1]/norm_factor;
   
 }
+
+void Corr_gofr::get_bin_edges(std::vector<float> & out) const
+{
+  out = bin_edges_;
+}
