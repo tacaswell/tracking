@@ -103,27 +103,6 @@ float particle_base::distancesq(const particle_base* part_in)const
 
 
 
-float particle_base::get_value(utilities::D_TYPE type) const{
-  //add check to make sure that the particle know about this
-  //type
-  int tmpi;
-  float tmpf;
-  switch(utilities::v_type(type))
-  {
-  case utilities::V_INT:
-    if(type == utilities::D_FRAME)
-      return (float) frame_;
-    
-    wrapper_in_->get_value(tmpi,ind_,type,frame_);
-    return (float) tmpi;
-  case utilities::V_FLOAT:
-    wrapper_in_->get_value(tmpf,ind_,type,frame_);
-    return tmpf;
-  default:
-    throw "particle_base: unsupported type";
-  }
-}
-
 
 
 float particle_base::get_value(utilities::D_TYPE type,float & data_io ) const

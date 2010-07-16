@@ -100,14 +100,27 @@ public:
   virtual void print() const;
 
   
+  /**
+     Returns the float value of type given.  The value is passed out by reference and returned
 
-  ///Returns the value of 'type' for the particle as specified
-  ///by the in_wrapper, get rid of these
-  virtual float get_value(utilities::D_TYPE type) const;
+     @param type the value to be extracted
+     @param val reference to the variable to be set.  Also sets type of function call
+  */
+  virtual float               get_value(utilities::D_TYPE type,float & val        ) const;
+  /**
+     Returns the int value of type given.  The value is passed out by reference and returned
 
-  virtual float              get_value(utilities::D_TYPE type,float &        ) const;
-  virtual int                 get_value(utilities::D_TYPE type,int &          ) const;
-  virtual std::complex<float> get_value(utilities::D_TYPE type,std::complex<float>&) const;
+     @param type the value to be extracted
+     @param val reference to the variable to be set.  Also sets type of function call
+  */
+  virtual int                 get_value(utilities::D_TYPE type,int &val    ) const;
+  /**
+     Returns the complex value of type given.  The value is passed out by reference and returned
+
+     @param type the value to be extracted
+     @param val reference to the variable to be set.  Also sets type of function call
+  */
+  virtual std::complex<float> get_value(utilities::D_TYPE type,std::complex<float>& val) const;
 
   /**
      returns a tuple of the particle's position
