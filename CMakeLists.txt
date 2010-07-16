@@ -66,9 +66,7 @@ SET(COMMON_WRAPPER_SRC
   ${COMMON_SRC_PATH}/data_map.cpp
 )
 
-SET(MATLAB_WRAPPER_SRC
 
-)
 
 SET(OTHER_WRAPPER_SRC
   ${COMMON_SRC_PATH}/wrapper_i_file.cpp
@@ -91,6 +89,10 @@ SET(HDF_SRC
 set(SQL_CODE
   ${EXTERNAL_SRC_PATH}/sqlite-3.6.23.1/sqlite3.c
   ${COMMON_SRC_PATH}/sql_handler.cpp
+)
+
+SET(CORR_DISPLAY_SRC
+  ${COMMON_SRC_PATH}/corr_display.cpp
 )
 
 SET(ENV{HDF5_ROOT} "/home/tcaswell/local_installs")

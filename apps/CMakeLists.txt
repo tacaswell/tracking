@@ -109,22 +109,22 @@ set_target_properties(phi6 PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_COUNT=2"
 
 
 
-# add_executable(tracking tracking.cpp ${COMMON_SRC}
-#  ${UTIL_SRC}
-#  ${HDF_SRC}
-#  ${CORR_SRC}
-#  ${GNU_PLOT_SRC}
-#  ${COMMON_TRACK_SRC}
-#  ${COMMON_HASH_SRC} 
-#  ${HASH_TRACK_SRC}
-#  ${COMMON_WRAPPER_SRC} 
-#  ${CONFIG_SRC}
-# )
-# target_link_libraries(tracking
-#   ${HDF5_LIBRARIES} 
-#   ${XERCESC_LIBRARY} 
-#   )
-# set_target_properties(tracking PROPERTIES COMPILE_DEFINITIONS  "PTYPE=1;DIM_COUNT=2")
+add_executable(tracking tracking.cpp ${COMMON_SRC}
+ ${UTIL_SRC}
+ ${HDF_SRC}
+ ${CORR_SRC}
+ ${GNU_PLOT_SRC}
+ ${COMMON_TRACK_SRC}
+ ${COMMON_HASH_SRC} 
+ ${HASH_TRACK_SRC}
+ ${COMMON_WRAPPER_SRC} 
+ ${CONFIG_SRC}
+)
+target_link_libraries(tracking
+  ${HDF5_LIBRARIES} 
+  ${XERCESC_LIBRARY} 
+  )
+set_target_properties(tracking PROPERTIES COMPILE_DEFINITIONS  "PTYPE=1;DIM_COUNT=2")
 
 
 
