@@ -28,8 +28,8 @@
 #include <stdlib.h>
 #include <string>
 
-#include "mex.h"
-#include "params_matlab.h"
+
+
 #include "wrapper_i_matlab.h"
 
 using namespace utilities;
@@ -38,47 +38,58 @@ using std::complex;
 using std::endl;
 using std::set;
 using std::map;
-
-/**
-   Implementation for wrapper_i of files.
- */
+using std::logic_error;
+using std::runtime_error;
 
 
-int Wrapper_i_matlab::get_num_entries()const{
-  return rows;
+
+int Wrapper_i_matlab::get_num_entries(int frame)const{
+  return frame_offsets_.at(frame +1) - frame_offsets_.at(frame);
+  
+}
+
+int Wrapper_i_matlab::get_num_frames()const
+{
+  return frames_;
+  
+}
+
+bool Wrapper_i_matlab::contains_type(D_TYPE type)const
+{
+  map<D_TYPE,int>::const_iterator it = data_types_.find(type);
+  return it != data_types_.end();
+}
+
+Tuplef Wrapper_i_matlab::get_dims()const
+{
+  return dims_;
+  
 }
 
 
 
-float Wrapper_i_matlab::get_value(int ind,  utilities::D_TYPE type,int junk)const{
-  //note that this is sideways to deal with the fact that matlab is
-  //blasted coloum major
-
-
-//   std::map<utilities::D_TYPE,int>::const_iterator it = data_types_.find(type);
-//   if(it == data_types_.end())
-//     {
-//       throw "type not in wrapper";
-//     }
+float Wrapper_i_matlab::get_value(int ind,  utilities::D_TYPE type,int frame)const{
   
   int data_posistion = data_map_(type);
-  if(data_posistion >=0)
-    return *(first + ind  + rows * data_posistion);
-
-  
-  //deal with error
-  cout<<"wrapper does not store this type of data, size of set is: "
-      <<data_types_.size()
-      <<   endl;
-  //    return;
-  return -123456789;
-
-
+  if(data_posistion <0)
+    throw logic_error("wrapper_i_matlab: Wrapper does not contain " + DT2str_s(type));
+    
+  return *(first_ + ind + frame_offsets_.at(frame) + rows_ * data_posistion);
 }
+
+int Wrapper_i_matlab::get_value(int& out,int ind,D_TYPE type, int frame) const
+{
+  out = (int) get_value(ind,type,frame);
+  return out;
+  
+}
+
 
 float Wrapper_i_matlab::get_value(float &out,int ind, utilities::D_TYPE type,int frame)const
 {
   out = get_value(ind,type,frame);
+  return out;
+  
 }
 
 complex<float> Wrapper_i_matlab::get_value(std::complex<float> &out,int ind, utilities::D_TYPE type,int frame)const
@@ -88,15 +99,14 @@ complex<float> Wrapper_i_matlab::get_value(std::complex<float> &out,int ind, uti
 
 
 void Wrapper_i_matlab::print()const{
-  cout<<"rows: "<<rows<<" cols: "<<cols<<endl;
+  cout<<"rows: "<<rows_<<" cols: "<<cols_<<endl;
 }
 
 
 Wrapper_i_matlab::~Wrapper_i_matlab(){
   //don't need to do anything here because everything is taken care of
   //by matlab, or so we hope.
-  first = NULL;
-  
+  first_ = NULL;
 }
 
 
@@ -115,38 +125,43 @@ void Wrapper_i_matlab::get_data_types(std::set<utilities::D_TYPE>& out) const{
 }
 
 
-Wrapper_i_matlab::Wrapper_i_matlab(params_matlab* param):
-  rows(mxGetM(*(param->data_in))),
-  cols(mxGetN(*(param->data_in))), first(mxGetPr(*(param->data_in))),
-  data_map_(param->contains)
-{
+Wrapper_i_matlab::Wrapper_i_matlab(const mxArray ** mex_array,std::map<utilities::D_TYPE,int> contents,Tuplef dims):
+  mex_array_(mex_array),
+  rows_(mxGetM(*mex_array)),
+  cols_(mxGetN(*mex_array)), first_(mxGetPr(*mex_array)),
+  dims_(dims),
+  data_map_(contents)
   
-  //   //nonsense to get the map set up
-  //   p_vals tmp[] = {d_index, D_XPOS, D_YPOS, d_I, d_r2, D_FRAME};
-  //   int tmp2[] = {0, 1, 2 ,3,4,5};
+{
+  // make sure that the array has a frame column
+  int frm_offset = data_map_(D_FRAME);
+  
+  if(frm_offset <0)
+    throw logic_error("wrapper_i_matlab: Wrapper does not contain " + DT2str_s(D_FRAME));
+  
+  // make sure that the frame_offsets_ vector is empty
+  frame_offsets_.clear();
+  frame_offsets_.push_back(0);
+  
+  // loop over all data to get frame offsets and record the max x/max y for dims
+  int cur_frame = (int) *(first_ + 0  + rows_ * frm_offset);
+  for(int j = 0;j<rows_;++j)
+  {
+    int tmp_frame = (int) *(first_ + j  + rows_ * frm_offset);
+    if(tmp_frame != cur_frame)
+    {
+      if(tmp_frame != (cur_frame +1))
+	throw runtime_error("wrapper_i_matlab:: the frames must be evenly spaced and monotonic");
+      
+      cur_frame = tmp_frame;
+      frame_offsets_.push_back(j);
+    }
     
-  //   vector<utilities::D_TYPE > tmp3(tmp, tmp+6);
-  //   vector<p_vals>::iterator it1 = tmp3.begin();
-    
-  //   vector<int> tmp4(tmp2, tmp2+6);
-  //   vector<int>::iterator it2 = tmp4.begin();
-
-  //   map<p_vals, int>::iterator it3 = data_types.begin();
-
-  //   for( ;it2<tmp4.end() && it1<tmp3.end() ; it1++, it2++, it3++)
-  //    data_types.insert(it3,pair<p_vals, int>(*it1, *it2));
-  //end nonense
-  //there has to be a better way to do this
-
-  /*  cout<<data_types[d_index]<<"\t"
-      <<data_types[D_XPOS	]<<"\t"
-      <<data_types[D_YPOS	]<<"\t"
-      <<data_types[d_I	]<<"\t"
-      <<data_types[d_r2	]<<"\t"
-      <<data_types[d_e    ]<<"\t"
-      <<endl;
-  */
-
-
+  }
+  frames_ = frame_offsets_.size();
+  
+  frame_offsets_.push_back(rows_);
+  
+  
   
 }

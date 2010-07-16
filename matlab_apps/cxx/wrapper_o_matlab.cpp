@@ -23,7 +23,7 @@
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
 #include "wrapper_o_matlab.h"
-#include "params_matlab.h"
+
 #include <iostream>
 using namespace utilities;
 using std::cout;
@@ -68,15 +68,15 @@ void Wrapper_o_matlab::initialize_wrapper(){
   wrapper_open = true;
 }
 
-void Wrapper_o_matlab::reset_wrapper(params * param_in){
-  params_matlab* param;
-  param = dynamic_cast<params_matlab*>(param_in);
-  seq_count = 0;
-  part_count = 0;
-  wrapper_open = false;
-  part_open = false;
-  data_array_ = param->data_out;
-};
+// void Wrapper_o_matlab::reset_wrapper(params * param_in){
+//   params_matlab* param;
+//   param = dynamic_cast<params_matlab*>(param_in);
+//   seq_count = 0;
+//   part_count = 0;
+//   wrapper_open = false;
+//   part_open = false;
+//   data_array_ = param->data_out;
+// };
 
 void Wrapper_o_matlab::open_particle(int){
   if(part_open)
@@ -94,11 +94,11 @@ void Wrapper_o_matlab::open_particle(int){
 }
 
 
-Wrapper_o_matlab::Wrapper_o_matlab(params_matlab* parms)
-  :data_array_(parms->data_out),
-   rows(parms->rows),cols(parms->cols),
-   data_map_(parms->contains)
-{}
+// Wrapper_o_matlab::Wrapper_o_matlab(params_matlab* parms)
+//   :data_array_(parms->data_out),
+//    rows(parms->rows),cols(parms->cols),
+//    data_map_(parms->contains)
+// {}
   
 
 Wrapper_o_matlab::~Wrapper_o_matlab(){
@@ -116,3 +116,24 @@ void Wrapper_o_matlab::print()const
   
   return;
 }
+
+void Wrapper_o_matlab::set_all_values(const tracking::particle *)
+{
+  throw "not implemented";
+}
+
+void Wrapper_o_matlab::set_all_values(const tracking::Track_box *)
+{
+  throw "not implemented";
+}
+void Wrapper_o_matlab::get_content_tpyes(std::set<D_TYPE>&) const 
+{
+  throw "not implemented"	;
+}
+
+
+const std::set<D_TYPE>& Wrapper_o_matlab::get_content_tpyes() const
+{
+  throw "not implemented";
+}
+

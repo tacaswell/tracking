@@ -9,8 +9,6 @@ SET(MATLAB_UTIL_SRC
   ${MATLAB_SRC_PATH}/generic_wrapper_matlab.cpp
   ${MATLAB_SRC_PATH}/generic_parameters_matlab.cpp
   ${MATLAB_SRC_PATH}/cell_matlab.cpp 
-#  ${MATLAB_SRC_PATH}/wrapper_i_matlab.cpp
-#  ${MATLAB_SRC_PATH}/wrapper_o_matlab.cpp
   )
 
 
@@ -26,6 +24,13 @@ SET(MATLAB_IDEN_SRC
   ${IDEN_SRC_PATH}/image1_mex.cpp
   ${IDEN_SRC_PATH}/params1_mex.cpp
 )
+
+
+SET(MATLAB_WRAPPER_SRC
+  ${MATLAB_SRC_PATH}/wrapper_i_matlab.cpp
+  ${MATLAB_SRC_PATH}/wrapper_o_matlab.cpp
+)
+
 
 set(ENV{FREEIMAGE_ROOT} "/home/tcaswell/local_installs/usr/")
 find_package(FreeImage REQUIRED)
@@ -57,6 +62,24 @@ add_library(matlab_process SHARED
 set_target_properties(matlab_process PROPERTIES COMPILE_DEFINITIONS  
   "PTYPE=0;DIM_COUNT=2;MATLAB_MEX_FILE")
 target_link_libraries(matlab_process 
+  ${IPP_LIBRARIES} 
+  ${FreeImage_LIBRARIES}
+  )
+
+
+add_library(basic_static SHARED
+  apps/basic_static.cpp 
+  ${COMMON_SRC} 
+  ${UTIL_SRC} 
+  ${MATLAB_UTIL_SRC}
+  ${COMMON_WRAPPER_SRC}
+  ${CORR_SRC}
+  ${COMMON_HASH_SRC}
+  ${MATLAB_WRAPPER_SRC}
+  )
+set_target_properties(basic_static PROPERTIES COMPILE_DEFINITIONS  
+  "PTYPE=0;DIM_COUNT=2;MATLAB_MEX_FILE")
+target_link_libraries(basic_static
   ${IPP_LIBRARIES} 
   ${FreeImage_LIBRARIES}
   )

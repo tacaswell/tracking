@@ -29,9 +29,9 @@
 #define WRAPPER_I_MATLAB
 
 #include <complex>
+#include <vector>
 
 #include "wrapper_i.h"
-#include "enum_utils.h"
 #include "mex.h"
 #include "data_map.h"
 
@@ -42,7 +42,7 @@ class particle_track;
 
 namespace utilities{
 
-class params_matlab;
+
 /**
    Wrapper class for dealing with data from matlab
 */
@@ -50,18 +50,32 @@ class params_matlab;
 class Wrapper_i_matlab:public Wrapper_in{
 private:
   ///Pointer to matlab array that holds the data
-  //  const mxArray * data_array;
+  const mxArray ** mex_array_;
   ///The number of rows in the array.  This isn't strictly needed,
   ///hoever it should make returning values faster by amoritizing the
   ///dereference cost, maybe
-  int rows;
+  int rows_;
   ///The number of columns (and hence number of values in the array.
   ///This isn't strictly needed, hoever it should make returning
   ///values faster by amoritizing the dereference cost, maybe
-  int cols;
+  int cols_;
   ///anchor to data with in array
-  double * first;
-protected:
+  const double * first_;
+
+  /**
+     The number of frames in the wrapper
+   */
+  int frames_;
+
+  /**
+     Offsets of which row each set of frames starts on.  This is
+     needed because of the way that locations are stored in matlab vs
+     how they are stored in hdf files.
+   */
+  std::vector<unsigned int> frame_offsets_;
+  
+  
+
   /**
      A map between the data types and a posistion in the data structure.
      This orginally had been burried down in the derived classes, but 
@@ -84,8 +98,14 @@ protected:
    */
   float get_value(int ind,  utilities::D_TYPE type,int junk)const;
   
+  /**
+     Dimensions
+   */
+  Tuplef dims_;
+  
 public:
   int get_num_entries() const;
+  
 
   //  void print(int ind);
   void print()const;
@@ -104,17 +124,21 @@ public:
 
   bool contains_type(D_TYPE type) const ;
 
-  Tuple get_dims() const;
+  Tuplef get_dims() const;
 
 
 
   
-  virtual ~Wrapper_i_matlab();
-  Wrapper_i_matlab(params_matlab* param);
-  Wrapper_i_matlab();
+  ~Wrapper_i_matlab();
+
+  Wrapper_i_matlab(const mxArray ** mex_array,std::map<utilities::D_TYPE,int> contents,Tuplef dims);
+  
   //void fill_master_box(tracking::Master_box<tracking::particle_track>& test) const{};
   std::set<utilities::D_TYPE> get_data_types() const;
   void get_data_types(std::set<utilities::D_TYPE>&) const;
+
+
+  
   
 };
 

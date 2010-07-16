@@ -42,12 +42,14 @@
 #include "master_box_t.h"
 #include "hash_case.h"
 
-#include "wrapper_i_matlab.h"
-#include "params_matlab.h"
+#include "corr_gofr.h"
 
-#include "mex.h"
+
+
+
 #include "matlab_utils.h"
 #include "array.h"
+#include "filter.h"
 
 #include "histogram.h"
 #include "svector.h"
@@ -55,12 +57,16 @@
 #include "generic_wrapper_matlab.h"
 #include "generic_parameters_matlab.h"
 
-#include "params_ning_hd.h"
-
 #include "cell_matlab.h"
 
-using namespace tracking;
+#include "wrapper_i_matlab.h"
+
 using std::exception;
+using std::cout;
+using std::endl;
+using std::map;
+using std::vector;
+using std::pair;
 
 using utilities::array_to_mat;
 using utilities::vector_to_mat;
@@ -70,6 +76,14 @@ using utilities::Array;
 using utilities::Cell_matlab;
 using utilities::Generic_wrapper_base;
 using utilities::Generic_parameters_matlab;
+using utilities::Filter_trivial;
+
+using utilities::Wrapper_i_matlab;
+
+using tracking::Master_box;
+using tracking::hash_case;
+using tracking::Corr_gofr;
+
 extern void _main();
 void mexFunction( int nlhs, mxArray *plhs[], 
 		  int nrhs, const mxArray* prhs[] ){
@@ -83,22 +97,22 @@ void mexFunction( int nlhs, mxArray *plhs[],
     /**
        \todo add checks on input types
     */
-    utilities::Pair dims;	
+    utilities::Tuple<int,2> dims;	
     dims[0] = (int)mxGetScalar(prhs[1]);
     dims[1] = (int)mxGetScalar(prhs[2]);
     int frames = (int)mxGetScalar(prhs[3]);
 
     double max_r = mxGetScalar(prhs[4]);
-    int bins = (int)mxGetScalar(prhs[5]);
+    int nbins = (int)mxGetScalar(prhs[5]);
 
 
 
     //nonsense to get the map set up
     map<utilities::D_TYPE, int> contents;
 
-    utilities::D_TYPE tmp[] = {wrapper::D_XPOS,
-			     wrapper::D_YPOS, 
-			     wrapper::D_FRAME};
+    utilities::D_TYPE tmp[] = {utilities::D_XPOS,
+			       utilities::D_YPOS, 
+			       utilities::D_FRAME};
     int tmp2[] = {0, 1, 2};
     vector<utilities::D_TYPE > tmp3(tmp, tmp+3);
     vector<utilities::D_TYPE>::iterator it1 = tmp3.begin();
@@ -112,38 +126,48 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
     
 
-    params_matlab p_in = params_matlab(prhs,contents);
- 
 
-
-    contents.insert(pair<utilities::D_TYPE, int>(wrapper::D_TRACKID,5));
-
-
-    Master_box<particle>bt(&p_in);
+    Wrapper_i_matlab wm(prhs,contents,dims);
     
-    Track_shelf tracks;
-    cout<<"total number of particles is: "<<bt.size()<<endl;
+
+    
+    Master_box box;
+    Filter_trivial filt;
+    
+
+    box.init(wm,filt);
+    
+    cout<<"total number of particles is: "<<box.size()<<endl;
 
 //     for(int k = 0;k<15;++k)
 //     {
-//       (bt.get_particle(k))->print();
-//       cout<<      (bt.get_particle(k))->get_value(wrapper::D_FRAME)<<endl;
+//       (box.get_particle(k))->print();
+//       cout<<      (box.get_particle(k))->get_value(wrapper::D_FRAME)<<endl;
 //     }
     
      
   
     //build hash case
-    hash_case hcase(bt,dims,(int)max_r,frames);
+    hash_case hcase(box,dims,(int)max_r,frames);
     cout<<"case built"<<endl;
 
 //     hcase.print();
     
 
     // Compute G(r)
-    vector<double> gofr_bin_count;
-    vector<double> gofr_bin_edges;
+    
     cout<<"starting gofr"<<endl;
-    hcase.gofr_norm(max_r,bins,gofr_bin_count,gofr_bin_edges);
+    //hcase.gofr_norm(max_r,bins,gofr_bin_count,gofr_bin_edges);        
+    Corr_gofr gofr(nbins,max_r,-1,-1,-1);
+    hcase.compute_corr(gofr);
+    cout<<"computed g(r)"<<endl;
+
+    vector<float> gofr_bin_count;
+    vector<float> gofr_bin_edges;
+    gofr.normalize(gofr_bin_count);
+    gofr.get_bin_edges(gofr_bin_edges);
+    
+
     vector_to_mat(plhs,gofr_bin_count);
     vector_to_mat(plhs +1,gofr_bin_edges);
     cout<<"gofr computed"<<endl;

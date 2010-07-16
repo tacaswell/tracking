@@ -51,7 +51,7 @@ public:
   }
   void close_particle();
 
-  void open_group(int,int)
+  void open_group(int,int,int)
   {
     throw "not implemented";
   }
@@ -67,7 +67,7 @@ public:
   ~Wrapper_o_matlab();
 
   void print()const;
-  void get_content_tpyes(std::set<D_TYPE>&) const {};
+  void get_content_tpyes(std::set<D_TYPE>&) const ;
   int  num_entries()const{return 0;};
 
   
@@ -79,6 +79,29 @@ public:
   const std::set<D_TYPE>& get_content_tpyes() const;
 
   
+  void add_meta_data(const std::string & key, float val,bool root_group = true){};
+  void add_meta_data(const std::string & key, const Tuple<float,2> & val,bool root_group = true){};
+  void add_meta_data(const std::string & key, const Tuple<float,3> & val,bool root_group = true){};
+  
+  
+
+  void add_meta_data(const std::string & key,  const std::string & val,bool root_group = true){};
+
+  void add_meta_data(const std::string & key, int val,bool root_group = true){};
+
+  
+  void add_meta_data(const std::string & key, float val,D_TYPE dset_type){};
+  
+  void add_meta_data(const std::string & key, const Tuple<float,2> & val,D_TYPE dset_type){};
+  
+  void add_meta_data(const std::string & key, const Tuple<float,3> & val,D_TYPE dset_type){};
+  
+  void add_meta_data(const std::string & key,  const std::string & val,D_TYPE dset_type){};
+  
+  void add_meta_data(const std::string & key, int val,D_TYPE dset_type){};
+
+  void add_meta_data_list(const Read_config & , const std::set<D_TYPE> &){};
+
 
  protected:
     ///Count of the number of particles that have been added
