@@ -82,7 +82,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
 
   
-  if(nrhs!=3){
+  if(nrhs!=2){
     cout<<"Error, wrong number of arguments"<<endl;
     return;
   }
@@ -111,9 +111,9 @@ void mexFunction( int nlhs, mxArray *plhs[],
  image_in.set_data(prhs[0]); 
  
 
- image_in.trim_max(mxGetScalar(prhs[2]));
+ image_in.trim_max(parm.get_top_cut());
  
- cout<<"cutting: "<<mxGetScalar(prhs[2])*100<<"% off the top"<<endl;
+ cout<<"cutting: "<<parm.get_top_cut()*100<<"% off the top"<<endl;
  
  
  

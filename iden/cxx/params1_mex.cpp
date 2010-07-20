@@ -64,7 +64,8 @@ using iden::Params;
 
 Params::Params(const int numargs,const mxArray *arguments):
   feature_radius_(0), hwhm_length_(0), 
-  dilation_radius_(0), pctle_threshold_(0), mask_radius_(0)
+  dilation_radius_(0), pctle_threshold_(0), mask_radius_(0),
+  top_cut_(0)
 {
   /*	file_extension = ".tif";
    *	infile_stem = arguments[1];
@@ -78,11 +79,11 @@ Params::Params(const int numargs,const mxArray *arguments):
   double *args = mxGetPr(arguments);
     
   feature_radius_ = (int)args[0];
-  hwhm_length_ = args[1];
+  hwhm_length_ = (float)args[1];
   cout<<hwhm_length_<<endl;
 
   dilation_radius_ = (int)args[2];
   mask_radius_ = (int)args[3];
-  pctle_threshold_ = args[4];
-
+  pctle_threshold_ = (float)args[4];
+  top_cut_ = (float)args[5];
 }
