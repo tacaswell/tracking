@@ -79,10 +79,7 @@ add_library(basic_static SHARED
   )
 set_target_properties(basic_static PROPERTIES COMPILE_DEFINITIONS  
   "PTYPE=0;DIM_COUNT=2;MATLAB_MEX_FILE")
-target_link_libraries(basic_static
-  ${IPP_LIBRARIES} 
-  ${FreeImage_LIBRARIES}
-  )
+
 
 
 
