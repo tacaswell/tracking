@@ -103,7 +103,8 @@ public:
 
 
 
-  int get_num_entries(int frame) const ;
+  int get_num_entries(unsigned int frame) const ;
+  int get_num_entries() const ;
 
   int get_num_frames() const ;
 

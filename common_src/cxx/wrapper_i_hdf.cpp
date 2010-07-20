@@ -391,13 +391,16 @@ std::set<D_TYPE>Wrapper_i_hdf::get_data_types() const
 {
   return set<D_TYPE>(data_types_set_);
 }
-int Wrapper_i_hdf::get_num_entries(int frame)const
+int Wrapper_i_hdf::get_num_entries(unsigned int frame)const
 {
-  if(frame == -1)
-    return total_part_count_;
-  else
-    return frame_c_.at(frame);
+  return frame_c_.at(frame);
 }
+
+int Wrapper_i_hdf::get_num_entries()const
+{
+  return total_part_count_;
+}
+
 
 
 int Wrapper_i_hdf::get_num_frames() const

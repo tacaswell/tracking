@@ -43,10 +43,16 @@ using std::runtime_error;
 
 
 
-int Wrapper_i_matlab::get_num_entries(int frame)const{
+int Wrapper_i_matlab::get_num_entries(unsigned int frame)const{
   return frame_offsets_.at(frame +1) - frame_offsets_.at(frame);
   
 }
+
+int Wrapper_i_matlab::get_num_entries()const{
+  return rows_;
+}
+
+
 
 int Wrapper_i_matlab::get_num_frames()const
 {

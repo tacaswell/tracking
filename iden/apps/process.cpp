@@ -242,7 +242,7 @@ int main(int argc, char * const argv[])
     
     
   Wrapper_i_plu *  wp = iden.fill_wrapper(dims,frame_c,0);
-  cout<<"number of entries in wrapper: "<<wp->get_num_entries(-1)<<endl;
+  cout<<"number of entries in wrapper: "<<wp->get_num_entries()<<endl;
     
 
   Master_box box;

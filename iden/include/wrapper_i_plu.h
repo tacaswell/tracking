@@ -52,7 +52,9 @@ public:
    */
   void add_frame_data(Ipp32f[][9], int frame ,int num);
 
-  int get_num_entries(int j) const;
+  int get_num_entries(unsigned int j) const;
+  
+  int get_num_entries() const;
   
   
   

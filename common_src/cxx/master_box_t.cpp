@@ -79,7 +79,7 @@ void Master_box::priv_init()
   particle::intialize_wrapper_in(in_wrapper_);
   particle::intialize_data_types(&data_types);
 
-  int total_entries= in_wrapper_->get_num_entries(-1);
+  int total_entries= in_wrapper_->get_num_entries();
   cout<<"box: total entries "<<total_entries<<endl;
   
   particle_vec_.reserve(total_entries);

@@ -136,13 +136,13 @@ Wrapper_i_plu::Wrapper_i_plu(int frames,Tuple<float,2> dims):data_(frames,NULL),
 }
 
 
-int Wrapper_i_plu::get_num_entries(int j) const{
-  if(j == -1)
-    return count_;
-  else
-    return frame_count_.at(j);
-  
+int Wrapper_i_plu::get_num_entries(unsigned int j) const{
+  return frame_count_.at(j);
 }
+int Wrapper_i_plu::get_num_entries() const{
+  return count_;
+}
+
   
 bool Wrapper_i_plu::contains_type(utilities::D_TYPE in) const
 {

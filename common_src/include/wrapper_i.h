@@ -77,10 +77,14 @@ public:
   //  virtual void  get_data_types(std::set<D_TYPE> & out) const = 0;
   
   /**
-     Return the number of entries the specified frame. Frame -1 returns the total for all frames
+     Return the number of entries the specified frame.
   */
-  virtual int get_num_entries(int frame) const = 0;
+  virtual int get_num_entries(unsigned int frame) const = 0;
   
+  /**
+     Return the total number of entries in the wrapper
+   */
+  virtual int get_num_entries() const = 0;
   /**
      Return the number of frames
    */
