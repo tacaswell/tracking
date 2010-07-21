@@ -51,28 +51,39 @@ public:
      destructor
   */
   ~Read_config();
-
+  
   /**
      looks up the value of the given attribute.  The value is
      returned by reference.  The function returns the value.
 
      @param attr_name attribute name
+     
   */
-  float get_value(const std::string & attr_name,float & val)const;
+  template <class T>
+  T get_value(const std::string & attr_name,T & val)const;
+  
+
+  /**
+     Returns value at index j.  The value is
+     returned by reference.  The function returns the value.
+
+     
+  */
+  float get_value(int j,float & val)const;
     /**
-     looks up the value of the given attribute.  The value is returned
+    Gets value at index j.   The value is returned
      by reference.  The function either returns the value.
 
-     @param attr_name attribute name
+     
   */
- int get_value(const std::string & attr_name,int & val)const;
+ int get_value(int j,int & val)const;
     /**
-     looks up the value of the given attribute.  The value is
+    Gets value at index j.   The value is
      returned by reference.  The function returns as well the value.
 
-     @param attr_name attribute name
+     
   */
-  std::string get_value(const std::string & attr_name,std::string & val)const;
+  std::string get_value(int j,std::string & val)const;
   
 
   /**
