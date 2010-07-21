@@ -35,9 +35,9 @@
 #include "hash_shelf.h"
 #include "hash_box.h"
 #include "track_box.h"
-#include "coarse_grain_array.h"
-#include "counted_vector.h"
-#include "array.h"
+
+
+
 #include "wrapper_o.h"
 
 #include "master_box_t.h"
@@ -49,7 +49,7 @@
 using namespace tracking;
 
 
-using utilities::Coarse_grain_array;
+
 using utilities::Tuplef;
 using utilities::Tuplei;
 using utilities::Null_field;

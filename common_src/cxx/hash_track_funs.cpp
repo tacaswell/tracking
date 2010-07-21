@@ -21,8 +21,7 @@
 #include <stdexcept> // out_of_range exception
 #include <iostream>
 #include <vector>
-#include "array.h"
-#include "cell.h"
+
 
 #include "wrapper_o.h"
 
@@ -38,10 +37,6 @@
 #include "track_box.h"
 #include "track_shelf.h"
 #include "track_list.h"
-
-#include "counted_vector.h"
-#include "coarse_grain_array.h"
-
 #include "exception.h"
 #include "part_def.h"
 using namespace tracking;

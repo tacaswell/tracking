@@ -441,14 +441,15 @@ void Wrapper_o_hdf::add_meta_data_list(const Read_config & config, const std::se
     {
       V_TYPE type = config.get_type(j);
       string tmp_key = config.get_key(j);
+      
       switch(type)
       {
       case utilities::V_INT:
-	config.get_value(tmp_key,tmpi);
+	config.get_value(j,tmpi);
 	add_meta_data(tmp_key,tmpi,*it);
 	break;
       case utilities::V_FLOAT:
-	config.get_value(tmp_key,tmpf);
+	config.get_value(j,tmpf);
 	add_meta_data(tmp_key,tmpf,*it);
 	break;
       default:

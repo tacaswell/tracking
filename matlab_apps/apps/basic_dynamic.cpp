@@ -52,8 +52,8 @@
 
 #include "histogram.h"
 #include "svector.h"
-#include "counted_vector.h"
-#include "coarse_grain_array.h"
+
+
 
 #include "generic_wrapper_matlab.h"
 #include "generic_parameters_matlab.h"
@@ -72,8 +72,8 @@ using utilities::Array;
 using utilities::Cell_matlab;
 using utilities::Generic_wrapper_base;
 using utilities::Generic_parameters_matlab;
-using utilities::Counted_vector;
-using utilities::Coarse_grain_array;
+
+
 
 extern void _main();
 void mexFunction( int nlhs, mxArray *plhs[], 
