@@ -30,7 +30,7 @@
 
 #include "wrapper_o_hdf_group.h"
 #include "H5Cpp.h"
-#include "particle_base.h"
+
 #include "particle_track.h"
 
 

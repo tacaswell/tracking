@@ -30,7 +30,7 @@
 #include <vector>
 
 #include "master_box_t.h"
-#include "particle_base.h"
+
 #include "particle_track.h"
 #include "array.h"
 #include "cell.h"

@@ -26,7 +26,6 @@
 
 #include "master_box_t.h"
 #include "accumulator.h"
-#include "particle_base.h"
 #include "particle_track.h"
 
 

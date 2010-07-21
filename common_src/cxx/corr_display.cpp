@@ -31,9 +31,9 @@
 //work.
 
 #include "corr_gofr.h"
-#include "particle_base.h"
-#include "particle_track.h"
-#include "generic_wrapper.h"
+#include "corr_goftheta.h"
+
+
 
 #include "gnuplot_i.hpp"
 
@@ -45,7 +45,7 @@ using gnuplot::wait_for_key;
 using std::vector;
 using std::string;
 
-using utilities::Generic_wrapper;
+
 
 
 using tracking::Corr_gofr;

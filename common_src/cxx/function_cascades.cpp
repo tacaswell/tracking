@@ -25,7 +25,6 @@
 #include "hash_box.h"
 #include "track_shelf.h"
 #include "track_box.h"
-#include "particle_base.h"
 #include "particle_track.h"
 #include "wrapper_o.h"
 #include "corr.h"

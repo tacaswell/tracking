@@ -41,7 +41,7 @@
 #include "wrapper_o.h"
 
 #include "master_box_t.h"
-#include "particle_base.h"
+
 #include "particle_track.h"
 
 #include "corr.h"

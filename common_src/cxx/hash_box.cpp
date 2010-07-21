@@ -23,7 +23,6 @@
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
 #include "hash_box.h"
-#include "particle_base.h"
 #include "particle_track.h"
 
 using namespace tracking;

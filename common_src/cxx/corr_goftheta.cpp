@@ -31,7 +31,6 @@
 //work.
 
 #include "corr_goftheta.h"
-#include "particle_base.h"
 #include "particle_track.h"
 #include "generic_wrapper.h"
 
