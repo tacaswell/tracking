@@ -188,7 +188,7 @@ Read_config::Read_config(std::string fname, string elm_str)
 		char * value = XMLString::transcode(pram_elm->getAttribute(value_str));
 		
 
-		prams_.push_back(Config_pram(key,type,value));
+		md_store_.add_element(key,type,value);
 
 		XMLString::release(&key);
 		XMLString::release(&type);
@@ -239,8 +239,8 @@ Read_config::Read_config(std::string fname, string elm_str)
 
 void Read_config::print() const
 {
-  for(unsigned int j = 0; j<prams_.size();++j)
-    cout<<'('<<prams_[j].key<<','<<prams_[j].type<<','<<prams_[j].value<<')'<<endl;
+  md_store_.print();
+  
 }
 
   
@@ -250,72 +250,35 @@ Read_config::~Read_config()
 
 int Read_config::get_key_index(const string& key) const
 {
-  int max = prams_.size();
-  for(int j = 0;j<max;++j)
-    if(prams_[j].key.compare(key) == 0)
-      return j;
-  throw logic_error("Read_config::does not contain key: " + key);
+  return md_store_.get_key_index(key);
 }
 
 
 bool Read_config::contains_key(const string& key) const
 {
-  int max = prams_.size();
-  for(int j = 0;j<max;++j)
-    if(prams_[j].key.compare(key) ==0)
-      return true;
-  
-  return false;
+  return md_store_.contains_key(key);
 }
 
-float Read_config::get_value(int j,float & val)const
+
+template <class T>
+T Read_config::get_value(int j,T & val)const
 {
-  if(str2VT_s(prams_[j].type) == utilities::V_FLOAT)
-  {
-    if( from_string<float> (val,prams_[j].value,std::dec))
-      return val;
-    else
-      throw logic_error("Read_config:: failure to parse " + prams_[j].key);
-  }
-  else
-    throw logic_error("Read_congig::get_value, expect pram of type: float, found type: " + prams_[j].type);
+    return md_store_.get_value(j,val);
 }
 
-
-int Read_config::get_value(int j,int & val)const
-{
-  
-  if(str2VT_s(prams_[j].type) == utilities::V_INT)
-    if(from_string<int> (val,prams_[j].value,std::dec))
-      return val;
-    else 
-      throw logic_error("Read_config:: failure to parse " + prams_[j].key);
-  else
-    throw logic_error("Read_congig::get_value, expect pram of type: int, found type: " + prams_[j].type);
-}
-
-
-
-string Read_config::get_value(int j,string & val)const
-{
-  
-  if(str2VT_s(prams_[j].type) == utilities::V_STRING)
-  {
-    val = prams_[j].value;
-    return val;
-  }
-  else
-    throw logic_error("Read_congig::get_value, expect pram of type: string, found type: " + prams_[j].type);
-}
 
 template <class T>
 T Read_config::get_value(const string& key,T & val)const
 {
-  int j = get_key_index(key);
-  return get_value(j,val);
+  int j = md_store_.get_key_index(key);
+  return md_store_.get_value(j,val);
   
 }
 
 template int Read_config::get_value(const string& key,int & val)const;
 template float Read_config::get_value(const string& key,float & val)const;
 template string Read_config::get_value(const string& key,string & val)const;
+
+template int Read_config::get_value(int j,int & val)const;
+template float Read_config::get_value(int j,float & val)const;
+template string Read_config::get_value(int j,string & val)const;

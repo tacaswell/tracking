@@ -28,9 +28,10 @@
 #include <vector>
 #include <string>
 #include "enum_utils.h"
+#include "md_store.h"
 namespace utilities{
 
-  
+
 
 
 /**
@@ -62,28 +63,14 @@ public:
   template <class T>
   T get_value(const std::string & attr_name,T & val)const;
   
+  
 
   /**
-     Returns value at index j.  The value is
-     returned by reference.  The function returns the value.
-
-     
-  */
-  float get_value(int j,float & val)const;
-    /**
-    Gets value at index j.   The value is returned
-     by reference.  The function either returns the value.
-
-     
-  */
- int get_value(int j,int & val)const;
-    /**
     Gets value at index j.   The value is
-     returned by reference.  The function returns as well the value.
-
-     
+    returned by reference.  The function returns as well the value.
   */
-  std::string get_value(int j,std::string & val)const;
+  template <class T>
+  T get_value(int j,T& val)const;
   
 
   /**
@@ -107,7 +94,7 @@ public:
    */
   int size() const
   {
-    return prams_.size();
+    return md_store_.size();
   }
   
   /**
@@ -115,42 +102,20 @@ public:
    */
   std::string get_key(int j) const
   {
-    return prams_.at(j).key;
+    return md_store_.get_key(j);
+    
   }
   /**
      Returns the type at j in the internal structure
    */
   utilities::V_TYPE get_type(int j)const
   {
-    return str2VT_s(prams_.at(j).type);
+    return md_store_.get_type(j);
   }
   
 
 private:
-  
-  /**
-     A struct for holding information extracted from parameter
-  */
-  struct Config_pram
-  {
-
-    Config_pram(std::string key_i,std::string type_i,std::string value_i)
-      :key(key_i),type(type_i),value(value_i){}
-    Config_pram(const char * key_i,const char * type_i,const char * value_i)
-      :key(key_i),type(type_i),value(value_i){}
-    Config_pram();
-    ~Config_pram(){};
-    std::string key;
-    std::string type;
-    std::string value;
-  
-
-  };
-
-  /**
-     vector of the attributes to be parsed
-  */
-  std::vector<Config_pram> prams_;
+  MD_store md_store_;
   
   
 };

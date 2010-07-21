@@ -35,14 +35,7 @@ using std::cout;
 using std::endl;
 
 int main ()
-{
-  vector<string> names;
-  names.push_back("max");
-  names.push_back("min");
-  names.push_back("thresh");
-  names.push_back("err");
-  
-  
+{ 
   
   
   Read_config rc("test.xml","iden");
@@ -52,20 +45,33 @@ int main ()
   string s;
   
   
-  if(rc.get_value("a",i))
+  try
+  {
+    rc.get_value("a",i);
     cout<<"a: "<<i<<endl;
-  else
+  }
+  catch(...)
+  {
     cout<<"not found"<<endl;
+  }
   
-  if(rc.get_value("b",f))
+  try
+  {
+    rc.get_value("b",f);
     cout<<"b: "<<f<<endl;
-  else
-    cout<<"not found"<<endl;
+  }
+  catch(...)
+  {
+  cout<<"not found"<<endl;
+  }
   
-  if(rc.get_value("c",s))
+  try{
+    rc.get_value("c",s);
     cout<<"c: "<<s<<endl;
-  else
+  }
+  catch(...){
     cout<<"not found"<<endl;
+  }
   
   return 0;
 
