@@ -62,7 +62,8 @@ public:
   std::complex<float> get_value(std::complex<float>& out,int ind,D_TYPE type, int frame) const 
   {return out;}
   std::set<D_TYPE> get_data_types() const {return d_types_;}
-  int get_num_entries(int frame) const {return count_;};
+  int get_num_entries(unsigned int frame) const {return count_;};
+  int get_num_entries() const {return count_*frames_;};
   int get_num_frames() const {return frames_;};
   bool contains_type(D_TYPE in) const{return d_types_.find(in) != d_types_.end();};
   Tuplef get_dims() const{return Tuplef();}

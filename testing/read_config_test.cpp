@@ -73,6 +73,24 @@ int main ()
     cout<<"not found"<<endl;
   }
   
+  
+  try{
+    rc.get_value("c",f);
+    cout<<"c: "<<s<<endl;
+  }
+  catch(...){
+    cout<<"wrong type"<<endl;
+  }
+  
+
+  try{
+    rc.get_value("aoeu",s);
+    cout<<"c: "<<s<<endl;
+  }
+  catch(...){
+    cout<<"not found"<<endl;
+  }
+  
   return 0;
 
 }

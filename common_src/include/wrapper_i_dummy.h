@@ -94,8 +94,9 @@ public:
 
 
 
-  int get_num_entries(int frame) const {return count_;};
 
+  int get_num_entries(unsigned int frame) const {return count_;};
+  int get_num_entries() const {return count_*frames_;};
   int get_num_frames() const {return frames_;};
 
   bool contains_type(D_TYPE in) const
