@@ -104,10 +104,16 @@ public:
   void get_data(mxArray *data)const;
 #endif
   /**
-     Fill the image with data form a pointer to unsigned ints (16bit)
+     Fill the image with data from a pointer to unsigned ints (16bit)
    */
   void set_data(const WORD *data_in, int rows,int cols,WORD in_step);
   
+  /**
+     accumulates data from a pointer to an unsigned int (16bit)
+   */
+  void add_data(const WORD * data_in, int rows, int cols,WORD in_step);
+  
+
   /**
         let the outside world see the pointer, 
 	get rid of this eventually? or make it safer.  This will require a bunch of rewriting, sadly

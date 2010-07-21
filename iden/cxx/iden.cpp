@@ -36,7 +36,8 @@
 //for FreeImage Public License, the licensors of
 //this Program grant you additional permission to convey the resulting
 //work.
-
+#include <iostream>
+#include <stdexcept>
 
 #include "iden.h"
 #include "wrapper_i_plu.h"
@@ -50,7 +51,7 @@
 
 using std::string;
 
-#include <iostream>
+
 using std::cout;
 using std::endl;
 
@@ -64,9 +65,10 @@ using utilities::Wrapper_i_plu;
 using utilities::Tuple;
 
 
+using std::runtime_error;
 
 
-Wrapper_i_plu * Iden::fill_wrapper(Tuple<float,2> dims,int frames,int start)
+Wrapper_i_plu * Iden::fill_wrapper(Tuple<float,2> dims,unsigned int frames,unsigned int start)
 {
   
   Wrapper_i_plu * wrapper = NULL;
@@ -79,7 +81,7 @@ Wrapper_i_plu * Iden::fill_wrapper(Tuple<float,2> dims,int frames,int start)
   fipMultiPage src(bMemoryCache);
   // Open src file (read-only, use memory cache)
   src.open(fname_.c_str(), FALSE, TRUE);
-  int img_frames = src.getPageCount();
+  unsigned int img_frames = src.getPageCount();
 
   if(start > img_frames)
     throw "Iden: start is larger than the number of frames in image";
@@ -111,7 +113,7 @@ Wrapper_i_plu * Iden::fill_wrapper(Tuple<float,2> dims,int frames,int start)
   // step in bytes on input image
  
   // loop over frames
-  for(int j = start;j<(frames+start);++j)
+  for(unsigned int j = start;j<(frames+start);++j)
   {
     
 
@@ -214,3 +216,146 @@ void Iden::set_fname(const std::string & in)
   // look to see if the file has the meta data for the parameters
 }
 
+Wrapper_i_plu * Iden::fill_wrapper_avg(Tuple<float,2> dims,unsigned int avg_count,unsigned int frames,unsigned int start)
+{
+  
+  if(avg_count > frames)
+    throw runtime_error("Iden: avg_count is greater than the number for frames");
+  
+
+  Wrapper_i_plu * wrapper = NULL;
+  
+
+  // load multi page
+  
+  FreeImage_Initialise();
+  BOOL bMemoryCache = TRUE;
+  fipMultiPage src(bMemoryCache);
+  // Open src file (read-only, use memory cache)
+  src.open(fname_.c_str(), FALSE, TRUE);
+  unsigned int img_frames = src.getPageCount();
+  unsigned int wrapper_frames = frames/avg_count;
+  
+  
+
+  if(start > img_frames)
+    throw runtime_error("Iden: start is larger than the number of frames in image");
+  
+  if(frames == 0)
+  {
+    frames = img_frames-start;
+  }
+  else if(start + frames > img_frames)
+  {
+    cout<<"start "<<start<<endl;
+    cout<<"frames "<<frames<<endl;
+    cout<<"img_frames"<<img_frames<<endl;
+    
+    src.close(0);
+    throw "Iden: asking for more frames than the stack has";
+  }
+  
+  
+  
+  // create the wrapper
+  wrapper = new Wrapper_i_plu(wrapper_frames,dims);
+
+  // freeimage object
+  fipImage image;
+  
+  // open the first image and get the size etc, assumes that all of
+  // the planes are the same size etc.
+
+  image = src.lockPage(0);
+  WORD scan_step = image.getScanWidth();
+  int rows = image.getHeight();
+  int cols = image.getWidth();
+  src.unlockPage(image,false);
+  
+
+  
+  // loop over frames
+  for(unsigned int j = 0;j<wrapper_frames;++j)
+  {
+    
+    Image2D image_in(rows,cols);
+    for(unsigned int k = 0; k<avg_count;++k)
+    {
+      // load frame
+      image = src.lockPage(j*avg_count + k);
+      
+      // get data about image
+      WORD * data_ptr = (WORD *) image.accessPixels();
+      // shove data in to image object
+    
+
+      image_in.add_data(data_ptr, rows,cols,scan_step);
+      // clear the input data
+      src.unlockPage(image,false);
+    }
+    
+
+    
+    // object for holding band passed image
+    Image2D image_bpass(rows,cols);
+    // object for holding the thresholded band passed image
+    Image2D image_bpass_thresh(rows,cols);
+    // object that holds the local max
+    Image2D image_localmax(rows,cols);
+
+    
+    // trim off the top fraction of pixels
+    image_in.trim_max(params_.get_top_cut());
+
+    RecenterImage(image_in);
+
+    IppStatus status;
+    
+    status = BandPass_2D(image_in,
+			 image_bpass,
+			 params_.get_feature_radius(),
+			 params_.get_hwhm_length());
+
+
+    
+    status = FindLocalMax_2D(image_bpass,
+			     image_bpass_thresh,
+			     image_localmax,
+			     (int)params_.get_pctle_threshold(),
+			     params_.get_dilation_radius());
+    
+
+    
+    RecenterImage(image_bpass_thresh);
+    // image_in.display_image();
+    //     image_bpass.display_image();
+    //     image_bpass_thresh.display_image();
+    //    image_localmax.display_image();
+    // get out massive nx9 array
+    int counter;
+    Ipp32f (*particledata)[9] =
+      ParticleStatistics(image_localmax,
+			 image_bpass_thresh, 
+			 params_.get_mask_radius(),
+			 params_.get_feature_radius(),
+			 counter);
+    
+    // put it in a wrapper
+
+    //     cout<<"---------------"<<endl;
+    //     cout<<counter<<endl;
+    //     cout<<"---------------"<<endl;
+    
+    wrapper->add_frame_data(particledata,j-start,counter);
+    //    cout<<j<<endl;
+  }
+  
+  
+  src.close(0);
+  
+  FreeImage_DeInitialise();
+
+  return wrapper;
+  
+
+}

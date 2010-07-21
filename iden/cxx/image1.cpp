@@ -53,13 +53,18 @@
 // tac 2009-09-15
 // 
 #include "image1.h"
-
+// tac 2010-07-20
+// added exception library
+#include <stdexcept>
 // tac 2009-09-15
 // 
 using iden::Image2D;
 using std::cout;
 using std::endl;
 
+// tac 2010-07-20
+// added using statements
+using std::runtime_error;
 
 
 // tac 2009-09-21
@@ -140,6 +145,31 @@ void Image2D::set_data(const WORD * data_in, int rows, int cols,WORD in_step)
 
   // copy data to this object
   ippiConvert_16u32f_C1R(data_in, in_step,imagedata_,data_step,ROIfull_);
+  
+}
+
+// tac 2010-07-20
+// Added function to add data.  
+void Image2D::add_data(const WORD * data_in, int rows, int cols,WORD in_step)
+{
+  
+  // this make the assumption that WORD is a short is an unsigned
+  // short and an Ipp16u is also an unsigned short, or atleast that
+  // they are the same thing.  This is true on linux
+
+  if(!(cols==width_ && rows == height_))
+  {
+    std::cerr<<"height: "<<height_<<'\t'<<"rows: "<<rows<<std::endl;
+    std::cerr<<"width: "<<width_<<'\t'<<"cols: "<<cols<<std::endl;
+    throw "Image2D: data is wrong size";
+  }
+  
+
+  int data_step = cols*sizeof(Ipp32f);
+  
+  ippiAdd_16u32f_C1IR(data_in,in_step,imagedata_,data_step,ROIfull_);
+  
+
   
 }
 
