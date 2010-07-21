@@ -37,7 +37,7 @@
 #include "part_def.h"
 
 namespace utilities{
-class Coarse_grain_array;
+
 class Counted_vector;
 class Array;
 class Histogram2D;

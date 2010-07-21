@@ -37,7 +37,7 @@
 
 namespace utilities{
 class Array;
-class Coarse_grain_array;
+
 class Histogram2D;
 class Wrapper_out;
 class Cell;
@@ -149,32 +149,6 @@ public:
    */
   void gofr_norm(float max_d, int nbins,
 		 std::vector<float>& bin_count,std::vector<float>& bin_r) const;
-
-  /**
-     Computes D_rr, theu two point microrhelogy correlation.
-     See 
-     Title: Two-Point Microrheology of Inhomogeneous Soft  Materials
-     Authors: Crocker, John C. and Valentine, M. T. and Weeks, Eric
-     R. and Gisler, T.  and Kaplan, P. D. and Yodh, A. G. and Weitz,
-     D. A.
-     prl 85,8,888
-   */
-  void D_rr(utilities::Coarse_grain_array& D)const;
-
-  
-  /**
-     comupute lots of correlations, need to clean this up
-   */
-  void D_lots(utilities::Coarse_grain_array & Duu,
-	      utilities::Coarse_grain_array & DuuL,
-	      utilities::Coarse_grain_array & DuuT,
-	      utilities::Coarse_grain_array & Ddrdr,
-	      // utilities::Coarse_grain_array & Dxx,
-// 	      utilities::Coarse_grain_array & Dyy,
-	      utilities::Coarse_grain_array & Ddudu,
-	      utilities::Counted_vector const& md 
-	      )const;
-  
 
   /**
      for computing the direction of the nearest neighbor

@@ -16,7 +16,7 @@ SET(CONFIG_SRC
 SET(UTIL_SRC
   ${COMMON_SRC_PATH}/array.cpp
   ${COMMON_SRC_PATH}/cell.cpp
-  ${COMMON_SRC_PATH}/coarse_grain_array.cpp
+#  ${COMMON_SRC_PATH}/coarse_grain_array.cpp
   ${COMMON_SRC_PATH}/counted_vector.cpp
 )
 

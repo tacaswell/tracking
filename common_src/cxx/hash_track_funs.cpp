@@ -44,7 +44,7 @@ using namespace tracking;
 
 using utilities::Tuple;
 using utilities::Counted_vector;
-using utilities::Coarse_grain_array;
+
 using utilities::Ll_range_error;
 
 using utilities::Wrapper_out;
@@ -139,6 +139,90 @@ void hash_case::fill_pos_link_next(list<particle_track*>* tlist,
     }
   //  cout<<"finished loops"<<endl;
 }
+
+
+void hash_case::link(float max_range, Track_shelf& tracks){
+
+  //doing this rehash takes a long time for large data sets, better to just
+  //get it right begin with
+  //this->rehash((int)(1.2*max_range));
+
+  //  cout<<"rehashed"<<endl;
+
+  vector<Hash_shelf*>::iterator it = h_case_.begin();
+
+  //generate first list
+  list<particle_track*>* t_list = (*it)->shelf_to_list();
+
+  //  cout<<"generated list 1"<<endl;
+  //fill first track pos_link_next
+  fill_pos_link_next(t_list,++it,max_range);
+  //  cout<<"get links "<<endl;
+
+  for(list<particle_track*>::iterator it2 = t_list ->begin();
+      it2!=t_list->end(); it2++)
+    tracks.add_new_track(*it2);
+  
+  //  cout<<"populated initial tracks"<<endl;
+  
+  //  tracks.print();
+  
+  //make local track_list object
+  track_list tracking(t_list, max_range,&tracks);
+  
+  int stupid_counter = 0;
+  //cout<<"here"<<endl;
+  //loop over shelves
+  while( it<(h_case_.end()-1))
+  {
+    ++stupid_counter;
+    if(stupid_counter%50==0)
+      cout<<stupid_counter<<endl;;
+    //generate next list
+    t_list = (*it)->shelf_to_list();
+    //    cout<<": "<<t_list->size()<<endl;
+    
+    //fill next list's pos_link_next
+    fill_pos_link_next(t_list,++it,max_range);
+    
+
+
+    //shove in to track_list
+    tracking.link_next(t_list);
+  
+  }
+  //make last list
+  t_list = (*it)->shelf_to_list();
+  tracking.link_next(t_list);
+  //  cout<<"here"<<endl;
+}
+
+
+//   /*
+//      Computes D_rr, theu two point microrhelogy correlation.
+//      See 
+//      Title: Two-Point Microrheology of Inhomogeneous Soft  Materials
+//      Authors: Crocker, John C. and Valentine, M. T. and Weeks, Eric
+//      R. and Gisler, T.  and Kaplan, P. D. and Yodh, A. G. and Weitz,
+//      D. A.
+//      prl 85,8,888
+//    */
+//   //void D_rr(utilities::Coarse_grain_array& D)const;
+
+  
+//   /*
+//      comupute lots of correlations, need to clean this up
+//    */
+//   //void D_lots(utilities::Coarse_grain_array & Duu,
+// 	      utilities::Coarse_grain_array & DuuL,
+// 	      utilities::Coarse_grain_array & DuuT,
+// 	      utilities::Coarse_grain_array & Ddrdr,
+// 	      // utilities::Coarse_grain_array & Dxx,
+// // 	      utilities::Coarse_grain_array & Dyy,
+// 	      utilities::Coarse_grain_array & Ddudu,
+// 	      utilities::Counted_vector const& md 
+// 	      )const;
+  
 
 
 
@@ -487,60 +571,3 @@ void hash_case::fill_pos_link_next(list<particle_track*>* tlist,
 //   }
 // }
 
-
-
-void hash_case::link(float max_range, Track_shelf& tracks){
-
-  //doing this rehash takes a long time for large data sets, better to just
-  //get it right begin with
-  //this->rehash((int)(1.2*max_range));
-
-  //  cout<<"rehashed"<<endl;
-
-  vector<Hash_shelf*>::iterator it = h_case_.begin();
-
-  //generate first list
-  list<particle_track*>* t_list = (*it)->shelf_to_list();
-
-  //  cout<<"generated list 1"<<endl;
-  //fill first track pos_link_next
-  fill_pos_link_next(t_list,++it,max_range);
-  //  cout<<"get links "<<endl;
-
-  for(list<particle_track*>::iterator it2 = t_list ->begin();
-      it2!=t_list->end(); it2++)
-    tracks.add_new_track(*it2);
-  
-  //  cout<<"populated initial tracks"<<endl;
-  
-  //  tracks.print();
-  
-  //make local track_list object
-  track_list tracking(t_list, max_range,&tracks);
-  
-  int stupid_counter = 0;
-  //cout<<"here"<<endl;
-  //loop over shelves
-  while( it<(h_case_.end()-1))
-  {
-    ++stupid_counter;
-    if(stupid_counter%50==0)
-      cout<<stupid_counter<<endl;;
-    //generate next list
-    t_list = (*it)->shelf_to_list();
-    //    cout<<": "<<t_list->size()<<endl;
-    
-    //fill next list's pos_link_next
-    fill_pos_link_next(t_list,++it,max_range);
-    
-
-
-    //shove in to track_list
-    tracking.link_next(t_list);
-  
-  }
-  //make last list
-  t_list = (*it)->shelf_to_list();
-  tracking.link_next(t_list);
-  //  cout<<"here"<<endl;
-}
