@@ -26,12 +26,11 @@
 #define TRACK_SHELF
 
 #include <map>
+#include <vector>
 #include "tuple.h"
 //forward declare histogram
 namespace utilities{
 class Histogram;
-template<class T>
-struct Svector;
 class Cell;
 class Counted_vector;
 class Generic_wrapper_base;
@@ -108,13 +107,13 @@ public:
   /**
      Generates the MSD plot for all the tarcks in this shelf.
    */
-  void msd(utilities::Svector<double> & msd_vec,utilities::Svector<int> & entry_count)const;
+  void msd(std::vector<double> & msd_vec,std::vector<int> & entry_count)const;
 
   /**
      Generates the corrected MSD plot for all the tarcks in this shelf.
      DEPRECIATED
    */
-  void msd_corrected(utilities::Svector<double> & msd_vec,utilities::Svector<int> & entry_count)const;
+  void msd_corrected(std::vector<double> & msd_vec,std::vector<int> & entry_count)const;
 
   
   /**

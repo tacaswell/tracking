@@ -30,7 +30,7 @@
 #include "histogram.h"
 #include "track_box.h"
 #include "particle_track.h"
-#include "svector.h"
+
 #include "counted_vector.h"
 #include "generic_wrapper_base.h"
 #include "array.h"
@@ -46,7 +46,7 @@ using std::vector;
 
 
 using utilities::Histogram;
-using utilities::Svector;
+
 using utilities::Ll_range_error;
 using utilities::Array;
 using utilities::Cell;
@@ -145,12 +145,12 @@ void Track_shelf::track_length_histogram(Histogram & hist_in){
     hist_in.add_data_point(((*it).second)->get_length());
 }
 
-void Track_shelf::msd(Svector<double> & msd_vec,Svector<int> & entry_count)const{
+void Track_shelf::msd(vector<double> & msd_vec,vector<int> & entry_count)const{
   //this exception needs to get it's own class or something
-  if(msd_vec.data.size()!=entry_count.data.size())
+  if(msd_vec.size()!=entry_count.size())
     throw "Vector size's don't match, change this exception";
 
-  int max_time_step = msd_vec.data.size();
+  int max_time_step = msd_vec.size();
 
 
   double disp_sq_sum;
@@ -183,16 +183,16 @@ void Track_shelf::msd(Svector<double> & msd_vec,Svector<int> & entry_count)const
 	  current = next;
 	  not_past_end = current->step_forwards(j+1,next);
 	}
-	msd_vec.data.at(j) += disp_sq_sum/tmp_count;
-	++(entry_count.data.at(j));
+	msd_vec.at(j) += disp_sq_sum/tmp_count;
+	++(entry_count.at(j));
 	
       }
     }
 
 
-  vector<double>::iterator it = msd_vec.data.begin();
-  vector<int>::iterator it2 = entry_count.data.begin();
-  for(;it<msd_vec.data.end();it++, it2++)
+  vector<double>::iterator it = msd_vec.begin();
+  vector<int>::iterator it2 = entry_count.begin();
+  for(;it<msd_vec.end();it++, it2++)
     {
       if(*it2 >0)
 	{
@@ -203,12 +203,12 @@ void Track_shelf::msd(Svector<double> & msd_vec,Svector<int> & entry_count)const
 }
 
 
-void Track_shelf::msd_corrected(Svector<double> & msd_vec,Svector<int> & entry_count)const{
+void Track_shelf::msd_corrected(vector<double> & msd_vec, vector<int> & entry_count)const{
   //this exception needs to get it's own class or something
-  if(msd_vec.data.size()!=entry_count.data.size())
+  if(msd_vec.size()!=entry_count.size())
     throw "Vector size's don't match, change this exception";
 
-  int max_time_step = msd_vec.data.size();
+  int max_time_step = msd_vec.size();
 
 
   double disp_sq_sum;
@@ -245,17 +245,17 @@ void Track_shelf::msd_corrected(Svector<double> & msd_vec,Svector<int> & entry_c
 	}
 	  
 	  
-	msd_vec.data.at(j) += disp_sq_sum;
-	(entry_count.data.at(j))+=tmp_count;
-	// 	      msd_vec.data.at(j) += disp_sq_sum/tmp_count;
-	// 	      ++(entry_count.data.at(j));
+	msd_vec.at(j) += disp_sq_sum;
+	(entry_count.at(j))+=tmp_count;
+	// 	      msd_vec.at(j) += disp_sq_sum/tmp_count;
+	// 	      ++(entry_count.at(j));
       }
       
     }
   
-  vector<double>::iterator it = msd_vec.data.begin();
-  vector<int>::iterator it2 = entry_count.data.begin();
-  for(;it<msd_vec.data.end();it++, it2++)
+  vector<double>::iterator it = msd_vec.begin();
+  vector<int>::iterator it2 = entry_count.begin();
+  for(;it<msd_vec.end();it++, it2++)
     {
       if(*it2 >0)
 	{

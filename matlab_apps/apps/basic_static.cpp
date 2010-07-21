@@ -52,10 +52,10 @@
 #include "filter.h"
 
 #include "histogram.h"
-#include "svector.h"
+
 
 #include "generic_wrapper_matlab.h"
-#include "generic_parameters_matlab.h"
+
 
 #include "cell_matlab.h"
 
@@ -70,7 +70,7 @@ using std::pair;
 
 using utilities::array_to_mat;
 using utilities::vector_to_mat;
-using utilities::Svector;
+
 using utilities::Histogram;
 using utilities::Array;
 using utilities::Cell_matlab;
