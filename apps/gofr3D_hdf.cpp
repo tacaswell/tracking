@@ -214,7 +214,7 @@ int main(int argc, char * const argv[])
 
     
 
-    Corr_gofr gofr(nbins,max_range,write_comp_number,dset_num);
+    Corr_gofr gofr(nbins,max_range,write_comp_number,dset_num,read_comp_number);
     hcase.compute_corr(gofr);
     cout<<"computed g(r)"<<endl;
     

@@ -177,7 +177,7 @@ int main(int argc, char * argv[])
 
     cout<<"hash case filled"<<endl;
     
-    Corr_case gofr_c((tracking::Corr_gofr*)NULL,comp_count,max_range,nbins,write_comp_num,dset_num);
+    Corr_case gofr_c((tracking::Corr_gofr*)NULL,comp_count,max_range,nbins,write_comp_num,dset_num,read_comp_num);
     hcase.compute_corr(gofr_c);
     cout<<"computed g(r)"<<endl;
     
