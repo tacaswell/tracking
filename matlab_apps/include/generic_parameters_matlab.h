@@ -27,7 +27,7 @@
 #ifndef GPARAM_MATLAB
 #define GPARAM_MATLAB
 
-#include "generic_parameters_base.h"
+
 
 #include "mex.h"
 
@@ -38,7 +38,7 @@ class Generic_wrapper_base;
    Class for generic matlab wrapper parameters
 */
 
-class Generic_parameters_matlab:public Generic_parameters_base{
+class Generic_parameters_matlab{
 public:
   int rows_;
   int cols_;
