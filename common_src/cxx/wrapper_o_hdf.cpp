@@ -432,8 +432,8 @@ void Wrapper_o_hdf::add_meta_data_list(const Read_config & config, const std::se
 {
   int pram_sz = config.size();
   set<D_TYPE>::const_iterator end= d_types.end();
-  int tmpi;
-  float tmpf;
+  int tmpi =0;
+  float tmpf=0;
   for(set<D_TYPE>::const_iterator it = d_types.begin();
       it != end; ++it)
   {
