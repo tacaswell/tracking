@@ -143,7 +143,7 @@ endif(COMPILE_BASIC)
 if(COMPILE_IDEN)
   MESSAGE(STATUS "making the identification functionality")
   SET(CMAKE_CXX_FLAGS "-ansi -D_GNU_SOURCE -fPIC -fno-omit-frame-pointer -pthread -Wall ")
-  add_subdirectory(iden/apps)
+  add_subdirectory(iden)
 endif(COMPILE_IDEN)
 
 if(COMPILE_TEST)
