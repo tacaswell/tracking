@@ -1,4 +1,4 @@
-//Copyright 2008,2009 Thomas A Caswell
+//Copyright 2008-2010 Thomas A Caswell
 //tcaswell@uchicago.edu
 //http://jfi.uchicago.edu/~tcaswell
 //
@@ -22,6 +22,19 @@
 //containing parts covered by the terms of MATLAB User License, the
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
+// 
+//If you modify this Program, or any covered work, by linking or
+//combining it with IPP (or a modified version of that library),
+//containing parts covered by the terms of End User License Agreement
+//for the Intel(R) Software Development Products, the licensors of
+//this Program grant you additional permission to convey the resulting
+//work.
+//
+//If you modify this Program, or any covered work, by linking or
+//combining it with FreeImage (or a modified version of that library),
+//containing parts covered by the terms of End User License Agreement
+//for FreeImage Public License, the licensors of
+//this Program grant you additional permission to convey the resulting
 
 
 
@@ -36,9 +49,12 @@
 
 #include <set>
 #include <complex>
+#include <vector>
 namespace utilities{
+class MD_store;
+
 /**
-   ABC for input wrappers
+   A mostly abstract base class for input wrappers.  Has handling for MD_store at this level
 
 
 */
@@ -101,8 +117,51 @@ public:
    */
   virtual Tuplef get_dims() const = 0;
 
-  virtual ~Wrapper_in(){};
+
+
+  /**
+     \defgroup Meta data handling functions
+   */
+  /*@{*/
+  /**
+     Returns a pointer to plane j's meta data store.  Const version
+   */
+  const MD_store * get_MD_store(unsigned int j)const;
   
+
+  /**
+     Returns a pointer to plane j's meta data store.  Const version
+  */
+  MD_store* get_MD_store(unsigned int j);
+  
+  /**
+     Sets the MD_store for plane j.  When the pointer is assigned the wrapper
+     takes ownership of the pointer and will clean it up.
+   */
+  void set_MD_store(unsigned int j, MD_store * in);
+
+  /**
+     Sets the size of the md_stores_ vector
+   */
+  void set_MD_store_size(unsigned int j);
+
+  /**
+     Gets the size of the md_stores_ vector
+   */
+  unsigned int get_MD_store_size();
+  
+
+  /**
+     Deletes  plane j's MD_store.
+   */
+  void clear_MD_store(unsigned int j);
+  /*@}*/
+  virtual ~Wrapper_in();
+  
+  Wrapper_in();
+  
+private:
+  std::vector<MD_store*> md_stores_;
   
   
 };
