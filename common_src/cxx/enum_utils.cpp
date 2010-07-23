@@ -106,7 +106,7 @@ std::string DT2str_s(D_TYPE in)
   
 }
 
-D_TYPE DT2str_s(std::string in)
+D_TYPE str2DT_s(std::string in)
 {
   throw "function not written yet";
   return D_TRACKID;
@@ -152,12 +152,13 @@ V_TYPE v_type(D_TYPE in)
 
 std::string format_dset_name(D_TYPE type,int comp_num)
 {
-  std::ostringstream o;
-  o.width(format_padding_);
-  o.fill('0');
-  o<<std::right<<comp_num;
-  return  DT2str_s(type) +"_"+  o.str();
-
+  // std::ostringstream o;
+  // o.width(format_padding_);
+  // o.fill('0');
+  // o<<std::right<<comp_num;
+  // return  DT2str_s(type) +"_"+  o.str();
+  return format_name(DT2str_s(type),comp_num);
+  
 }
 
 

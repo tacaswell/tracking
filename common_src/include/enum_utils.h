@@ -112,7 +112,7 @@ std::string DT2str_s(D_TYPE in);
 /**
    Helper functions to convert short name strings in to D_TYPEs 
  */
-D_TYPE DT2str_s(std::string in);
+D_TYPE str2DT_s(std::string in);
 /**
    Helper function to format dset names with computation numbers attached
  */
