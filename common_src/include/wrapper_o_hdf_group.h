@@ -34,9 +34,8 @@
 
 
 #include "part_def.h"
-#include "attr_list_hdf.h"
 #include "data_map.h"
-#include "H5Cpp.h"
+
 
 
 
@@ -47,10 +46,13 @@ namespace H5
 class H5File;
 class Group;
 class DataSet;
+class CommonFG;
+
 }
 
 
 namespace utilities{
+class MD_store;
 
 /**
    Wrapper class for dealing with output to matlab
@@ -98,17 +100,17 @@ public:
   bool contains_meta(const std::string & key);
 
   template <class T>
-  void set_meta_data(const std::string & key, T & val);
+  void set_meta_data(const std::string & key, const T & val);
   
   template <class T>
-  T get_meta_data(const std::string & key, T &  val) ;
+  T get_meta_data(const std::string & key, T &  val) const ;
 
   // data set level
   bool contains_meta(const std::string & key,D_TYPE dtype);
   
   
   template <class T>
-  void set_meta_data(const std::string & key, T & val, D_TYPE dtype);
+  void set_meta_data(const std::string & key, const T & val, D_TYPE dtype);
   
   template <class T>
   T get_meta_data(const std::string & key, T &  val, D_TYPE dtype) ;
@@ -223,20 +225,6 @@ private:
   
 };
 
-
-template <class T>
-void Wrapper_o_hdf_group::set_meta_data(const std::string & key, T & val)
-{
-  Attr_list_hdf attr_list(group_);
-  attr_list.set_value(key,val);
-}
-  
-template <class T>
-T Wrapper_o_hdf_group::get_meta_data(const std::string & key, T &  val) 
-{
-  Attr_list_hdf attr_list(group_);
-  return attr_list.get_value(key,val);
-}
 
 
 

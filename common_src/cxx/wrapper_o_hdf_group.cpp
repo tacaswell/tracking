@@ -27,7 +27,7 @@
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
-
+#include "attr_list_hdf.h"
 #include "wrapper_o_hdf_group.h"
 #include "H5Cpp.h"
 
@@ -36,6 +36,7 @@
 
 #include "track_box.h"
 
+#include "md_store.h"
 //using namespace H5;
 
 
@@ -50,7 +51,7 @@ using std::cerr;
 using std::endl;
 using std::complex;
 using std::logic_error;
-
+using std::runtime_error;
 
 using H5::H5File;
 using H5::CommonFG;
@@ -66,6 +67,8 @@ using H5::Exception;
 
 
 using utilities::D_TYPE;
+using utilities::MD_store;
+using utilities::Tuple;
 
 using tracking::particle;
 const int Wrapper_o_hdf_group::csize_ = 400;
@@ -85,11 +88,11 @@ Wrapper_o_hdf_group::Wrapper_o_hdf_group(CommonFG * parent, const std::string & 
   {
     
 
-  // make a new entry or open group entry in parent
-  if(type==NEW_GROUP)
-    group_ = new Group(parent_->createGroup(g_name));
-  else
-    group_ = new Group(parent_->openGroup(g_name));
+    // make a new entry or open group entry in parent
+    if(type==NEW_GROUP)
+      group_ = new Group(parent_->createGroup(g_name));
+    else
+      group_ = new Group(parent_->openGroup(g_name));
   }
   catch(Exception &e)
   {
@@ -284,7 +287,7 @@ void Wrapper_o_hdf_group::store_particle_pos(const Tuple<float,3> & cord_in,floa
     cout<<"group_max_count_ "<<p_count_<<endl;
     throw logic_error("wrapper_o_hdf: trying to add too many particles to group");
   }
-    // set values to temp storage
+  // set values to temp storage
   for(set<D_TYPE>::const_iterator current_type = d_types_add_.begin();
       current_type!=d_types_add_.end();++current_type)
   {
@@ -318,7 +321,6 @@ void Wrapper_o_hdf_group::store_particle_pos(const Tuple<float,3> & cord_in,floa
 
 
 }
-
 
 
 void Wrapper_o_hdf_group::write_to_disk()
@@ -359,7 +361,7 @@ void Wrapper_o_hdf_group::write_to_disk()
 	
       break;
     default:
-      throw "should not have hit default";
+      throw logic_error("should not have hit default");
     }
     
   }
@@ -369,28 +371,58 @@ void Wrapper_o_hdf_group::write_to_disk()
 Wrapper_o_hdf_group::~Wrapper_o_hdf_group()
 {
       
-    // clean up
-    for(vector<int*>::iterator it = int_data_.begin();
-	it != int_data_.end();++it)
-      delete [] *it;
-    int_data_.clear();
+  // clean up
+  for(vector<int*>::iterator it = int_data_.begin();
+      it != int_data_.end();++it)
+    delete [] *it;
+  int_data_.clear();
     
-    for(vector<float*>::iterator it = float_data_.begin();
-	it != float_data_.end();++it)
-      delete [] *it;
-    float_data_.clear();
+  for(vector<float*>::iterator it = float_data_.begin();
+      it != float_data_.end();++it)
+    delete [] *it;
+  float_data_.clear();
     
-    for(vector<complex_t*>::iterator it = complex_data_.begin();
-	it != complex_data_.end();++it)
-      delete [] *it;
-    complex_data_.clear();
+  for(vector<complex_t*>::iterator it = complex_data_.begin();
+      it != complex_data_.end();++it)
+    delete [] *it;
+  complex_data_.clear();
 
-    for(vector<DataSet *>::iterator it = dsets_.begin();
-	it != dsets_.end();++it)
-      delete *it;
-    dsets_.clear();
+  for(vector<DataSet *>::iterator it = dsets_.begin();
+      it != dsets_.end();++it)
+    delete *it;
+  dsets_.clear();
     
-    delete group_;
-    group_ = NULL;
+  delete group_;
+  group_ = NULL;
     
 }
+
+
+
+template <class T>
+void Wrapper_o_hdf_group::set_meta_data(const std::string & key, const T & val)
+{
+  Attr_list_hdf attr_list(group_);
+  attr_list.set_value(key,val);
+}
+  
+template <class T>
+T Wrapper_o_hdf_group::get_meta_data(const std::string & key, T &  val) const 
+{
+  Attr_list_hdf attr_list(group_);
+  return attr_list.get_value(key,val);
+}
+ 
+template void Wrapper_o_hdf_group::set_meta_data(const std::string & key, const int & val);
+template void Wrapper_o_hdf_group::set_meta_data(const std::string & key, const float & val);
+template void Wrapper_o_hdf_group::set_meta_data(const std::string & key, const string & val);
+template void Wrapper_o_hdf_group::set_meta_data(const std::string & key, const Tuple<float,2> & val);
+template void Wrapper_o_hdf_group::set_meta_data(const std::string & key, const Tuple<float,3> & val);
+
+template int Wrapper_o_hdf_group::get_meta_data(const std::string & key, int & val) const;
+template float Wrapper_o_hdf_group::get_meta_data(const std::string & key, float & val)const;
+template string Wrapper_o_hdf_group::get_meta_data(const std::string & key, string & val)const;
+template Tuple<float,3> 
+Wrapper_o_hdf_group::get_meta_data(const std::string & key,  Tuple<float,3> & val)const;
+template Tuple<float,2> 
+Wrapper_o_hdf_group::get_meta_data(const std::string & key,  Tuple<float,2> & val)const;
