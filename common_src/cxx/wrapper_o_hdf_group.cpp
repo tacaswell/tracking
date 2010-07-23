@@ -323,6 +323,47 @@ void Wrapper_o_hdf_group::store_particle_pos(const Tuple<float,3> & cord_in,floa
 }
 
 
+void Wrapper_o_hdf_group::add_meta_store(const MD_store * md_in)
+{
+  if(!md_in)
+    throw runtime_error("Wrapper_o_hdf_group::add_meta_store: MD_store pointer is null");
+  
+  Attr_list_hdf atrlst(group_);
+  unsigned int num_entries = md_in->size();
+  int tmpi;
+  float tmpf;
+  string tmps;
+  for(unsigned int j = 0; j<num_entries; ++j)
+  {
+    string key = md_in->get_key(j);
+    switch(md_in->get_type(j))
+    {
+      // integer data
+    case V_INT:
+    
+      atrlst.set_value(key,md_in->get_value(j,tmpi));
+      break;
+      // float data
+    case V_FLOAT:
+    
+      atrlst.set_value(key,md_in->get_value(j,tmpf));
+      break;
+      // complex data
+    case V_STRING:
+    
+      atrlst.set_value(key,md_in->get_value(j,tmps));
+      break;
+    default:
+      throw logic_error("should not have hit default");
+      
+    }
+  
+
+  }
+}
+
+
+
 void Wrapper_o_hdf_group::write_to_disk()
 {
   // make sure the particle is closed

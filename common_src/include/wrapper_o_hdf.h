@@ -48,6 +48,7 @@ class DataSet;
 
 namespace utilities{
 class Wrapper_o_hdf_group;
+class MD_store;
 
 /**
    Wrapper class for dealing with output to matlab
@@ -97,7 +98,8 @@ public:
 #endif
   void set_value(D_TYPE,const tracking::particle *);
   
-
+  void add_meta_store(const MD_store * md_in);
+  
 
   void close_group();
   void finalize_wrapper();

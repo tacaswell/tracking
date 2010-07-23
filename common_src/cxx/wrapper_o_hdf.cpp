@@ -223,6 +223,12 @@ void Wrapper_o_hdf::set_all_values(const tracking::Track_box * in,const utilitie
 }
 #endif
 
+void Wrapper_o_hdf::add_meta_store(const MD_store * md_in)
+{
+  current_group_->add_meta_store(md_in);
+}
+
+
 void Wrapper_o_hdf::close_group()
 {
   if(!group_open_)

@@ -105,6 +105,9 @@ public:
   template <class T>
   T get_meta_data(const std::string & key, T &  val) const ;
 
+  void add_meta_store(const MD_store * md_in);
+  
+
   // data set level
   bool contains_meta(const std::string & key,D_TYPE dtype);
   

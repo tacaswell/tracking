@@ -44,6 +44,7 @@ namespace utilities
 {
 class params;
 class Read_config;
+class MD_store;
 
 
 /**
@@ -192,6 +193,9 @@ public:
      Adds all parameters from the Read_config object to the data sets in the set
    */
   virtual void add_meta_data_list(const Read_config & , const std::set<D_TYPE> &)=0;
+
+  virtual void add_meta_store(const MD_store * md_in)  =0;
+  
   
 };
 
