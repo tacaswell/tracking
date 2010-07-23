@@ -22,6 +22,19 @@
 //containing parts covered by the terms of MATLAB User License, the
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
+// 
+//If you modify this Program, or any covered work, by linking or
+//combining it with IPP (or a modified version of that library),
+//containing parts covered by the terms of End User License Agreement
+//for the Intel(R) Software Development Products, the licensors of
+//this Program grant you additional permission to convey the resulting
+//work.
+//
+//If you modify this Program, or any covered work, by linking or
+//combining it with FreeImage (or a modified version of that library),
+//containing parts covered by the terms of End User License Agreement
+//for FreeImage Public License, the licensors of
+//this Program grant you additional permission to convey the resulting
 
 
 /** @mainpage Particle Identification and Tracking
@@ -202,6 +215,12 @@ for the Intel(R) Software Development Products, the licensors of
 this Program grant you additional permission to convey the resulting
 work.
 
+If you modify this Program, or any covered work, by linking or
+combining it with FreeImage (or a modified version of that library),
+containing parts covered by the terms of End User License Agreement
+for FreeImage Public License, the licensors of
+this Program grant you additional permission to convey the resulting
+
 
 */
  
@@ -223,7 +242,7 @@ namespace utilities{}
 
 
 
-/**
+/*
    Namespace for tracking and identifying filaments
 */
-namespace filament{}
+//namespace filament{}
