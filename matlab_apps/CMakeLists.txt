@@ -29,8 +29,9 @@ SET(MATLAB_IDEN_SRC
 SET(MATLAB_WRAPPER_SRC
   ${MATLAB_SRC_PATH}/wrapper_i_matlab.cpp
   ${MATLAB_SRC_PATH}/wrapper_o_matlab.cpp
+  ${COMMON_WRAPPER_SRC}
 )
-
+MESSAGE (STATUS "common src: ${COMMON_WRAPPER_SRC}")
 
 set(ENV{FREEIMAGE_ROOT} "/home/tcaswell/local_installs/usr/")
 find_package(FreeImage REQUIRED)
@@ -58,6 +59,7 @@ add_library(matlab_process SHARED
   ${MATLAB_UTIL_SRC}
   ${COMMON_WRAPPER_SRC}
   ${MATLAB_IDEN_SRC}
+  ${MATLAB_WRAPPER_SRC}
   )
 set_target_properties(matlab_process PROPERTIES COMPILE_DEFINITIONS  
   "PTYPE=0;DIM_COUNT=2;MATLAB_MEX_FILE")

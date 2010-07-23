@@ -66,15 +66,16 @@ SET(ACCUM_SCR
 SET(COMMON_WRAPPER_SRC
   ${COMMON_SRC_PATH}/data_map.cpp
   ${COMMON_SRC_PATH}/wrapper_i.cpp
+  ${COMMON_SRC_PATH}/md_store.cpp
 )
 
 
 
 SET(OTHER_WRAPPER_SRC
     ${COMMON_SRC_PATH}/wrapper_i_file.cpp
-  ${COMMON_SRC_PATH}/wrapper_i_ning.cpp
-  ${COMMON_SRC_PATH}/wrapper_i_ning_hd.cpp
-  ${COMMON_SRC_PATH}/wrapper_o_file.cpp
+    ${COMMON_SRC_PATH}/wrapper_i_ning.cpp
+    ${COMMON_SRC_PATH}/wrapper_i_ning_hd.cpp
+    ${COMMON_SRC_PATH}/wrapper_o_file.cpp
   )
 
 
