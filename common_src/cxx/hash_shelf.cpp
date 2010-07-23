@@ -106,11 +106,15 @@ Hash_shelf::Hash_shelf(utilities::Tuplef imgsz,
 		       int i_frame,
 		       float z_offset
 		       )
- :plane_number_(i_frame), 
-  next_(NULL),particle_count_(0),
-  img_dims_(imgsz),
-  upb_(upb),
-  z_offset_(z_offset)
+  :md_store_(NULL),
+   plane_number_(i_frame), 
+   next_(NULL),particle_count_(0),
+   max_part_indx_(0),
+   hash_dims_(0),
+   hash_cum_dim_(0),
+   img_dims_(imgsz),
+   upb_(upb),
+   z_offset_(z_offset)
 {  
   priv_init();
   
@@ -239,6 +243,7 @@ Hash_shelf::~Hash_shelf()
     *it = NULL;
     
   }
+  md_store_ = NULL;
   
 }
 

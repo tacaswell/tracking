@@ -27,7 +27,7 @@
 #include "master_box_t.h"
 #include "accumulator.h"
 #include "particle_track.h"
-
+#include "md_store.h"
 
 #include "wrapper_i.h"
 #include "filter.h"
@@ -38,6 +38,8 @@ using std::endl;
 using std::cout;
 using tracking::Accumulator;
 using std::vector;
+
+using utilities::MD_store;
 
 
 
@@ -142,7 +144,11 @@ void Master_box::compute_accum(Accumulator & in)const
   for(vector<particle*>::const_iterator part_it = particle_vec_.begin();
       part_it != end_it;++part_it)
     in.add_particle(*part_it);
-  
-
 }
 
+const MD_store * Master_box::get_MD_store(unsigned int j) const
+{
+  return in_wrapper_->get_MD_store(j);
+}
+
+  

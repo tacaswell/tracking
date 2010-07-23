@@ -39,8 +39,15 @@
 
 #include <iostream>
 #include <stdexcept>
-#include "master_box_t.h"
+#include <sstream>
 
+#include <string>
+#include <vector>
+#include <map>
+
+#include <cmath>
+
+#include "master_box_t.h"
 #include "particle_base.h"
 #include "hash_case.h"
 
@@ -52,16 +59,10 @@
 
 
 
-#include <string>
-#include <vector>
-#include <map>
-
-#include <cmath>
-
 #include "wrapper_i.h"
 
 #include "part_def.h"
-
+#include "md_store.h"
 
 namespace utilities{
 /**
@@ -110,6 +111,7 @@ using std::exception;
 using utilities::Wrapper_i_dummy;
 using utilities::Wrapper_o_hdf;
 using utilities::Tuple;
+using utilities::MD_store;
 
 using utilities::Filter_trivial;
 using utilities::D_TYPE;
@@ -120,7 +122,15 @@ using tracking::Master_box;
 using tracking::particle;
 using tracking::hash_case;
 
-
+// taken from
+// http://notfaq.wordpress.com/2006/08/30/c-convert-int-to-string/#comment-22
+template <class T>
+inline std::string to_string (const T& t)
+{
+std::stringstream ss;
+ss << t;
+return ss.str();
+}
 
 
 
@@ -142,6 +152,22 @@ int main(int argc, const char * argv[])
     
     
     Wrapper_i_dummy wrapper_in = Wrapper_i_dummy(data_types,p_c,frame_c);
+    wrapper_in.set_MD_store_size(frame_c);
+    for(int j = 0; j< frame_c; ++j)
+    {
+      MD_store * tmp = new MD_store;
+      wrapper_in.set_MD_store(j,tmp);
+      string si= "int";
+      string sf = "float";
+      string ss = "string";
+      string sji = to_string(j);
+      string sjf = to_string(((float)j)*.1);
+      tmp->add_element(si,si,sji);
+      tmp->add_element(sf,sf,sjf);
+      tmp->add_element(ss,ss,sjf);
+    }
+    
+    
     Filter_trivial filt;
     Master_box box;
     box.init(wrapper_in,filt);

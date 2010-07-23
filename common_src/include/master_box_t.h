@@ -37,6 +37,7 @@
 namespace utilities
 {
 class Wrapper_in;
+class MD_store;
 
 class Filter;
 
@@ -96,6 +97,11 @@ public:
      Puts all of the particles in to the Accumulator
    */
   void compute_accum(tracking::Accumulator & in)const;
+  
+  /**
+     Returns a pointer to the  MD_store for plane j in the input wrapper
+   */
+  const utilities::MD_store * get_MD_store(unsigned int j) const;
   
 
   ~Master_box();

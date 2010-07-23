@@ -48,6 +48,9 @@ using std::vector;
 
 const MD_store* Wrapper_in::get_MD_store(unsigned int j)const
 {
+  if(j>=md_stores_.size())
+    return NULL;
+  
   return md_stores_.at(j);
 }
 MD_store* Wrapper_in::get_MD_store(unsigned int j)

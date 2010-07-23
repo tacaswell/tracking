@@ -98,6 +98,9 @@ void Hash_shelf::output_to_wrapper(Wrapper_out & wrapper) const
   // {
   //   cout<<e.what()<<endl;
   // }
+
+  if(md_store_)
+    wrapper.add_meta_store(md_store_);
   
   for(vector<hash_box*>::const_iterator current_box = hash_.begin();
       current_box != hash_.end();++current_box)

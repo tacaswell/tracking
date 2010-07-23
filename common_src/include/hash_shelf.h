@@ -42,6 +42,7 @@ class Counted_vector;
 class Array;
 class Histogram2D;
 class Wrapper_out;
+class MD_store;
 
 
 
@@ -260,11 +261,14 @@ public:
    */
   std::list<particle_track*> * shelf_to_list() const;
 
+  /**
+     Pointer to a MD_store object.  The input wrapper owns this, if it is deleted before
+     the hash shelf is done, we are in trouble.
+  */
+  const utilities::MD_store * md_store_;
 
 
-  
-protected:
-
+private:
   ///Main data structure.  This is an vector of
   ///hash boxes.  For simplicity the strcuture is stored as
   ///a 1-D array and the class takes care of the 1D<->2D conversion
@@ -327,7 +331,9 @@ protected:
    */
   float z_offset_;
   
-private:
+
+
+
   /**
      converts a coordinate tuple in the hash shelf to an index
    */
@@ -357,7 +363,6 @@ private:
 			   utilities::Tuplei & region_sides,
 			   const int range)const;
   
-
   
   
 };
