@@ -39,7 +39,7 @@
 #include <errno.h>
 
 
-using utilities::MD_store;
+using utilities::Md_store;
 
 
 using std::string;
@@ -65,39 +65,39 @@ bool from_string(T& t,
   return !(iss >> f >> t).fail();
 }
 
-void MD_store::add_element(std::string & key,std::string & type, std::string & value)
+void Md_store::add_element(std::string & key,std::string & type, std::string & value)
 {
-  entries_.push_back(MD_element(key,type,value));
+  entries_.push_back(Md_element(key,type,value));
 }
 
-void MD_store::add_element(char * key,char * type, char * value)
+void Md_store::add_element(char * key,char * type, char * value)
 {
-  entries_.push_back(MD_element(key,type,value));
+  entries_.push_back(Md_element(key,type,value));
 }
 
 
-void MD_store::print() const
+void Md_store::print() const
 {
   for(unsigned int j = 0; j<entries_.size();++j)
     cout<<'('<<entries_[j].key<<','<<entries_[j].type<<','<<entries_[j].value<<')'<<endl;
 }
 
   
-MD_store::~MD_store()
+Md_store::~Md_store()
 {
 }
 
-int MD_store::get_key_index(const string& key) const
+int Md_store::get_key_index(const string& key) const
 {
   int max = entries_.size();
   for(int j = 0;j<max;++j)
     if(entries_[j].key.compare(key) == 0)
       return j;
-  throw logic_error("MD_store::does not contain key: " + key);
+  throw logic_error("Md_store::does not contain key: " + key);
 }
 
 
-bool MD_store::contains_key(const string& key) const
+bool Md_store::contains_key(const string& key) const
 {
   int max = entries_.size();
   for(int j = 0;j<max;++j)
@@ -107,35 +107,35 @@ bool MD_store::contains_key(const string& key) const
   return false;
 }
 
-float MD_store::get_value(int j,float & val)const
+float Md_store::get_value(int j,float & val)const
 {
   if(str2VT_s(entries_[j].type) == utilities::V_FLOAT)
   {
     if( from_string<float> (val,entries_[j].value,std::dec))
       return val;
     else
-      throw logic_error("MD_store:: failure to parse " + entries_[j].key);
+      throw logic_error("Md_store:: failure to parse " + entries_[j].key);
   }
   else
     throw logic_error("Read_congig::get_value, expect pram of type: float, found type: " + entries_[j].type);
 }
 
 
-int MD_store::get_value(int j,int & val)const
+int Md_store::get_value(int j,int & val)const
 {
   
   if(str2VT_s(entries_[j].type) == utilities::V_INT)
     if(from_string<int> (val,entries_[j].value,std::dec))
       return val;
     else 
-      throw logic_error("MD_store:: failure to parse " + entries_[j].key);
+      throw logic_error("Md_store:: failure to parse " + entries_[j].key);
   else
     throw logic_error("Read_congig::get_value, expect pram of type: int, found type: " + entries_[j].type);
 }
 
 
 
-string MD_store::get_value(int j,string & val)const
+string Md_store::get_value(int j,string & val)const
 {
   
   if(str2VT_s(entries_[j].type) == utilities::V_STRING)
@@ -148,14 +148,14 @@ string MD_store::get_value(int j,string & val)const
 }
 
 template <class T>
-T MD_store::get_value(const string& key,T & val)const
+T Md_store::get_value(const string& key,T & val)const
 {
   int j = get_key_index(key);
   return get_value(j,val);
   
 }
 
-template int MD_store::get_value(const string& key,int & val)const;
-template float MD_store::get_value(const string& key,float & val)const;
-template string MD_store::get_value(const string& key,string & val)const;
+template int Md_store::get_value(const string& key,int & val)const;
+template float Md_store::get_value(const string& key,float & val)const;
+template string Md_store::get_value(const string& key,string & val)const;
 

@@ -47,10 +47,10 @@ namespace utilities
 {
 
 /**
-   A class to hold MD_elements and functions to get information out
+   A class to hold Md_elements and functions to get information out
    in a useful way. 
- */
-class MD_store
+*/
+class Md_store
 {
 public:
     
@@ -72,15 +72,15 @@ public:
      
   */
   float get_value(int j,float & val)const;
-    /**
-    Gets value at index j.   The value is returned
+  /**
+     Gets value at index j.   The value is returned
      by reference.  The function either returns the value.
 
      
   */
- int get_value(int j,int & val)const;
-    /**
-    Gets value at index j.   The value is
+  int get_value(int j,int & val)const;
+  /**
+     Gets value at index j.   The value is
      returned by reference.  The function returns as well the value.
 
      
@@ -93,16 +93,16 @@ public:
 
   /**
      Returns true if the stanza contains a pram with the given key
-   */
+  */
   bool contains_key(const std::string& key)const;
   /**
      Returns the index of the given key in the internal structure
-   */
+  */
   int get_key_index(const std::string& key)const;
   
-    /**
+  /**
      Returns the number of parsed prams
-   */
+  */
   int size() const
   {
     return entries_.size();
@@ -110,50 +110,52 @@ public:
   
   /**
      Returns the key at j in the internal structure
-   */
+  */
   std::string get_key(int j) const
   {
     return entries_.at(j).key;
   }
   /**
      Returns the type at j in the internal structure
-   */
+  */
   utilities::V_TYPE get_type(int j)const
   {
     return str2VT_s(entries_.at(j).type);
   }
   /**
      Returns the value as a string
-   */
+  */
   std::string get_val(int j)const
   {
     return std::string(entries_.at(j).value);
   }
+
+
   /**
      Add entry
-   */
+  */
   void add_element(std::string & key,std::string & type, std::string & value);
   void add_element(char * key,char * type, char * value);
   
 
   void print()const;
   
-  ~MD_store();
+  ~Md_store();
   
 private:
   /**
      A struct to store meta data information, (key,type,val) as strings to
      make passing this stuff around easy.
   */
-  struct MD_element
+  struct Md_element
   {
   
-    MD_element(std::string key_i,std::string type_i,std::string value_i)
+    Md_element(std::string key_i,std::string type_i,std::string value_i)
       :key(key_i),type(type_i),value(value_i){}
-    MD_element(const char * key_i,const char * type_i,const char * value_i)
+    Md_element(const char * key_i,const char * type_i,const char * value_i)
       :key(key_i),type(type_i),value(value_i){}
-    MD_element();
-    ~MD_element(){};
+    Md_element();
+    ~Md_element(){};
     std::string key;
     std::string type;
     std::string value;
@@ -161,7 +163,7 @@ private:
 
   };
 
-  std::vector<MD_element> entries_;
+  std::vector<Md_element> entries_;
 };
 
   

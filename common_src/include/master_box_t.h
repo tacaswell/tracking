@@ -37,7 +37,7 @@
 namespace utilities
 {
 class Wrapper_in;
-class MD_store;
+class Md_store;
 
 class Filter;
 
@@ -99,9 +99,9 @@ public:
   void compute_accum(tracking::Accumulator & in)const;
   
   /**
-     Returns a pointer to the  MD_store for plane j in the input wrapper
+     Returns a pointer to the  Md_store for plane j in the input wrapper
    */
-  const utilities::MD_store * get_MD_store(unsigned int j) const;
+  const utilities::Md_store * get_Md_store(unsigned int j) const;
   
 
   ~Master_box();

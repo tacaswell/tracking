@@ -52,7 +52,7 @@ class CommonFG;
 
 
 namespace utilities{
-class MD_store;
+class Md_store;
 
 /**
    Wrapper class for dealing with output to matlab
@@ -105,7 +105,7 @@ public:
   template <class T>
   T get_meta_data(const std::string & key, T &  val) const ;
 
-  void add_meta_store(const MD_store * md_in);
+  void add_meta_store(const Md_store * md_in);
   
 
   // data set level

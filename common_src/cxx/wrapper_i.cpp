@@ -41,24 +41,24 @@
 #include <stdexcept>
 #include "md_store.h"
 using utilities::Wrapper_in;
-using utilities::MD_store;
+using utilities::Md_store;
 using std::logic_error;
 using std::vector;
 
 
-const MD_store* Wrapper_in::get_MD_store(unsigned int j)const
+const Md_store* Wrapper_in::get_Md_store(unsigned int j)const
 {
   if(j>=md_stores_.size())
     return NULL;
   
   return md_stores_.at(j);
 }
-MD_store* Wrapper_in::get_MD_store(unsigned int j)
+Md_store* Wrapper_in::get_Md_store(unsigned int j)
 {
   return md_stores_.at(j);
 }
 
-void Wrapper_in::set_MD_store_size(unsigned int j)
+void Wrapper_in::set_Md_store_size(unsigned int j)
 {
   if(j<md_stores_.size())
   {
@@ -72,22 +72,22 @@ void Wrapper_in::set_MD_store_size(unsigned int j)
   md_stores_.resize(j,NULL);
 }
 
-unsigned int Wrapper_in::get_MD_store_size()
+unsigned int Wrapper_in::get_Md_store_size()
 {
   return md_stores_.size();
 }
 
 
-void Wrapper_in::set_MD_store(unsigned int j, MD_store * in)
+void Wrapper_in::set_Md_store(unsigned int j, Md_store * in)
 {
   if(md_stores_.at(j))
-    throw logic_error("MD_store already exist for this plane ");
+    throw logic_error("Md_store already exist for this plane ");
   md_stores_.at(j)  = in;
   
   
 }
 
-void Wrapper_in::clear_MD_store(unsigned int j)
+void Wrapper_in::clear_Md_store(unsigned int j)
 {
   delete md_stores_.at(j);
   md_stores_.at(j) = NULL;
@@ -95,7 +95,7 @@ void Wrapper_in::clear_MD_store(unsigned int j)
 
 Wrapper_in::~Wrapper_in()
 {
-  for(vector<MD_store*>::iterator it = md_stores_.begin();
+  for(vector<Md_store*>::iterator it = md_stores_.begin();
       it!= md_stores_.end();++it)
   {
     delete *it;

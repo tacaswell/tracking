@@ -51,10 +51,10 @@
 #include <complex>
 #include <vector>
 namespace utilities{
-class MD_store;
+class Md_store;
 
 /**
-   A mostly abstract base class for input wrappers.  Has handling for MD_store at this level
+   A mostly abstract base class for input wrappers.  Has handling for Md_store at this level
 
 
 */
@@ -126,42 +126,42 @@ public:
   /**
      Returns a pointer to plane j's meta data store.  Const version
    */
-  const MD_store * get_MD_store(unsigned int j)const;
+  const Md_store * get_Md_store(unsigned int j)const;
   
 
   /**
      Returns a pointer to plane j's meta data store.  Const version
   */
-  MD_store* get_MD_store(unsigned int j);
+  Md_store* get_Md_store(unsigned int j);
   
   /**
-     Sets the MD_store for plane j.  When the pointer is assigned the wrapper
+     Sets the Md_store for plane j.  When the pointer is assigned the wrapper
      takes ownership of the pointer and will clean it up.
    */
-  void set_MD_store(unsigned int j, MD_store * in);
+  void set_Md_store(unsigned int j, Md_store * in);
 
   /**
      Sets the size of the md_stores_ vector
    */
-  void set_MD_store_size(unsigned int j);
+  void set_Md_store_size(unsigned int j);
 
   /**
      Gets the size of the md_stores_ vector
    */
-  unsigned int get_MD_store_size();
+  unsigned int get_Md_store_size();
   
 
   /**
-     Deletes  plane j's MD_store.
+     Deletes  plane j's Md_store.
    */
-  void clear_MD_store(unsigned int j);
+  void clear_Md_store(unsigned int j);
   /*@}*/
   virtual ~Wrapper_in();
   
   Wrapper_in();
   
 private:
-  std::vector<MD_store*> md_stores_;
+  std::vector<Md_store*> md_stores_;
   
   
 };

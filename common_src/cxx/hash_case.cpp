@@ -95,7 +95,7 @@ void hash_case::init(Master_box & mb,const utilities::Tuplef & dims,
   for(unsigned int j = 1; j<h_case_.size(); ++j){
     h_case_[j] = new Hash_shelf(dims, ppb,j);
     h_case_[j-1]->set_next_shelf(h_case_[j]);
-    h_case_[j]->md_store_ = mb.get_MD_store(j);
+    h_case_[j]->md_store_ = mb.get_Md_store(j);
     
   }
 

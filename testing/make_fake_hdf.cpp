@@ -111,7 +111,7 @@ using std::exception;
 using utilities::Wrapper_i_dummy;
 using utilities::Wrapper_o_hdf;
 using utilities::Tuple;
-using utilities::MD_store;
+using utilities::Md_store;
 
 using utilities::Filter_trivial;
 using utilities::D_TYPE;
@@ -152,11 +152,11 @@ int main(int argc, const char * argv[])
     
     
     Wrapper_i_dummy wrapper_in = Wrapper_i_dummy(data_types,p_c,frame_c);
-    wrapper_in.set_MD_store_size(frame_c);
+    wrapper_in.set_Md_store_size(frame_c);
     for(int j = 0; j< frame_c; ++j)
     {
-      MD_store * tmp = new MD_store;
-      wrapper_in.set_MD_store(j,tmp);
+      Md_store * tmp = new Md_store;
+      wrapper_in.set_Md_store(j,tmp);
       string si= "int";
       string sf = "float";
       string ss = "string";

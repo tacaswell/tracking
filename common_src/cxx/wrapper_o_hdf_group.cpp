@@ -67,7 +67,7 @@ using H5::Exception;
 
 
 using utilities::D_TYPE;
-using utilities::MD_store;
+using utilities::Md_store;
 using utilities::Tuple;
 
 using tracking::particle;
@@ -323,10 +323,10 @@ void Wrapper_o_hdf_group::store_particle_pos(const Tuple<float,3> & cord_in,floa
 }
 
 
-void Wrapper_o_hdf_group::add_meta_store(const MD_store * md_in)
+void Wrapper_o_hdf_group::add_meta_store(const Md_store * md_in)
 {
   if(!md_in)
-    throw runtime_error("Wrapper_o_hdf_group::add_meta_store: MD_store pointer is null");
+    throw runtime_error("Wrapper_o_hdf_group::add_meta_store: Md_store pointer is null");
   
   Attr_list_hdf atrlst(group_);
   unsigned int num_entries = md_in->size();

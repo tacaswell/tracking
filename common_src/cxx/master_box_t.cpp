@@ -39,7 +39,7 @@ using std::cout;
 using tracking::Accumulator;
 using std::vector;
 
-using utilities::MD_store;
+using utilities::Md_store;
 
 
 
@@ -146,9 +146,9 @@ void Master_box::compute_accum(Accumulator & in)const
     in.add_particle(*part_it);
 }
 
-const MD_store * Master_box::get_MD_store(unsigned int j) const
+const Md_store * Master_box::get_Md_store(unsigned int j) const
 {
-  return in_wrapper_->get_MD_store(j);
+  return in_wrapper_->get_Md_store(j);
 }
 
   

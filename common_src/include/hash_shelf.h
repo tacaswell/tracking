@@ -42,7 +42,7 @@ class Counted_vector;
 class Array;
 class Histogram2D;
 class Wrapper_out;
-class MD_store;
+class Md_store;
 
 
 
@@ -262,10 +262,10 @@ public:
   std::list<particle_track*> * shelf_to_list() const;
 
   /**
-     Pointer to a MD_store object.  The input wrapper owns this, if it is deleted before
+     Pointer to a Md_store object.  The input wrapper owns this, if it is deleted before
      the hash shelf is done, we are in trouble.
   */
-  const utilities::MD_store * md_store_;
+  const utilities::Md_store * md_store_;
 
 
 private:
