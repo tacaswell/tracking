@@ -1,4 +1,4 @@
-//Copyright 2008,2009 Thomas A Caswell
+//Copyright 2010 Thomas A Caswell
 //tcaswell@uchicago.edu
 //http://jfi.uchicago.edu/~tcaswell
 //
@@ -35,66 +35,77 @@
 //containing parts covered by the terms of End User License Agreement
 //for FreeImage Public License, the licensors of
 //this Program grant you additional permission to convey the resulting
-//work.
 
-
-#ifndef IDEN_OBJ
-#define IDEN_OBJ
+#include <iostream>
+#include <stdexcept>
 #include <string>
 
-#include "params1.h"
+#include "FreeImagePlus.h"
 
-namespace tracking
+#include "mm_md_parser.h"
+#include "md_store.h"
+
+using std::string;
+using std::cout;
+using std::cerr;
+using std::endl;
+using std::vector;
+using std::logic_error;
+using utilities::Mm_md_parser;
+using utilities::Md_store;
+
+
+
+
+
+static string fname = "/home/tcaswell/colloids/data/polyNIPAM_batch_12/20100524/4/exp2/27-7_27-1_27-6_vslow.tif";
+
+int main()
 {
-class hash_case;
-class Master_box;
+    
+  FreeImage_Initialise();
+  BOOL bMemoryCache = TRUE;
+  fipMultiPage src(bMemoryCache);
+  // Open src file (read-only, use memory cache)
+  src.open(fname.c_str(), FALSE, TRUE);
+  unsigned int img_frames = src.getPageCount();
+  cout<<img_frames<<endl;
+  Mm_md_parser mm_md_p;
 
+  fipImage image;
+  image = src.lockPage(0);
+  Md_store * md_store = mm_md_p.parse_md(image);
+  // clear the input data
+  src.unlockPage(image,false);
+
+
+  image = src.lockPage(1);
+  Md_store * md_store2 = mm_md_p.parse_md(image);
+  // clear the input data
+  src.unlockPage(image,false);
+
+
+  src.close(0);
+  
+  FreeImage_DeInitialise();
+
+  for(unsigned int j = 0; j<md_store->size();++j)
+    cout<<md_store->get_key(j)<<" ("
+	<<md_store->get_type(j)<<") "
+	<<md_store->get_val(j)<<endl;
+
+  
+  for(unsigned int j = 0; j<md_store2->size();++j)
+    cout<<md_store2->get_key(j)<<" ("
+	<<md_store2->get_type(j)<<") "
+	<<md_store2->get_val(j)<<endl;
+
+  delete md_store;
+  md_store=NULL;
+  delete md_store2;
+  md_store2=NULL;
+  
+      
+
+  return 0;
 }
-namespace utilities
-{
-class Wrapper_i_plu;
-template <class T,int N>
-class Tuple;
-
-
-}
-
-
-namespace iden
-{
-
-/**
-   Class to encapsulate all of the image processing for particle identification
- */
-class Iden
-{
-public:
-  Iden(Params& in):params_(in)
-  {
-  };			// needs arguements
-  ~Iden(){};
-  
-  void set_fname(const std::string &);
-  void set_params(const Params& param_in);
-  
-  utilities::Wrapper_i_plu * fill_wrapper(utilities::Tuple<float,2>,unsigned int frames=0,unsigned int start=0);
-  utilities::Wrapper_i_plu * fill_wrapper_avg(utilities::Tuple<float,2> dims,unsigned int avg_count,unsigned int frames,unsigned int start);
-  
-private:
-  /**
-     name of the file to be working on
-   */
-  std::string fname_;
-  /**
-     Parameter object, holds the parameters for the image processing
-   */
-  Params params_;
-  
-};
-
-  
-
-
-}
-
-#endif

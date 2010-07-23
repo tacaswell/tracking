@@ -35,13 +35,13 @@
 //containing parts covered by the terms of End User License Agreement
 //for FreeImage Public License, the licensors of
 //this Program grant you additional permission to convey the resulting
+//work.
+
+
+
 #include <iostream>
-
-
 #include <sstream>
-
 #include <stdexcept>
-#include <string>
 #include <vector>
 
 #include <xercesc/dom/DOM.hpp>
@@ -59,12 +59,17 @@
 #include <xercesc/parsers/XercesDOMParser.hpp>
 #include <xercesc/util/XMLUni.hpp>
 
+#include "mm_md_parser.h"
+#include "FreeImagePlus.h"
+#include "md_store.h"
+
 using std::string;
 using std::cout;
 using std::cerr;
 using std::endl;
 using std::vector;
 using std::logic_error;
+using std::runtime_error;
 
 
 using xercesc::XMLPlatformUtils;
@@ -77,72 +82,18 @@ using xercesc::MemBufInputSource;
 
 using xercesc::XercesDOMParser;
 
+using utilities::Mm_md_parser;
+using utilities::Md_store;
 
-#include "FreeImagePlus.h"
+void parse_description(string& des,Md_store *store);
 
-
-struct Config_pram
-{
-  
-    Config_pram(std::string key_i,std::string type_i,std::string value_i)
-      :key(key_i),type(type_i),value(value_i){}
-    Config_pram(const char * key_i,const char * type_i,const char * value_i)
-      :key(key_i),type(type_i),value(value_i){}
-    Config_pram();
-    ~Config_pram(){};
-    std::string key;
-    std::string type;
-    std::string value;
-  
-
-  };
-
-void parse_description(string& des,vector<Config_pram> & prams_);
-void parse_elements(DOMNode* pram_elm, vector<Config_pram> & prams_,XMLCh* pram_str,XMLCh* key_str,XMLCh* value_str,XMLCh* type_str);
-
-static string fname = "/home/tcaswell/colloids/data/polyNIPAM_batch_12/20100524/4/exp2/27-7_27-1_27-6_vslow.tif";
+// string to make MemBufInputSource happy
 static const char*  gMemBufId = "ImageDescription";
-int main()
+
+
+Mm_md_parser::Mm_md_parser()
 {
-    
-  FreeImage_Initialise();
-  BOOL bMemoryCache = TRUE;
-  fipMultiPage src(bMemoryCache);
-  // Open src file (read-only, use memory cache)
-  src.open(fname.c_str(), FALSE, TRUE);
-  unsigned int img_frames = src.getPageCount();
-  cout<<img_frames<<endl;
-  
-  fipImage image;
-
-  image = src.lockPage(0);
-
-  cout<<"meta data count: MAIN  "<<image.getMetadataCount(FIMD_EXIF_MAIN )<<endl;
-  cout<<"meta data count: EXIF  "<<image.getMetadataCount(FIMD_EXIF_EXIF )<<endl;
-  cout<<"meta data count: XMP   "<<image.getMetadataCount(FIMD_XMP  )<<endl;
-  cout<<"meta data count: IPTC  "<<image.getMetadataCount(FIMD_IPTC )<<endl;
-  cout<<"meta data count: GOETIFF  "<<image.getMetadataCount(FIMD_GEOTIFF )<<endl;
-
-
-  fipTag tag;
-  fipMetadataFind finder;
-  if( finder.findFirstMetadata(FIMD_EXIF_MAIN, image, tag) ) {
-    do {
-      // process the tag
-      cout << tag.getKey() << "\n";
-    } while( finder.findNextMetadata(tag) );
-  }
-
-  cout<<"try to get at the data"<<endl;
-  
-  image.getMetadata(FIMD_EXIF_MAIN,"ImageDescription",tag);
-  cout<<(const char*)tag.getValue()<<endl;
-  cout<<"type: "<<tag.getType()<<endl;
-  
-  const char * xml_str = (const char*)tag.getValue();
-  
-    // set up xml parser stuff
-  try
+    try
   {
     XMLPlatformUtils::Initialize();  // Initialize Xerces infrastructure
   }
@@ -151,35 +102,81 @@ int main()
     char* message = XMLString::transcode( e.getMessage() );
     cerr << "XML toolkit initialization error: " << message << endl;
     XMLString::release( &message );
-    // throw exception here to return ERROR_XERCES_INIT
+    // throw exception here to return ERROR_XERCES_INTI
   }
-  
 
-  XMLCh* elm_name = XMLString::transcode("PlaneInfo");
-  XMLCh* key_str = XMLString::transcode("id");
-  XMLCh* type_str = XMLString::transcode("type");
-  XMLCh* value_str = XMLString::transcode("value");
-  XMLCh* pram_str = XMLString::transcode("prop");
     
-  
-  XercesDOMParser *config_parser = new XercesDOMParser;
-  
-  config_parser->setValidationScheme( XercesDOMParser::Val_Never );
-  config_parser->setDoNamespaces( false );
-  config_parser->setDoSchema( false );
-  config_parser->setLoadExternalDTD( false );
+  elm_name_ = XMLString::transcode("PlaneInfo");
+  key_str_  = XMLString::transcode("id");
+  type_str_ = XMLString::transcode("type");
+  value_str_= XMLString::transcode("value");
+  pram_str_ = XMLString::transcode("prop");
 
-  MemBufInputSource* memBuf = new MemBufInputSource((const XMLByte*)xml_str
-					       , strlen(xml_str)
-					       , gMemBufId
-					       ,false
-					       );
-  
-  
-  vector<Config_pram> prams_;
+}
+
+
+
+Mm_md_parser::~Mm_md_parser()
+{
+  XMLString::release(&  elm_name_);
+  XMLString::release(&key_str_   );
+  XMLString::release(&type_str_  );
+  XMLString::release(&value_str_ );
+  XMLString::release(&pram_str_  );
+
+
+
   
   try
   {
+    XMLPlatformUtils::Terminate();  // Terminate Xerces
+  }
+  catch( xercesc::XMLException& e )
+  {
+    char* message = xercesc::XMLString::transcode( e.getMessage() );
+
+    cerr << "XML ttolkit teardown error: " << message << endl;
+    XMLString::release( &message );
+  }
+}
+
+
+
+Md_store * Mm_md_parser::parse_md(fipImage & image) const 
+{
+
+  Md_store * md_store = new Md_store();
+  
+  
+  fipTag tag;
+  image.getMetadata(FIMD_EXIF_MAIN,"ImageDescription",tag);
+  
+
+  // this test should make sure the below casts all work as intended
+  // as my interpretation of 
+  // 	FIDT_ASCII		= 2,	// 8-bit bytes w/ last byte null 
+  // from FreeImage.h is that ascii is an unsigned char restricted to 
+  // 0-128, which can be safely cast to an unsigned char
+  //     typedef unsigned char       XMLByte;
+  // from XercesDefs.hpp
+  // which is what XMLByte is
+  if(tag.getType() != FIDT_ASCII)
+    throw runtime_error("The data type of the meta data is not correct (expect ascii" );
+  
+  const XMLByte*  xml_str = (const XMLByte*)tag.getValue();
+  
+  MemBufInputSource* memBuf = new MemBufInputSource(xml_str
+						    , tag.getLength()
+						    , gMemBufId
+						    ,false
+						    );
+  
+  
+  XercesDOMParser *config_parser = new XercesDOMParser;
+  
+  try
+  {
+    
     config_parser->parse(*memBuf);
     
     DOMDocument * doc = config_parser->getDocument();
@@ -200,16 +197,17 @@ int main()
       {
 	// cast to dom element
 	DOMElement* cur_elm = dynamic_cast<DOMElement*>(current_node);
-	// look for top level groups
-	parse_elements(cur_elm,prams_,pram_str,key_str,value_str,type_str);
+	// look for prop elements in the top group
+	parse_elements(cur_elm,md_store);
 	// see if this is the element that we want
-	if(XMLString::equals(cur_elm->getTagName(),elm_name))
+	if(XMLString::equals(cur_elm->getTagName(),elm_name_))
 	{
 	  DOMNodeList* pram_elms = cur_elm->getChildNodes();
 	  const XMLSize_t pram_count =  pram_elms->getLength();
 	  for(XMLSize_t k = 0; k<pram_count; ++k)
 	  {
-	    parse_elements(pram_elms->item(k),prams_,pram_str,key_str,value_str,type_str);
+	    // parse the prop elements
+	    parse_elements(pram_elms->item(k),md_store);
 	    
 	  }
 	  
@@ -228,52 +226,25 @@ int main()
 
   }
   
-  
-  XMLString::release(&key_str);
-  XMLString::release(&type_str);
-  XMLString::release(&value_str);
-  XMLString::release(&pram_str);
-  
-  // clean up xml stuff
-  XMLString::release(&elm_name);
   delete config_parser;
+  config_parser = NULL;
   delete memBuf;
-  try
-  {
-    XMLPlatformUtils::Terminate();  // Terminate Xerces
-  }
-  catch( xercesc::XMLException& e )
-  {
-    char* message = xercesc::XMLString::transcode( e.getMessage() );
-
-    cerr << "XML ttolkit teardown error: " << message << endl;
-    XMLString::release( &message );
-  }
-
+  memBuf = NULL;
   
-  for(unsigned int j = 0; j<prams_.size();++j)
-    cout<<prams_[j].key<<": "
-	<<'('<<prams_[j].type<<") "
-	<<prams_[j].value<<endl;
+  return md_store;
   
 
-
-
-  
-  
-  // clear the input data
-  src.unlockPage(image,false);
-  
-  src.close(0);
-  
-  FreeImage_DeInitialise();
-
-  return 0;
-  
 }
 
-void parse_description(string& des,vector<Config_pram> & prams)
+
+
+
+
+void parse_description(string& des,Md_store* md_store)
 {
+
+  string strstr = "string";
+  
   size_t start_indx = 0;
   size_t colon_indx = 0;
   size_t end_indx = 0;
@@ -288,7 +259,22 @@ void parse_description(string& des,vector<Config_pram> & prams)
 
   while(end_indx != string::npos)
   {
-    prams.push_back(Config_pram(des.substr(start_indx,colon_indx-start_indx),"string",des.substr(colon_indx+2,end_indx-colon_indx-2)));
+
+    string key = des.substr(start_indx,colon_indx-start_indx);
+    
+    string val = des.substr(colon_indx+2,end_indx-colon_indx-2);
+    
+    // add special handling
+    if(false)
+    {
+    }
+    else
+    {
+      md_store->add_element(key,strstr,val);
+      
+    }
+    
+    // step pointers in string
     start_indx = end_indx +SW;
     colon_indx = des.find(": ",start_indx);
     end_indx= des.find("&#13;&#10;",colon_indx);
@@ -297,7 +283,7 @@ void parse_description(string& des,vector<Config_pram> & prams)
 }
 
 
-void parse_elements(DOMNode* pram_node, vector<Config_pram> & prams_,XMLCh* pram_str,XMLCh* key_str,XMLCh* value_str,XMLCh* type_str)
+void Mm_md_parser::parse_elements(DOMNode* pram_node, Md_store* md_store)const
 {
   XMLCh* des_str = XMLString::transcode("Description");
 
@@ -305,27 +291,27 @@ void parse_elements(DOMNode* pram_node, vector<Config_pram> & prams_,XMLCh* pram
      pram_node->getNodeType() == DOMNode::ELEMENT_NODE)
   {
     DOMElement* pram_elm = dynamic_cast<DOMElement*>(pram_node);
-    if(XMLString::equals(pram_elm->getTagName(),pram_str))
+    if(XMLString::equals(pram_elm->getTagName(),pram_str_))
     {
 
 		
-      if(!(pram_elm->hasAttribute(key_str) &&
-	   pram_elm->hasAttribute(type_str) &&
-	   pram_elm->hasAttribute(value_str)))
+      if(!(pram_elm->hasAttribute(key_str_) &&
+	   pram_elm->hasAttribute(type_str_) &&
+	   pram_elm->hasAttribute(value_str_)))
 	throw logic_error("read_config :: pram entry does not have proper attributes"); 
 		
-      char * key = XMLString::transcode(pram_elm->getAttribute(key_str));
-      char * type = XMLString::transcode(pram_elm->getAttribute(type_str));
-      char * value = XMLString::transcode(pram_elm->getAttribute(value_str));
+      char * key = XMLString::transcode(pram_elm->getAttribute(key_str_));
+      char * type = XMLString::transcode(pram_elm->getAttribute(type_str_));
+      char * value = XMLString::transcode(pram_elm->getAttribute(value_str_));
 
       
-      if(XMLString::equals(pram_elm->getAttribute(key_str),des_str))
+      if(XMLString::equals(pram_elm->getAttribute(key_str_),des_str))
       {
 	string v(value);
-	parse_description(v,prams_);
+	parse_description(v,md_store);
       }
       else
-	prams_.push_back(Config_pram(key,type,value));
+	md_store->add_element(key,type,value);
 
       XMLString::release(&key);
       XMLString::release(&type);
@@ -333,5 +319,6 @@ void parse_elements(DOMNode* pram_node, vector<Config_pram> & prams_,XMLCh* pram
     }
   }
   XMLString::release(&des_str);
+   
   
 }

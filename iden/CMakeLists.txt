@@ -9,6 +9,11 @@ SET(COMMON_IDEN_SRC
   ${IDEN_SRC_PATH}/iden.cpp
   ${IDEN_SRC_PATH}/wrapper_i_plu.cpp)
 
+SET(MD_PARSE_SRC
+  ${IDEN_SRC_PATH}/mm_md_parser
+  ${COMMON_SRC_PATH}/md_store
+  ${COMMON_SRC_PATH}/enum_utils
+  )
 
 find_package(IPP REQUIRED)
 set(ENV{FREEIMAGE_ROOT} "/home/tcaswell/local_installs/usr/")

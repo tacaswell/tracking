@@ -1,4 +1,4 @@
-//Copyright 2008,2009 Thomas A Caswell
+//Copyright 2008-2010 Thomas A Caswell
 //tcaswell@uchicago.edu
 //http://jfi.uchicago.edu/~tcaswell
 //
@@ -41,6 +41,7 @@
 
 #include "iden.h"
 #include "wrapper_i_plu.h"
+
 #include "image1.h"
 #include "data_proc1.h"
 
@@ -49,6 +50,7 @@
 
 #include "tuple.h"
 
+#include "mm_md_parser.h"
 using std::string;
 
 
@@ -259,7 +261,7 @@ Wrapper_i_plu * Iden::fill_wrapper_avg(Tuple<float,2> dims,unsigned int avg_coun
   
   // create the wrapper
   wrapper = new Wrapper_i_plu(wrapper_frames,dims);
-
+  wrapper->set_Md_store_size(wrapper_frames);
   // freeimage object
   fipImage image;
   

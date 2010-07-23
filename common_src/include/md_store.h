@@ -103,7 +103,7 @@ public:
   /**
      Returns the number of parsed prams
   */
-  int size() const
+  unsigned int size() const
   {
     return entries_.size();
   }
