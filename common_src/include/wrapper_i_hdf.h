@@ -49,6 +49,10 @@ private:
   
   static std::string format_name(int in);
   
+  /**
+     Set of pairs of data types and the computation number to be
+     used for that data type.
+   */
   std::set<std::pair<utilities::D_TYPE,int> > data_types_;
   std::set<utilities::D_TYPE> data_types_set_;
   
@@ -109,6 +113,8 @@ public:
   int get_num_frames() const ;
 
   bool contains_type(D_TYPE type) const ;
+
+  
 
   Tuplef get_dims() const;
 
