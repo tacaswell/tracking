@@ -140,6 +140,15 @@ public:
   void add_element(const char * key,int val);
   
 
+  /**
+     Add all elements in md_in to this Md_store object
+   */
+  void add_elements(const Md_store * md_in);
+  
+
+  /**
+     Print out the contents
+   */
   void print()const;
   
   ~Md_store();
