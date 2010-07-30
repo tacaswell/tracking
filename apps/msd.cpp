@@ -1,4 +1,4 @@
-//Copyright 2008-2010 Thomas A Caswell
+//Copyright 2010 Thomas A Caswell
 //tcaswell@uchicago.edu
 //http://jfi.uchicago.edu/~tcaswell
 //
@@ -26,28 +26,17 @@
 
 
 #include "master_box_t.h"
-
-#include "particle_base.h"
 #include "hash_case.h"
-
 #include "wrapper_o_hdf.h"
 #include "wrapper_i_hdf.h"
 #include "filter.h"
-
 #include "generic_wrapper_hdf.h"
-#include "corr_gofr.h"
-
-
-#include "gnuplot_i.hpp" //Gnuplot class handles POSIX-Pipe-communication with Gnuplot
-
 #include "track_shelf.h"
-
-
 #include <unistd.h>
 #include <vector>
 #include "read_config.h"
-
-
+#include "cl_parse.h"
+#include "counted_vector.h"
 using std::string;
 using std::vector;
 
@@ -73,7 +62,9 @@ using utilities::D_TYPE;
 using utilities::Generic_wrapper_hdf;
 
 using utilities::Read_config;
-
+using utilities::CL_parse;
+using utilities::Counted_vector;
+using utilities::format_name;
 
 
 
@@ -89,73 +80,71 @@ int main(int argc, char * const argv[])
   Track_shelf tracks;
   
   		   
-  string data_file ;
+  string in_file ;
   string out_file ;
   string pram_file ;
 
-
+    
   
-      
-  int optchar;
-  bool found_i=false,found_o= false,found_c = false;
-
-  while((optchar = getopt(argc,argv,"i:o:c:")) !=-1)
+  try
   {
-    switch(optchar)
-    {
-    case 'i':
-      data_file = string(optarg);
-      found_i = true;
-      break;
-    case 'o':
-      out_file = string(optarg);
-      found_o = true;
-      break;
-    case 'c':
-      pram_file = string(optarg);
-      found_c = true;
-      break;
-      
-    case '?':
-    default:
-      cout<<"-i input file name"<<endl;
-      cout<<"-o output file name"<<endl;
-      cout<<"-c parameter file name"<<endl;
-      break;
-    }
+    CL_parse cl(argc,argv);
+    cl.parse();
+    cl.get_fin(in_file);
+    cl.get_fout(out_file);
+    cl.get_fpram(pram_file);
   }
-
-  if(!(found_i && found_o && found_c))
+  catch(std::invalid_argument &e )
   {
-    cerr<<"input failed"<<endl;
-    cout<<"-i input filename"<<endl;
-    cout<<"-o output filename"<<endl;
-    cout<<"-c configuration filename"<<endl;
+    cout<<e.what()<<endl;
     return -1;
   }
+
   
-  cout<<"file to read in: "<<data_file<<endl;
+  
+  cout<<"file to read in: "<<in_file<<endl;
   cout<<"file that will be written to: "<<out_file<<endl;
 
     
-  float box_side_len;
-  float search_range;
-  int min_track_length;
 
-  
-  Read_config app_prams(pram_file,"tracking");
-  if(!(app_prams.contains_key("box_side_len")&&
-       app_prams.contains_key("search_range")))
+  int msd_steps;
+
+  // get msd parameters
+  Read_config app_prams_msd(pram_file,"msd");
+  if(!(app_prams_msd.contains_key("msd_steps")))
   {
     cerr<<APP_NAME + " parameter file does not contain enough parameters"<<endl;
     return -1;
   }
   try
   {
-    app_prams.get_value("box_side_len",box_side_len);
-    app_prams.get_value("search_range",search_range);
-    if(app_prams.contains_key("min_track_length"))
-      app_prams.get_value("min_track_length",min_track_length);
+    app_prams_msd.get_value("msd_steps",msd_steps);
+  }
+  catch(logic_error & e)
+  {
+    cerr<<"error parsing the computation numbers"<<endl;
+    cerr<<e.what()<<endl;
+    return -1;
+  }
+
+  float box_side_len, search_range;
+  int min_track_length;
+  
+  
+  // get tracking parameters 
+  Read_config app_prams_trk(pram_file,"tracking");
+  if(!(app_prams_trk.contains_key("box_side_len")&&
+       app_prams_trk.contains_key("search_range")))
+  {
+    cerr<<APP_NAME + " parameter file does not contain enough parameters"<<endl;
+    return -1;
+  }
+  try
+  {
+    app_prams_trk.get_value("box_side_len",box_side_len);
+    app_prams_trk.get_value("search_range",search_range);
+    if(app_prams_trk.contains_key("min_track_length"))
+      app_prams_trk.get_value("min_track_length",min_track_length);
     else
       min_track_length = 3;
   }
@@ -165,6 +154,7 @@ int main(int argc, char * const argv[])
     cerr<<e.what()<<endl;
     return -1;
   }
+
   
 
   int read_comp_num, write_comp_num;
@@ -180,7 +170,6 @@ int main(int argc, char * const argv[])
   {
     comp_prams.get_value("read_comp",read_comp_num);
     comp_prams.get_value("write_comp",write_comp_num);
-
   }
   catch(logic_error & e)
   {
@@ -189,12 +178,10 @@ int main(int argc, char * const argv[])
     return -1;
   }
 
-  cout<<"file to read in: "<<data_file<<endl;
+  cout<<"file to read in: "<<in_file<<endl;
   cout<<"file that will be written to: "<<out_file<<endl;
   cout<<"Parameters: "<<endl;
-  cout<<"  box_side_len: "<<box_side_len<<endl;
-  cout<<"  search_range: "<<search_range<<endl;
-  cout<<"  min_track_length: "<<min_track_length<<endl;
+  
   cout<<"comps: "<<endl;
   cout<<"  read_comp_num "<<read_comp_num<<endl;
   cout<<"  write_comp_num "<<write_comp_num<<endl;
@@ -220,11 +207,11 @@ int main(int argc, char * const argv[])
     
       
     // set up the input wrapper
-    Wrapper_i_hdf wh(data_file,data_types,read_comp_num,0,100);
+    Wrapper_i_hdf wh(in_file,data_types,read_comp_num,0,100);
     
     // fill the master_box
     Master_box box;
-    Filter_basic filt(data_file,read_comp_num);
+    Filter_basic filt(in_file,read_comp_num);
     //Filter_trivial filt;
     box.init(wh,filt);
     
@@ -246,67 +233,47 @@ int main(int argc, char * const argv[])
     cout<<"after trimming found "<<tracks.get_track_count()<<" tracks"<<endl;
     // make wrapper
     
-    D_TYPE tmp2[] = {utilities::D_XPOS,
-    		     utilities::D_YPOS,
-    };
-    set<D_TYPE> data_types2 = set<D_TYPE>(tmp2, tmp2+2);
+    Counted_vector md(msd_steps);
+    Counted_vector msd(msd_steps);
+    Counted_vector msd_sq(msd_steps);
+    tracks.msd_corrected(md,msd,msd_sq);
+
     
-    
-    set<D_TYPE> d2;
-    d2.insert(utilities::D_NEXT_INDX);
-    d2.insert(utilities::D_PREV_INDX);
-    d2.insert(utilities::D_TRACKID);
-    
-    
-    Wrapper_o_hdf hdf_w(out_file,d2,write_comp_num,
-			Wrapper_o_hdf::APPEND_FILE,
-			"frame");
-    
+    // md.average_data();
+    // msd.average_data();
+    // msd_sq.average_data();
     
 
-    cout<<"made output wrapper"<<endl;
+    string data_str = "data";
+    string count_str = "count";
+    string g_name;
+    
+    Generic_wrapper_hdf hdf_out(out_file,true);
+
+    g_name = format_name("mean_disp",write_comp_num);
     
     
-    try
-    {
-      hdf_w.initialize_wrapper();
-      cout<<"inited wrapper"<<endl;
-      hcase.output_to_wrapper(hdf_w,false);
-      hdf_w.add_meta_data_list(app_prams,d2);
-      hdf_w.finalize_wrapper();
-    }
-    catch(const char * err)
-    {
-      std::cerr<<"caught on error: ";
-      std::cerr<<err<<endl;
-      return -1;
-    }
-    catch(std::exception & e)
-    {
-      cout<<"caught std excetp"<<endl;
-      cout<<e.what()<<endl;
-    }
+    md.output_to_wrapper(&hdf_out,
+			 g_name,
+			 data_str,
+			 count_str,
+			 NULL);
+    g_name = format_name("mean_squared_disp",write_comp_num);
+    msd.output_to_wrapper(&hdf_out,
+			  g_name,
+			 data_str,
+			  count_str,
+			  NULL);
+    g_name = format_name("msd_squared",write_comp_num);    
+    md.output_to_wrapper(&hdf_out,
+			 g_name,
+			 data_str,
+			 count_str,
+			 NULL);
     
-    catch(...)
-    {
-      std::cerr<<"unknown error type"<<endl;
-      return -1;
-    }
+    cout<<"wrote out g(r)"<<endl;
+
     
-    
-    
-    // cout<<"made wrapper"<<endl;
-    // hdf_w.initialize_wrapper();
-    // // set meta data on wrapper
-    // hdf_w.add_meta_data(string("search_range"),search_range,true);
-    // hdf_w.add_meta_data(string("min_track_length"),min_track_length,true);
-    // // set the tracks to the wrapper
-    // cout<<"set meta-data"<<endl;
-    // tracks.output_to_wrapper(hdf_w);
-    // cout<<"wrote tracks"<<endl;
-    // // close wrapper
-    // hdf_w.finalize_wrapper();
-    // cout<<"done"<<endl;
   }
   catch(const char * err){
     std::cerr<<"caught on error: ";
