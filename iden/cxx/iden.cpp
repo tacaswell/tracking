@@ -51,6 +51,7 @@
 #include "tuple.h"
 
 #include "mm_md_parser.h"
+#include "md_store.h"
 using std::string;
 
 
@@ -68,6 +69,9 @@ using utilities::Tuple;
 
 
 using std::runtime_error;
+
+using utilities::Md_store;
+using utilities::Mm_md_parser;
 
 
 Wrapper_i_plu * Iden::fill_wrapper(Tuple<float,2> dims,unsigned int frames,unsigned int start)
@@ -220,29 +224,18 @@ void Iden::set_fname(const std::string & in)
 
 Wrapper_i_plu * Iden::fill_wrapper_avg(Tuple<float,2> dims,unsigned int avg_count,unsigned int frames,unsigned int start)
 {
-  
-  if(avg_count > frames)
-    throw runtime_error("Iden: avg_count is greater than the number for frames");
-  
-
-  Wrapper_i_plu * wrapper = NULL;
-  
 
   // load multi page
-  
   FreeImage_Initialise();
   BOOL bMemoryCache = TRUE;
   fipMultiPage src(bMemoryCache);
   // Open src file (read-only, use memory cache)
   src.open(fname_.c_str(), FALSE, TRUE);
   unsigned int img_frames = src.getPageCount();
-  unsigned int wrapper_frames = frames/avg_count;
-  
-  
 
   if(start > img_frames)
     throw runtime_error("Iden: start is larger than the number of frames in image");
-  
+
   if(frames == 0)
   {
     frames = img_frames-start;
@@ -256,12 +249,20 @@ Wrapper_i_plu * Iden::fill_wrapper_avg(Tuple<float,2> dims,unsigned int avg_coun
     src.close(0);
     throw "Iden: asking for more frames than the stack has";
   }
+
+  
+  if(avg_count > frames)
+    throw runtime_error("Iden: avg_count is greater than the number for frames");
+  
+
+  Wrapper_i_plu * wrapper = NULL;
+  
+
+
+  unsigned int wrapper_frames = frames/avg_count;
   
   
   
-  // create the wrapper
-  wrapper = new Wrapper_i_plu(wrapper_frames,dims);
-  wrapper->set_Md_store_size(wrapper_frames);
   // freeimage object
   fipImage image;
   
@@ -274,11 +275,23 @@ Wrapper_i_plu * Iden::fill_wrapper_avg(Tuple<float,2> dims,unsigned int avg_coun
   int cols = image.getWidth();
   src.unlockPage(image,false);
   
+  dims[1] = rows;
+  dims[0] = cols;
+  
+  
+  // create the wrapper
+  wrapper = new Wrapper_i_plu(wrapper_frames,dims);
+  wrapper->set_Md_store_size(wrapper_frames);
 
+  Mm_md_parser mm_md_p;
+  float scx=0,scy=0;
   
   // loop over frames
   for(unsigned int j = 0;j<wrapper_frames;++j)
   {
+    float exposure_sum = 0,x = 0,y = 0,z=0,tmp = 0;
+    
+    
     
     Image2D image_in(rows,cols);
     for(unsigned int k = 0; k<avg_count;++k)
@@ -289,14 +302,41 @@ Wrapper_i_plu * Iden::fill_wrapper_avg(Tuple<float,2> dims,unsigned int avg_coun
       // get data about image
       WORD * data_ptr = (WORD *) image.accessPixels();
       // shove data in to image object
-    
-
       image_in.add_data(data_ptr, rows,cols,scan_step);
+    
+      // extract meta data from tiff
+      Md_store * md_store = mm_md_p.parse_md(image);
+      exposure_sum += md_store->get_value("Exposure",tmp);
+      if(j == 0)
+      {
+	md_store->get_value("spatial-calibration-x",scx);
+	md_store->get_value("spatial-calibration-y",scy);
+      }
+      x += md_store->get_value("stage-position-x",tmp);
+      y += md_store->get_value("stage-position-y",tmp);      
+      z += md_store->get_value("z-position",tmp);  
+      // clean up meta data from tiff
+      delete md_store;
+      
       // clear the input data
       src.unlockPage(image,false);
     }
-    
+    // average 
+    x /=avg_count;
+    y /=avg_count;
+    z /=avg_count;
 
+    Md_store *md_store = new Md_store();
+    md_store->add_element("Exposure",exposure_sum);
+    md_store->add_element("stage-position-x",x);
+    md_store->add_element("stage-position-y",y);      
+    md_store->add_element("z-position",z);  
+    md_store->add_element("spatial-calibration-x",scx);
+    md_store->add_element("spatial-calibration-y",scy);
+    md_store->add_element("pixel-size-x",cols);
+    md_store->add_element("pixel-size-y",rows);
+    
+    
     
     // object for holding band passed image
     Image2D image_bpass(rows,cols);
@@ -349,6 +389,11 @@ Wrapper_i_plu * Iden::fill_wrapper_avg(Tuple<float,2> dims,unsigned int avg_coun
     //     cout<<"---------------"<<endl;
     
     wrapper->add_frame_data(particledata,j-start,counter);
+    wrapper->set_Md_store(j,md_store);
+    
+
+    
+    
     //    cout<<j<<endl;
   }
   

@@ -150,41 +150,44 @@ int main(int argc, char * const argv[])
   cout<<"file that will be written to: "<<out_file<<endl;
     
   float hwhm,thresh,top_cut;
-  int feature_rad,dilation_rad, mask_rad,frame_c;
+  int feature_rad,dilation_rad, mask_rad;
   Tuple<float,2> dims;
     
   int comp_num;
   string grp_name;
   
 
-  // read parameters out of hdf file 
-  H5File * file = new H5File(out_file,H5F_ACC_RDONLY);
+  // // read parameters out of hdf file 
+  // H5File * file = new H5File(out_file,H5F_ACC_RDONLY);
 
-  Group * group = new Group(file->openGroup("/"));
+  // Group * group = new Group(file->openGroup("/"));
   
-  Attr_list_hdf * attr_list = new Attr_list_hdf(group);
+  // Attr_list_hdf * attr_list = new Attr_list_hdf(group);
   
-  if(!attr_list->contains_attr("number-of-planes"))
-    throw logic_error("Can't find number of planes");
+  // if(!attr_list->contains_attr("number-of-planes"))
+  //   throw logic_error("Can't find number of planes");
 
   
-  if(!attr_list->contains_attr("dims"))
-    throw logic_error("Can't find dimensions");
+  
+  // if(!attr_list->contains_attr("dims"))
+  //   throw logic_error("Can't find dimensions");
 
-  frame_c = attr_list->get_value("number-of-planes",frame_c);
-  cout<<"planes"<<endl;
-  dims = attr_list->get_value("dims",dims);
-  cout<<"dims"<<endl;
-  delete attr_list;
-  attr_list = NULL;
+
+  
+  // frame_c = attr_list->get_value("number-of-planes",frame_c);
+  // cout<<"planes"<<endl;
+  // dims = attr_list->get_value("dims",dims);
+  // cout<<"dims"<<endl;
+  // delete attr_list;
+  // attr_list = NULL;
   
       
-  delete group;
-  group=NULL;
+  // delete group;
+  // group=NULL;
   
 
-  delete file;
-  file= NULL;
+  // delete file;
+  // file= NULL;
 
 
   // read parameters out of the input xml that have to do with the 
@@ -214,6 +217,12 @@ int main(int argc, char * const argv[])
   }
 
 
+  Read_config frame_prams(pram_file,"frames");
+  int avg_count = 0;
+  frame_prams.get_value("avg_count",avg_count);
+  
+
+
   
   // read parameters from xml that have do to with logistics
   Read_config comp_prams(pram_file,"comp");
@@ -229,7 +238,7 @@ int main(int argc, char * const argv[])
   
   Params p(feature_rad,hwhm,dilation_rad,thresh,mask_rad,top_cut);
   p.PrintOutParameters(std::cout);
-  cout<<frame_c<<endl;
+  
     
 
   
@@ -243,9 +252,12 @@ int main(int argc, char * const argv[])
 
     
     
-  Wrapper_i_plu *  wp = iden.fill_wrapper_avg(dims,frame_c,0);
+  Wrapper_i_plu *  wp = iden.fill_wrapper_avg(dims,avg_count);
   cout<<"number of entries in wrapper: "<<wp->get_num_entries()<<endl;
     
+
+  dims = wp->get_dims();
+  
 
   Master_box box;
   //Filter_basic filt(out_file);
@@ -271,7 +283,7 @@ int main(int argc, char * const argv[])
 
     
     
-  hash_case hcase(box,dims,20,frame_c);
+  hash_case hcase(box,dims,20,wp->get_num_frames());
   hcase.print();
   bool error_flg = false;
   try
@@ -279,9 +291,9 @@ int main(int argc, char * const argv[])
     //Wrapper_o_hdf hdf_w("25-0_mid_0.h5",wh.get_data_types());
     set<D_TYPE> d_types = wp->get_data_types();
     
-    Wrapper_o_hdf hdf_w(out_file,d_types,comp_num,Wrapper_o_hdf::FILL_FILE);
+    Wrapper_o_hdf hdf_w(out_file,d_types,comp_num,Wrapper_o_hdf::NEW_FILE);
     hdf_w.initialize_wrapper();
-    hcase.output_to_wrapper(hdf_w,false);
+    hcase.output_to_wrapper(hdf_w,true);
     hdf_w.add_meta_data_list(iden_prams,d_types);
 
     hdf_w.finalize_wrapper();

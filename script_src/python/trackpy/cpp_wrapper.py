@@ -145,8 +145,8 @@ def do_Iden(key,conn):
     prams.add_pram("rg_cut" ,"float" ,"7.500000")
     prams.add_pram("e_cut" ,"float" ,"0.600000")
     prams.add_pram("top_cut" ,"float" ,"0.010000")
-    prams.add_pram("p_rad" ,"int" ,"4")
-    prams.add_pram("d_rad" ,"int" ,"4")
+    prams.add_pram("p_rad" ,"int" ,str(p_rad))
+    prams.add_pram("d_rad" ,"int" ,"3")
     prams.add_pram("mask_rad" ,"int" ,"4")
 
     
@@ -173,6 +173,93 @@ def do_Iden(key,conn):
         os.makedirs(proc_path,0751)
 
     parse1.make_h5(fin,fout)
+
+    rc = subprocess.call(["time",prog_path + prog_name,'-i',fin,'-o',fout,'-c',fxml ])
+    print rc
+
+    # if it works, then returns zero
+    if rc == 0:
+        params = (key,comp_num,2,0.01,p_rad,hwhm,4,4,1.5,7.5,.6)
+        print "entering into database"
+        conn.execute("insert into comps (dset_key,date,fin,fout,function) values (?,?,?,?,?);",
+                     (key,date.today().isoformat(),fin,fout,prog_name))
+            
+        conn.execute("insert into Iden_prams" +
+                     " (dset_key,comp_key,threshold,top_cut,p_rad,hwhm,d_rad,mask_rad,shift_cut,rg_cut,e_cut) " +
+                     "values (?,?,?,?,?,?,?,?,?,?,?);",params)
+        conn.commit()
+
+
+
+def do_Iden_avg(key,conn,frames):
+    # see if the file has already been processed
+    prog_name = "Iden_avg"
+    prog_path = "/home/tcaswell/misc_builds/iden_rel/iden/apps/"
+    res = check_comps_table(key,"Iden",conn)
+    fin = conn.execute("select fname from dsets where key = ?;",(key,)).fetchone()[0]
+    if os.path.isfile(fin.replace('.tif','-file002.tif')):
+        print "multi-part tiff, can't cope yet"
+        return
+    
+    fout = '.'.join(fin.replace("data","processed").split('.')[:-1]) + '.h5'
+    if len(res) >0:
+        fout = fout.replace(".h5","-" + str(len(res)) + ".h5")
+
+
+    fpram = fin.replace(".tif",".xml")
+    if not os.path.isfile(fpram):
+        print "can not find parameter file, exiting"
+        print fin
+        print fpram
+        return
+
+    comp_num = conn.execute("select max(comp_key) from comps;").fetchone()[0] + 1
+
+    hwhm = 1.2
+    p_rad = 4
+    prams = xml_data()
+    prams.add_stanza("comp")
+    prams.add_pram("number","int",comp_num)
+    
+    #prams.merge_File(fpram,"iden")
+
+    prams.add_stanza("iden")
+    prams.add_pram("threshold" ,"float" ,"2.000000")
+    prams.add_pram("hwhm" ,"float" ,hwhm)
+    prams.add_pram("shift_cut" ,"float" ,"1.500000")
+    prams.add_pram("rg_cut" ,"float" ,"7.500000")
+    prams.add_pram("e_cut" ,"float" ,"0.600000")
+    prams.add_pram("top_cut" ,"float" ,"0.010000")
+    prams.add_pram("p_rad" ,"int" ,"4")
+    prams.add_pram("d_rad" ,"int" ,"3")
+    prams.add_pram("mask_rad" ,"int" ,"4")
+
+    prams.add_stanza("frames")
+    prams.add_pram("avg_count","int",str(frames))
+    
+    fxml = prams.write_to_tmp()
+
+    prams.disp()
+    # prams.write_to_disk('/home/tcaswell/misc_builds/iden_dbg/iden/apps/pram2.xml')
+    # ask for confirmation
+    print "will processess"
+    print fin
+    print "from parameters in"
+    print fpram
+    print "will write to"
+    print fout
+    # resp = raw_input("is this ok?: ")
+    # if resp[0]=='n':
+    #     print "you have chosen not to continue"
+    #     return
+
+    
+
+    proc_path = os.path.dirname(fout)  + '/'
+    if not os.path.exists(proc_path):
+        os.makedirs(proc_path,0751)
+
+    ## parse1.make_h5(fin,fout)
 
     rc = subprocess.call(["time",prog_path + prog_name,'-i',fin,'-o',fout,'-c',fxml ])
     print rc
@@ -219,7 +306,7 @@ def do_gofr3D(key,conn):
 
     
     
-def do_gofr(comp_key,write_key,conn,pram_i, pram_f, pram_s = None, rel = True,):
+def do_gofr(comp_key,conn,pram_i, pram_f, pram_s = None, rel = True,):
     """
     Computes gofr 
 

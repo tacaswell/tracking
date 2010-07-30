@@ -78,7 +78,7 @@ public:
   void set_params(const Params& param_in);
   
   utilities::Wrapper_i_plu * fill_wrapper(utilities::Tuple<float,2>,unsigned int frames=0,unsigned int start=0);
-  utilities::Wrapper_i_plu * fill_wrapper_avg(utilities::Tuple<float,2> dims,unsigned int avg_count,unsigned int frames,unsigned int start);
+  utilities::Wrapper_i_plu * fill_wrapper_avg(utilities::Tuple<float,2> dims,unsigned int avg_count,unsigned int frames=0,unsigned int start=0);
   
 private:
   /**
