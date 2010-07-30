@@ -129,6 +129,9 @@ void hash_case::init(Master_box & mb,const utilities::Tuplef & dims,
       }
       
       h_case_.at(cf)->push(p);
+#if PTYPE == 1
+      p->set_shelf(h_case_.at(cf));
+#endif
     }
     catch(const char * e)
     {

@@ -155,7 +155,10 @@ public:
   const Hash_shelf* get_shelf()const{
     return shelf_;
   }
-
+  /**
+     Sets the shelf that the particle is in
+   */
+  void set_shelf(Hash_shelf* shelf);
   
   /**
      Returns the displacement squared corrected for the net drift

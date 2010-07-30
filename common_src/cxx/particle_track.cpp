@@ -34,6 +34,9 @@ using namespace tracking;
 using std::set;
 using utilities::Ll_range_error;
 using utilities::Null_field;
+using std::logic_error;
+using std::runtime_error;
+
 /*
 particle_track::particle_track(Wrapper_in * i_data, 
 			       Wrapper_out* o_out, int i_ind, 
@@ -307,10 +310,10 @@ bool particle_track::has_next()const
 const utilities::Tuplef particle_track::get_corrected_pos()const
 {
   if (shelf_ ==NULL)
-    {
-      throw "shelf not defined";
-      return utilities::Tuplef();
-    }
+  {
+    throw "shelf not defined";
+    return utilities::Tuplef();
+  }
   return position_ - shelf_->get_cum_forward_disp();
 }
 
@@ -380,4 +383,11 @@ std::complex<float> particle_track::get_value(utilities::D_TYPE type,
 			      std::complex<float>& val) const
 {
   return particle_base::get_value(type,val);
+}
+
+void particle_track::set_shelf(Hash_shelf * shelf)
+{
+  if(shelf_)
+    throw logic_error("particle_track: particle already has shelf_ set");
+  shelf_ = shelf;
 }
