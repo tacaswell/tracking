@@ -167,15 +167,11 @@ protected:
   Track_box * split_track(int indx);
   
   /**
-     CHECK THIS DOCUMENTATION
+     Trims the track from the ind_start and keeps
+     the next length particles.
 
-     Trims the track it include only the particles between the indexes
-     given, the final track contains the particles (ind_start -
-     (ind_end -1)).  This is to stay with in the frame work of all the
-     standard library stuff which gives the end value as
-     'one-past-the-end'.
      @param ind_start first particle to keep
-     @param ind_end number of particles to keep
+     @param length number of particles to keep
    */
   void trim_track(int ind_start, int length);
 
