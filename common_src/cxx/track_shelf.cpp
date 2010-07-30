@@ -103,6 +103,8 @@ void Track_shelf::remove_short_tracks(int min_length){
   }
   
   
+  
+  
 }
 
 void Track_shelf::print(){
@@ -531,4 +533,12 @@ void Track_shelf::output_link_to_wrapper(Wrapper_out & wrapper,
   }
   wrapper.close_group();
 
+}
+
+void Track_shelf::renumber()
+{
+  unsigned int j = 0;
+  for(tr_list::iterator it = tracks_.begin();
+      it!=tracks_.end(); ++it)
+    (*it)->set_track_id(j++);
 }

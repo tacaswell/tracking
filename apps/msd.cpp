@@ -245,8 +245,11 @@ int main(int argc, char * const argv[])
     tracks.remove_short_tracks(min_track_length);
     cout<<"after trimming found "<<tracks.get_track_count()<<" tracks"<<endl;
     // make wrapper
-
-    tracks.renumber();
+    
+    D_TYPE tmp2[] = {utilities::D_XPOS,
+    		     utilities::D_YPOS,
+    };
+    set<D_TYPE> data_types2 = set<D_TYPE>(tmp2, tmp2+2);
     
     
     set<D_TYPE> d2;
@@ -290,6 +293,20 @@ int main(int argc, char * const argv[])
       return -1;
     }
     
+    
+    
+    // cout<<"made wrapper"<<endl;
+    // hdf_w.initialize_wrapper();
+    // // set meta data on wrapper
+    // hdf_w.add_meta_data(string("search_range"),search_range,true);
+    // hdf_w.add_meta_data(string("min_track_length"),min_track_length,true);
+    // // set the tracks to the wrapper
+    // cout<<"set meta-data"<<endl;
+    // tracks.output_to_wrapper(hdf_w);
+    // cout<<"wrote tracks"<<endl;
+    // // close wrapper
+    // hdf_w.finalize_wrapper();
+    // cout<<"done"<<endl;
   }
   catch(const char * err){
     std::cerr<<"caught on error: ";

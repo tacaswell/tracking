@@ -126,16 +126,6 @@ void Track_box::push_back(particle_track * next){
 }
 
 
-//this needs some sanity checking/error handling
-// void Track_box::set_track() const{
-//   const particle_track * current_particle = t_first_;
-  
-//   while(current_particle !=NULL){
-//     current_particle -> output_to_wrapper();
-//     current_particle = current_particle->get_next();
-//   }
-// }
-
 void Track_box::extract_raw_disp(Array & output) const{
   output.clear(length_);
   const particle_track* working_part = t_first_;

@@ -95,20 +95,13 @@ public:
   ///adds the particle next the end of the track
   void push_back(particle_track* next);
 
-  int get_id() const
+  unsigned int get_id() const
   {
     return id_;
   }
 
   virtual ~Track_box();
   
-  /**
-     outputs the particles in the track to what ever output
-     wrapper they are pointing at.  This function needs to be
-     renamed
-   */
-  void set_track() const;
-
   /**
      Returns the length of the track
    */
@@ -137,8 +130,16 @@ public:
      should be sub-classed
    */
   void average_cord(utilities::Tuple<float,3> & pos,float & I) const ;
-  
 
+  /**
+     Sets the track_id
+  */
+  void set_track_id(unsigned int in)
+  {
+    id_ = in;
+  }
+   
+  
 protected:
   ///Pointer to first particle in track
   particle_track * t_first_;
