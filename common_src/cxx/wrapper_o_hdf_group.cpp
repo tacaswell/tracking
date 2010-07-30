@@ -160,18 +160,28 @@ Wrapper_o_hdf_group::Wrapper_o_hdf_group(CommonFG * parent, const std::string & 
 
    
   // go through add set and allocate arrays for storing data and make data sets
+  
   for(set<D_TYPE>::const_iterator it = d_types_add_.begin(); 
       it!=d_types_add_.end();++it)
   { 
+    int * tmpi = NULL;
+    float * tmpf = NULL;
+    
     switch(v_type(*it))
     {
     case V_INT:
-      int_data_.push_back(new int[size_]);
+      tmpi = new int[size_];
+      for(int j = 0; j<size_;++j)
+	tmpi[j] = -1;
+      int_data_.push_back(tmpi);
       dsets_.push_back(new DataSet(group_->createDataSet(format_dset_name(*it,comp_number_),PredType::NATIVE_INT,space,plist_i)));
       int_map_.set_lookup(*it,i_c++);
       break;
     case V_FLOAT:
-      float_data_.push_back(new float[size_]);
+      tmpf = new float[size_];
+      for(int j = 0; j<size_;++j)
+	tmpf[j] = -1;
+      float_data_.push_back(tmpf);
       dsets_.push_back( new DataSet(group_->createDataSet(format_dset_name(*it,comp_number_),PredType::NATIVE_FLOAT,space,plist_f)));
       float_map_.set_lookup(*it,f_c++);
       break;
