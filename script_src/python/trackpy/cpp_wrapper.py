@@ -51,14 +51,18 @@ def add_gofr_mdata(comp_pram,i_pram,f_pram,s_pram,conn):
                  "values (?,?,?,?,?);",params)
     conn.commit()
 
-
-
-_prog_to_fun_lookup = {'gofr_by_plane':add_gofr_plane_mdata,'gofr':add_gofr_mdata}
-
-def check_comps_table(key,func,conn):
-    # figure out name of file to write to
-    res = conn.execute("select fout,comp_key from comps where dset_key=? and function=?;",(key,func)).fetchall()
-    return res
+def add_msd_mdata(comp_pram,i_pram,f_pram,s_pram,conn):
+    params = (comp_pram['dset'],
+              comp_pram['write_comp'],
+              i_pram['msd_steps'],
+              i_pram['min_track_length'],
+              f_pram['search_range'])
+    conn.execute("insert into msd_prams " +
+                 "(dset_key,comp_key,msd_steps, search_range,min_track_length) "+
+                 "values (?,?,?,?,?)",params)
+    conn.commit()
+    
+_prog_to_fun_lookup = {'gofr_by_plane':add_gofr_plane_mdata,'gofr':add_gofr_mdata, 'msd':add_msd_mdata}
 
 
 def _make_sure_h5_exists(fname):
@@ -276,34 +280,6 @@ def do_Iden_avg(key,conn,frames):
                      "values (?,?,?,?,?,?,?,?,?,?,?);",params)
         conn.commit()
 
-
-def do_gofr3D(key,conn):
-    prog_name = "gofr3D"
-
-    # see if the file has already been processed
-    res = check_comps_table(key,"link3D",conn)
-    if len(res) ==0:
-        print "no entry"
-        return
-    if len(res) >1:
-        print "more than one entry, can't cope, quiting"
-        return
-    (fin,read_comp) = res[0]
-
-    
-
-    fout = os.path.dirname(fin) + '/gofr3D.h5'
-    _make_sure_h5_exists(fout)
-    
-    comp_num = conn.execute("select max(comp_key) from comps;").fetchone()[0] + 1
-
-    config = xml_data()
-    config.add_stanza("gofr3D")
-    config.add_pram("max_range","float","5")
-    config.add_pram("nbins","int","2000")
-    config.add_pram("grp_name","string",prog_name + "_%(#)07d"%{"#":comp_num})
-
-
     
     
 def do_gofr(comp_key,conn,pram_i, pram_f, pram_s = None, rel = True,):
@@ -351,87 +327,51 @@ def do_gofr(comp_key,conn,pram_i, pram_f, pram_s = None, rel = True,):
                   required_pram_s,pram_s)
     except KeyError, ke:
         print "Parameter: " ,ke,' not found'
-    
-
-def do_tracking(key,conn,pram_i, pram_f, pram_s = None, rel = True,):
-    prog_name = "tracking"
-
-    # figure out name of file to write to
-    res = check_comps_table(key,"Iden",conn)
-    if len(res) ==0:
-        print "no entry"
-        # _do_Iden(key,conn)
-        return
-    if len(res) >1:
-        print "more than one entry, can't cope, quiting"
-        return
-    fname = res[0][0]
-    
-
-    srange = raw_input("enter search range: ")
-    
-    config = xml_data()
-    config.add_stanza("tracking")
-    config.add_pram("search_range","float",srange)
-    config.add_pram("box_side_len","float",srange)
-    config.add_pram("min_trk_len","int","10")
-
-
-
-def do_phi6(key,conn):
-    prog_path = '/home/tcaswell/misc_builds/basic_dbg/apps/'
-    prog_name = "phi6"
-
-    # figure out name of file to write to
-    res = check_comps_table(key,"Iden",conn)
-    if len(res) ==0:
-        print "no entry"
-        # _do_Iden(key,conn)
-        return
-    if len(res) >1:
-        print "more than one entry, can't cope, quiting"
-        return
-    (fname,read_comp) = res[0]
-    
-    
-    comp_num = conn.execute("select max(comp_key) from comps;").fetchone()[0] + 1
-    
-    
-    #srange = raw_input("enter search range: ")
-    srange = 13
-    
-    config = xml_data()
-    config.add_stanza("phi6")
-    config.add_pram("neighbor_range","float",srange)
-
 
     
+def do_msd(comp_key,conn,pram_i, pram_f, pram_s = None, rel = True,):
+    """
+    Computes gofr 
 
-def do_sofq(key,conn,rel = True):
+    """
+    prog_name = "msd"
+    required_pram_i = ['msd_steps','min_track_length']
+    required_pram_f = ['search_range','box_side_len']
+    required_pram_s = None
 
-    prog_name = "sofq"
-    
     # see if the file has already been processed
-    res = check_comps_table(key,"Iden",conn)
-    if len(res) ==0:
-        print "no entry"
-        return
-    if len(res) >1:
-        print "more than one entry, can't cope, quiting"
-        return
-    (fin,read_comp) = res[0]
+    res = conn.execute("select fout,dset_key from comps where comp_key=? ;",
+                       (comp_key,)).fetchone()
+    read_comp = comp_key
+
+    print res
+    print comp_key
+    if res is None:
+        raise utils.dbase_error('no entry found')
+    
+    (fin,key) = res
+
+    fout = os.path.dirname(fin) + '/msd.h5'
+    
+    
+    comp_prams = {'read_comp':read_comp,'dset':key}
+    comp_prams['write_comp'] =conn.execute("select max(comp_key) from comps;"
+                                           ).fetchone()[0] + 1
+
     
 
-    fout = os.path.dirname(fin) + '/sofq.h5'
-    _make_sure_h5_exists(fout)
     
-    comp_num = conn.execute("select max(comp_key) from comps;").fetchone()[0] + 1
+    try:
+        _call_fun(conn,
+                  prog_name,fin,fout,
+                  comp_prams,
+                  required_pram_i,pram_i,
+                  required_pram_f,pram_f,
+                  required_pram_s,pram_s)
+    except KeyError, ke:
+        print "Parameter: " ,ke,' not found'
 
-    config = xml_data()
-    config.add_stanza("sofq")
-    config.add_pram("nbins","int","200")
     
-
 
 def do_gofr_by_plane(key,conn,pram_i, pram_f, pram_s = None, rel = True,):
     prog_name = "gofr_by_plane"
@@ -470,6 +410,7 @@ def do_gofr_by_plane(key,conn,pram_i, pram_f, pram_s = None, rel = True,):
     except KeyError, ke:
         print "Parameter: " ,ke,' not found'
     
+
 
 
     
