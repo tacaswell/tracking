@@ -30,15 +30,15 @@
 #include "tuple.h"
 namespace utilities{
 
+class Md_store;
+
+
 /**
    Try two at a generic wrapper function.  This is based much more on the
    capabilities of hdf files, not shoving stuff back to matlab
 
    This is an abstract base class 
 */
-
-
-
 class Generic_wrapper{
 public:
 
@@ -116,6 +116,18 @@ public:
      Adds an integer meta-data for a data set
    */
   virtual void add_meta_data(const std::string & key, int val,const std::string & dset_name)=0;
+
+  
+  /**
+     Adds all the meta data in a Md_store at the group level
+   */
+  virtual void add_meta_data(const Md_store * md_store)=0;
+  
+  /**
+     Adds all the meta data in a Md_store at the dset level
+   */
+  virtual void add_meta_data(const Md_store * md_store,const std::string & dset_name)=0;
+
   
   virtual ~Generic_wrapper(){};
   

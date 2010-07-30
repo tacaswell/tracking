@@ -27,6 +27,7 @@
 #include "H5Cpp.h"
 #include "attr_list_hdf.h"
 
+#include "md_store.h"
 
 #include <iostream>
 #include <stdexcept>
@@ -37,6 +38,7 @@ using std::logic_error;
 
 using namespace H5;
 using std::string;
+using utilities::Md_store;
 
   
 Generic_wrapper_hdf::Generic_wrapper_hdf(std::string fname, bool add_to_file):
@@ -218,6 +220,78 @@ void Generic_wrapper_hdf::add_meta_data(const std::string & key, int val,const s
   add_meta_data_priv(key,val,dset_name);
 }
 
+void Generic_wrapper_hdf::add_meta_data(const Md_store * md_store)
+{
+  
+  unsigned int num_entries = md_store->size();
+  int tmpi;
+  float tmpf;
+  string tmps;
+  for(unsigned int j = 0; j<num_entries; ++j)
+  {
+    string key = md_store->get_key(j);
+    switch(md_store->get_type(j))
+    {
+      // integer data
+    case V_INT:
+    
+      add_meta_data_priv(key,md_store->get_value(j,tmpi));
+      break;
+      // float data
+    case V_FLOAT:
+    
+      add_meta_data_priv(key,md_store->get_value(j,tmpf));
+      break;
+      // complex data
+    case V_STRING:
+    
+      add_meta_data_priv(key,md_store->get_value(j,tmps));
+      break;
+    default:
+      throw logic_error("should not have hit default");
+      
+    }
+  
+
+  }
+}
+
+void Generic_wrapper_hdf::add_meta_data(const Md_store * md_store,const string & dset)
+{
+  
+  unsigned int num_entries = md_store->size();
+  int tmpi;
+  float tmpf;
+  string tmps;
+  for(unsigned int j = 0; j<num_entries; ++j)
+  {
+    string key = md_store->get_key(j);
+    switch(md_store->get_type(j))
+    {
+      // integer data
+    case V_INT:
+    
+      add_meta_data_priv(key,md_store->get_value(j,tmpi),dset);
+      break;
+      // float data
+    case V_FLOAT:
+    
+      add_meta_data_priv(key,md_store->get_value(j,tmpf),dset);
+      break;
+      // complex data
+    case V_STRING:
+    
+      add_meta_data_priv(key,md_store->get_value(j,tmps),dset);
+      break;
+    default:
+      throw logic_error("should not have hit default");
+      
+    }
+  
+
+  }
+}
+
 
 template<class T>
 void Generic_wrapper_hdf::add_meta_data_priv(const std::string & key, const T& val,const std::string & dset_name)
@@ -240,3 +314,4 @@ void Generic_wrapper_hdf::add_meta_data_priv(const std::string & key, const T& v
     throw logic_error("generic_wrapper_hdf:: can't add to a closed group");
   group_attrs_->set_value(key,val);
 }
+
