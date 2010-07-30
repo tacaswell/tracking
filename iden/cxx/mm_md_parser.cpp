@@ -244,6 +244,7 @@ void parse_description(string& des,Md_store* md_store)
 {
 
   string strstr = "string";
+  string fltstr = "float";
   
   size_t start_indx = 0;
   size_t colon_indx = 0;
@@ -265,8 +266,16 @@ void parse_description(string& des,Md_store* md_store)
     string val = des.substr(colon_indx+2,end_indx-colon_indx-2);
     
     // add special handling
-    if(false)
+    if(key == "Exposure")
     {
+      size_t spc_indx = val.find(" ");
+      string tmp_key = key+ " units";
+      string tmp_val = val.substr(0,spc_indx);
+      string tmp_units = val.substr(spc_indx+1);
+      
+      md_store->add_element(key,fltstr,tmp_val);
+      md_store->add_element(tmp_key,strstr,tmp_units);
+      
     }
     else
     {

@@ -44,6 +44,7 @@
 
 #include "mm_md_parser.h"
 #include "md_store.h"
+#include "enum_utils.h"
 
 using std::string;
 using std::cout;
@@ -53,6 +54,8 @@ using std::vector;
 using std::logic_error;
 using utilities::Mm_md_parser;
 using utilities::Md_store;
+
+using utilities::VT2str_s;
 
 
 
@@ -89,16 +92,58 @@ int main()
   
   FreeImage_DeInitialise();
 
+  cout<<"Frame 0"<<endl;
+  cout<<"==============="<<endl;
+  
   for(unsigned int j = 0; j<md_store->size();++j)
     cout<<md_store->get_key(j)<<" ("
-	<<md_store->get_type(j)<<") "
-	<<md_store->get_val(j)<<endl;
-
+	<<VT2str_s(md_store->get_type(j))<<") "
+	<<md_store->get_val(j)<<'|'<<endl;
   
+
+  float exposure;
+  int key_ind = md_store->get_key_index("Exposure");
+  
+  key_ind = md_store->get_key_index("Exposure");
+  cout<<"The exposure is "<<md_store->get_value("Exposure",exposure);
+  
+  cout<<endl
+      <<"    (string)"<<md_store->get_val(key_ind)<<endl
+      <<"     (float)"<<exposure<<endl;
+  
+  
+
+
+  cout<<"Frame 1"<<endl;
+  cout<<"==============="<<endl;
   for(unsigned int j = 0; j<md_store2->size();++j)
     cout<<md_store2->get_key(j)<<" ("
-	<<md_store2->get_type(j)<<") "
-	<<md_store2->get_val(j)<<endl;
+	<<VT2str_s(md_store2->get_type(j))<<") "
+	<<md_store2->get_val(j)<<'|'<<endl;
+  
+  exposure = 3.14159;
+  
+  
+  
+  key_ind = md_store2->get_key_index("Exposure");
+
+  
+  cout<<"The exposure is "<<md_store2->get_value("Exposure",exposure);
+  
+  cout<<endl
+      <<"    (string) "<<md_store2->get_val(key_ind)<<endl
+      <<"     (float) "<<exposure<<endl;
+  
+
+  float stupid = 374.9899;
+  cout<<stupid<<endl;
+
+
+  float a,b;
+  
+  a = md_store2->get_value("Exposure",b);
+  cout<<a<<"  "<<b<<endl;
+  
 
   delete md_store;
   md_store=NULL;
