@@ -65,14 +65,33 @@ bool from_string(T& t,
   return !(iss >> f >> t).fail();
 }
 
+template <class T>
+std::string to_string(T in)
+{
+  std::ostringstream o;
+  o<<in;
+  return o.str();
+}
+
+
 void Md_store::add_element(std::string & key,std::string & type, std::string & value)
 {
   entries_.push_back(Md_element(key,type,value));
 }
 
-void Md_store::add_element(char * key,char * type, char * value)
+void Md_store::add_element(const char * key,const char * type, const char * value)
 {
   entries_.push_back(Md_element(key,type,value));
+}
+
+void Md_store::add_element(const char * key,float val)
+{
+  entries_.push_back(Md_element(key,"float",to_string(val).c_str()));
+}
+
+void Md_store::add_element(const char * key,int val)
+{
+  entries_.push_back(Md_element(key,"int",to_string(val).c_str()));
 }
 
 

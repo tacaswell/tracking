@@ -135,7 +135,9 @@ public:
      Add entry
   */
   void add_element(std::string & key,std::string & type, std::string & value);
-  void add_element(char * key,char * type, char * value);
+  void add_element(const char * key,const char * type, const char * value);
+  void add_element(const char * key,float val);
+  void add_element(const char * key,int val);
   
 
   void print()const;
