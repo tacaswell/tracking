@@ -167,8 +167,8 @@ int main(int argc, char * const argv[])
   }
   
 
-  int read_comp_num, write_comp_num,dset_num;
-  Read_config comp_prams(pram_file,"comps");
+  int read_comp_num, write_comp_num;
+  Read_config comp_prams(pram_file,"comp");
   if(!(comp_prams.contains_key("read_comp")&&
        comp_prams.contains_key("write_comp")))
   {
@@ -180,7 +180,7 @@ int main(int argc, char * const argv[])
   {
     comp_prams.get_value("read_comp",read_comp_num);
     comp_prams.get_value("write_comp",write_comp_num);
-    comp_prams.get_value("dset",dset_num);
+
   }
   catch(logic_error & e)
   {
@@ -333,5 +333,5 @@ int main(int argc, char * const argv[])
   
     
   
-  return -1;
+  return 0;
 }
