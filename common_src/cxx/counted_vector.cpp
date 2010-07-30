@@ -25,18 +25,19 @@
 
 
 #include "counted_vector.h"
-#include "generic_wrapper_base.h"
+#include "generic_wrapper.h"
 #include <iostream>
 
 using utilities::Counted_vector;
 using std::vector;
+using std::string;
 
 Counted_vector::Counted_vector( int n_elements):
-  data_array_(n_elements),count_array_(n_elements),averaged_(false)
+  data_array_(n_elements,0),count_array_(n_elements,0),averaged_(false)
 {
 }
 
-void  Counted_vector::add_to_element(int t, double val){
+void  Counted_vector::add_to_element(int t, float val){
   if(averaged_)
   {
     throw "can not add to averaged vector";
@@ -50,7 +51,7 @@ void  Counted_vector::add_to_element(int t, double val){
 
 
 
-void  Counted_vector::batch_add_to_element(int t, double val,int count){
+void  Counted_vector::batch_add_to_element(int t, float val,int count){
   if(averaged_)
   {
     throw "can not add to averaged vector";
@@ -63,33 +64,49 @@ void  Counted_vector::batch_add_to_element(int t, double val,int count){
 }
 
 
-void Counted_vector::output_to_wrapper(Generic_wrapper_base * data_out_wrapper,
-			 Generic_wrapper_base * count_out_wrapper) const{
-  data_out_wrapper->initialize_wrapper();
-  data_out_wrapper->start_new_row();
-  for(unsigned int k = 0;k<data_array_.size();++k)
+void Counted_vector::output_to_wrapper(Generic_wrapper * out_wrapper,
+				       string & g_name,
+				       string & data_name,
+				       string & count_name,
+				       const Md_store* g_md_store
+				       ) const
+{
+  // house keeping
+  bool opened_wrapper = false;
+  if(!out_wrapper->is_open())
   {
-    data_out_wrapper->append_to_row(data_array_[k]);
+    out_wrapper->open_wrapper();
+    opened_wrapper = true;
+    
   }
-  data_out_wrapper->finish_row();
-  data_out_wrapper->finalize_wrapper();
+  int n_bins = data_array_.size();
+  
+  // open group
+  out_wrapper->open_group(g_name);
+  // shove in real data
+  const float * tmpf = &(data_array_.front());
+  out_wrapper->add_dset(1,&n_bins,utilities::V_FLOAT,tmpf,data_name);
+  const int * tmpi = &(count_array_.front());
+  out_wrapper->add_dset(1,&n_bins,utilities::V_INT,tmpi,count_name);
+  // shove in meta data
+  if(g_md_store)
+    out_wrapper->add_meta_data(g_md_store);
+  // close group
+  out_wrapper->close_group();
+
+  
+  // house keeping
+  if(opened_wrapper)
+    out_wrapper->close_wrapper();
   
 
-  count_out_wrapper->initialize_wrapper();
-  count_out_wrapper->start_new_row();
-  for(unsigned int k = 0;k<count_array_.size();++k)
-  {
-    count_out_wrapper->append_to_row(count_array_[k]);
-  }
-  count_out_wrapper->finish_row();
-  count_out_wrapper->finalize_wrapper();
 }
 
 
 void Counted_vector::average_data(){
   if(!averaged_)
   {
-    vector<double>::iterator data_it = data_array_.begin();
+    vector<float>::iterator data_it = data_array_.begin();
     vector<int>::iterator count_it = count_array_.begin();
     while(data_it!= data_array_.end() && count_it!= count_array_.end())
     {
@@ -107,7 +124,7 @@ void Counted_vector::average_data(){
 void Counted_vector::unaverage_data(){
   if(averaged_)
   {
-    vector<double>::iterator data_it = data_array_.begin();
+    vector<float>::iterator data_it = data_array_.begin();
     vector<int>::iterator count_it = count_array_.begin();
     while(data_it!= data_array_.end() && count_it!= count_array_.end())
     {
@@ -122,7 +139,7 @@ void Counted_vector::unaverage_data(){
 }
 
 void Counted_vector::print() const{
-  vector<double>::const_iterator data_it = data_array_.begin();
+  vector<float>::const_iterator data_it = data_array_.begin();
   vector<int>::const_iterator count_it = count_array_.begin();
   std::cout<<"d\tc"<<std::endl;
   while(data_it!= data_array_.end() && count_it!= count_array_.end())

@@ -27,9 +27,11 @@
 #define COUNTED_VECTOR
 
 #include <vector>
-
+#include <string>
 namespace utilities{
-class Generic_wrapper_base;
+class Generic_wrapper;
+class Md_store;
+
 /**
    A vector class that keeps count of elements being added to the
    bins for use in averaging scalers, ie msd
@@ -43,25 +45,22 @@ public:
   /**
      Adds val to the element t
    */
-  void  add_to_element(int t, double val);
+  void  add_to_element(int t, float val);
 
   /**
      Adds val to the value and count to the count_array_
    */
-  void  batch_add_to_element(int t, double val,int count);
+  void  batch_add_to_element(int t, float val,int count);
 
   /**
-     Output to what ever is pointed to by the wrapper
-     outputs only the data array.
-   */
-  void output_to_wrapper(Generic_wrapper_base * out_wrapper) const;
-
-  /**
-     Output to what ever is pointed to by the wrappers.
-     The output format is for the columns to be constant time
-   */
-  void output_to_wrapper(Generic_wrapper_base * data_out_wrapper,
-			 Generic_wrapper_base * count_out_wrapper) const;
+     Output data and count vectors to out_wrapper.
+  */
+  void output_to_wrapper(Generic_wrapper * out_wrapper,
+			 std::string & g_name,
+			 std::string & data_name,
+			 std::string & count_name,
+			 const Md_store* g_md_store
+			 ) const;
 
   /**
      Sensible output
@@ -86,7 +85,7 @@ public:
   /**
      Returns the value in element j
   */
-  double get_val(int j)const
+  float get_val(int j)const
   {
     return data_array_.at(j);
   }
@@ -110,7 +109,7 @@ protected:
   /**
      Array that contains the data
    */
-  std::vector<double> data_array_;
+  std::vector<float> data_array_;
   /**
      Array of identical size that counts how many times each bin is
      added to
