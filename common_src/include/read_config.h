@@ -114,6 +114,11 @@ public:
   }
   
 
+  const Md_store * get_store()const
+  {
+    return &md_store_;
+  }
+  
 private:
   Md_store md_store_;
   
