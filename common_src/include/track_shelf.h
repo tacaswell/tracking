@@ -25,7 +25,7 @@
 #ifndef TRACK_SHELF
 #define TRACK_SHELF
 
-#include <map>
+#include <list>
 #include <vector>
 #include "tuple.h"
 //forward declare histogram
@@ -65,22 +65,6 @@ public:
     responsibility for deleting the track when done.
    */
   void add_track(Track_box * track);
-  
-  /**Removes the track specified.  Removes and destroys the track.  Be
-     aware of this and make sure there arn't any dangling refernces
-     left.   However, this does not clear the pointers amoung the member
-     particles
-     @param 
-     track unique ID of track to be removed
-   */
-  void remove_track(int track);
-  
-  /**
-     Returns a pointer to the Track_box for the specified track
-     @param track
-     unique ID of track to be removed 
-   */
-  Track_box* get_track(int track);
 
   /**
      Removes all tracks from the shelf that are shorter than n.
@@ -151,8 +135,9 @@ public:
   /**
      returns the number of tracks in shelf
    */
-  int get_track_count() const{
-    return (int)(track_map.size());
+  unsigned int get_track_count() const{
+    return track_count_;
+    
   }
   /**
      outputs the initial location and plane of the tracks
@@ -198,6 +183,14 @@ public:
    */
   void split_to_parts(Track_shelf & out_put_shelf);
   
+
+  /**
+     Renumbers the tracks sequentially.  Track id numbers are only used
+     when outputting the tracks.
+   */
+  void renumber();
+  
+  
   ///Constructor
   Track_shelf():track_count_(0){};
 
@@ -205,21 +198,17 @@ public:
   ~Track_shelf();
 protected:
   /** 
-      Map to store locations of tracks.  Map used instead of a vector
-      because each track has a unique number set on construction, but
-      I want to be able to nuke tracks entirely, with out having to
-      store empty boxes or deal with renumbering all tracks.  There is
-      a hit on the access time (logrithmic vs constant) comapred to
-      using a vector, but I think the time saved (both at run time and
-      coding time) by not having the extra baggage to keep track of
-      everything is worth it.  
+      list to keep track of all the created tracks.  The shelf is
+      responsible for cleaning up the tracks at the end.  A list is used
+      so that addition/removal is fast.  Random access isn't important.
+      Tracks can now be renumbered.
   */
-  std::map<int,Track_box*> track_map;  
-
+  std::list<Track_box*> tracks_;
+  
   /**
      internal private function to do track removal to make maintianign code simpler
    */
-  void remove_track_internal_(  std::map<int,Track_box*>::iterator it);
+  void remove_track_internal_(  std::list<Track_box*>::iterator it);
 
   /**
      number of tracks in the self

@@ -1,4 +1,4 @@
-//Copyright 2008,2009 Thomas A Caswell
+//Copyright 2008-2010 Thomas A Caswell
 //tcaswell@uchicago.edu
 //http://jfi.uchicago.edu/~tcaswell
 //
@@ -38,7 +38,7 @@
 #include "exception.h"
 #include "wrapper_o.h"
 
-using std::map;
+using std::list;
 using std::pair;
 using std::cout;
 using std::endl;
@@ -56,12 +56,13 @@ using utilities::Tuple;
 
 using namespace tracking;
 
-typedef  map<int,Track_box*> tr_map;
+typedef list<Track_box*> tr_list ;
+
 
 Track_shelf::~Track_shelf(){
-  for(map<int,Track_box*>::iterator it = track_map.begin();
-      it!=track_map.end(); it++)
-    delete it->second;
+  for(tr_list::iterator it = tracks_.begin();
+      it!=tracks_.end(); ++it)
+    delete *it;
   std::cout<<"track dead"<<std::endl;
 }
 
@@ -69,80 +70,73 @@ Track_shelf::~Track_shelf(){
 void Track_shelf::add_new_track(particle_track* first_part){
   if(first_part ==NULL)
     throw "null particle";
-  Track_box * tmp_box = new Track_box(first_part);
-  track_map.insert(pair<int,Track_box*>(tmp_box->get_id(), tmp_box));
+  tracks_.push_back(new Track_box(first_part));
   ++track_count_;
   
 
 }
 void Track_shelf::add_track(Track_box * track)
 {
-  track_map.insert(pair<int,Track_box*>(track->get_id(), track));
+  tracks_.push_back(track);
+  
   ++track_count_;
   
 }
 
 
-  
-void Track_shelf::remove_track(int track){
-  map<int,Track_box*>::iterator it = track_map.find(track);
-  remove_track_internal_(it);
-}
-
-Track_box* Track_shelf::get_track(int track){
-  map<int,Track_box*>::iterator it = track_map.find(track);
-  if(it == track_map.end())
-    throw "not in map";
-  return it->second;
-}
-
 void Track_shelf::remove_short_tracks(int min_length){
   int tmp_length;
   
-  for(map<int,Track_box*>::iterator it = track_map.begin();
-      it!=track_map.end(); ){
-      tmp_length = ((*it).second)->get_length();
-      if( tmp_length< min_length){
-	remove_track_internal_(it++);
-      }
-      else{
-	it++;
-      }
+  // beware of tricksy iterator nonsense here
+  for(tr_list::iterator it = tracks_.begin();
+      it!=tracks_.end(); )
+  {
+    tmp_length = (*it)->get_length();
+
+    if( tmp_length< min_length)	
+      remove_track_internal_(it++); // this needs to be done this way
+				    // to prevent from getting all
+				    // manner of allocation bugs*
+    else
+      ++it;
+    
   }
   
   
 }
 
 void Track_shelf::print(){
- for(map<int,Track_box*>::iterator it = track_map.begin();
-     it!=track_map.end(); it++)
+ for(tr_list::iterator it = tracks_.begin();
+     it!=tracks_.end(); it++)
    {
      //     cout<<"track id: "<<it->first<<endl;
-     (it->second)->print();
+     (*it)->print();
    }
 }
 
 
 
 // void Track_shelf::set_shelf(){
-//   for(map<int,Track_box* >::iterator it = track_map.begin();
-//       it!= track_map.end(); it++)
-//     ((*it).second)->set_track();
+//   for(list<int,Track_box* >::iterator it = tracks_.begin();
+//       it!= tracks_.end(); it++)
+//     (*it)->set_track();
 // }
 
-void Track_shelf::remove_track_internal_(  map<int,Track_box*>::iterator it)
+void Track_shelf::remove_track_internal_(  tr_list::iterator it)
 {
-  if(it == track_map.end())
-    throw "not in map";
-  delete it->second;
-  it->second = NULL;
-  track_map.erase(it);
+  if(it == tracks_.end())
+    throw "not in list";
+  delete *it;
+  *it = NULL;
+  tracks_.erase(it);
+  --track_count_;
+  
 }
 
 void Track_shelf::track_length_histogram(Histogram & hist_in){
-  for(map<int,Track_box*>::iterator it = track_map.begin();
-      it!=track_map.end(); it++)
-    hist_in.add_data_point(((*it).second)->get_length());
+  for(tr_list::iterator it = tracks_.begin();
+      it!=tracks_.end(); it++)
+    hist_in.add_data_point((*it)->get_length());
 }
 
 void Track_shelf::msd(vector<double> & msd_vec,vector<int> & entry_count)const{
@@ -163,18 +157,18 @@ void Track_shelf::msd(vector<double> & msd_vec,vector<int> & entry_count)const{
 
   
 
-  for(map<int,Track_box*>::const_iterator working_track = track_map.begin();
-      working_track!=track_map.end(); working_track++)
+  for(tr_list::const_iterator working_track = tracks_.begin();
+      working_track!=tracks_.end(); working_track++)
     {
       
-      //      cout<<"Track legnth: "<<(*working_track).second->get_length()<<endl;
-      for(int j = 0; j<((*working_track).second->get_length()-1) && j < max_time_step;j++){
+      //      cout<<"Track legnth: "<<(*working_track)->get_length()<<endl;
+      for(int j = 0; j<((*working_track)->get_length()-1) && j < max_time_step;j++){
 	tmp_count =0;
 	disp_sq_sum = 0;
 	
 	not_past_end = true;
 
-	current = (*working_track).second->get_first();
+	current = (*working_track)->get_first();
 	not_past_end = current->step_forwards(j+1,next);
 	while(not_past_end){
 	  disp_sq_sum += current->distancesq(next);
@@ -221,19 +215,19 @@ void Track_shelf::msd_corrected(vector<double> & msd_vec, vector<int> & entry_co
 
   
 
-  for(map<int,Track_box*>::const_iterator working_track = track_map.begin();
-      working_track!=track_map.end(); working_track++)
+  for(tr_list::const_iterator working_track = tracks_.begin();
+      working_track!=tracks_.end(); working_track++)
     {
       
-      //      cout<<"Track legnth: "<<(*working_track).second->get_length()<<endl;
-      for(int j = 0; j<((*working_track).second->get_length()-1) && j < max_time_step;j++)
+      //      cout<<"Track legnth: "<<(*working_track)->get_length()<<endl;
+      for(int j = 0; j<((*working_track)->get_length()-1) && j < max_time_step;j++)
       {
 	tmp_count =0;
 	disp_sq_sum = 0;
 	
 	not_past_end = true;
 	
-	current = (*working_track).second->get_first();
+	current = (*working_track)->get_first();
 	not_past_end = current->step_forwards(j+1,next);
 
 	while(not_past_end){
@@ -277,12 +271,12 @@ void Track_shelf::msd_corrected(utilities::Counted_vector & msd)const
   
 
   bool not_past_end = false;
-  for(map<int,Track_box*>::const_iterator working_track = track_map.begin();
-      working_track!=track_map.end(); working_track++)
+  for(tr_list::const_iterator working_track = tracks_.begin();
+      working_track!=tracks_.end(); working_track++)
   {
       
-    //      cout<<"Track legnth: "<<(*working_track).second->get_length()<<endl;
-    int track_length = ((*working_track).second->get_length()-1);
+    //      cout<<"Track legnth: "<<(*working_track)->get_length()<<endl;
+    int track_length = ((*working_track)->get_length()-1);
     
     for(int j = 0; j< track_length && j < max_time_step;j++)
     {
@@ -290,7 +284,7 @@ void Track_shelf::msd_corrected(utilities::Counted_vector & msd)const
       double tmp_dist_sq_sum=0;
 
       not_past_end = true;
-      current = (*working_track).second->get_first();
+      current = (*working_track)->get_first();
       not_past_end = current->step_forwards(j+1,next);
       while(not_past_end)
       {
@@ -320,12 +314,12 @@ void Track_shelf::msd_corrected(utilities::Counted_vector & md,
   
 
   bool not_past_end = false;
-  for(map<int,Track_box*>::const_iterator working_track = track_map.begin();
-      working_track!=track_map.end(); working_track++)
+  for(tr_list::const_iterator working_track = tracks_.begin();
+      working_track!=tracks_.end(); working_track++)
   {
       
 
-    int track_length = ((*working_track).second->get_length()-1);
+    int track_length = ((*working_track)->get_length()-1);
     
     for(int j = 0; j< track_length && j < max_time_step;j++)
     {
@@ -335,7 +329,7 @@ void Track_shelf::msd_corrected(utilities::Counted_vector & md,
       double tmp_dist_sq_sq_sum=0;
 
       not_past_end = true;
-      current = (*working_track).second->get_first();
+      current = (*working_track)->get_first();
       not_past_end = current->step_forwards(j+1,next);
       while(not_past_end)
       {
@@ -385,10 +379,10 @@ void Track_shelf::msd_hist(int time_step ,utilities::Histogram & in) const
     throw "nonsense input";
   }
   
-  for(map<int,Track_box*>::const_iterator working_track = track_map.begin();
-      working_track!=track_map.end(); working_track++)
+  for(tr_list::const_iterator working_track = tracks_.begin();
+      working_track!=tracks_.end(); working_track++)
   {
-    current = (*working_track).second->get_first();
+    current = (*working_track)->get_first();
     bool more_track = current->has_next();
     while(more_track)
     {
@@ -400,11 +394,11 @@ void Track_shelf::msd_hist(int time_step ,utilities::Histogram & in) const
 
 
 void Track_shelf::set_raw_disp_to_cell(Cell & output)const{
-  tr_map::const_iterator working_track = track_map.begin();
+  tr_list::const_iterator working_track = tracks_.begin();
   Array tmp(1);
   for(int j = 0; j<output.get_length();j++)
     {
-      ((*(working_track++)).second)->extract_raw_disp(tmp);
+      (*(working_track++))->extract_raw_disp(tmp);
       output.add_array(tmp);
     }
 
@@ -412,11 +406,11 @@ void Track_shelf::set_raw_disp_to_cell(Cell & output)const{
 
 
 void Track_shelf::set_corrected_disp_to_cell(Cell & output)const{
-  tr_map::const_iterator working_track = track_map.begin();
+  tr_list::const_iterator working_track = tracks_.begin();
   Array tmp(1);
   for(int j = 0; j<output.get_length();j++)
     {
-      ((*(working_track++)).second)->extract_corrected_disp(tmp);
+      (*(working_track++))->extract_corrected_disp(tmp);
       output.add_array(tmp);
     }
 
@@ -424,15 +418,15 @@ void Track_shelf::set_corrected_disp_to_cell(Cell & output)const{
 
 
 void Track_shelf::initial_corrected_pos_to_wrapper(utilities::Generic_wrapper_base * data_out_wrapper)const{
-  tr_map::const_iterator working_track = track_map.begin();
+  tr_list::const_iterator working_track = tracks_.begin();
   const particle_track *  working_track_ptr;
 
   data_out_wrapper->initialize_wrapper();
-  while(working_track != track_map.end())
+  while(working_track != tracks_.end())
   {
     data_out_wrapper->start_new_row();
     // note trickiness
-    working_track_ptr = ((*(working_track++)).second)->get_first();
+    working_track_ptr = (*(working_track++))->get_first();
     const utilities::Tuplef i_pos = working_track_ptr->get_corrected_pos();
     
     data_out_wrapper->append_to_row(i_pos[0]);
@@ -449,17 +443,17 @@ void Track_shelf::initial_corrected_pos_to_wrapper(utilities::Generic_wrapper_ba
 }
 
 void Track_shelf::corrected_tracks_out(Cell & output, utilities::Generic_wrapper_base * data_out_wrapper)const{
-  tr_map::const_iterator working_track = track_map.begin();
+  tr_list::const_iterator working_track = tracks_.begin();
   const particle_track *  working_track_ptr;
   Array tmp(1);
   data_out_wrapper->initialize_wrapper();
   
-  while(working_track != track_map.end())
+  while(working_track != tracks_.end())
   {
     // Deal with the initial position data 
     data_out_wrapper->start_new_row();
 
-    working_track_ptr = ((*(working_track)).second)->get_first();
+    working_track_ptr = (*(working_track))->get_first();
     const utilities::Tuplef i_pos = working_track_ptr->get_corrected_pos();
     
     data_out_wrapper->append_to_row(i_pos[0]);
@@ -469,7 +463,7 @@ void Track_shelf::corrected_tracks_out(Cell & output, utilities::Generic_wrapper
     data_out_wrapper->finish_row();
     
     // Deal with the displacements
-    ((*(working_track)).second)->extract_corrected_disp(tmp);
+    (*(working_track))->extract_corrected_disp(tmp);
     output.add_array(tmp);
 
     // increment the iterator 
@@ -486,11 +480,11 @@ void Track_shelf::corrected_tracks_out(Cell & output, utilities::Generic_wrapper
 
 void Track_shelf::pass_fun_to_track(void(Track_box::*fun)()const)const
 {
-  map<int,Track_box*>::const_iterator myend =  track_map.end();
-  for(map<int,Track_box*>::const_iterator it = track_map.begin();
+  tr_list::const_iterator myend =  tracks_.end();
+  for(tr_list::const_iterator it = tracks_.begin();
       it!=myend;++it)
   {
-    ((it->second)->*fun)();
+    ((*it)->*fun)();
   }
 }
 
@@ -502,11 +496,11 @@ void Track_shelf::split_to_parts(Track_shelf & output_shelf)
     throw "need to provide a second shelf to put trimmed tracks into";
   
 
-  map<int,Track_box*>::const_iterator myend =  track_map.end();
-  for(map<int,Track_box*>::const_iterator it = track_map.begin();
+  tr_list::const_iterator myend =  tracks_.end();
+  for(tr_list::const_iterator it = tracks_.begin();
       it!=myend;++it)
   {
-    (it->second)->split_to_parts(output_shelf);
+    (*it)->split_to_parts(output_shelf);
   }
   
 }
@@ -524,14 +518,14 @@ void Track_shelf::output_link_to_wrapper(Wrapper_out & wrapper,
   wrapper.add_meta_data("dims",dim);
   wrapper.add_meta_data("number-of-planes",1);
   wrapper.open_group(0,track_count_);
-  map<int,Track_box*>::const_iterator myend =  track_map.end();
+  tr_list::const_iterator myend =  tracks_.end();
   
 
   
-  for(map<int,Track_box*>::const_iterator it = track_map.begin();it!=myend;++it)
+  for(tr_list::const_iterator it = tracks_.begin();it!=myend;++it)
   {
 
-    wrapper.set_all_values((it->second),scale_t);
+    wrapper.set_all_values((*it),scale_t);
     
     
   }

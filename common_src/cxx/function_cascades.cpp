@@ -127,12 +127,10 @@ void hash_box::output_to_wrapper(Wrapper_out & wrapper) const
 void Track_shelf::output_to_wrapper(Wrapper_out & wrapper) const
 {
 
-  map<int,Track_box*>::const_iterator myend =  track_map.end();
-  for(map<int,Track_box*>::const_iterator it = track_map.begin();it!=myend;++it)
-  {
-    Track_box * cur_box = (it->second);
-    cur_box->output_to_wrapper(wrapper);
-  }
+  list<Track_box*>::const_iterator myend =  tracks_.end();
+  for(list<Track_box*>::const_iterator it = tracks_.begin();it!=myend;++it)
+    (*it)->output_to_wrapper(wrapper);
+  
 
 }
 
