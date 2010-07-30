@@ -60,7 +60,17 @@ void Generic_wrapper_hdf::open_wrapper()
   {
     // if there is a file to add to open it read/write
     if(add_to_file_)
-      file_ = new H5File(file_name_,H5F_ACC_RDWR);
+    {
+      try
+      {
+	file_ = new H5File(file_name_,H5F_ACC_RDWR);
+      }
+      catch(FileIException & error)
+      {
+	file_ = new H5File(file_name_,H5F_ACC_EXCL);
+      }
+    }
+    
     else
     {
       // if there is not a file to add to try to make a new one
