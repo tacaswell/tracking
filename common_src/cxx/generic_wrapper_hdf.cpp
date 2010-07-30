@@ -56,6 +56,8 @@ Generic_wrapper_hdf::~Generic_wrapper_hdf()
 
 void Generic_wrapper_hdf::open_wrapper()
 {
+  Exception::dontPrint();
+  
   if(!wrapper_open_)
   {
     // if there is a file to add to open it read/write
