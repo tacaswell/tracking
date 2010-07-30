@@ -66,6 +66,7 @@ using utilities::CL_parse;
 using utilities::Counted_vector;
 using utilities::format_name;
 
+using utilities::Md_store;
 
 
 using namespace tracking;
@@ -101,12 +102,6 @@ int main(int argc, char * const argv[])
   }
 
   
-  
-  cout<<"file to read in: "<<in_file<<endl;
-  cout<<"file that will be written to: "<<out_file<<endl;
-
-    
-
   int msd_steps;
 
   // get msd parameters
@@ -132,7 +127,7 @@ int main(int argc, char * const argv[])
   
   
   // get tracking parameters 
-  Read_config app_prams_trk(pram_file,"tracking");
+  Read_config app_prams_trk(pram_file,"msd");
   if(!(app_prams_trk.contains_key("box_side_len")&&
        app_prams_trk.contains_key("search_range")))
   {
@@ -158,7 +153,7 @@ int main(int argc, char * const argv[])
   
 
   int read_comp_num, write_comp_num;
-  Read_config comp_prams(pram_file,"comp");
+  Read_config comp_prams(pram_file,"comps");
   if(!(comp_prams.contains_key("read_comp")&&
        comp_prams.contains_key("write_comp")))
   {
@@ -181,7 +176,10 @@ int main(int argc, char * const argv[])
   cout<<"file to read in: "<<in_file<<endl;
   cout<<"file that will be written to: "<<out_file<<endl;
   cout<<"Parameters: "<<endl;
-  
+  cout<<"  box_side_len: "<<box_side_len<<endl;
+  cout<<"  search_range: "<<search_range<<endl;
+  cout<<"  min_track_length: "<<min_track_length<<endl;
+  cout<<"  msd_steps: "<<msd_steps<<endl;
   cout<<"comps: "<<endl;
   cout<<"  read_comp_num "<<read_comp_num<<endl;
   cout<<"  write_comp_num "<<write_comp_num<<endl;
@@ -207,7 +205,7 @@ int main(int argc, char * const argv[])
     
       
     // set up the input wrapper
-    Wrapper_i_hdf wh(in_file,data_types,read_comp_num,0,100);
+    Wrapper_i_hdf wh(in_file,data_types,read_comp_num);
     
     // fill the master_box
     Master_box box;
@@ -239,9 +237,9 @@ int main(int argc, char * const argv[])
     tracks.msd_corrected(md,msd,msd_sq);
 
     
-    // md.average_data();
-    // msd.average_data();
-    // msd_sq.average_data();
+    md.average_data();
+    msd.average_data();
+    msd_sq.average_data();
     
 
     string data_str = "data";
@@ -250,6 +248,11 @@ int main(int argc, char * const argv[])
     
     Generic_wrapper_hdf hdf_out(out_file,true);
 
+    Md_store md_store;
+    md_store.add_elements(app_prams_msd.get_store());
+    md_store.add_elements(app_prams_trk.get_store());    
+    
+    
     g_name = format_name("mean_disp",write_comp_num);
     
     
@@ -257,19 +260,19 @@ int main(int argc, char * const argv[])
 			 g_name,
 			 data_str,
 			 count_str,
-			 NULL);
+			 &md_store);
     g_name = format_name("mean_squared_disp",write_comp_num);
     msd.output_to_wrapper(&hdf_out,
 			  g_name,
 			 data_str,
 			  count_str,
-			  NULL);
+			  &md_store);
     g_name = format_name("msd_squared",write_comp_num);    
     md.output_to_wrapper(&hdf_out,
 			 g_name,
 			 data_str,
 			 count_str,
-			 NULL);
+			 &md_store);
     
     cout<<"wrote out g(r)"<<endl;
 
