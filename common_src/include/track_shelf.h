@@ -93,12 +93,6 @@ public:
    */
   void msd(std::vector<double> & msd_vec,std::vector<int> & entry_count)const;
 
-  /**
-     Generates the corrected MSD plot for all the tarcks in this shelf.
-     DEPRECIATED
-   */
-  void msd_corrected(std::vector<double> & msd_vec,std::vector<int> & entry_count)const;
-
   
   /**
      Generates the corrected MSD plot for all the tarcks in this shelf.
@@ -110,10 +104,10 @@ public:
 		     utilities::Counted_vector & msd_sq)const;
   
 
-  /**
+  /*
      Computes the average fourier transform of the tracks
    */
-  void track_fft();
+  //void track_fft();
   
   /**
      generates a histogram of the msd of the specified time step
@@ -139,20 +133,6 @@ public:
     return track_count_;
     
   }
-  /**
-     outputs the initial location and plane of the tracks
-     
-     to be removed
-   */
-  void initial_corrected_pos_to_wrapper(utilities::Generic_wrapper_base * data_out_wrapper)const;
-  
-  /**
-     Outputs both the corrected initial position and the corrected displacements
-
-     to be removed
-   */
-  void corrected_tracks_out(utilities::Cell & output, utilities::Generic_wrapper_base * data_out_wrapper)const;
-  
 
   /**
      Pass a function to all of the Track_box objects contained
@@ -160,8 +140,8 @@ public:
   void pass_fun_to_track(void(Track_box::*fun)()const)const;
 
   /**
-     Outputs the particles in a track-centric format.  Assumes that the wrapper is 
-     already initialized.
+     Outputs the particles in a track-centric format.  Assumes that
+     the wrapper is already initialized.
 
      @param output wrapper, already initialized
    */
@@ -169,8 +149,8 @@ public:
 
   
   /**
-     outputs the contents of the shelf treating each track as a single particle.
-     for use with 3D linking.  This should be sub-classed
+     outputs the contents of the shelf treating each track as a single
+     particle.  for use with 3D linking.  This should be sub-classed
    */
   void output_link_to_wrapper(utilities::Wrapper_out & wrapper, 
 			      const utilities::Tuple<float,3> & scale_t,

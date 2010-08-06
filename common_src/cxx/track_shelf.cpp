@@ -199,68 +199,6 @@ void Track_shelf::msd(vector<double> & msd_vec,vector<int> & entry_count)const{
 }
 
 
-void Track_shelf::msd_corrected(vector<double> & msd_vec, vector<int> & entry_count)const{
-  //this exception needs to get it's own class or something
-  if(msd_vec.size()!=entry_count.size())
-    throw "Vector size's don't match, change this exception";
-
-  int max_time_step = msd_vec.size();
-
-
-  double disp_sq_sum;
-  int tmp_count;
-
-  const particle_track* current = NULL;
-  const particle_track* next = NULL;
-
-  bool not_past_end = false;
-
-  
-
-  for(tr_list::const_iterator working_track = tracks_.begin();
-      working_track!=tracks_.end(); working_track++)
-    {
-      
-      //      cout<<"Track legnth: "<<(*working_track)->get_length()<<endl;
-      for(int j = 0; j<((*working_track)->get_length()-1) && j < max_time_step;j++)
-      {
-	tmp_count =0;
-	disp_sq_sum = 0;
-	
-	not_past_end = true;
-	
-	current = (*working_track)->get_first();
-	not_past_end = current->step_forwards(j+1,next);
-
-	while(not_past_end){
-	  disp_sq_sum += current->distancesq_corrected(next);
-	  ++tmp_count;
-
-	  current = next;
-	  not_past_end = current->step_forwards(j+1,next);
-	}
-	  
-	  
-	msd_vec.at(j) += disp_sq_sum;
-	(entry_count.at(j))+=tmp_count;
-	// 	      msd_vec.at(j) += disp_sq_sum/tmp_count;
-	// 	      ++(entry_count.at(j));
-      }
-      
-    }
-  
-  vector<double>::iterator it = msd_vec.begin();
-  vector<int>::iterator it2 = entry_count.begin();
-  for(;it<msd_vec.end();it++, it2++)
-    {
-      if(*it2 >0)
-	{
-	  (*it) = (*it)/(double)(*(it2));
-	}
-    }
-}
-
-
 
 void Track_shelf::msd_corrected(utilities::Counted_vector & msd)const
 {
@@ -415,66 +353,6 @@ void Track_shelf::set_corrected_disp_to_cell(Cell & output)const{
       (*(working_track++))->extract_corrected_disp(tmp);
       output.add_array(tmp);
     }
-
-}
-
-
-void Track_shelf::initial_corrected_pos_to_wrapper(utilities::Generic_wrapper_base * data_out_wrapper)const{
-  tr_list::const_iterator working_track = tracks_.begin();
-  const particle_track *  working_track_ptr;
-
-  data_out_wrapper->initialize_wrapper();
-  while(working_track != tracks_.end())
-  {
-    data_out_wrapper->start_new_row();
-    // note trickiness
-    working_track_ptr = (*(working_track++))->get_first();
-    const utilities::Tuplef i_pos = working_track_ptr->get_corrected_pos();
-    
-    data_out_wrapper->append_to_row(i_pos[0]);
-    data_out_wrapper->append_to_row(i_pos[1]);
-    data_out_wrapper->append_to_row(working_track_ptr->get_frame());
-    
-    data_out_wrapper->finish_row();
-  }
-  
-  data_out_wrapper->finalize_wrapper();
-
-
-  
-}
-
-void Track_shelf::corrected_tracks_out(Cell & output, utilities::Generic_wrapper_base * data_out_wrapper)const{
-  tr_list::const_iterator working_track = tracks_.begin();
-  const particle_track *  working_track_ptr;
-  Array tmp(1);
-  data_out_wrapper->initialize_wrapper();
-  
-  while(working_track != tracks_.end())
-  {
-    // Deal with the initial position data 
-    data_out_wrapper->start_new_row();
-
-    working_track_ptr = (*(working_track))->get_first();
-    const utilities::Tuplef i_pos = working_track_ptr->get_corrected_pos();
-    
-    data_out_wrapper->append_to_row(i_pos[0]);
-    data_out_wrapper->append_to_row(i_pos[1]);
-    data_out_wrapper->append_to_row(working_track_ptr->get_frame());
-    
-    data_out_wrapper->finish_row();
-    
-    // Deal with the displacements
-    (*(working_track))->extract_corrected_disp(tmp);
-    output.add_array(tmp);
-
-    // increment the iterator 
-    ++working_track;
-    
-  }
-  
-  data_out_wrapper->finalize_wrapper();
-
 
 }
 
