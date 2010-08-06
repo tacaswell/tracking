@@ -38,7 +38,7 @@ def add_gofr_plane_mdata(comp_pram,i_pram,f_pram,s_pram,conn):
              f_pram['max_range'],i_pram['comp_count'],comp_pram['read_comp'])
     conn.execute("insert into gofr_by_plane_prams" +
                  " (dset_key,comp_key,'nbins','max_range','comp_count',iden_key) " +
-                 "values (?,?,?,?,?,?);",params)
+                 "values (?,?,?,?,?,?);",prams)
     conn.commit()
 
 
@@ -132,7 +132,7 @@ def do_Iden(key,conn):
     # see if the file has already been processed
     prog_name = "Iden"
     prog_path = "/home/tcaswell/misc_builds/iden_rel/iden/apps/"
-    res = check_comps_table(key,"Iden",conn)
+    res = conn.execute("select fout,comp_key from comps where dset_key=? and function='Iden';",(key,)).fetchall()
     fin = conn.execute("select fname from dsets where key = ?;",(key,)).fetchone()[0]
     if os.path.isfile(fin.replace('.tif','-file002.tif')):
         print "multi-part tiff, can't cope yet"
@@ -143,12 +143,12 @@ def do_Iden(key,conn):
         fout = fout.replace(".h5","-" + str(len(res)) + ".h5")
 
 
-    fpram = fin.replace(".tif",".xml")
-    if not os.path.isfile(fpram):
-        print "can not find parameter file, exiting"
-        print fin
-        print fpram
-        return
+    ## fpram = fin.replace(".tif",".xml")
+    ## if not os.path.isfile(fpram):
+    ##     print "can not find parameter file, exiting"
+    ##     print fin
+    ##     print fpram
+    ##     return
 
     comp_num = conn.execute("select max(comp_key) from comps;").fetchone()[0] + 1
 
@@ -177,8 +177,7 @@ def do_Iden(key,conn):
     # ask for confirmation
     print "will processess"
     print fin
-    print "from parameters in"
-    print fpram
+
     print "will write to"
     print fout
     # resp = raw_input("is this ok?: ")
@@ -192,7 +191,7 @@ def do_Iden(key,conn):
     if not os.path.exists(proc_path):
         os.makedirs(proc_path,0751)
 
-    parse1.make_h5(fin,fout)
+
 
     rc = subprocess.call(["time",prog_path + prog_name,'-i',fin,'-o',fout,'-c',fxml ])
     print rc
@@ -215,23 +214,23 @@ def do_Iden_avg(key,conn,frames):
     # see if the file has already been processed
     prog_name = "Iden_avg"
     prog_path = "/home/tcaswell/misc_builds/iden_rel/iden/apps/"
-    res = check_comps_table(key,"Iden",conn)
+    res = conn.execute("select fout,comp_key from comps where dset_key=? and function = 'Iden_avg';",(key,)).fetchall()
     fin = conn.execute("select fname from dsets where key = ?;",(key,)).fetchone()[0]
     if os.path.isfile(fin.replace('.tif','-file002.tif')):
         print "multi-part tiff, can't cope yet"
         return
     
-    fout = '.'.join(fin.replace("data","processed").split('.')[:-1]) + '.h5'
+    fout = '.'.join(fin.replace("data","processed").split('.')[:-1]) + '-avg.h5'
     if len(res) >0:
         fout = fout.replace(".h5","-" + str(len(res)) + ".h5")
 
 
-    fpram = fin.replace(".tif",".xml")
-    if not os.path.isfile(fpram):
-        print "can not find parameter file, exiting"
-        print fin
-        print fpram
-        return
+    ## fpram = fin.replace(".tif",".xml")
+    ## if not os.path.isfile(fpram):
+    ##     print "can not find parameter file, exiting"
+    ##     print fin
+    ##     print fpram
+    ##     return
 
     comp_num = conn.execute("select max(comp_key) from comps;").fetchone()[0] + 1
 
@@ -264,8 +263,8 @@ def do_Iden_avg(key,conn,frames):
     # ask for confirmation
     print "will processess"
     print fin
-    print "from parameters in"
-    print fpram
+    ## print "from parameters in"
+    ## print fpram
     print "will write to"
     print fout
     # resp = raw_input("is this ok?: ")
@@ -324,8 +323,8 @@ def do_gofr(comp_key,conn,pram_i, pram_f, pram_s = None, rel = True,):
     _make_sure_h5_exists(fout)
     
     comp_prams = {'read_comp':read_comp,'dset':key}
-    comp_prams['write_comp'] =conn.execute("select max(comp_key) from comps;"
-                                           ).fetchone()[0] + 1
+    comp_prams['write_comp'] = conn.execute("select max(comp_key) from comps;"
+                                            ).fetchone()[0] + 1
 
         
     if pram_s is None:
@@ -386,26 +385,26 @@ def do_msd(comp_key,conn,pram_i, pram_f, pram_s = None, rel = True,):
 
     
 
-def do_gofr_by_plane(key,conn,pram_i, pram_f, pram_s = None, rel = True,):
+def do_gofr_by_plane(comp_key,conn,pram_i, pram_f, pram_s = None, rel = True,):
     prog_name = "gofr_by_plane"
     required_pram_i = ['nbins','comp_count']
     required_pram_f = ['max_range']
     required_pram_s = ['grp_name']
     # see if the file has already been processed
     
-    res = check_comps_table(key,"Iden",conn)
+    
+    res = conn.execute("select fout,dset_key from comps where comp_key=? ;",
+                       (comp_key,)).fetchone()
+
     if len(res) ==0:
         print "no entry"
         return
-    if len(res) >1:
-        print "more than one entry, can't cope, quiting"
-        return
-    (fin,read_comp) = res[0]
+    (fin,key) = res
     fout = os.path.dirname(fin) + '/gofr_by_planes.h5'
     _make_sure_h5_exists(fout)
     
 
-    comp_prams = {'read_comp':read_comp,'dset':key}
+    comp_prams = {'read_comp':comp_key,'dset':key}
     comp_prams['write_comp'] =conn.execute("select max(comp_key) from comps;"
                                            ).fetchone()[0] + 1
     
