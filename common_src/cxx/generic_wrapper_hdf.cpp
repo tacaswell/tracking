@@ -35,6 +35,7 @@
 using utilities::Generic_wrapper_hdf;
 
 using std::logic_error;
+using std::runtime_error;
 
 using namespace H5;
 using std::string;
@@ -105,22 +106,24 @@ void Generic_wrapper_hdf::open_group(const string & name )
 {
 
   if(!wrapper_open_)
-    throw "generic_wrapper_hdf: wrapper not open";
+    throw runtime_error("generic_wrapper_hdf: wrapper not open");
   
   if(name=="none")
-    throw "generic_wrapper_hdf: need to give a name";
+    throw runtime_error("generic_wrapper_hdf: need to give a name");
   
   if(group_open_)
-    throw "generic_wrapper_hdf::open_group: there is already an open group";
+    throw runtime_error("generic_wrapper_hdf::open_group: there is already an open group");
   
 
   try
   {
     group_ = new Group(file_->createGroup(name));
   }
-  catch(...)
+  catch(Exception & e)
   {
-    throw "generic_wrapper_hdf: group creation failed";
+    e.printError();
+    
+    throw runtime_error("generic_wrapper_hdf: group creation failed");
   }
 
   group_attrs_ = new Attr_list_hdf(group_);
