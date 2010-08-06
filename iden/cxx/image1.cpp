@@ -212,7 +212,7 @@ void Image2D::trim_max(float cut_percent)
   // move back one bin
   ++bin_indx;
 
-  cout<<"cutting top "<<bin_indx<<" bins"<<endl;
+  // cout<<"cutting top "<<bin_indx<<" bins"<<endl;
   
   // trim data in place, set all values above the cutoff to the cutoff
   ippiThreshold_GTVal_32f_C1IR(imagedata_,stepsize_,ROIfull_,

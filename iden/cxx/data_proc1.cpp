@@ -318,7 +318,9 @@ Ipp32f (*iden::ParticleStatistics(Image2D &image_localmax, Image2D &image_in,
     }
   }
   // 	cout<<"---------------"<<endl;
-  cout<<"data_proc_cout: "<<counter<<endl;
+  // tac 2010-08-05
+  // suppressed output
+  // cout<<"data_proc_cout: "<<counter<<endl;
   // 	cout<<"---------------"<<endl;
     
   /*//extract local region around each maximum*/

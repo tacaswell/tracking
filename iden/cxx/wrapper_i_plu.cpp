@@ -49,7 +49,8 @@ void Wrapper_i_plu::add_frame_data(Ipp32f data[][9], int frame,int num)
   if(data_.at(frame) !=NULL)
     throw "already data at this frame";
 
-  cout<<"frame "<<frame<<endl;
+  if (frame%50==0)
+    cout<<"frame "<<frame<<endl;
   
   data_.at(frame) = data;
   frame_count_.at(frame) = num;
