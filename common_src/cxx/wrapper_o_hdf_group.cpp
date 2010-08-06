@@ -187,10 +187,13 @@ Wrapper_o_hdf_group::Wrapper_o_hdf_group(CommonFG * parent, const std::string & 
       dsets_.push_back( new DataSet(group_->createDataSet(format_dset_name(*it,comp_number_),ctype,space,plist_c)));
       complex_map_.set_lookup(*it,c_c++);
       break;
+    case V_BOOL:
+    case V_GUID:
+    case V_TIME:
     case V_STRING:
-      throw "type should not be string";
+      throw runtime_error("type should not be "+ VT2str_s(v_type(*it)));
     case V_ERROR:
-      throw "type not registered, wrapper_o_hdf";
+      throw logic_error("type not registered, wrapper_o_hdf");
     }
     
     dset_map_.set_lookup(*it,d_c++);
@@ -259,11 +262,13 @@ void Wrapper_o_hdf_group::store_particle(const particle * p_in)
       tmp_val.im = tmpc.imag();
       complex_data_.at(complex_map_(type))[part_index] =tmp_val;
       break;
+    case V_BOOL:
+    case V_GUID:
+    case V_TIME:
     case V_STRING:
-      throw "type should not be string";
+      throw runtime_error("type should not be "+ VT2str_s(v_type(type)));
     case V_ERROR:
-      throw "you have hit a type that is not defined in enum_utils::v_type";
-      break;
+      throw logic_error("type not registered, wrapper_o_hdf");
     }
 
   }
@@ -337,12 +342,17 @@ void Wrapper_o_hdf_group::add_meta_store(const Md_store * md_in)
   
   Attr_list_hdf atrlst(group_);
   unsigned int num_entries = md_in->size();
-  int tmpi;
-  float tmpf;
-  string tmps;
+  int tmpi = 0;
+  float tmpf=0;
+  string tmps="";
+  bool tmpb=false;
+  
   for(unsigned int j = 0; j<num_entries; ++j)
   {
     string key = md_in->get_key(j);
+    try
+    {
+      
     switch(md_in->get_type(j))
     {
       // integer data
@@ -355,16 +365,32 @@ void Wrapper_o_hdf_group::add_meta_store(const Md_store * md_in)
     
       atrlst.set_value(key,md_in->get_value(j,tmpf));
       break;
-      // complex data
+      
     case V_STRING:
-    
+    case V_TIME:
+    case V_GUID:
       atrlst.set_value(key,md_in->get_value(j,tmps));
       break;
-    default:
-      throw logic_error("should not have hit default");
+    case V_BOOL:
+      atrlst.set_value(key,md_in->get_value(j,tmpb));
+      break;
       
+    case V_COMPLEX:
+      throw logic_error("attr lists can not deal with complex data yet");
+      break;
+    case V_ERROR:
+      break;
     }
-  
+    }
+    catch(Exception& e)
+    {
+      e.printError();
+      
+      cout<<j<<endl;
+      cout<<key<<" ("<<md_in->get_type(j)<<") "<<md_in->get_val(j)<<endl;
+    }
+    
+      
 
   }
 }

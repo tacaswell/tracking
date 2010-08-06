@@ -209,12 +209,15 @@ void Attr_list_hdf::set_value(const std::string & key,  const std::string &   va
     else
       throw invalid_argument("attribute name already exists");
   }
-  StrType str_type(0,value_in.size());
-  DataSpace dspace =  DataSpace(H5S_SCALAR);
-  Attribute  tmpa =Attribute(obj_->createAttribute(key,str_type,dspace));
-  tmpa.write(str_type,value_in);
-  if(!over_write)
+  if(value_in.size()>0)
+  {
+    StrType str_type(0,value_in.size());
+    DataSpace dspace =  DataSpace(H5S_SCALAR);
+    Attribute  tmpa =Attribute(obj_->createAttribute(key,str_type,dspace));
+    tmpa.write(str_type,value_in);
     keys_.push_back(key);
+  }
+  
 }
 
 
@@ -314,10 +317,89 @@ unsigned int Attr_list_hdf::get_value(const std::string & key, unsigned int & va
 }
 
 
-template void Attr_list_hdf::set_value(const std::string & key,  const Tuple<float,2> &   value_in,bool over_write) ;
-template void Attr_list_hdf::set_value(const std::string & key,  const Tuple<float,3> &   value_in,bool over_write) ;
+template 
+void Attr_list_hdf::set_value(const std::string & key,  
+			      const Tuple<float,2> &   
+			      value_in,
+			      bool over_write) ;
+template 
+void Attr_list_hdf::set_value(const std::string & key,
+			      const Tuple<float,3> &   
+			      value_in,
+			      bool over_write) ;
 
-template utilities::Tuple<float,2> Attr_list_hdf::get_value(const std::string & key,utilities::Tuple<float,2>  & value_out) const ;
+template 
+utilities::Tuple<float,2> Attr_list_hdf::get_value(const std::string & key,
+						   utilities::Tuple<float,2>  & value_out) const ;
 
-template utilities::Tuple<float,3> Attr_list_hdf::get_value(const std::string & key,utilities::Tuple<float,3>  & value_out) const ;
+template 
+utilities::Tuple<float,3> Attr_list_hdf::get_value(const std::string & key,
+						   utilities::Tuple<float,3>  & value_out) const ;
+
+
+bool Attr_list_hdf::get_value(const std::string & key, bool & value_out) const 
+{
+  int tmp = 0;
+  
+  Attribute  tmpa =  Attribute(obj_->openAttribute(key));
+  H5T_class_t type_class = tmpa.getTypeClass();
+  H5S_class_t space_type = tmpa.getSpace().getSimpleExtentType();
+  if(type_class == H5T_INTEGER && space_type == H5S_SCALAR )
+    tmpa.read(PredType::NATIVE_INT,&tmp);
+  else
+    throw invalid_argument("output does not match attribute dtype");
+  
+  if(tmp == 0)
+    value_out = false;
+  else
+    value_out = true;
+  
+  return value_out;
+
+}
+
+void Attr_list_hdf::set_value(const std::string & key,  const bool &   value_in,bool over_write) 
+{
+  int tmp_in = 0;
+  if(value_in)
+    tmp_in = 1;
+  
+  
+  if(contains_attr(key))
+  {
+    if( over_write)
+    {
+      Attribute  tmpa =  Attribute(obj_->openAttribute(key));
+      H5T_class_t type_class = tmpa.getTypeClass();
+      H5S_class_t space_type = tmpa.getSpace().getSimpleExtentType();
+  
+      if(type_class == H5T_INTEGER && space_type == H5S_SCALAR )
+	tmpa.write(PredType::NATIVE_INT,&tmp_in);
+      else
+      	throw invalid_argument("output does not match attribute dtype");
+    }
+        else
+    {
+      // check to see if they match
+      int tmp = 0;
+      get_value(key,tmp);
+      if(tmp != value_in)
+      {
+	cerr<<"setting attribute: "<<key<<endl;
+	cerr<<"the existing value: "<<tmp<<endl;
+	cerr<<"the input value: "<<value_in<<endl;
+	
+	throw invalid_argument("attribute name already exists and values don't match: float");
+      }
+    }
+    
+  }
+  else
+  {
+    DataSpace dspace =  DataSpace(0,NULL);
+    Attribute  tmpa =Attribute(obj_->createAttribute(key,PredType::NATIVE_INT,dspace));
+    tmpa.write(PredType::NATIVE_INT,&tmp_in);
+    keys_.push_back(key);
+  }
+}
 

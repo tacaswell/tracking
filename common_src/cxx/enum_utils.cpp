@@ -24,9 +24,12 @@
 //the resulting work.
 #include <string>
 #include <sstream>
+#include <stdexcept>
 
 #include "enum_utils.h"
+
 using std::string;
+using std::logic_error;
 
 namespace utilities
 {
@@ -187,6 +190,12 @@ V_TYPE str2VT_s(const std::string& type_str)
     return utilities::V_INT;
   else if(type_str.compare("string") == 0)
     return utilities::V_STRING;
+  else if(type_str.compare("bool") == 0)
+    return utilities::V_BOOL;
+  else if(type_str.compare("guid") == 0)
+    return utilities::V_GUID;
+  else if(type_str.compare("time") == 0)
+    return utilities::V_TIME;
   else
     return utilities::V_ERROR;
 }
@@ -212,12 +221,16 @@ std::string VT2str_s(V_TYPE type)
     return "complex";
   case V_STRING:
     return "string";
+  case V_BOOL:
+    return "bool";
+  case V_TIME:
+    return "time";
+  case V_GUID:
+    return "guid";
   case V_ERROR:
-  default:
-    return "type unknown";
-
-
+    return "error";
   }
+  throw logic_error("enum_utils::VT2str_s should not have exited switch");
   
 }
 

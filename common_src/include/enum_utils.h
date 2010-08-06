@@ -93,11 +93,15 @@ const int D_TYPE_COUNT = 18;
  */
 typedef enum V_TYPE
   {
-    V_ERROR = -1,
-    V_INT = 0,
-    V_FLOAT,
-    V_COMPLEX,
-    V_STRING
+    V_ERROR = -1,		// error type
+    V_INT = 0,			// integer
+    V_FLOAT,			// float
+    V_COMPLEX,			// complex
+    V_STRING,			// string
+    V_BOOL,			// bool
+    V_TIME,			// date/time
+    V_GUID,			// guid from MM meta-data
+    
   }V_TYPE;
 /**
    Helper function to map between D_TYPE and V_TYPE

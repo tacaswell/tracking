@@ -82,11 +82,15 @@ public:
   /**
      Gets value at index j.   The value is
      returned by reference.  The function returns as well the value.
-
-     
   */
   std::string get_value(int j,std::string & val)const;
-  
+
+  /**
+     Gets value at index j.   The value is
+     returned by reference.  The function returns as well the value.
+  */
+  bool get_value(int j,bool & val)const;
+
   
   
   

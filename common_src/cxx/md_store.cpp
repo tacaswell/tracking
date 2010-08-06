@@ -156,8 +156,12 @@ int Md_store::get_value(int j,int & val)const
 
 string Md_store::get_value(int j,string & val)const
 {
+  V_TYPE val_type = str2VT_s(entries_[j].type);
   
-  if(str2VT_s(entries_[j].type) == utilities::V_STRING)
+
+  if(val_type == utilities::V_STRING ||
+     val_type == utilities::V_GUID ||
+     val_type == utilities::V_TIME)
   {
     val = entries_[j].value;
     return val;
@@ -165,6 +169,24 @@ string Md_store::get_value(int j,string & val)const
   else
     throw logic_error("Read_congig::get_value, expect pram of type: string, found type: " + entries_[j].type);
 }
+
+
+bool Md_store::get_value(int j,bool & val)const
+{
+  if(str2VT_s(entries_[j].type) == utilities::V_BOOL)
+  {
+    val = false;
+    string tmp_str = entries_[j].value;
+    if(tmp_str.compare("on" )==0||tmp_str.compare("true" )==0)
+      val = true;
+    
+    return val;
+    
+  }
+  else
+    throw logic_error("Read_congig::get_value, expect pram of type: float, found type: " + entries_[j].type);
+}
+
 
 template <class T>
 T Md_store::get_value(const string& key,T & val)const
