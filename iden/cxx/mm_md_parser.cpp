@@ -90,6 +90,34 @@ void parse_description(string& des,Md_store *store);
 // string to make MemBufInputSource happy
 static const char*  gMemBufId = "ImageDescription";
 
+/**
+   Local function to slightly re-format the time string from metamorph
+ */
+std::string de_mangle_mmdate(const std::string & in)
+{
+  // add dashes to date
+  string out = in.substr(0,4) + "-" +in.substr(4,2) + "-" + in.substr(6,2);
+
+  size_t p_indx = in.find(".");
+  out += in.substr(8,(p_indx-8)+1);
+  std::ostringstream o;
+  o.width(3);
+  o.fill('0');
+  int tmpi;
+  
+  
+  std::istringstream(in.substr(p_indx+1))>>std::dec>>tmpi;
+  
+  o<<std::right<<tmpi;
+  // deal with stupidity in milliseconds
+  
+  out +=o.str();
+  
+
+  return out;
+  
+}
+
 
 Mm_md_parser::Mm_md_parser()
 {
@@ -295,6 +323,8 @@ void parse_description(string& des,Md_store* md_store)
 void Mm_md_parser::parse_elements(DOMNode* pram_node, Md_store* md_store)const
 {
   XMLCh* des_str = XMLString::transcode("Description");
+  XMLCh* time_str = XMLString::transcode("time");
+  
 
   if(pram_node  && 	// make sure that current_node is non NULL
      pram_node->getNodeType() == DOMNode::ELEMENT_NODE)
@@ -319,6 +349,12 @@ void Mm_md_parser::parse_elements(DOMNode* pram_node, Md_store* md_store)const
 	string v(value);
 	parse_description(v,md_store);
       }
+      if(XMLString::equals(pram_elm->getAttribute(type_str_),time_str))
+      {
+	string t(value);
+	t = de_mangle_mmdate(t);
+	md_store->add_element(key,type,t.c_str());
+      }
       else
 	md_store->add_element(key,type,value);
 
@@ -328,6 +364,8 @@ void Mm_md_parser::parse_elements(DOMNode* pram_node, Md_store* md_store)const
     }
   }
   XMLString::release(&des_str);
+  XMLString::release(&time_str);
    
   
 }
+
