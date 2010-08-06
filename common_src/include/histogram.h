@@ -33,7 +33,8 @@ class Gnuplot;
 
 namespace utilities{
 //forward declare
-class Generic_wrapper_base;
+class Generic_wrapper;
+class Md_store;
 
 /**
    Base class for historgram objects.
@@ -83,7 +84,11 @@ public:
     of the bins.  The extra entry at the end are the number of entries
     outside of the 
   */
-  void output_to_wrapper(Generic_wrapper_base * wrapper_out) const;
+  void output_to_wrapper(Generic_wrapper * wrapper_out,
+			 std::string & g_name,
+			 std::string & count_name,
+			 std::string & edges_name,
+			 const Md_store* g_md_store) const;
   
   void display()const;
   void display(Gnuplot & g)const;

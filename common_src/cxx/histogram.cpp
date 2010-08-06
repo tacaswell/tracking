@@ -24,9 +24,13 @@
 //the resulting work.
 #include "histogram.h"
 #include <iostream>
-#include "generic_wrapper_base.h"
-#include "gnuplot_i.hpp"
+#include "generic_wrapper.h"
+
+#include "md_store.h"
+
 using namespace utilities;
+
+using std::string;
 
 using std::cout;
 using std::cerr;
@@ -81,91 +85,61 @@ vectord Histogram::get_bin_edges() const{
 }
 
 
-void Histogram::output_to_wrapper(Generic_wrapper_base * wrapper_out)const
+void Histogram::output_to_wrapper(Generic_wrapper * wrapper_out,
+				  string & g_name,
+				  string & count_name,
+				  string & edges_name,
+				  const Md_store* g_md_store
+				  )const
 {
-  wrapper_out->initialize_wrapper();
-  for(int j =0; j<number_bins_;++j)
+    // house keeping
+  bool opened_wrapper = false;
+  
+  if(!wrapper_out->is_open())
   {
-    wrapper_out->start_new_row();
-    wrapper_out->append_to_row(hist_array_[j]);
-    wrapper_out->append_to_row(bottom_edge_ + j*bin_width_);
-    wrapper_out->finish_row();
+    wrapper_out->open_wrapper();
+    opened_wrapper = true;
+      
   }
+  wrapper_out->open_group(g_name);
+  
+  
+  int n_bins = hist_array_.size();
+  
+  // open group
+  
+  // shove in count data
+  const int * tmpi = &(hist_array_.front());
+  wrapper_out->add_dset(1,&n_bins,utilities::V_INT,tmpi,count_name);
 
-  wrapper_out->start_new_row();
-  wrapper_out->append_to_row(over_count_);
-  wrapper_out->append_to_row(top_edge_);
-  wrapper_out->finish_row();
+  vector<float> bin_edges(n_bins);
+  for(int j = 0;j<n_bins;++j)
+    bin_edges[j] = bottom_edge_ + j*bin_width_;
+  
+  const float * tmpf = &(bin_edges.front());
+  wrapper_out->add_dset(1,&n_bins,utilities::V_FLOAT,tmpf,edges_name);
+  
+  // shove in meta data from store
+  if(g_md_store)
+    wrapper_out->add_meta_data(g_md_store);
 
+  // add meta data specific to 
+  wrapper_out->add_meta_data("over_count",over_count_);
+  wrapper_out->add_meta_data("under_count",under_count_);
+  wrapper_out->add_meta_data("nbins",n_bins);
+  wrapper_out->add_meta_data("bottom_edge",bottom_edge_);
+  wrapper_out->add_meta_data("top_edge",top_edge_);
+  wrapper_out->add_meta_data("bin_width",bin_width_);
+  
+  // close group
+  wrapper_out->close_group();
 
-  wrapper_out->start_new_row();
-  wrapper_out->append_to_row(under_count_);
-  wrapper_out->append_to_row(bottom_edge_ - bin_width_);
-  wrapper_out->finish_row();
-
-			     
-  wrapper_out->finalize_wrapper();
+  
+  // house keeping
+  if(opened_wrapper)
+    wrapper_out->close_wrapper();
+  
   
 }
 
-
-void Histogram::display() const
-{
-
-  vector<float> tmp = get_bin_edges();
-  tmp.pop_back();
-  
-  vector<float> tmp2 = vector<float>(0);
-  tmp2.reserve(hist_array_.size());
-  
-  for(vectori::const_iterator it = hist_array_.begin();
-      it<hist_array_.end(); ++it)
-    tmp2.push_back(*it);
-  
-  try
-  {
-    
-    Gnuplot g(tmp,tmp2,"track length","histeps");
-    g.set_grid();
-    wait_for_key();
-  }
-  catch(GnuplotException & e)
-  {
-    cout<<e.what()<<endl;
-  }
-  
-}
-
-
-
-void Histogram::display(Gnuplot & g ) const
-{
-
-  vector<float> tmp = get_bin_edges();
-  tmp.pop_back();
-  
-  vector<float> tmp2 = vector<float>(0);
-  tmp2.reserve(hist_array_.size());
-  
-  for(vectori::const_iterator it = hist_array_.begin();
-      it<hist_array_.end(); ++it)
-    tmp2.push_back(*it);
-  
-  try
-  {
-    
-    g.plot_xy(tmp,tmp2);
-    g.set_style("histograms");
-    
-    g.set_grid();
-    g.replot();
-    
-    wait_for_key();
-  }
-  catch(GnuplotException & e)
-  {
-    cout<<e.what()<<endl;
-  }
-  
-}
 
