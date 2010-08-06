@@ -163,3 +163,23 @@ target_link_libraries(msd
   )
 set_target_properties(msd PROPERTIES COMPILE_DEFINITIONS  "PTYPE=1;DIM_COUNT=2")
 
+
+add_executable(track_stats track_stats
+  ${COMMON_SRC}
+  ${UTIL_SRC}
+  ${HDF_SRC}
+  ${CORR_SRC}
+  ${GNU_PLOT_SRC}
+  ${COMMON_TRACK_SRC}
+  ${COMMON_HASH_SRC} 
+  ${HASH_TRACK_SRC}
+  ${COMMON_WRAPPER_SRC} 
+  ${CONFIG_SRC}
+  ${COMMON_SRC_PATH}/histogram
+  )
+target_link_libraries(track_stats
+  ${HDF5_LIBRARIES} 
+  ${XERCESC_LIBRARY} 
+  )
+set_target_properties(track_stats PROPERTIES COMPILE_DEFINITIONS  "PTYPE=1;DIM_COUNT=2")
+

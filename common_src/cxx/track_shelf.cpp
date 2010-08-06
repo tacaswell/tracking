@@ -43,6 +43,7 @@ using std::pair;
 using std::cout;
 using std::endl;
 using std::vector;
+using std::runtime_error;
 
 
 using utilities::Histogram;
@@ -310,25 +311,32 @@ void Track_shelf::msd_corrected(utilities::Counted_vector & md,
 
 
 
-void Track_shelf::msd_hist(int time_step ,utilities::Histogram & in) const
+void Track_shelf::disp_sq_hist(int time_step ,utilities::Histogram & disp_sq_hist) const
 {
   const particle_track* current = NULL;
+  const particle_track* next = NULL;
+  bool not_past_end = false;
+  
   //const particle_track* next = NULL;
   if(time_step<1)
-  {
-    throw "nonsense input";
-  }
+    throw runtime_error("Track_shelf::disp_sq_hist: Time step less than 1");
+  
+  
   
   for(tr_list::const_iterator working_track = tracks_.begin();
       working_track!=tracks_.end(); working_track++)
   {
+    
     current = (*working_track)->get_first();
-    bool more_track = current->has_next();
-    while(more_track)
+    not_past_end = current->step_forwards(time_step,next);
+    while(not_past_end)
     {
-      in.add_data_point((current->get_corrected_forward_disp()).magnitude_sqr());
-      more_track = current->step_forwards(time_step,current);
-    }	 
+      disp_sq_hist.add_data_point(current->distancesq_corrected(next));
+      current = next;
+      not_past_end = current->step_forwards(time_step,next);
+      
+    }
+    
   }
 }
 

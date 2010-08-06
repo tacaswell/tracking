@@ -56,13 +56,29 @@ def add_msd_mdata(comp_pram,i_pram,f_pram,s_pram,conn):
               comp_pram['write_comp'],
               i_pram['msd_steps'],
               i_pram['min_track_length'],
-              f_pram['search_range'])
+              f_pram['search_range'],
+              i_pram['read_comp'])
     conn.execute("insert into msd_prams " +
-                 "(dset_key,comp_key,msd_steps, search_range,min_track_length) "+
+                 "(dset_key,comp_key,msd_steps, search_range,min_track_length,iden_key) "+
                  "values (?,?,?,?,?)",params)
     conn.commit()
+
     
-_prog_to_fun_lookup = {'gofr_by_plane':add_gofr_plane_mdata,'gofr':add_gofr_mdata, 'msd':add_msd_mdata}
+def add_trk_stat_mdata(comp_pram,i_pram,f_pram,s_pram,conn):
+    params = (comp_pram['dset'],
+              comp_pram['write_comp'],
+              comp_pram['read_comp'],
+              f_pram['search_range'],
+              i_pram['steps'],
+              i_pram['hist_bins'],
+              f_pram['hist_range'],)
+    conn.execute("insert into trk_stat_prams " +
+                 "(dset_key,comp_key,iden_key,search_range,steps,hist_bins,hist_range) "+
+                 "values (?,?,?,?,?,?,?)",params)
+    conn.commit()
+
+    
+_prog_to_fun_lookup = {'gofr_by_plane':add_gofr_plane_mdata,'gofr':add_gofr_mdata, 'msd':add_msd_mdata,'track_stats':add_trk_stat_mdata}
 
 
 def _make_sure_h5_exists(fname):
@@ -270,14 +286,14 @@ def do_Iden_avg(key,conn,frames):
 
     # if it works, then returns zero
     if rc == 0:
-        params = (key,comp_num,2,0.01,p_rad,hwhm,4,4,1.5,7.5,.6)
+        params = (key,comp_num,2,0.01,p_rad,hwhm,4,4,1.5,7.5,.6,frames)
         print "entering into database"
         conn.execute("insert into comps (dset_key,date,fin,fout,function) values (?,?,?,?,?);",
                      (key,date.today().isoformat(),fin,fout,prog_name))
             
-        conn.execute("insert into Iden_prams" +
-                     " (dset_key,comp_key,threshold,top_cut,p_rad,hwhm,d_rad,mask_rad,shift_cut,rg_cut,e_cut) " +
-                     "values (?,?,?,?,?,?,?,?,?,?,?);",params)
+        conn.execute("insert into Iden_avg_prams" +
+                     " (dset_key,comp_key,threshold,top_cut,p_rad,hwhm,d_rad,mask_rad,shift_cut,rg_cut,e_cut,avg_count) " +
+                     "values (?,?,?,?,?,?,?,?,?,?,?,?);",params)
         conn.commit()
 
     
@@ -358,9 +374,6 @@ def do_msd(comp_key,conn,pram_i, pram_f, pram_s = None, rel = True,):
     comp_prams['write_comp'] =conn.execute("select max(comp_key) from comps;"
                                            ).fetchone()[0] + 1
 
-    
-
-    
     try:
         _call_fun(conn,
                   prog_name,fin,fout,
@@ -410,6 +423,32 @@ def do_gofr_by_plane(key,conn,pram_i, pram_f, pram_s = None, rel = True,):
     except KeyError, ke:
         print "Parameter: " ,ke,' not found'
     
+
+
+def do_track_stat(comp_key,conn,pram_i, pram_f, pram_s = None, rel = True,):
+    prog_name = "track_stats"
+    required_pram_i = ['steps','hist_bins']
+    required_pram_f = ['search_range','box_side_len','hist_range']
+    required_pram_s = None
+
+    (fin,dset_key) = _get_fin(comp_key,conn)
+    
+    fout = os.path.dirname(fin) + '/track_stats.h5'
+    
+    
+    comp_prams = {'read_comp':comp_key,'dset':dset_key}
+    comp_prams['write_comp'] =conn.execute("select max(comp_key) from comps;"
+                                           ).fetchone()[0] + 1
+
+    try:
+        _call_fun(conn,
+                  prog_name,fin,fout,
+                  comp_prams,
+                  required_pram_i,pram_i,
+                  required_pram_f,pram_f,
+                  required_pram_s,pram_s)
+    except KeyError, ke:
+        print "Parameter: " ,ke,' not found'
 
 
 
@@ -494,3 +533,15 @@ def _call_fun(conn,
         print "ERROR!!!"
     
 
+    
+def _get_fin(comp_key,conn):
+    
+    res = conn.execute("select fout,dset_key from comps where comp_key=? ;",
+                       (comp_key,)).fetchone()
+    
+    print res
+    print comp_key
+    if res is None:
+        raise utils.dbase_error('no entry found')
+    
+    return res
