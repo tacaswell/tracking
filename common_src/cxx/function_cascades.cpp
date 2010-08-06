@@ -64,15 +64,13 @@ using std::invalid_argument;
 
 
 // hash output chain
-void hash_case::output_to_wrapper(Wrapper_out & wrapper,bool add_meta) const
+void hash_case::output_to_wrapper(Wrapper_out & wrapper) const
 {
 
 
-  if(add_meta)
-  {
-    wrapper.add_meta_data("dims",h_case_[0]->get_img_dims());
-    wrapper.add_meta_data("number-of-planes",(int)h_case_.size());
-  }
+  wrapper.add_meta_data("dims",h_case_[0]->get_img_dims());
+  wrapper.add_meta_data("number-of-planes",(int)h_case_.size());
+    
   
   for(vector<Hash_shelf*>::const_iterator current_shelf= h_case_.begin();
       current_shelf!=h_case_.end();++current_shelf)				// loop over frames
@@ -85,9 +83,9 @@ void hash_case::output_to_wrapper(Wrapper_out & wrapper,bool add_meta) const
 }
 void Hash_shelf::output_to_wrapper(Wrapper_out & wrapper) const
 {
-  cout<<"frame "<<plane_number_<<"contains ";
+  cout<<"frame "<<plane_number_<<" contains ";
   
-  cout<<particle_count_<<"particles"<<endl;
+  cout<<particle_count_<<" particles"<<endl;
   
   wrapper.open_group(plane_number_,particle_count_,max_part_indx_ + 1);
   // try

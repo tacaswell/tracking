@@ -206,7 +206,7 @@ public:
   /**
      outputs the hash case to the Wrapper that is passed in
    */
-  void output_to_wrapper(utilities::Wrapper_out &,bool add_meta = true ) const;
+  void output_to_wrapper(utilities::Wrapper_out &) const;
   
   /**
      passes a Corr object down the pyramid

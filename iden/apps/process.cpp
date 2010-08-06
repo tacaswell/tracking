@@ -284,7 +284,7 @@ int main(int argc, char * const argv[])
     
     Wrapper_o_hdf hdf_w(proc_file,d_types,comp_num,Wrapper_o_hdf::NEW_FILE);
     hdf_w.initialize_wrapper();
-    hcase.output_to_wrapper(hdf_w,false);
+    hcase.output_to_wrapper(hdf_w);
     hdf_w.add_meta_data_list(iden_prams,d_types);
 
     hdf_w.finalize_wrapper();
