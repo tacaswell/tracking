@@ -13,6 +13,7 @@ target_link_libraries(Iden
   ${HDF5_LIBRARIES}
   ${FreeImage_LIBRARIES}
   ${XERCESC_LIBRARY}
+  ${Boost_LIBRARIES}
   )
 
 
@@ -31,6 +32,7 @@ target_link_libraries(Iden_avg
   ${HDF5_LIBRARIES}
   ${FreeImage_LIBRARIES}
   ${XERCESC_LIBRARY}
+  ${Boost_LIBRARIES}
   )
 
 

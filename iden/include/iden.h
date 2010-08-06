@@ -53,10 +53,6 @@ class Master_box;
 namespace utilities
 {
 class Wrapper_i_plu;
-template <class T,int N>
-class Tuple;
-
-
 }
 
 
@@ -77,8 +73,8 @@ public:
   void set_fname(const std::string &);
   void set_params(const Params& param_in);
   
-  utilities::Wrapper_i_plu * fill_wrapper(utilities::Tuple<float,2>,unsigned int frames=0,unsigned int start=0);
-  utilities::Wrapper_i_plu * fill_wrapper_avg(utilities::Tuple<float,2> dims,unsigned int avg_count,unsigned int frames=0,unsigned int start=0);
+  utilities::Wrapper_i_plu * fill_wrapper(unsigned int frames=0,unsigned int start=0);
+  utilities::Wrapper_i_plu * fill_wrapper_avg(unsigned int avg_count,unsigned int frames=0,unsigned int start=0);
   
 private:
   /**

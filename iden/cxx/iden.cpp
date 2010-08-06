@@ -38,6 +38,9 @@
 //work.
 #include <iostream>
 #include <stdexcept>
+#include <sstream>
+
+#include "boost/date_time/posix_time/posix_time.hpp"
 
 #include "iden.h"
 #include "wrapper_i_plu.h"
@@ -72,16 +75,17 @@ using std::runtime_error;
 
 using utilities::Md_store;
 using utilities::Mm_md_parser;
+using namespace boost::posix_time;
 
 
-Wrapper_i_plu * Iden::fill_wrapper(Tuple<float,2> dims,unsigned int frames,unsigned int start)
+Wrapper_i_plu * Iden::fill_wrapper(unsigned int frames,unsigned int start)
 {
+  
   
   Wrapper_i_plu * wrapper = NULL;
   
 
   // load multi page
-  
   FreeImage_Initialise();
   BOOL bMemoryCache = TRUE;
   fipMultiPage src(bMemoryCache);
@@ -111,13 +115,29 @@ Wrapper_i_plu * Iden::fill_wrapper(Tuple<float,2> dims,unsigned int frames,unsig
   }
   
   
-  // replace the wrapper with an entirely new one
-  wrapper = new Wrapper_i_plu(frames,dims);
-
   fipImage image;
   
-  // step in bytes on input image
- 
+  
+  image = src.lockPage(0);
+  WORD scan_step = image.getScanWidth();
+  int rows = image.getHeight();
+  int cols = image.getWidth();
+  src.unlockPage(image,false);
+  
+  Tuple<float,2> dims;
+  dims[1] = rows;
+  dims[0] = cols;
+  
+  
+  // create a wrapper
+  wrapper = new Wrapper_i_plu(frames,dims);
+  wrapper->set_Md_store_size(frames);  
+
+  // set up parser for meta-morph tiffs
+  Mm_md_parser mm_md_p;
+  ptime prev_time,cur_time;
+  string time_str;
+  
   // loop over frames
   for(unsigned int j = start;j<(frames+start);++j)
   {
@@ -127,23 +147,38 @@ Wrapper_i_plu * Iden::fill_wrapper(Tuple<float,2> dims,unsigned int frames,unsig
     image = src.lockPage(j);
     // get data about image
     WORD * data_ptr = (WORD *) image.accessPixels();
-    WORD scan_step = image.getScanWidth();
-    int rows = image.getHeight();
-    int cols = image.getWidth();
-
-
     
-
-
+    
     // shove data in to image object
     Image2D image_in(rows,cols);
     image_in.set_data(data_ptr, rows,cols,scan_step);
+
     
     // trim off the top .1% of the pixels to deal with outliers
     ///TODO make this a parameter
     image_in.trim_max(params_.get_top_cut());
- 
-
+    
+    
+    // extract meta data
+    Md_store * md_store = mm_md_p.parse_md(image);
+    int dtime;
+    
+    // deal with time
+    if(j == start)
+    {
+      prev_time = time_from_string(md_store->get_value("acquisition-time-local",time_str));
+      dtime = 0;
+    }
+    
+    else
+    {
+      cur_time  = time_from_string(md_store->get_value("acquisition-time-local",time_str));
+      dtime = (cur_time-prev_time).total_milliseconds();
+      prev_time = cur_time;
+    }
+    md_store->add_element("dtime",dtime);
+    
+    
     // clear the input data
     src.unlockPage(image,false);
 
@@ -194,8 +229,11 @@ Wrapper_i_plu * Iden::fill_wrapper(Tuple<float,2> dims,unsigned int frames,unsig
     //     cout<<"---------------"<<endl;
     //     cout<<counter<<endl;
     //     cout<<"---------------"<<endl;
-    
+
+    // set data in wrapper
     wrapper->add_frame_data(particledata,j-start,counter);
+    // set metadata in wrapper
+    wrapper->set_Md_store(j-start,md_store);
     //    cout<<j<<endl;
   }
   
@@ -222,7 +260,7 @@ void Iden::set_fname(const std::string & in)
   // look to see if the file has the meta data for the parameters
 }
 
-Wrapper_i_plu * Iden::fill_wrapper_avg(Tuple<float,2> dims,unsigned int avg_count,unsigned int frames,unsigned int start)
+Wrapper_i_plu * Iden::fill_wrapper_avg(unsigned int avg_count,unsigned int frames,unsigned int start)
 {
 
   // load multi page
@@ -275,6 +313,7 @@ Wrapper_i_plu * Iden::fill_wrapper_avg(Tuple<float,2> dims,unsigned int avg_coun
   int cols = image.getWidth();
   src.unlockPage(image,false);
   
+  Tuple<float,2> dims;
   dims[1] = rows;
   dims[0] = cols;
   
@@ -292,18 +331,23 @@ Wrapper_i_plu * Iden::fill_wrapper_avg(Tuple<float,2> dims,unsigned int avg_coun
     float exposure_sum = 0,x = 0,y = 0,z=0,tmp = 0;
     
     
+    ptime prev_time,cur_time;
+    string time_str;
+    int dtime;
+    string exp_unit;
     
+
     Image2D image_in(rows,cols);
     for(unsigned int k = 0; k<avg_count;++k)
     {
       // load frame
-      image = src.lockPage(j*avg_count + k);
+      image = src.lockPage(j*avg_count + k +start);
       
       // get data about image
       WORD * data_ptr = (WORD *) image.accessPixels();
       // shove data in to image object
       image_in.add_data(data_ptr, rows,cols,scan_step);
-    
+      
       // extract meta data from tiff
       Md_store * md_store = mm_md_p.parse_md(image);
       exposure_sum += md_store->get_value("Exposure",tmp);
@@ -311,7 +355,25 @@ Wrapper_i_plu * Iden::fill_wrapper_avg(Tuple<float,2> dims,unsigned int avg_coun
       {
 	md_store->get_value("spatial-calibration-x",scx);
 	md_store->get_value("spatial-calibration-y",scy);
+	md_store->get_value("Exposure units",exp_unit);
+	
       }
+      
+      // deal with time
+      if(k ==0 )
+      {
+	cur_time  = time_from_string(md_store->get_value("acquisition-time-local",time_str));
+	prev_time = cur_time;
+	dtime = 0;
+      }
+      else
+      {
+	cur_time  = time_from_string(md_store->get_value("acquisition-time-local",time_str));
+	dtime = (cur_time-prev_time).total_milliseconds();
+	prev_time = cur_time;
+      }
+      md_store->add_element("dtime",dtime);
+  
       x += md_store->get_value("stage-position-x",tmp);
       y += md_store->get_value("stage-position-y",tmp);      
       z += md_store->get_value("z-position",tmp);  
@@ -326,15 +388,18 @@ Wrapper_i_plu * Iden::fill_wrapper_avg(Tuple<float,2> dims,unsigned int avg_coun
     y /=avg_count;
     z /=avg_count;
 
-    Md_store *md_store = new Md_store();
-    md_store->add_element("Exposure",exposure_sum);
-    md_store->add_element("stage-position-x",x);
-    md_store->add_element("stage-position-y",y);      
-    md_store->add_element("z-position",z);  
-    md_store->add_element("spatial-calibration-x",scx);
-    md_store->add_element("spatial-calibration-y",scy);
-    md_store->add_element("pixel-size-x",cols);
-    md_store->add_element("pixel-size-y",rows);
+    Md_store *avg_md_store = new Md_store();
+    avg_md_store->add_element("Exposure",exposure_sum);
+    avg_md_store->add_element("Exposure units","string",exp_unit.c_str());
+    avg_md_store->add_element("stage-position-x",x);
+    avg_md_store->add_element("stage-position-y",y);      
+    avg_md_store->add_element("z-position",z);  
+    avg_md_store->add_element("spatial-calibration-x",scx);
+    avg_md_store->add_element("spatial-calibration-y",scy);
+    avg_md_store->add_element("pixel-size-x",cols);
+    avg_md_store->add_element("pixel-size-y",rows);
+    avg_md_store->add_element("dtime",dtime);
+    avg_md_store->add_element("acquisition-time-local","string",time_str.c_str());
     
     
     
@@ -389,7 +454,7 @@ Wrapper_i_plu * Iden::fill_wrapper_avg(Tuple<float,2> dims,unsigned int avg_coun
     //     cout<<"---------------"<<endl;
     
     wrapper->add_frame_data(particledata,j-start,counter);
-    wrapper->set_Md_store(j,md_store);
+    wrapper->set_Md_store(j-start,avg_md_store);
     
 
     

@@ -252,7 +252,7 @@ int main(int argc, char * const argv[])
 
     
     
-  Wrapper_i_plu *  wp = iden.fill_wrapper_avg(dims,avg_count);
+  Wrapper_i_plu *  wp = iden.fill_wrapper_avg(avg_count);
   cout<<"number of entries in wrapper: "<<wp->get_num_entries()<<endl;
     
 
@@ -260,7 +260,7 @@ int main(int argc, char * const argv[])
   
 
   Master_box box;
-  //Filter_basic filt(out_file);
+
   Filter_trivial filt;
     
   box.init(*wp,filt);
@@ -295,7 +295,8 @@ int main(int argc, char * const argv[])
     hdf_w.initialize_wrapper();
     hcase.output_to_wrapper(hdf_w,true);
     hdf_w.add_meta_data_list(iden_prams,d_types);
-
+    hdf_w.add_meta_data("avg_count",avg_count);
+    
     hdf_w.finalize_wrapper();
   }
   catch(const char * err)
