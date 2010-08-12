@@ -55,12 +55,12 @@ def add_msd_mdata(comp_pram,i_pram,f_pram,s_pram,conn):
     params = (comp_pram['dset'],
               comp_pram['write_comp'],
               i_pram['msd_steps'],
-              i_pram['min_track_length'],
               f_pram['search_range'],
-              i_pram['read_comp'])
+              i_pram['min_track_length'],
+              comp_pram['read_comp'])
     conn.execute("insert into msd_prams " +
                  "(dset_key,comp_key,msd_steps, search_range,min_track_length,iden_key) "+
-                 "values (?,?,?,?,?)",params)
+                 "values (?,?,?,?,?,?)",params)
     conn.commit()
 
     
