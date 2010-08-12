@@ -324,6 +324,8 @@ Wrapper_i_plu * Iden::fill_wrapper_avg(unsigned int avg_count,unsigned int frame
 
   Mm_md_parser mm_md_p;
   float scx=0,scy=0;
+  string exp_unit,cal_units;
+  bool cal_state = false;
   
   // loop over frames
   for(unsigned int j = 0;j<wrapper_frames;++j)
@@ -334,7 +336,7 @@ Wrapper_i_plu * Iden::fill_wrapper_avg(unsigned int avg_count,unsigned int frame
     ptime prev_time,cur_time;
     string time_str;
     int dtime;
-    string exp_unit;
+    
     
 
     Image2D image_in(rows,cols);
@@ -356,6 +358,8 @@ Wrapper_i_plu * Iden::fill_wrapper_avg(unsigned int avg_count,unsigned int frame
 	md_store->get_value("spatial-calibration-x",scx);
 	md_store->get_value("spatial-calibration-y",scy);
 	md_store->get_value("Exposure units",exp_unit);
+	md_store->get_value("spatial-calibration-state",cal_state);
+	md_store->get_value("spatial-calibration-units",cal_units);
 	
       }
       
@@ -372,7 +376,7 @@ Wrapper_i_plu * Iden::fill_wrapper_avg(unsigned int avg_count,unsigned int frame
 	dtime = (cur_time-prev_time).total_milliseconds();
 	prev_time = cur_time;
       }
-      md_store->add_element("dtime",dtime);
+     
   
       x += md_store->get_value("stage-position-x",tmp);
       y += md_store->get_value("stage-position-y",tmp);      
@@ -394,6 +398,8 @@ Wrapper_i_plu * Iden::fill_wrapper_avg(unsigned int avg_count,unsigned int frame
     avg_md_store->add_element("stage-position-x",x);
     avg_md_store->add_element("stage-position-y",y);      
     avg_md_store->add_element("z-position",z);  
+    avg_md_store->add_element("spatial-calibration-state",cal_state);
+    avg_md_store->add_element("spatial-calibration-units","string",cal_units.c_str());
     avg_md_store->add_element("spatial-calibration-x",scx);
     avg_md_store->add_element("spatial-calibration-y",scy);
     avg_md_store->add_element("pixel-size-x",cols);
