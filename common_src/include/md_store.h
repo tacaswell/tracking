@@ -45,6 +45,7 @@
 #include "enum_utils.h"
 namespace utilities
 {
+class Attr_list_hdf;
 
 /**
    A class to hold Md_elements and functions to get information out
@@ -138,7 +139,7 @@ public:
   /**
      Add entry
   */
-  void add_element(std::string & key,std::string & type, std::string & value);
+  void add_element(const std::string & key,const std::string & type,const  std::string & value);
   void add_element(const char * key,const char * type, const char * value);
   void add_element(const char * key,float val);
   void add_element(const char * key,int val);
@@ -154,8 +155,21 @@ public:
      Print out the contents
    */
   void print()const;
-  
+
+  /**
+     Destructor
+   */
   ~Md_store();
+  
+  /**
+     Default constructor
+   */
+  Md_store();
+  
+  /**
+     Constructor from an attr_list
+   */
+  Md_store(const utilities::Attr_list_hdf & );
   
 private:
   /**

@@ -22,13 +22,14 @@
 //containing parts covered by the terms of MATLAB User License, the
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
+#include <stdexcept>
 
 #include "wrapper_i_hdf.h"
 #include "master_box_t.h"
 #include "particle_base.h"
 #include "enum_utils.h"
 #include "attr_list_hdf.h"
-#include <stdexcept>
+#include "md_store.h"
 
 using H5::H5File;
 using H5::Exception;
@@ -174,16 +175,19 @@ void Wrapper_i_hdf::priv_init(int fr_count)
       frame_zdata_.resize(frame_count_);
     
 
+    // set the size of the md_store
+    set_Md_store_size(frame_count_);
+    
     // fill in data
     // assume that the frames run from 0 to frame_count_
-
-    
     for(unsigned int j = 0; j<frame_count_;++j)
     {
       string frame_name = format_name(j+start_);
       Group * frame = new Group(file->openGroup(frame_name));
       
       Attr_list_hdf g_attr_list(frame);
+      
+      set_Md_store(j,new Md_store(g_attr_list));
       
       
       if(two_d_data_)

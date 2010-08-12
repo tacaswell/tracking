@@ -28,9 +28,10 @@
 #include "md_store.h"
 #include "enum_utils.h"
 
+
 #include <string>
 #include <stdexcept>
-
+#include <list>
 #include <iostream>
 #include <sstream>
 
@@ -44,6 +45,7 @@ using utilities::Md_store;
 
 using std::string;
 using std::vector;
+using std::list;
 
 using std::cerr;
 using std::cout;
@@ -74,7 +76,11 @@ std::string to_string(T in)
 }
 
 
-void Md_store::add_element(std::string & key,std::string & type, std::string & value)
+Md_store::Md_store(){}
+
+		     
+
+void Md_store::add_element(const std::string & key,const std::string & type, const std::string & value)
 {
   entries_.push_back(Md_element(key,type,value));
 }
@@ -210,4 +216,3 @@ void Md_store::add_elements(const Md_store * in)
     entries_.push_back(*it);
   
 }
-

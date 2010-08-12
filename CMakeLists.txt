@@ -52,9 +52,10 @@ SET(UTIL_SRC_GNU
   ${COMMON_SRC_PATH}/histogram.cpp
 )
 SET(CORR_SRC
-  ${COMMON_SRC_PATH}/corr_gofr.cpp
-  ${COMMON_SRC_PATH}/corr_case.cpp
-  ${COMMON_SRC_PATH}/corr_goftheta.cpp
+  ${COMMON_SRC_PATH}/corr
+  ${COMMON_SRC_PATH}/corr_gofr
+  ${COMMON_SRC_PATH}/corr_case
+  ${COMMON_SRC_PATH}/corr_goftheta
 )
 
 SET(ACCUM_SCR
@@ -67,6 +68,7 @@ SET(COMMON_WRAPPER_SRC
   ${COMMON_SRC_PATH}/data_map.cpp
   ${COMMON_SRC_PATH}/wrapper_i.cpp
   ${COMMON_SRC_PATH}/md_store.cpp
+  ${COMMON_SRC_PATH}/filter_basic.cpp
 )
 
 
@@ -85,8 +87,8 @@ SET(HDF_SRC
   ${COMMON_SRC_PATH}/wrapper_o_hdf_group.cpp
   ${COMMON_SRC_PATH}/generic_wrapper_hdf.cpp
   ${COMMON_SRC_PATH}/attr_list_hdf.cpp
-  ${COMMON_SRC_PATH}/filter_basic.cpp
   ${COMMON_WRAPPER_SRC}
+  ${COMMON_SRC_PATH}/md_store_attr_list
   )
 
 set(SQL_CODE

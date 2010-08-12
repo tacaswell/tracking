@@ -120,3 +120,15 @@ add_executable(corr_test corr_test.cpp
   ${COMMON_HASH_SRC}
   )
 set_target_properties(corr_test PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_COUNT=2;TESTING")
+
+add_executable(md_store_hdf md_store_hdf
+  ${COMMON_SRC_PATH}/md_store
+  ${COMMON_SRC_PATH}/attr_list_hdf
+  ${COMMON_SRC_PATH}/enum_utils
+  ${COMMON_SRC_PATH}/md_store_attr_list
+  )
+set_target_properties(md_store_hdf PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_COUNT=2;TESTING")
+target_link_libraries(md_store_hdf ${HDF5_LIBRARIES} )
+
+add_executable(hdf_bug hdf_bug)
+target_link_libraries(hdf_bug ${HDF5_LIBRARIES} )

@@ -22,6 +22,7 @@
 #include <list>
 #include <string>
 #include "tuple.h"
+#include "enum_utils.h"
 // forward declare classes
 namespace H5
 {
@@ -30,6 +31,7 @@ class H5Object;
 
 namespace utilities
 {
+
 
 /**
    A class that takes in a hdf object, makes a list of the attributes.
@@ -95,11 +97,20 @@ public:
    */
   void remove_attr(const std::string & key);
 
-
+  
   
   void print()const;
   
-
+  /**
+     Returns a list of the keys contained in this wrapper
+   */
+  std::list<std::string> contents()const;
+  /**
+     Returns the type of scalar attributes.  Only works
+     for int,float, and string.  All others return V_ERROR.
+   */
+  utilities::V_TYPE get_type(const std::string& key)const;
+  
   
 private:
   std::list<std::string> keys_;

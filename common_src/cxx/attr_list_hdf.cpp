@@ -170,6 +170,8 @@ void Attr_list_hdf::set_value(const std::string & key,  const float &   value_in
 
 std::string  Attr_list_hdf::get_value(const std::string & key, std::string & value_out) const 
 {
+  
+  value_out.clear();
   Attribute  tmpa =  Attribute(obj_->openAttribute(key));
   H5T_class_t type_class = tmpa.getTypeClass();
   H5S_class_t space_type = tmpa.getSpace().getSimpleExtentType();
@@ -404,3 +406,40 @@ void Attr_list_hdf::set_value(const std::string & key,  const bool &   value_in,
   }
 }
 
+list<string> Attr_list_hdf::contents()const
+{
+  return keys_;
+}
+
+
+utilities::V_TYPE Attr_list_hdf::get_type(const std::string & key)const
+{
+  
+  Attribute  tmpa =  Attribute(obj_->openAttribute(key));
+  H5T_class_t attr_class = tmpa.getTypeClass();
+  H5S_class_t space_type = tmpa.getSpace().getSimpleExtentType();
+  if( space_type != H5S_SCALAR)
+    return V_ERROR;
+  switch(attr_class)
+  {
+  case H5T_INTEGER:  
+    return V_INT;
+  case H5T_FLOAT:  
+    return V_FLOAT;
+  
+  case H5T_STRING:  
+    return V_STRING;
+  case H5T_TIME:  
+  case H5T_BITFIELD:  
+  case H5T_OPAQUE:  
+  case H5T_COMPOUND:  
+  case H5T_REFERENCE:  
+  case H5T_ENUM:	    
+  case H5T_VLEN:	    
+  case H5T_ARRAY:	    
+  case H5T_NO_CLASS:
+  case H5T_NCLASSES:
+    return V_ERROR;
+  }
+  return V_ERROR;
+}
