@@ -35,7 +35,9 @@
 #include "generic_wrapper.h"
 #include "corr_gofr.h"
 #include "enum_utils.h"
+#include "md_store.h"
 using utilities::Generic_wrapper;
+using utilities::Md_store;
 
 using std::string;
 using std::vector;
@@ -77,7 +79,9 @@ Corr_case::~Corr_case()
 }
 
 
-void Corr_case::out_to_wrapper(Generic_wrapper & in,const string & base_name)const
+void Corr_case::out_to_wrapper(Generic_wrapper & in,
+			       const string & base_name,
+			       const Md_store * md_store)const
 {
 
   std::cout<<"outputting the whole case"<<std::endl;
@@ -91,6 +95,8 @@ void Corr_case::out_to_wrapper(Generic_wrapper & in,const string & base_name)con
   for(map<string,int>::const_iterator it = prams_int_.begin();
       it != prams_int_.end();++it)
     in.add_meta_data((*it).first,(*it).second);
+  if(md_store)
+    in.add_meta_data(md_store);
   
   in.close_group();
   

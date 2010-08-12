@@ -37,6 +37,8 @@
 namespace utilities
 {
 class Generic_wrapper;
+class Md_store;
+
 }
 
 
@@ -71,7 +73,9 @@ public:
   /**
      Averages the values in a vector of Accum_sofq and writes 
    */
-  void out_to_wrapper(utilities::Generic_wrapper & wrap,const std::string & base_name) const;
+  void out_to_wrapper(utilities::Generic_wrapper & wrap,
+		      const std::string & base_name,
+		      const utilities::Md_store * md_store) const;
 
   /**
      Returns the nth element of the case.  Will throw out of range errors
