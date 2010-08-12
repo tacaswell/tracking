@@ -99,7 +99,7 @@ void Corr_gofr::out_to_wrapper(Generic_wrapper & in,const std::string & g_name)c
   bool opened_wrapper = false;
   
   vector<float> tmp;
-  normalize(tmp);
+  float rho = normalize(tmp);
 
   if(!in.is_open())
   {
@@ -122,6 +122,7 @@ void Corr_gofr::out_to_wrapper(Generic_wrapper & in,const std::string & g_name)c
   in.add_meta_data("dset",dset_);
   in.add_meta_data("max_range",max_range_);
   in.add_meta_data("nbins",n_bins_);
+  in.add_meta_data("rho", rho );
   
   in.close_group();
   
@@ -131,7 +132,7 @@ void Corr_gofr::out_to_wrapper(Generic_wrapper & in,const std::string & g_name)c
 }
 
 
-void Corr_gofr::normalize(vector<float> & out)const
+float Corr_gofr::normalize(vector<float> & out)const
 {
   // tac 2009-10-09
   // changed to float to prevent integer over flow
@@ -179,6 +180,8 @@ void Corr_gofr::normalize(vector<float> & out)const
   norm_factor = ( avg * pi*(front * front * front - back * back * back))*4/3;
 #endif
   out[n_bins_-1] = bin_count_[n_bins_-1]/norm_factor;
+  
+  return avg/(float)parts_added_;
   
 }
 

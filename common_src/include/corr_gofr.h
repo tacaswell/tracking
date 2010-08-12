@@ -61,7 +61,7 @@ public:
   /**
      normalize g(r) to the average and area etc
    */
-  void normalize(std::vector<float> & gofr) const;
+  float normalize(std::vector<float> & gofr) const;
   
   /**
      Returns the bin edges
@@ -87,7 +87,7 @@ private:
   /**
      gives the number entries in the bin
    */
-  std::vector<int> bin_count_;
+  std::vector<unsigned int> bin_count_;
   /**
      gives the value of the bottom edge of the bin
    */
@@ -104,7 +104,7 @@ private:
   /**
      count of the number of particles added
    */
-  int parts_added_;
+  unsigned int parts_added_;
   
   
   /**
