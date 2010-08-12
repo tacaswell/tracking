@@ -185,7 +185,7 @@ int main(int argc, char * argv[])
 
       
     Generic_wrapper_hdf hdf_out(out_file,true);
-    gofr_c.out_to_wrapper(hdf_out,utilities::format_name(grp_name,write_comp_num));
+    gofr_c.out_to_wrapper(hdf_out,utilities::format_name(grp_name,write_comp_num),comp_prams.get_store());
     cout<<"wrote out g(r)"<<endl;
 
     
