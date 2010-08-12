@@ -263,19 +263,10 @@ int main(int argc, char * const argv[])
     
 
 
-
-    
-  for(int j =0;j<20;++j)
-  {
-    particle* p = box.get_particle(j);
-    p->print();
-  }
-    
-
     
     
   hash_case hcase(box,dims,20,wp->get_num_frames());
-  hcase.print();
+
   bool error_flg = false;
   try
   {
