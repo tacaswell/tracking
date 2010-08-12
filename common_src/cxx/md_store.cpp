@@ -199,6 +199,7 @@ T Md_store::get_value(const string& key,T & val)const
 template int Md_store::get_value(const string& key,int & val)const;
 template float Md_store::get_value(const string& key,float & val)const;
 template string Md_store::get_value(const string& key,string & val)const;
+template bool Md_store::get_value(const string& key,bool & val)const;
 
 void Md_store::add_elements(const Md_store * in)
 {
