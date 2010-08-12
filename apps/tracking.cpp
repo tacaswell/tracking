@@ -268,7 +268,7 @@ int main(int argc, char * const argv[])
     {
       hdf_w.initialize_wrapper();
       cout<<"inited wrapper"<<endl;
-      hcase.output_to_wrapper(hdf_w,false);
+      hcase.output_to_wrapper(hdf_w);
       hdf_w.add_meta_data_list(app_prams,d2);
       hdf_w.finalize_wrapper();
     }
