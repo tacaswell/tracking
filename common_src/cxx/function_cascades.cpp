@@ -246,16 +246,6 @@ void hash_case::pass_fun_to_shelf(void(Hash_shelf::*fun)()const)const
   }
 }
 
-
-void hash_case::compute_accum(Accumulator & in)const
-{
-  vector<Hash_shelf*>::const_iterator end_it = h_case_.end();
-  for(vector<Hash_shelf*>::const_iterator shelf_it = h_case_.begin();
-      shelf_it!= end_it;++shelf_it)
-    (*shelf_it)->compute_accum(in);
-}
-
-
 void hash_case::compute_accum(Accum_case & in )const
 {
   if(in.size() != h_case_.size())
@@ -266,21 +256,14 @@ void hash_case::compute_accum(Accum_case & in )const
 }
 
 
-void hash_case::compute_corr(Corr_case & in )const
+void hash_case::compute_accum(Accumulator & in)const
 {
-  unsigned int hc_sz = h_case_.size();
-  unsigned int cc_sz = in.size();
-  
-  if (cc_sz > hc_sz)
-    throw "the corr_case has more planes than the hash case";
-  
-  unsigned int step = hc_sz/cc_sz;
-  unsigned int max_i = cc_sz * step;
-  
-  
-  for(unsigned int j = 0; j<max_i;++j)
-    h_case_[j]->compute_corr(*in[j/step]);
+  vector<Hash_shelf*>::const_iterator end_it = h_case_.end();
+  for(vector<Hash_shelf*>::const_iterator shelf_it = h_case_.begin();
+      shelf_it!= end_it;++shelf_it)
+    (*shelf_it)->compute_accum(in);
 }
+
 
 
 void Hash_shelf::compute_accum(Accumulator & in) const
@@ -301,6 +284,23 @@ void hash_box::compute_accum(Accumulator & in)const
 
 }
 
+
+
+void hash_case::compute_corr(Corr_case & in )const
+{
+  unsigned int hc_sz = h_case_.size();
+  unsigned int cc_sz = in.size();
+  
+  if (cc_sz > hc_sz)
+    throw "the corr_case has more planes than the hash case";
+  
+  unsigned int step = hc_sz/cc_sz;
+  unsigned int max_i = cc_sz * step;
+  
+  
+  for(unsigned int j = 0; j<max_i;++j)
+    h_case_[j]->compute_corr(*in[j/step]);
+}
 
 
 void hash_case::compute_corr(Corr & in) const
