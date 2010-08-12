@@ -83,9 +83,9 @@ void hash_case::output_to_wrapper(Wrapper_out & wrapper) const
 }
 void Hash_shelf::output_to_wrapper(Wrapper_out & wrapper) const
 {
-  cout<<"frame "<<plane_number_<<" contains ";
+  // cout<<"frame "<<plane_number_<<" contains ";
   
-  cout<<particle_count_<<" particles"<<endl;
+  // cout<<particle_count_<<" particles"<<endl;
   
   wrapper.open_group(plane_number_,particle_count_,max_part_indx_ + 1);
   // try
