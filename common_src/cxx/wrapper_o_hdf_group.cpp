@@ -132,14 +132,19 @@ Wrapper_o_hdf_group::Wrapper_o_hdf_group(CommonFG * parent, const std::string & 
   plist_c.setFillValue(ctype,&fillvalue_c);
     
 
+  // tac 2010-08-12
+  // Changed compression method to use szip (which is
+  // supposed to be much faster)
   if(size_ > csize_*5)
   {
     hsize_t tmp = csize_;
     plist_f.setChunk(1,&tmp);
-    plist_f.setDeflate(9);
+    plist_f.setSzip(H5_SZIP_NN_OPTION_MASK,10);
+    //plist_f.setDeflate(9);
 
     plist_i.setChunk(1,&tmp);
-    plist_i.setDeflate(9);
+    plist_f.setSzip(H5_SZIP_NN_OPTION_MASK,10);
+    //plist_i.setDeflate(9);
 
     tmp = csize_/2;
       
