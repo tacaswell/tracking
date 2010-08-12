@@ -251,7 +251,7 @@ int main(int argc, char * const argv[])
     Md_store md_store;
     md_store.add_elements(app_prams_msd.get_store());
     md_store.add_elements(app_prams_trk.get_store());    
-    
+    md_store.add_elements(comp_prams.get_store());    
     
     g_name = format_name("mean_disp",write_comp_num);
     
