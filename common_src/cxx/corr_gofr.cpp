@@ -123,6 +123,7 @@ void Corr_gofr::out_to_wrapper(Generic_wrapper & in,const std::string & g_name)c
   in.add_meta_data("max_range",max_range_);
   in.add_meta_data("nbins",n_bins_);
   in.add_meta_data("rho", rho );
+  in.add_meta_data("temperature",temperature_sum_/plane_count_);
   
   in.close_group();
   

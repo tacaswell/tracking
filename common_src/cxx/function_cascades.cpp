@@ -31,6 +31,7 @@
 #include "accum_sofq.h"
 #include "accum_case.h"
 #include "corr_case.h"
+#include "md_store.h"
 using tracking::hash_box;
 using tracking::Hash_shelf;
 using tracking::hash_case;
@@ -62,6 +63,7 @@ using std::map;
 using std::exception;
 using std::invalid_argument;
 
+const std::string TEMPERATURE_STRING = "temperature";
 
 // hash output chain
 void hash_case::output_to_wrapper(Wrapper_out & wrapper) const
@@ -316,6 +318,14 @@ void hash_case::compute_corr(Corr & in) const
 
 void Hash_shelf::compute_corr(Corr & in)const
 {
+
+  // deal with temperature
+  if(md_store_->contains_key(TEMPERATURE_STRING))
+  {
+    float temp;
+    in.add_plane_temperature(md_store_->get_value(TEMPERATURE_STRING,temp));
+  }
+  
 
   float range = in.get_max_range();
   // add an extra +1 to avoid the boxes at the edges with partial populations

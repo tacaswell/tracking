@@ -52,8 +52,8 @@ namespace tracking
 
 
 /**
-   An ABC of objects that can be handed into hash_case and calculates
-   correlation functions. 
+   A mostly ABC of objects that can be handed into hash_case and calculates
+   correlation functions.  This class deals with temperature meta-data
  */
 class Corr
 {
@@ -75,8 +75,22 @@ public:
    */
   virtual float get_max_range() const = 0;
 
-  virtual ~Corr(){};
+  /**
+     Adds the temperature for a plane. 
+   */
+  void add_plane_temperature(float temp);
   
+  virtual ~Corr(){};
+protected:
+  Corr();
+  /**
+     The sum of the temperatures added
+   */
+  float temperature_sum_;
+  /**
+     Count of the number of temperatures added
+   */
+  unsigned int plane_count_;
   
 };
 
