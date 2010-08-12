@@ -37,7 +37,8 @@ using std::cerr;
 using std::endl;
 using std::invalid_argument;
 
-
+// This function needs to match a signature in hdf for the iteration
+// functions.  This will raise an error that nothing can be done about
 void add_key(H5Object & a, std::string b, void * d)
 {
   list<string> * data = (list<string>*)d;
