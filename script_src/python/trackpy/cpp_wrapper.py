@@ -154,20 +154,28 @@ def do_Iden(key,conn):
 
     hwhm = 1.2
     p_rad = 4
+    threshold = 2
+    shift_cut = 1.5
+    rg_cut = 7.5
+    e_cut = .6
+    top_cut = 0.01
+    d_rad = 3
+    mask_rad = 4
+    
     prams = xml_data()
     prams.add_stanza("comp")
     prams.add_pram("number","int",comp_num)
     #prams.merge_File(fpram,"iden")
     prams.add_stanza("iden")
-    prams.add_pram("threshold" ,"float" ,"2.000000")
+    prams.add_pram("threshold" ,"float" ,threshold)
     prams.add_pram("hwhm" ,"float" ,hwhm)
-    prams.add_pram("shift_cut" ,"float" ,"1.500000")
-    prams.add_pram("rg_cut" ,"float" ,"7.500000")
-    prams.add_pram("e_cut" ,"float" ,"0.600000")
-    prams.add_pram("top_cut" ,"float" ,"0.010000")
+    prams.add_pram("shift_cut" ,"float" ,shift_cut)
+    prams.add_pram("rg_cut" ,"float" ,rg_cut)
+    prams.add_pram("e_cut" ,"float" ,e_cut)
+    prams.add_pram("top_cut" ,"float" ,top_cut)
     prams.add_pram("p_rad" ,"int" ,str(p_rad))
-    prams.add_pram("d_rad" ,"int" ,"3")
-    prams.add_pram("mask_rad" ,"int" ,"4")
+    prams.add_pram("d_rad" ,"int" ,d_rad)
+    prams.add_pram("mask_rad" ,"int" ,mask_rad)
 
     
     fxml = prams.write_to_tmp()
@@ -198,7 +206,7 @@ def do_Iden(key,conn):
 
     # if it works, then returns zero
     if rc == 0:
-        params = (key,comp_num,2,0.01,p_rad,hwhm,4,4,1.5,7.5,.6)
+        params = (key,comp_num,threshold,top_cut,p_rad,hwhm,d_rad,mask_rad,shift_cut,rg_cut,e_cut)
         print "entering into database"
         conn.execute("insert into comps (dset_key,date,fin,fout,function) values (?,?,?,?,?);",
                      (key,date.today().isoformat(),fin,fout,prog_name))
