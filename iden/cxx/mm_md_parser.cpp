@@ -286,7 +286,7 @@ void parse_description(string& des,Md_store* md_store)
   colon_indx = des.find(": ",0);
   if(start_indx>colon_indx)
   {
-    end_indx = start_indx;
+    end_indx = start_indx-SW;
     start_indx = 0;
   }
   else
@@ -314,7 +314,6 @@ void parse_description(string& des,Md_store* md_store)
     else
     {
       md_store->add_element(key,strstr,val);
-      
     }
     
     // step pointers in string
