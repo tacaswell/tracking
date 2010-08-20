@@ -229,11 +229,17 @@ int main(int argc, char * const argv[])
     
     tracks.remove_short_tracks(min_track_length);
     cout<<"after trimming found "<<tracks.get_track_count()<<" tracks"<<endl;
-    // make wrapper
     
+    
+    hcase.compute_mean_disp();
+
     Counted_vector md(msd_steps);
     Counted_vector msd(msd_steps);
     Counted_vector msd_sq(msd_steps);
+    
+    
+    
+    
     tracks.msd_corrected(md,msd,msd_sq);
 
     
@@ -248,10 +254,14 @@ int main(int argc, char * const argv[])
     
     Generic_wrapper_hdf hdf_out(out_file,true);
 
+    float dtime = hcase.get_avg_dtime();
+    
+
     Md_store md_store;
     md_store.add_elements(app_prams_msd.get_store());
     md_store.add_elements(app_prams_trk.get_store());    
     md_store.add_elements(comp_prams.get_store());    
+    md_store.add_element("dtime",dtime);
     
     g_name = format_name("mean_disp",write_comp_num);
     
@@ -292,6 +302,13 @@ int main(int argc, char * const argv[])
   {
     std::cerr<<"caught on error: ";
     std::cerr<<err<<endl;
+    return -1;
+  }
+  catch(const std::exception & err)
+  {
+    std::cerr<<"caught on error: ";
+    
+    std::cerr<<err.what()<<endl;
     return -1;
   }
   
