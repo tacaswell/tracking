@@ -82,13 +82,15 @@ typedef enum D_TYPE {
 typedef enum V_TYPE
   {
     V_ERROR = -1,		// error type
-    V_INT =0,			// integer
-    V_FLOAT =1,			// float
-    V_COMPLEX =2,		// complex
-    V_STRING =3,		// string
-    V_BOOL =4,			// bool
-    V_TIME =5,			// date/time
-    V_GUID =6,			// guid from MM meta-data
+    V_UINT = 0,			// unsigned integer
+    V_INT =1,			// integer
+    V_FLOAT =2,			// float
+    V_COMPLEX =3,		// complex
+    V_STRING =4,		// string
+    V_BOOL =5,			// bool
+    V_TIME =6,			// date/time
+    V_GUID =7,			// guid from MM meta-data
+    
 
   }V_TYPE;
 /**

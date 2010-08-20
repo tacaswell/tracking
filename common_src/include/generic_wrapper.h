@@ -71,7 +71,7 @@ public:
      data will be written safely with in the wrapper during this call so it
      can be safely freed outside if needed
    */
-  virtual void add_dset(int rank,const  int * dims, V_TYPE , const void *,const std::string & name ="none" )=0;
+  virtual void add_dset(int rank,const unsigned int * dims, V_TYPE , const void *,const std::string & name ="none" )=0;
 
   
   
@@ -95,6 +95,10 @@ public:
      Adds an integer meta-data
    */
   virtual void add_meta_data(const std::string & key, int val)=0;
+  /**
+     Adds an unsigned integer meta-data
+   */
+  virtual void add_meta_data(const std::string & key, unsigned int val)=0;
   
   /**
      Adds a float meta-data for a data set

@@ -154,7 +154,7 @@ void Corr_goftheta::compute(const particle * p_in,const vector<const particle*> 
       
       // assume the nhood is the right size
       
-      int ind = (int)floor(n_bins_ * (theta)/(pi));
+      unsigned int ind = (unsigned int)floor(n_bins_ * (theta)/(pi));
       if(ind ==n_bins_)
 	ind = 0;
       try
@@ -233,7 +233,7 @@ void Corr_goftheta::normalize(std::vector<float> & out) const
   // tac 2009-10-09
   // changed to float to prevent integer over flow
   float count_sum = 0;
-  for(int j = 0; j<n_bins_;++j)
+  for(unsigned int j = 0; j<n_bins_;++j)
     count_sum += bin_count_[j];
   
   // this does not need to be averaged by the number of particles
@@ -244,7 +244,7 @@ void Corr_goftheta::normalize(std::vector<float> & out) const
 
 
   out.resize(n_bins_);
-  for(int j = 1;j<(n_bins_);++j)
+  for(unsigned int j = 1;j<(n_bins_);++j)
   {
     out[j] = bin_count_[j]/avg;
     

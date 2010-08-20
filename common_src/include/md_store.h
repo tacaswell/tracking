@@ -69,17 +69,19 @@ public:
   /**
      Returns value at index j.  The value is
      returned by reference.  The function returns the value.
-
-     
   */
   float get_value(int j,float & val)const;
   /**
      Gets value at index j.   The value is returned
      by reference.  The function either returns the value.
-
-     
   */
   int get_value(int j,int & val)const;
+  /**
+     Gets value at index j.   The value is returned
+     by reference.  The function either returns the value.
+  */
+  int get_value(int j,unsigned int & val)const;
+  
   /**
      Gets value at index j.   The value is
      returned by reference.  The function returns as well the value.
@@ -143,6 +145,7 @@ public:
   void add_element(const char * key,const char * type, const char * value);
   void add_element(const char * key,float val);
   void add_element(const char * key,int val);
+  void add_element(const char * key,unsigned int val);
   
 
   /**

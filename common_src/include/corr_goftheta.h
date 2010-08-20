@@ -88,7 +88,7 @@ private:
   /**
      number of bins
    */
-  int n_bins_;
+  unsigned int n_bins_;
   /**
      maximum range
    */

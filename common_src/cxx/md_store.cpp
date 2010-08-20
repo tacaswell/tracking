@@ -34,7 +34,7 @@
 #include <list>
 #include <iostream>
 #include <sstream>
-
+#include <limits.h>
 
 #include <unistd.h>
 #include <errno.h>
@@ -52,7 +52,7 @@ using std::cout;
 using std::endl;
 
 using std::logic_error;
-
+using std::runtime_error;
 
 //taken from
 //http://www.codeguru.com/forum/showthread.php?t=231054
@@ -101,6 +101,12 @@ void Md_store::add_element(const char * key,int val)
 }
 
 
+void Md_store::add_element(const char * key,unsigned int val)
+{
+  entries_.push_back(Md_element(key,"uint",to_string(val).c_str()));
+}
+
+
 void Md_store::print() const
 {
   for(unsigned int j = 0; j<entries_.size();++j)
@@ -142,20 +148,66 @@ float Md_store::get_value(int j,float & val)const
       throw logic_error("Md_store:: failure to parse " + entries_[j].key);
   }
   else
-    throw logic_error("Md_store::get_value, expect pram of type: float, found type: " + entries_[j].type);
+    throw logic_error("Md_store::get_value, expect pram of type: float, found type: " + entries_[j].type + ": " + entries_[j].key );
 }
 
 
 int Md_store::get_value(int j,int & val)const
 {
-  
-  if(str2VT_s(entries_[j].type) == utilities::V_INT)
+  V_TYPE type = str2VT_s(entries_[j].type);
+  // deal with if the signedness matches
+  if(type == utilities::V_INT)
+  {
     if(from_string<int> (val,entries_[j].value,std::dec))
       return val;
     else 
       throw logic_error("Md_store:: failure to parse " + entries_[j].key);
+  }
+  // deal with if the signs don't match
+  else if(type  == utilities::V_UINT)
+  {
+    unsigned int tmp_ui = UINT_MAX;
+    if(!from_string<unsigned int> (tmp_ui,entries_[j].value,std::dec))
+      throw logic_error("Md_store:: failure to parse " + entries_[j].key);
+    if(tmp_ui>INT_MAX)
+      throw runtime_error("Md_store :: trying to cast an unsigned int to an int that is too large: "
+			  + entries_[j].type + ": " + entries_[j].key);
+    val = tmp_ui;
+    return val;
+    
+  }
+  // deal with if the class is wrong
   else
-    throw logic_error("Md_store::get_value, expect pram of type: int, found type: " + entries_[j].type);
+    throw logic_error("Md_store::get_value, expect pram of type: int, found type: " 
+		      + entries_[j].type + ": " + entries_[j].key );
+}
+
+
+int Md_store::get_value(int j,unsigned int & val)const
+{
+  V_TYPE type = str2VT_s(entries_[j].type);
+  if(type == utilities::V_UINT)
+  {
+    if(from_string<unsigned int> (val,entries_[j].value,std::dec))
+      return val;
+    else 
+      throw logic_error("Md_store:: failure to parse " + entries_[j].key);
+  }
+  // deal with if the signs don't match
+  else if(type  == utilities::V_INT)
+  {
+    int tmp_ui = INT_MIN;
+    if(!from_string<int> (tmp_ui,entries_[j].value,std::dec))
+      throw logic_error("Md_store:: failure to parse " + entries_[j].key);
+    if(tmp_ui<0)
+      throw runtime_error("Md_store :: trying to cast a negative int to an unsigned int: "+ entries_[j].type + ": " + entries_[j].key );
+    val = tmp_ui;
+    return val;
+    
+  }
+  
+  else
+    throw logic_error("Md_store::get_value, expect pram of type: int, found type: " + entries_[j].type + ": " + entries_[j].key );
 }
 
 
@@ -173,7 +225,7 @@ string Md_store::get_value(int j,string & val)const
     return val;
   }
   else
-    throw logic_error("Md_store::get_value, expect pram of type: string, found type: " + entries_[j].type);
+    throw logic_error("Md_store::get_value, expect pram of type: string, found type: " + entries_[j].type + ": " + entries_[j].key );
 }
 
 
@@ -190,7 +242,7 @@ bool Md_store::get_value(int j,bool & val)const
     
   }
   else
-    throw logic_error("Md_store::get_value, expect pram of type: float, found type: " + entries_[j].type);
+    throw logic_error("Md_store::get_value, expect pram of type: float, found type: " + entries_[j].type + ": " + entries_[j].key );
 }
 
 

@@ -57,7 +57,7 @@ public:
   void open_group(const std::string & name = "none");
   void close_group();
   
-  void add_dset(int rank, const int * dims, V_TYPE , const void *,const std::string & name );
+  void add_dset(int rank, const unsigned int * dims, V_TYPE , const void *,const std::string & name );
   
   Generic_wrapper_hdf(std::string fname, bool add_to_file = true);
   
@@ -67,7 +67,9 @@ public:
   void add_meta_data(const std::string & key, const Tuple<float,2>& val);
   void add_meta_data(const std::string & key, const std::string & val);
   void add_meta_data(const std::string & key, int val);
+  void add_meta_data(const std::string & key, unsigned int val);
   
+    
   void add_meta_data(const std::string & key, float val,const std::string & dset_name);
   void add_meta_data(const std::string & key, const Tuple<float,3> & val,const std::string & dset_name);
   void add_meta_data(const std::string & key, const Tuple<float,2>& val,const std::string & dset_name);

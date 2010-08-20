@@ -104,7 +104,7 @@ void Histogram::output_to_wrapper(Generic_wrapper * wrapper_out,
   wrapper_out->open_group(g_name);
   
   
-  int n_bins = hist_array_.size();
+  unsigned int n_bins = hist_array_.size();
   
   // open group
   
@@ -113,7 +113,7 @@ void Histogram::output_to_wrapper(Generic_wrapper * wrapper_out,
   wrapper_out->add_dset(1,&n_bins,utilities::V_INT,tmpi,count_name);
 
   vector<float> bin_edges(n_bins);
-  for(int j = 0;j<n_bins;++j)
+  for(unsigned int j = 0;j<n_bins;++j)
     bin_edges[j] = bottom_edge_ + j*bin_width_;
   
   const float * tmpf = &(bin_edges.front());

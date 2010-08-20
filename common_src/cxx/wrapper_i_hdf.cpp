@@ -166,6 +166,7 @@ void Wrapper_i_hdf::priv_init(int fr_count)
       case V_BOOL:
       case V_GUID:
       case V_TIME:
+      case V_UINT:
       case V_ERROR:
 	throw logic_error("wrapper_i_hdf: The data type should not have been " + VT2str_s(v_type(cur)));
       }
@@ -239,6 +240,7 @@ void Wrapper_i_hdf::priv_init(int fr_count)
 	case V_BOOL:
 	case V_GUID:
 	case V_TIME:
+	case V_UINT:
 	case V_ERROR:
 	  throw logic_error("wrapper_i_hdf: The data type should not have been " + VT2str_s(v_type(cur_type)));
       	}

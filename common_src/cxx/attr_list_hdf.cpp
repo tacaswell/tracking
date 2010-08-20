@@ -27,12 +27,14 @@ using H5::Attribute;
 using H5::PredType;
 using H5::DataSpace;
 using H5::StrType;
+using H5::IntType;
 
 
 using std::string;
 using std::list;
 using std::cout;
 using std::cerr;
+using std::runtime_error;
 
 using std::endl;
 using std::invalid_argument;
@@ -71,9 +73,30 @@ int Attr_list_hdf::get_value(const std::string & key, int & value_out) const
   H5T_class_t type_class = tmpa.getTypeClass();
   H5S_class_t space_type = tmpa.getSpace().getSimpleExtentType();
   if(type_class == H5T_INTEGER && space_type == H5S_SCALAR )
+  {
+    IntType int_type = tmpa.getIntType();
+    if(int_type.getSign() == H5T_SGN_2)
+      tmpa.read(PredType::NATIVE_UINT,&value_out);
+    else if(int_type.getSign() == H5T_SGN_NONE)
+    {
+      unsigned int tmp_int;
+      
+      // extract as a normal int
+      tmpa.read(PredType::NATIVE_UINT,&tmp_int);
+      // check limits
+      if (tmp_int >INT_MAX)
+	throw runtime_error("attr_list_hdf:: to big to be cast to a signed integer " + key );
+      // cast
+      value_out = (int) tmp_int;
+    }
+    else
+      throw runtime_error("attr_list_hdf :: invalid sign type  " + key );
+    
+    
     tmpa.read(PredType::NATIVE_INT,&value_out);
+  }
   else
-    throw invalid_argument("output does not match attribute dtype");
+    throw invalid_argument("output does not match attribute dtype " + key );
   return value_out;
 }
 
@@ -90,7 +113,7 @@ void Attr_list_hdf::set_value(const std::string & key,  const int &   value_in,b
       if(type_class == H5T_INTEGER && space_type == H5S_SCALAR )
 	tmpa.write(PredType::NATIVE_INT,&value_in);
       else
-      	throw invalid_argument("output does not match attribute dtype");
+      	throw invalid_argument("output does not match attribute dtype " + key );
     }
     else
     {
@@ -98,7 +121,7 @@ void Attr_list_hdf::set_value(const std::string & key,  const int &   value_in,b
       int tmp = 0;
       get_value(key,tmp);
       if(tmp != value_in)
-	throw invalid_argument("attribute name already exists and values don't match: int");
+	throw invalid_argument("attribute name already exists and values don't match: int " + key );
     }
   }
   else
@@ -119,7 +142,7 @@ float Attr_list_hdf::get_value(const std::string & key, float & value_out) const
   if(type_class == H5T_FLOAT && space_type == H5S_SCALAR )
     tmpa.read(PredType::NATIVE_FLOAT,&value_out);
   else
-    throw invalid_argument("output does not match attribute dtype");
+    throw invalid_argument("output does not match attribute dtype " + key );
   
   
   return value_out;
@@ -139,7 +162,7 @@ void Attr_list_hdf::set_value(const std::string & key,  const float &   value_in
       if(type_class == H5T_FLOAT && space_type == H5S_SCALAR )
 	tmpa.write(PredType::NATIVE_FLOAT,&value_in);
       else
-      	throw invalid_argument("output does not match attribute dtype");
+      	throw invalid_argument("output does not match attribute dtype " + key );
     }
         else
     {
@@ -152,7 +175,7 @@ void Attr_list_hdf::set_value(const std::string & key,  const float &   value_in
 	cerr<<"the existing value: "<<tmp<<endl;
 	cerr<<"the input value: "<<value_in<<endl;
 	
-	throw invalid_argument("attribute name already exists and values don't match: float");
+	throw invalid_argument("attribute name already exists and values don't match: float " + key );
       }
     }
     
@@ -183,7 +206,7 @@ std::string  Attr_list_hdf::get_value(const std::string & key, std::string & val
   }
   
   else
-    throw invalid_argument("output does not match attribute dtype");
+    throw invalid_argument("output does not match attribute dtype " + key );
   
   return string(value_out);
 
@@ -204,13 +227,23 @@ void Attr_list_hdf::set_value(const std::string & key,  const std::string &   va
       if(type_class == H5T_STRING && space_type == H5S_SCALAR )
       {
 	obj_->removeAttr(key);
-	
       }
       else
-      	throw invalid_argument("input does not match attribute dtype");
+      	throw invalid_argument("input does not match attribute dtype " + key );
     }
     else
-      throw invalid_argument("attribute name already exists");
+    {
+      string tmp_string;
+      get_value(key,tmp_string);
+      if(tmp_string.compare(value_in)!=0)
+      {
+	throw invalid_argument("input does not match existing value : " 
+			       + key + ": " + tmp_string +" (" + value_in + ")");
+      }
+      return;
+      
+    }
+
   }
   if(value_in.size()>0)
   {
@@ -238,7 +271,7 @@ utilities::Tuple<float,N> Attr_list_hdf::get_value(const std::string & key,utili
      dspace.getSimpleExtentNpoints() == Tuple<float,N>::length_)
     tmpa.read(PredType::NATIVE_FLOAT,value_out.get_ptr());
   else
-    throw invalid_argument("output does not match attribute dtype");
+    throw invalid_argument("output does not match attribute dtype: " + key);
   
   
   
@@ -263,7 +296,7 @@ void Attr_list_hdf::set_value(const std::string & key,  const Tuple<float,N> &  
 	tmpa.write(PredType::NATIVE_FLOAT,value_in.get_ptr());
       
       else
-      	throw invalid_argument("output does not match attribute dtype");
+      	throw invalid_argument("output does not match attribute dtype " + key );
     }
     else
     {
@@ -271,7 +304,7 @@ void Attr_list_hdf::set_value(const std::string & key,  const Tuple<float,N> &  
       Tuple<float,N> tmp ;
       get_value(key,tmp);
       if(!(tmp == value_in))
-	throw invalid_argument("attribute name already exists and values don't match: Tuple<float,N>");
+	throw invalid_argument("attribute name already exists and values don't match: Tuple<float,N> " + key );
     }
   }
   else
@@ -313,10 +346,64 @@ unsigned int Attr_list_hdf::get_value(const std::string & key, unsigned int & va
   H5T_class_t type_class = tmpa.getTypeClass();
   H5S_class_t space_type = tmpa.getSpace().getSimpleExtentType();
   if(type_class == H5T_INTEGER && space_type == H5S_SCALAR )
-    tmpa.read(PredType::NATIVE_UINT,&value_out);
+  {
+    IntType int_type = tmpa.getIntType();
+    if(int_type.getSign() == H5T_SGN_NONE)
+      tmpa.read(PredType::NATIVE_UINT,&value_out);
+    else if(int_type.getSign() == H5T_SGN_2)
+    {
+      int tmp_int;
+      
+      // extract as a normal int
+      tmpa.read(PredType::NATIVE_UINT,&tmp_int);
+      // check limits
+      if (tmp_int <0)
+	throw runtime_error("attr_list_hdf:: can not cast a negative int to an unsigned int " + key );
+      // cast
+      value_out = (unsigned int) tmp_int;
+    }
+    else
+      throw runtime_error("attr_list_hdf :: invalid sign type  " + key );
+  }
+  
   else
-    throw invalid_argument("output does not match attribute dtype");
+    throw invalid_argument("output does not match attribute dtype " + key );
   return value_out;
+}
+
+
+
+void Attr_list_hdf::set_value(const std::string & key,  const unsigned int &   value_in,bool over_write) 
+{
+  if(contains_attr(key))
+  {
+    if( over_write)
+    {
+      Attribute  tmpa =  Attribute(obj_->openAttribute(key));
+      H5T_class_t type_class = tmpa.getTypeClass();
+      H5S_class_t space_type = tmpa.getSpace().getSimpleExtentType();
+  
+      if(type_class == H5T_INTEGER && space_type == H5S_SCALAR )
+	tmpa.write(PredType::NATIVE_UINT,&value_in);
+      else
+      	throw invalid_argument("output does not match attribute dtype " + key );
+    }
+    else
+    {
+      // check to see if they match
+      unsigned int tmp = 0;
+      get_value(key,tmp);
+      if(tmp != value_in)
+	throw invalid_argument("attribute name already exists and values don't match: int " + key );
+    }
+  }
+  else
+  {
+    DataSpace dspace =  DataSpace(0,NULL);
+    Attribute  tmpa =Attribute(obj_->createAttribute(key,PredType::NATIVE_UINT,dspace));
+    tmpa.write(PredType::NATIVE_UINT,&value_in);
+    keys_.push_back(key);
+  }
 }
 
 
@@ -350,7 +437,7 @@ bool Attr_list_hdf::get_value(const std::string & key, bool & value_out) const
   if(type_class == H5T_INTEGER && space_type == H5S_SCALAR )
     tmpa.read(PredType::NATIVE_INT,&tmp);
   else
-    throw invalid_argument("output does not match attribute dtype");
+    throw invalid_argument("output does not match attribute dtype " + key );
   
   if(tmp == 0)
     value_out = false;
@@ -379,7 +466,7 @@ void Attr_list_hdf::set_value(const std::string & key,  const bool &   value_in,
       if(type_class == H5T_INTEGER && space_type == H5S_SCALAR )
 	tmpa.write(PredType::NATIVE_INT,&tmp_in);
       else
-      	throw invalid_argument("output does not match attribute dtype");
+      	throw invalid_argument("output does not match attribute dtype " + key );
     }
         else
     {
@@ -392,7 +479,7 @@ void Attr_list_hdf::set_value(const std::string & key,  const bool &   value_in,
 	cerr<<"the existing value: "<<tmp<<endl;
 	cerr<<"the input value: "<<value_in<<endl;
 	
-	throw invalid_argument("attribute name already exists and values don't match: float");
+	throw invalid_argument("attribute name already exists and values don't match: float " + key );
       }
     }
     

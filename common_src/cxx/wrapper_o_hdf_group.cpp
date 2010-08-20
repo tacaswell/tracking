@@ -195,6 +195,7 @@ Wrapper_o_hdf_group::Wrapper_o_hdf_group(CommonFG * parent, const std::string & 
     case V_BOOL:
     case V_GUID:
     case V_TIME:
+    case V_UINT:
     case V_STRING:
       throw runtime_error("type should not be "+ VT2str_s(v_type(*it)));
     case V_ERROR:
@@ -270,6 +271,7 @@ void Wrapper_o_hdf_group::store_particle(const particle * p_in)
     case V_BOOL:
     case V_GUID:
     case V_TIME:
+    case V_UINT:
     case V_STRING:
       throw runtime_error("type should not be "+ VT2str_s(v_type(type)));
     case V_ERROR:
@@ -348,6 +350,7 @@ void Wrapper_o_hdf_group::add_meta_store(const Md_store * md_in)
   Attr_list_hdf atrlst(group_);
   unsigned int num_entries = md_in->size();
   int tmpi = 0;
+  int tmpiu = 0;
   float tmpf=0;
   string tmps="";
   bool tmpb=false;
@@ -379,8 +382,11 @@ void Wrapper_o_hdf_group::add_meta_store(const Md_store * md_in)
     case V_BOOL:
       atrlst.set_value(key,md_in->get_value(j,tmpb));
       break;
-      
+    case V_UINT:
+      atrlst.set_value(key,md_in->get_value(j,tmpiu));
+      break;
     case V_COMPLEX:
+    
       throw logic_error("attr lists can not deal with complex data yet");
       break;
     case V_ERROR:

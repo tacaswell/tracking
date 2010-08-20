@@ -37,10 +37,23 @@ using utilities::Generic_wrapper_hdf;
 using std::logic_error;
 using std::runtime_error;
 
-using namespace H5;
+
+using H5::H5File;
+using H5::Group;
+using H5::DataSpace;
+using H5::H5File;
+using H5::Attribute;
+using H5::PredType;
+using H5::DataSet;
+using H5::DSetCreatPropList;
+using H5::Exception;
+using H5::FileIException;
+using H5::DataType;
+
 using std::string;
 using utilities::Md_store;
 
+const static unsigned int CSIZE = 500;
   
 Generic_wrapper_hdf::Generic_wrapper_hdf(std::string fname, bool add_to_file):
   file_name_(fname),wrapper_open_(false),group_open_(false),dset_open_(false),add_to_file_(add_to_file),
@@ -148,7 +161,7 @@ void Generic_wrapper_hdf::close_group()
   
 }
 
-void Generic_wrapper_hdf::add_dset(int rank, const int * dims, V_TYPE type, const void * data,
+void Generic_wrapper_hdf::add_dset(int rank, const unsigned int * dims, V_TYPE type, const void * data,
 				   const std::string & name  )
 {
   if(name =="none")
@@ -168,23 +181,50 @@ void Generic_wrapper_hdf::add_dset(int rank, const int * dims, V_TYPE type, cons
 
 
   DataType hdf_type,mem_type;
-  
+  DSetCreatPropList plist;
+  int fill_value_i = -31415;
+  unsigned int fill_value_ui = 0;
+  float fill_value_f = -3.1415;
   switch(type)
   {
   case V_INT:
+  
     hdf_type = PredType::NATIVE_INT;
     mem_type = PredType::NATIVE_INT;
+    plist.setFillValue(hdf_type,&fill_value_i);
     break;
   case V_FLOAT:
+    
     hdf_type = PredType::NATIVE_FLOAT;
     mem_type = PredType::NATIVE_FLOAT;
+    plist.setFillValue(hdf_type,&fill_value_f);
     break;
-  default:
+  case V_UINT:
+    hdf_type = PredType::NATIVE_UINT;
+    mem_type = PredType::NATIVE_UINT;
+    plist.setFillValue(hdf_type,&fill_value_ui);
+    break;
+  case V_BOOL:
+  case V_TIME:
+  case V_GUID:
+  case V_ERROR:
+  case V_COMPLEX:
+  case V_STRING:
     throw logic_error("generic_wrapper_hdf: un implemented types");
   }
   
+  
+  // if the list is big enough, us compression
+  if(rank ==1 && *hdims > CSIZE*5)
+  {
+    hsize_t tmp = CSIZE;
+    plist.setChunk(1,&tmp);
+    plist.setSzip(H5_SZIP_NN_OPTION_MASK,10);
+  }
+  
+  
   // make data set
-  DataSet dset = group_ ->createDataSet(name,hdf_type,dspace);
+  DataSet dset = group_ ->createDataSet(name,hdf_type,dspace,plist);
   // shove in data
   dset.write(data,mem_type,dspace,dspace);
   
@@ -210,6 +250,10 @@ void Generic_wrapper_hdf::add_meta_data(const std::string & key,  const std::str
   add_meta_data_priv(key,val);
 }
 void Generic_wrapper_hdf::add_meta_data(const std::string & key, int val)
+{
+  add_meta_data_priv(key,val);
+}
+void Generic_wrapper_hdf::add_meta_data(const std::string & key, unsigned int val)
 {
   add_meta_data_priv(key,val);
 }
@@ -240,6 +284,7 @@ void Generic_wrapper_hdf::add_meta_data(const Md_store * md_store)
   
   unsigned int num_entries = md_store->size();
   int tmpi;
+  int tmpui;
   float tmpf;
   string tmps;
   for(unsigned int j = 0; j<num_entries; ++j)
@@ -262,7 +307,16 @@ void Generic_wrapper_hdf::add_meta_data(const Md_store * md_store)
     
       add_meta_data_priv(key,md_store->get_value(j,tmps));
       break;
-    default:
+      
+    case V_UINT:
+      add_meta_data_priv(key,md_store->get_value(j,tmpui));
+      break;
+      
+    case V_COMPLEX:
+    case V_ERROR:
+    case V_BOOL:
+    case V_TIME:
+    case V_GUID:
       throw logic_error("should not have hit default");
       
     }

@@ -81,12 +81,14 @@ public:
   
   std::string get_value(const std::string & key,std::string & value_out)const;
   void set_value(const std::string & key,const std::string & value_out,bool over_write = false);
-
+  
   bool get_value(const std::string & key,bool & value_out)const;
   void set_value(const std::string & key,const bool & value_out,bool over_write = false);
 
+  
     
   unsigned int get_value(const std::string & key,unsigned int& value_out)const;
+  void set_value(const std::string & key,const unsigned int & value_out,bool over_write = false);
 
   
   

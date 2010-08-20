@@ -140,7 +140,7 @@ float Corr_gofr::normalize(vector<float> & out)const
   // tac 2009-10-09
   // changed to float to prevent integer over flow
   float count_sum = 0;
-  for(int j = 0; j<n_bins_;++j)
+  for(unsigned int j = 0; j<n_bins_;++j)
     count_sum += bin_count_[j];
   
   // this does not need to be averaged by the number of particles
@@ -159,7 +159,7 @@ float Corr_gofr::normalize(vector<float> & out)const
   // tac 2010-05-27
   // I don't see why the first one is a special case, as bin_edges_[0] should be 0
   
-  for(int j = 0;j<(n_bins_-1);++j)
+  for(unsigned int j = 0;j<(n_bins_-1);++j)
   {
     // made it easier to read/more efficient
     front = bin_edges_[j+1];

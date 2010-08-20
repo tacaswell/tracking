@@ -82,7 +82,7 @@ void Counted_vector::output_to_wrapper(Generic_wrapper * out_wrapper,
     opened_wrapper = true;
     
   }
-  int n_bins = data_array_.size();
+  unsigned int n_bins = data_array_.size();
   
   // open group
   out_wrapper->open_group(g_name);

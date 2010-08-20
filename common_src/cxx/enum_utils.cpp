@@ -188,6 +188,8 @@ V_TYPE str2VT_s(const std::string& type_str)
     return utilities::V_FLOAT;
   else if(type_str.compare("int") == 0)
     return utilities::V_INT;
+  else if(type_str.compare("uint") == 0)
+    return utilities::V_UINT;
   else if(type_str.compare("string") == 0)
     return utilities::V_STRING;
   else if(type_str.compare("bool") == 0)
@@ -213,6 +215,8 @@ std::string VT2str_s(V_TYPE type)
 {
   switch(type)
   {
+  case V_UINT:
+    return "uint";
   case V_INT:
     return "int";
   case V_FLOAT:
