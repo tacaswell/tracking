@@ -210,15 +210,17 @@ void Hash_shelf::compute_mean_forward_disp(utilities::Tuplef & cum_disp_in){
   int count = 0;
   const particle_track* current_part = NULL;
   for(vector<hash_box*>::iterator cur_box = hash_.begin(); 
-      cur_box<hash_.end(); ++cur_box){
+      cur_box<hash_.end(); ++cur_box)
+  {
     for(vector<particle*>::iterator cur_part = (*cur_box)->begin();
-	cur_part!=(*cur_box)->end(); ++cur_part) {
+	cur_part!=(*cur_box)->end(); ++cur_part) 
+    {
       current_part = static_cast<particle_track*>(*cur_part);
-      if(current_part->get_next() != NULL){
+      if(current_part->get_next() != NULL)
+      {
 	mean_forward_disp_ += (current_part->get_raw_forward_disp());
 	++count;
       }
-      
     }
   }
   if(count > 0)
