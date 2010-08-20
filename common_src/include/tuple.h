@@ -215,7 +215,7 @@ public:
   Tuple(T x,T y,T z);
   
   /**
-     Takes in an array, assumes it is the length length
+     Takes in an array, assumes it is the correct length
   */
   Tuple(const T * );
 
