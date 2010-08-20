@@ -32,11 +32,12 @@
 #include "particle_track.h"
 
 #include "counted_vector.h"
-#include "generic_wrapper_base.h"
+#include "generic_wrapper.h"
 #include "array.h"
 #include "cell.h"
 #include "exception.h"
 #include "wrapper_o.h"
+#include "md_store.h"
 
 using std::list;
 using std::pair;
@@ -44,9 +45,11 @@ using std::cout;
 using std::endl;
 using std::vector;
 using std::runtime_error;
-
+using std::logic_error;
+using std::string;
 
 using utilities::Histogram;
+using utilities::Md_store;
 
 using utilities::Ll_range_error;
 using utilities::Array;
@@ -427,4 +430,83 @@ void Track_shelf::renumber()
   for(tr_list::iterator it = tracks_.begin();
       it!=tracks_.end(); ++it)
     (*it)->set_track_id(j++);
+}
+
+void Track_shelf::output_to_wrapper(utilities::Generic_wrapper & wrapper,const Md_store * md_store) const
+{
+  // check to make sure that all the required meta data is in the store
+
+  // \todo really implement md checking
+  
+  int write_comp;
+  md_store->get_value("write_comp",write_comp);
+
+
+  vector<unsigned int> lengths(track_count_),start_plane(track_count_),start_part(track_count_);
+  unsigned int local_track_count = 0;
+
+  // loop over tracks to get out
+  // 1) the size
+  // 2) the starting plane
+  // 3) the starting particle
+  list<Track_box*>::const_iterator it_end = tracks_.end();
+  for(list<Track_box*>::const_iterator it = tracks_.begin();
+      it != it_end;++it)
+  {
+    // check to make sure we don't run out the top
+    if(!(local_track_count<track_count_))
+      throw logic_error("track_shelf :: trying to add more tracks than the track shelf claims to know about");
+    
+    // get the pointer to the track we are working on
+    Track_box* cur_track = *it;
+    // get it's id
+    unsigned int track_id = cur_track->get_id();
+    // make sure it's ID plays nice (enforcing pigeon hole property)
+    if(track_id != local_track_count)
+      throw logic_error("track_shelf :: track ids are not monotonically incrementing by one, remember to run renumber first");
+    
+    // get the track length
+    lengths[track_id] = cur_track->get_length();
+    // get pointer to the first particle
+    particle * tmp_part = cur_track->get_first();
+    // get the start plane and particle index
+    start_part[track_id] = tmp_part->get_ind();
+    start_plane[track_id] = tmp_part->get_frame();
+    // mark that we added a particle
+    ++local_track_count;
+  }
+  
+  // make sure that the wrapper is open
+  bool opened_wrapper = false;
+  
+  if(!wrapper.is_open())
+  {
+    wrapper.open_wrapper();
+    opened_wrapper = true;
+  }
+  // open group
+  string g_name = utilities::format_name("tracking",write_comp);
+  wrapper.open_group(g_name);
+  
+  // shove in meta-data
+  wrapper.add_meta_data(md_store);
+  
+  // shove in real data
+  const unsigned int * tmp_ptr;
+  tmp_ptr = &lengths.front();
+  wrapper.add_dset(1,&local_track_count,utilities::V_UINT,tmp_ptr,"length");
+
+  tmp_ptr = &start_plane.front();
+  wrapper.add_dset(1,&local_track_count,utilities::V_UINT,tmp_ptr,"start_plane");
+
+  tmp_ptr = &start_part.front();
+  wrapper.add_dset(1,&local_track_count,utilities::V_UINT,tmp_ptr,"start_particle");
+
+  // tidy up
+    
+  wrapper.close_group();
+
+  if(opened_wrapper)
+    wrapper.close_wrapper();
+
 }

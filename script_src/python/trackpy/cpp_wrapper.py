@@ -19,8 +19,6 @@
 import os
 import os.path
 
-from .utils import parse1
-
 import h5py
 
 import subprocess
@@ -77,8 +75,20 @@ def add_trk_stat_mdata(comp_pram,i_pram,f_pram,s_pram,conn):
                  "values (?,?,?,?,?,?,?)",params)
     conn.commit()
 
+
+def add_tracking_mdata(comp_pram,i_pram,f_pram,s_pram,conn):
+    params = (comp_pram['dset'],
+              comp_pram['write_comp'],
+              f_pram['search_range'],
+              comp_pram['read_comp'])
+    conn.execute("insert into tracking_prams " +
+                 "(dset_key,comp_key,search_range,iden_key) "+
+                 "values (?,?,?,?)",params)
+    conn.commit()
+
+
     
-_prog_to_fun_lookup = {'gofr_by_plane':add_gofr_plane_mdata,'gofr':add_gofr_mdata, 'msd':add_msd_mdata,'track_stats':add_trk_stat_mdata}
+_prog_to_fun_lookup = {'gofr_by_plane':add_gofr_plane_mdata,'gofr':add_gofr_mdata, 'msd':add_msd_mdata,'track_stats':add_trk_stat_mdata,'tracking':add_tracking_mdata}
 
 
 def _make_sure_h5_exists(fname):
@@ -459,6 +469,35 @@ def do_track_stat(comp_key,conn,pram_i, pram_f, pram_s = None, rel = True,):
 
 
 
+def do_tracking(comp_key,conn,pram_i, pram_f, pram_s = None, rel = True,):
+    prog_name = "tracking"
+    required_pram_i = []
+    required_pram_f = ['search_range']
+    required_pram_s = None
+        
+    (fin,dset_key) = _get_fin(comp_key,conn)
+    
+    fout = fin
+    
+    
+    comp_prams = {'read_comp':comp_key,'dset':dset_key}
+    comp_prams['write_comp'] =conn.execute("select max(comp_key) from comps;"
+                                           ).fetchone()[0] + 1
+    
+    
+    try:
+        _call_fun(conn,
+                  prog_name,fin,fout,
+                  comp_prams,
+                  required_pram_i,pram_i,
+                  required_pram_f,pram_f,
+                  required_pram_s,pram_s)
+    except KeyError, ke:
+        print "Parameter: " ,ke,' not found'
+
+
+
+
     
 def _call_fun(conn,
                 prog_name,fin,fout,
@@ -539,6 +578,9 @@ def _call_fun(conn,
     else:
         print "ERROR!!!"
     
+
+
+
 
     
 def _get_fin(comp_key,conn):

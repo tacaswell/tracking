@@ -45,8 +45,10 @@
 
 #include <unistd.h>
 #include <vector>
-#include "read_config.h"
 
+#include "read_config.h"
+#include "cl_parse.h"
+#include "md_store.h"
 
 using std::string;
 using std::vector;
@@ -61,10 +63,12 @@ using std::vector;
 using std::map;
 
 using std::logic_error;
+using std::exception;
 
 
 using utilities::Wrapper_o_hdf;
 using utilities::Wrapper_i_hdf;
+using utilities::Md_store;
 
 
 using utilities::Filter_basic;
@@ -73,7 +77,7 @@ using utilities::D_TYPE;
 using utilities::Generic_wrapper_hdf;
 
 using utilities::Read_config;
-
+using utilities::CL_parse;
 
 
 
@@ -84,103 +88,35 @@ static string APP_NAME = "tracking :: ";
 
 int main(int argc, char * const argv[])
 {
-  
-  
-  Track_shelf tracks;
-  
-  		   
-  string data_file ;
+  string in_file ;
   string out_file ;
   string pram_file ;
 
-
-  
-      
-  int optchar;
-  bool found_i=false,found_o= false,found_c = false;
-
-  while((optchar = getopt(argc,argv,"i:o:c:")) !=-1)
-  {
-    switch(optchar)
-    {
-    case 'i':
-      data_file = string(optarg);
-      found_i = true;
-      break;
-    case 'o':
-      out_file = string(optarg);
-      found_o = true;
-      break;
-    case 'c':
-      pram_file = string(optarg);
-      found_c = true;
-      break;
-      
-    case '?':
-    default:
-      cout<<"-i input file name"<<endl;
-      cout<<"-o output file name"<<endl;
-      cout<<"-c parameter file name"<<endl;
-      break;
-    }
-  }
-
-  if(!(found_i && found_o && found_c))
-  {
-    cerr<<"input failed"<<endl;
-    cout<<"-i input filename"<<endl;
-    cout<<"-o output filename"<<endl;
-    cout<<"-c configuration filename"<<endl;
-    return -1;
-  }
-  
-  cout<<"file to read in: "<<data_file<<endl;
-  cout<<"file that will be written to: "<<out_file<<endl;
-
     
-  float box_side_len;
-  float search_range;
-  int min_track_length;
-
-  
-  Read_config app_prams(pram_file,"tracking");
-  if(!(app_prams.contains_key("box_side_len")&&
-       app_prams.contains_key("search_range")))
-  {
-    cerr<<APP_NAME + " parameter file does not contain enough parameters"<<endl;
-    return -1;
-  }
+  // Extract the input and output files from the command line arguements
   try
   {
-    app_prams.get_value("box_side_len",box_side_len);
-    app_prams.get_value("search_range",search_range);
-    if(app_prams.contains_key("min_track_length"))
-      app_prams.get_value("min_track_length",min_track_length);
-    else
-      min_track_length = 3;
+    CL_parse cl(argc,argv);
+    cl.parse();
+    cl.get_fin(in_file);
+    cl.get_fout(out_file);
+    cl.get_fpram(pram_file);
   }
-  catch(logic_error & e)
+  catch(std::invalid_argument &e )
   {
-    cerr<<"error parsing the computation numbers"<<endl;
-    cerr<<e.what()<<endl;
+    cout<<e.what()<<endl;
     return -1;
   }
   
 
-  int read_comp_num, write_comp_num;
-  Read_config comp_prams(pram_file,"comp");
-  if(!(comp_prams.contains_key("read_comp")&&
-       comp_prams.contains_key("write_comp")))
-  {
-    cerr<<APP_NAME + " parameter file does not contain both read and write comp nums"<<endl;
-    return -1;
-  }
-
+  // parse out the standard logistic parameters
+  int read_comp_num, write_comp_num,dset;
+  Read_config comp_prams(pram_file,"comps");
   try
   {
     comp_prams.get_value("read_comp",read_comp_num);
     comp_prams.get_value("write_comp",write_comp_num);
-
+    comp_prams.get_value("dset",dset);
   }
   catch(logic_error & e)
   {
@@ -189,12 +125,25 @@ int main(int argc, char * const argv[])
     return -1;
   }
 
-  cout<<"file to read in: "<<data_file<<endl;
+  
+  // parse out the parameters that this application needs
+  float search_range;
+  Read_config app_prams(pram_file,"tracking");
+  try
+  {
+    app_prams.get_value("search_range",search_range);
+  }
+  catch(logic_error & e)
+  {
+    cerr<<"error parsing the apps parameters"<<endl;
+    cerr<<e.what()<<endl;
+    return -1;
+  }
+  
+  cout<<"file to read in: "<<in_file<<endl;
   cout<<"file that will be written to: "<<out_file<<endl;
   cout<<"Parameters: "<<endl;
-  cout<<"  box_side_len: "<<box_side_len<<endl;
   cout<<"  search_range: "<<search_range<<endl;
-  cout<<"  min_track_length: "<<min_track_length<<endl;
   cout<<"comps: "<<endl;
   cout<<"  read_comp_num "<<read_comp_num<<endl;
   cout<<"  write_comp_num "<<write_comp_num<<endl;
@@ -203,50 +152,49 @@ int main(int argc, char * const argv[])
 
 
     
-  
+    
+
+  //nonsense to get the map set up
+  map<utilities::D_TYPE, int> contents;
+  utilities::D_TYPE tmp[] = {utilities::D_XPOS,
+			     utilities::D_YPOS,
+			     utilities::D_DX,
+			     utilities::D_DY,
+			     utilities::D_R2,
+			     utilities::D_E};
+  set<D_TYPE> data_types = set<D_TYPE>(tmp,tmp+6);
+    
+    
   try
   {
     
-
-    //nonsense to get the map set up
-    map<utilities::D_TYPE, int> contents;
-    utilities::D_TYPE tmp[] = {utilities::D_XPOS,
-			       utilities::D_YPOS,
-			       utilities::D_DX,
-			       utilities::D_DY,
-			       utilities::D_R2,
-			       utilities::D_E};
-    set<D_TYPE> data_types = set<D_TYPE>(tmp,tmp+6);
     
-      
+    
     // set up the input wrapper
-    Wrapper_i_hdf wh(data_file,data_types,read_comp_num,0,100);
+    Wrapper_i_hdf wh(in_file,data_types,read_comp_num);
     
-    // fill the master_box
+    
     Master_box box;
-    Filter_basic filt(data_file,read_comp_num);
-    //Filter_trivial filt;
+    // filter based on the values stored with the initial computation
+    Filter_basic filt(in_file,read_comp_num);
+    // fill the master_box
     box.init(wh,filt);
     
- 
     
-    cout<<wh.get_dims()<<endl;
-    
-    hash_case hcase(box,wh.get_dims(),box_side_len,wh.get_num_frames());
+    // fill the hash case
+    hash_case hcase(box,wh.get_dims(),search_range,wh.get_num_frames());
     cout<<"hash case filled"<<endl;
+
     
     Track_shelf tracks;
-    
+    // link tracks together
     hcase.link(search_range,tracks);
     cout<<"after searching found "<<tracks.get_track_count()<<" tracks"<<endl;
-    
-
-    
-    tracks.remove_short_tracks(min_track_length);
-    cout<<"after trimming found "<<tracks.get_track_count()<<" tracks"<<endl;
-    // make wrapper
-
+    // remove tracks with one element
+    tracks.remove_short_tracks(2);
+    // renumber to get rid of gaps
     tracks.renumber();
+    
     
     
     set<D_TYPE> d2;
@@ -254,66 +202,62 @@ int main(int argc, char * const argv[])
     d2.insert(utilities::D_PREV_INDX);
     d2.insert(utilities::D_TRACKID);
     
-    
-    Wrapper_o_hdf hdf_w(out_file,d2,write_comp_num,
+    // set up output wrapper
+    Wrapper_o_hdf particle_data_wrapper(out_file,d2,write_comp_num,
 			Wrapper_o_hdf::APPEND_FILE,
 			"frame");
     
     
 
     cout<<"made output wrapper"<<endl;
+    try
+    {
+      particle_data_wrapper.initialize_wrapper();
+      cout<<"inited wrapper"<<endl;
+      hcase.output_to_wrapper(particle_data_wrapper);
+      particle_data_wrapper.add_meta_data_list(app_prams,d2);
+      particle_data_wrapper.finalize_wrapper();
+    }
+    catch(exception & err)
+    {
+      std::cerr<<"caught on error outputting to particle data: "<<err.what()<<endl;
+      return -1;
+      
+    }
     
+    cout<<"finished outputting to particle data"<<endl;
+    
+    int dtime = hcase.get_avg_dtime();
+
+
+    Md_store md_store;
+    md_store.add_elements(app_prams.get_store());    
+    md_store.add_elements(comp_prams.get_store());    
+    md_store.add_element("dtime",dtime);
+    cout<<"set up md_store"<<endl;
     
     try
     {
-      hdf_w.initialize_wrapper();
-      cout<<"inited wrapper"<<endl;
-      hcase.output_to_wrapper(hdf_w);
-      hdf_w.add_meta_data_list(app_prams,d2);
-      hdf_w.finalize_wrapper();
+      Generic_wrapper_hdf track_data_wrapper(out_file,true);
+      tracks.output_to_wrapper(track_data_wrapper,&md_store);
     }
-    catch(const char * err)
+    catch(exception & err)
     {
-      std::cerr<<"caught on error: ";
-      std::cerr<<err<<endl;
+      std::cerr<<"caught on error outputting track data: "<<err.what()<<endl;
       return -1;
+      
     }
-    catch(std::exception & e)
-    {
-      cout<<"caught std excetp"<<endl;
-      cout<<e.what()<<endl;
-    }
-    
-    catch(...)
-    {
-      std::cerr<<"unknown error type"<<endl;
-      return -1;
-    }
+
+
+  }
+  catch(exception & err)
+  {
+    std::cerr<<"caught on error: "<<err.what()<<endl;
+    return -1;
     
   }
-  catch(const char * err){
-    std::cerr<<"caught on error: ";
-    std::cerr<<err<<endl;
-    return -1;
-  } 
-  catch( char const * err){
-    std::cerr<<"caught on error: ";
-    std::cerr<<err<<endl;
-    return -1;
-  } 
-  catch(const string & err)
-  {
-    std::cerr<<"caught on error: ";
-    std::cerr<<err<<endl;
-    return -1;
-  }
   
-  catch(...)
-  {
-    std::cerr<<"uncaught error"<<endl;
-    return -1;
-  }
-  
+    
     
   
   return 0;

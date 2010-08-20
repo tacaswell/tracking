@@ -33,8 +33,9 @@ namespace utilities{
 class Histogram;
 class Cell;
 class Counted_vector;
-class Generic_wrapper_base;
+class Generic_wrapper;
 class Wrapper_out;
+class Md_store;
 
 
 }
@@ -153,6 +154,19 @@ public:
    */
   void output_to_wrapper(utilities::Wrapper_out & wrapper) const;
 
+
+  
+  /**
+     This function assumes that the tracks have been renumbered,  such that
+     the pigeon hole principle applies.  If not, it will throw an error.
+     It also assumes that the tracks are in order in the shelf.
+     
+     @param wrapper where to dump the data too.  
+ 
+   */
+  void output_to_wrapper(utilities::Generic_wrapper & wrapper,
+			 const utilities::Md_store * md_store) const;
+
   
   /**
      outputs the contents of the shelf treating each track as a single
@@ -162,7 +176,7 @@ public:
 			      const utilities::Tuple<float,3> & scale_t,
 			      const utilities::Tuple<float,3> & dim) const;
 
-
+  
   /**
      Splits all the tracks in the self in to sections that represent single
      particles when the tracking is linking between z-planes

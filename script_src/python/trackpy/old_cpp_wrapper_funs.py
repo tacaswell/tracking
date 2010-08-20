@@ -31,32 +31,6 @@ def do_gofr3D(key,conn):
     config.add_pram("grp_name","string",prog_name + "_%(#)07d"%{"#":comp_num})
 
 
-
-def do_tracking(key,conn,pram_i, pram_f, pram_s = None, rel = True,):
-    prog_name = "tracking"
-
-    # figure out name of file to write to
-    res = check_comps_table(key,"Iden",conn)
-    if len(res) ==0:
-        print "no entry"
-        # _do_Iden(key,conn)
-        return
-    if len(res) >1:
-        print "more than one entry, can't cope, quiting"
-        return
-    fname = res[0][0]
-    
-
-    srange = raw_input("enter search range: ")
-    
-    config = xml_data()
-    config.add_stanza("tracking")
-    config.add_pram("search_range","float",srange)
-    config.add_pram("box_side_len","float",srange)
-    config.add_pram("min_trk_len","int","10")
-
-
-
 def do_phi6(key,conn):
     prog_path = '/home/tcaswell/misc_builds/basic_dbg/apps/'
     prog_name = "phi6"
