@@ -95,14 +95,14 @@ void Master_box::priv_init()
   {
     int num_entries= in_wrapper_->get_num_entries(k);
     //    std::cout<<"adding: "<<num_entries<<" to frame: "<<k<< std::endl;
-    int count = 0;
+    //  int count = 0;
     
     for(int j = 0; j<num_entries; ++j)
     {
       if((*filt_)(j,k))
       {
 	particle_vec_.push_back( new particle(j,k));
-	++count;
+	//	++count;
       }
     }
     //    std::cout<<"added: "<<count<<" total count: "<<particle_vec_.size()<<std::endl;
