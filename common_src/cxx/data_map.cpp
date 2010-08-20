@@ -34,7 +34,7 @@ using std::cout;
 using std::endl;
 Data_map:: Data_map(const std::map<utilities::D_TYPE,int>& in)
 {
-  for(int j = 0;j<D_TYPE_COUNT;++j)
+  for(int j = 0;j<D_SENTRY;++j)
     data_layout_[j] = -1;
   
   int count = 0;
@@ -42,13 +42,13 @@ Data_map:: Data_map(const std::map<utilities::D_TYPE,int>& in)
   for(std::map<utilities::D_TYPE,int>::const_iterator it = in.begin();
       it!= in.end(); ++it)
   {
-    if(!((*it).first<D_TYPE_COUNT))
+    if(!((*it).first<D_SENTRY))
     {
       throw logic_error("constants wrong, type out of array bounds");
     }
     data_layout_[(*it).first] = (*it).second;
     ++count;
-    if(!(count<D_TYPE_COUNT))
+    if(!(count<D_SENTRY))
     {
       throw logic_error("out of array spaces");
     }
@@ -59,7 +59,7 @@ Data_map:: Data_map(const std::map<utilities::D_TYPE,int>& in)
 
 Data_map:: Data_map()
 {
-  for(int j = 0;j<D_TYPE_COUNT;++j)
+  for(int j = 0;j<D_SENTRY;++j)
     data_layout_[j] = -1;
 }
 

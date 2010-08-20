@@ -59,7 +59,7 @@ public:
   
 private:
   
-  int data_layout_[D_TYPE_COUNT];
+  int data_layout_[D_SENTRY];
   
 };
 
@@ -83,7 +83,7 @@ operator<<(std::basic_ostream<_CharT, _Traits>& __os, const Data_map& in)
     
   s << '(' ;
   s<< in(0)  ;
-  for(int j = 1;j<D_TYPE_COUNT;++j)
+  for(int j = 1;j<D_SENTRY;++j)
     s<< ','<<in(j)  ;
   s << ')';
 

@@ -47,46 +47,34 @@ typedef enum W_TYPE{
    add the D_TYPE to the V_TYPE conversion function, and D2Str function.
 */
 typedef enum D_TYPE {
-  D_INDEX=0, 			// index of particle in case,
+  D_INDEX               =0,	// index of particle in case,
 				// (frame,indx) is unique and should
 				// be persistent in wrappers (wrapper)
-
-  D_XPOS, 			// x-position (plu)
-  D_YPOS, 			// y-position (plu)
-  D_FRAME, 			// frame (wrapper)
-
-  D_I, 				// integrated intensity (plu)
-  D_R2, 			// radius of gyration (plu)
-  D_E,				// eccentricity (plu)
-  
-  D_NEXT_INDX,			// index of the next particle in the
+  D_XPOS  		=1,	// x-position (plu)
+  D_YPOS  		=2,	// y-position (plu)
+  D_FRAME  		=3,	// frame (wrapper)
+  D_I  			=4,	// integrated intensity (plu)
+  D_R2  		=5,	// radius of gyration (plu)
+  D_E 			=6,	// eccentricity (plu)
+  D_NEXT_INDX 		=7,	// index of the next particle in the
 				// track (track)
-  D_PREV_INDX, 			// index of the previous particle in
+  D_PREV_INDX  		=8,	// index of the previous particle in
 				// the track (track)
-  
-  D_DX, 			// x-shift (plu)
-  D_DY, 			// y-shift (plu)
-  D_ORGX, 			// original x-position (computed)
-  D_ORGY, 			// original y-position (computed)
-  
-  D_ZPOS,			// z-position (link or meta-data)
-
-  D_TRACKID,			// track id (track)
-  D_S_ORDER_PARAMETER,		// scalar order parameter (computed)
-  D_MULT,			// multiplicity (plu)
-
-  D_N_SIZE, 			// neighborhood size (computed)
-
+  D_DX  		=9,	// x-shift (plu)
+  D_DY  		=10,	// y-shift (plu)
+  D_ORGX  		=11,	// original x-position (computed)
+  D_ORGY  		=12,	// original y-position (computed)
+  D_ZPOS 		=13,	// z-position (link or meta-data)
+  D_TRACKID 		=14,	// track id (track)
+  D_S_ORDER_PARAMETER 	=15,	// scalar order parameter (computed)
+  D_MULT 		=16,	// multiplicity (plu)
+  D_N_SIZE  		=17,	// neighborhood size (computed)
+  D_SENTRY			// this entry must remain last, and I
+				// am making assumptions about how the
+				// numbering will work in the compiler
   
 } D_TYPE;
 
-
-/**
-   Number of enumerated data types.  This needs to be right for the
-   flat wrappers to work properly.  If this is wrong, there will be
-   buffer overflow which will screw you over.
- */
-const int D_TYPE_COUNT = 18;
 
 /**
    Enumeration for the type of value the data is (ie float, int,complex)
@@ -94,14 +82,14 @@ const int D_TYPE_COUNT = 18;
 typedef enum V_TYPE
   {
     V_ERROR = -1,		// error type
-    V_INT = 0,			// integer
-    V_FLOAT,			// float
-    V_COMPLEX,			// complex
-    V_STRING,			// string
-    V_BOOL,			// bool
-    V_TIME,			// date/time
-    V_GUID,			// guid from MM meta-data
-    
+    V_INT =0,			// integer
+    V_FLOAT =1,			// float
+    V_COMPLEX =2,		// complex
+    V_STRING =3,		// string
+    V_BOOL =4,			// bool
+    V_TIME =5,			// date/time
+    V_GUID =6,			// guid from MM meta-data
+
   }V_TYPE;
 /**
    Helper function to map between D_TYPE and V_TYPE
