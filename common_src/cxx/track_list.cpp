@@ -36,6 +36,7 @@ using std::set;
 using std::list;
 using std::pair;
 
+const static unsigned int MAX_NET_SIZE = 75;
 
 void track_list::link_next(list<particle_track*>* new_next){
   //tracks->print();
@@ -534,7 +535,7 @@ void track_list::set_up_sub_ntwrk(){
   while((tmp_p.size()!=0) ||(tmp_n.size()!=0))
   {
     // sanity check
-    if(n_sub_net.size() >75 ||p_sub_net.size() >75)
+    if(n_sub_net.size() >MAX_NET_SIZE ||p_sub_net.size() >MAX_NET_SIZE)
     {
       throw runtime_error("subnetwork too big, barfing");
     }
