@@ -283,8 +283,14 @@ void parse_description(string& des,Md_store* md_store)
   
   start_indx = des.find("&#13;&#10;",0)+SW;
   
-  colon_indx = des.find(": ",start_indx);
-  end_indx= des.find("&#13;&#10;",colon_indx);
+  colon_indx = des.find(": ",0);
+  if(start_indx>colon_indx)
+  {
+    end_indx = start_indx;
+    start_indx = 0;
+  }
+  else
+    end_indx= des.find("&#13;&#10;",colon_indx);
 
   while(end_indx != string::npos)
   {
@@ -348,8 +354,10 @@ void Mm_md_parser::parse_elements(DOMNode* pram_node, Md_store* md_store)const
       {
 	string v(value);
 	parse_description(v,md_store);
+	// add unpasted description for good measure
+	md_store->add_element(key,type,value);
       }
-      if(XMLString::equals(pram_elm->getAttribute(type_str_),time_str))
+      else if(XMLString::equals(pram_elm->getAttribute(type_str_),time_str))
       {
 	string t(value);
 	t = de_mangle_mmdate(t);
