@@ -26,7 +26,7 @@
 #define ARRAY_ND
 
 
-#include "part_def.h"
+#include "tuple.h"
 #include <iostream>
 namespace utilities{
 
