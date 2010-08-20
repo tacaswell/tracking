@@ -32,6 +32,10 @@
 
 #include "gnuplot_i.hpp"
 
+#include <stdexcept>
+using std::runtime_error;
+
+
 using gnuplot::Gnuplot;
 using gnuplot::GnuplotException;
 using gnuplot::wait_for_key;
@@ -409,7 +413,7 @@ void Track_box::trim_track(int start,int length)
   
   // get new last particle
   if(! t_first_->step_forwards(length - 1,t_last_))
-    throw "track_box: stepped out of track";
+    throw runtime_error("track_box: stepped out of track");
   
   // set new length
   length_ = length;

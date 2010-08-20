@@ -37,7 +37,8 @@
 #include "track_box.h"
 #include "particle_track.h"
 
-
+#include <stdexcept>
+using std::runtime_error;
 
 using namespace tracking;
 
@@ -250,7 +251,7 @@ void Hash_shelf::set_next_shelf(Hash_shelf* next)
 {
   if(next_ !=NULL)
   {
-    throw "the next shelf is already set";
+    throw runtime_error("the next shelf is already set");
   }
   next_ = next;
 }
@@ -287,7 +288,7 @@ int Hash_shelf::tuple_to_indx(const Tuplei & cord)const
   for(int j = 0;j<length;++j)
   {
     if(cord[j]>=hash_dims_[j])
-      throw "Hash_shelf::tuple_to_indx cord out of hash dimensions";
+      throw runtime_error("Hash_shelf::tuple_to_indx cord out of hash dimensions");
     
     
     indx += ((unsigned int)cord[j])*hash_cum_dim_[j];
@@ -338,7 +339,7 @@ unsigned int Hash_shelf::hash_function(const particle* p) const
   for(int j = 0;j<length;++j)
   {
     if(cur_pos[j]>=hash_dims_[j])
-      throw "Hash_shelf::tuple_to_indx cord out of hash dimensions";
+      throw runtime_error("Hash_shelf::tuple_to_indx cord out of hash dimensions");
     
     
     indx += ((unsigned int)cur_pos[j])*hash_cum_dim_[j];

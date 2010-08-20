@@ -60,7 +60,7 @@ using std::cerr;
 using std::endl;
 using std::complex;
 using std::logic_error;
-
+using std::runtime_error;
 
 using H5::H5File;
 using H5::Group;
@@ -126,7 +126,7 @@ void Wrapper_o_hdf::initialize_wrapper()
   }
   catch(...)
   {
-    throw "failure to create or open file";
+    throw runtime_error("failure to create or open file");
   }
 
   if(file_type_ != APPEND_FILE)
@@ -273,13 +273,13 @@ void Wrapper_o_hdf::finalize_wrapper()
        
 void Wrapper_o_hdf::reset_wrapper(params * param)
 {
-  throw "not implemented";
+  throw logic_error("not implemented");
 }
 
        
 void Wrapper_o_hdf::print()const
 {
-  throw "not implemented";
+  throw logic_error("not implemented");
 } 
 
 

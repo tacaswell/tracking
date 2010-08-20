@@ -70,7 +70,7 @@ Track_shelf::~Track_shelf(){
 
 void Track_shelf::add_new_track(particle_track* first_part){
   if(first_part ==NULL)
-    throw "null particle";
+    throw runtime_error("null particle");
   tracks_.push_back(new Track_box(first_part));
   ++track_count_;
   
@@ -128,7 +128,7 @@ void Track_shelf::print(){
 void Track_shelf::remove_track_internal_(  tr_list::iterator it)
 {
   if(it == tracks_.end())
-    throw "not in list";
+    throw runtime_error("not in list");
   delete *it;
   *it = NULL;
   tracks_.erase(it);
@@ -145,7 +145,7 @@ void Track_shelf::track_length_histogram(Histogram & hist_in){
 void Track_shelf::msd(vector<double> & msd_vec,vector<int> & entry_count)const{
   //this exception needs to get it's own class or something
   if(msd_vec.size()!=entry_count.size())
-    throw "Vector size's don't match, change this exception";
+    throw runtime_error("Vector size's don't match, change this exception");
 
   int max_time_step = msd_vec.size();
 
@@ -381,7 +381,7 @@ void Track_shelf::split_to_parts(Track_shelf & output_shelf)
 {
 
   if(&output_shelf == this)
-    throw "need to provide a second shelf to put trimmed tracks into";
+    throw runtime_error("need to provide a second shelf to put trimmed tracks into");
   
 
   tr_list::const_iterator myend =  tracks_.end();

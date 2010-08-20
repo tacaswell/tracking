@@ -23,18 +23,21 @@
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
 #include <iostream>
-
+#include <stdexcept>
 #include "array.h"
 
 #include "generic_wrapper_base.h"
 
+
 using namespace utilities;
 using std::cout;
 using std::endl;
+using std::runtime_error;
+
 Array::Array(int rows)
   :rows_(rows),cols_(Tuplef::length_),data_(rows_*cols_),cur_index_(0){
   if(rows_<1)
-    throw "you are being stupid, too few rows";
+    throw runtime_error("you are being stupid, too few rows");
 }
 
 void Array::print(){
@@ -51,7 +54,7 @@ void Array::push(const Tuplef&  tuple_in){
   {
     cout<<cur_index_<<" "<<rows_<<endl;
     
-    throw "past end of array";
+    throw runtime_error("past end of array");
   }
   
   for(int j = 0; j<cols_;++j)

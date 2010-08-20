@@ -60,6 +60,8 @@ using std::ceil;
 using std::list;
 using std::map;
 
+using std::runtime_error;
+using std::logic_error;
 using std::exception;
 using std::invalid_argument;
 
@@ -294,7 +296,7 @@ void hash_case::compute_corr(Corr_case & in )const
   unsigned int cc_sz = in.size();
   
   if (cc_sz > hc_sz)
-    throw "the corr_case has more planes than the hash case";
+    throw runtime_error("the corr_case has more planes than the hash case");
   
   unsigned int step = hc_sz/cc_sz;
   unsigned int max_i = cc_sz * step;
@@ -342,7 +344,7 @@ void Hash_shelf::compute_corr(Corr & in)const
   for(int j = 0;j<Tuplei::length_;++j)
   {
     if(buffer>=hash_dims_[j])
-      throw "Hash_shelf::compute_corr buffer is bigger than a hash dimension" ;
+      throw runtime_error("Hash_shelf::compute_corr buffer is bigger than a hash dimension");
     
 
     bottom_corner[j] = buffer;
@@ -384,7 +386,7 @@ void hash_box::compute_corr(Corr & in )const
   else
   {
     if(shelf_ ==NULL || hash_indx_ == -1)
-      throw "hash_box: box not part of a shelf";
+      throw logic_error("hash_box: box not part of a shelf");
 
     vector <const particle *> nhood;
     shelf_->get_region_px(hash_indx_,nhood,in.get_max_range());

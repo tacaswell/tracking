@@ -33,6 +33,8 @@
 #include "corr_gofr.h"
 #include "particle_track.h"
 #include "generic_wrapper.h"
+#include <stdexcept>
+using std::runtime_error;
 
 
 using std::vector;
@@ -84,7 +86,7 @@ Corr_gofr::Corr_gofr(int bins,float max,int comp_num,int dset,int read_comp):
   max_range_(max),parts_added_(0),dset_(dset),comp_num_(comp_num),read_comp_(read_comp)
 {
   if(bins <1)
-    throw "number of bins must be greater than 0";
+    throw runtime_error("number of bins must be greater than 0");
   
   float bin_sz = max_range_/bins;
   for( int j= 0;j<bins;++j)

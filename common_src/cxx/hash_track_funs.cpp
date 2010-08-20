@@ -259,7 +259,7 @@ void hash_case::link(float max_range, Track_shelf& tracks){
 
 //   if(!(md.averaged()))
 //   {
-//     throw "need an averaged md";
+//     throw runtime_error("need an averaged md");
 //   }
     
 //   list<particle_track*> current_box;

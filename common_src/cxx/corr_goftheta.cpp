@@ -37,7 +37,8 @@
 
 
 #include <cmath>
-
+#include <stdexcept>
+using std::runtime_error;
 using std::vector;
 using std::string;
 using std::cout;
@@ -171,7 +172,7 @@ void Corr_goftheta::compute(const particle * p_in,const vector<const particle*> 
 	cout<<"p_in_put "<<p_in_pos<<endl;
 	
 	cout<<"dot prod "<<  dotp<<endl;
-	throw "stupidity";
+	throw runtime_error("stupidity");
 	
       }
       
@@ -192,10 +193,10 @@ Corr_goftheta::Corr_goftheta(int bins,float max,string& name):
   max_range_(max),name_(name),parts_added_(0)
 {
   if(bins <1)
-    throw "number of bins must be greater than 0";
+    throw runtime_error("number of bins must be greater than 0");
   
 //   if(max_range_>particle::get_neighborhood_range())
-//     throw "maximum range past what particles know about";
+//     throw runtime_error("maximum range past what particles know about");
   
   float bin_sz = pi/bins;
   for( int j= 0;j<bins;++j)

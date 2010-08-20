@@ -305,13 +305,13 @@ void Tuple<T,length>::operator= (const Tuple<T,length>& y){
 template<class T,int length>
 T& Tuple<T,length>::operator[] (int i){
   if(i<0 || i>= length)
-    throw "Tuple range error"; 		// place holder for proper error handling
+    throw std::runtime_error("Tuple range error");
   return data_[i];
 }
 template<class T,int length>
 const T& Tuple<T,length>::operator[] (int i) const{
   if(i<0 || i>= length)
-    throw "Tuple range error"; 		// place holder for proper error handeling
+    throw std::runtime_error("Tuple range error");
   return data_[i];
 }
 template<class T,int length>

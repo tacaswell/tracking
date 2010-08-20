@@ -57,6 +57,7 @@ using std::vector;
 using std::complex;
 using std::invalid_argument;
 using std::logic_error;
+using std::runtime_error;
 using std::pair;
 
 
@@ -130,7 +131,7 @@ void Wrapper_i_hdf::priv_init(int fr_count)
     if(fr_count != 0)
     {
       if(fr_count + start_ > frame_count_)
-	throw "wrapper_i_hdf: asking for too many frames";
+	throw runtime_error("wrapper_i_hdf: asking for too many frames");
       frame_count_ = fr_count;
       
     }
@@ -215,7 +216,7 @@ void Wrapper_i_hdf::priv_init(int fr_count)
 	if(frame_c_.size()==j)
 	  frame_c_.push_back(part_count);
 	else if(frame_c_.at(j) != part_count)
-	  throw "wrapper_i_hdf: data sets different sizes";
+	  throw runtime_error("wrapper_i_hdf: data sets different sizes");
 	
 	D_TYPE cur_type = (*it).first;
 	
@@ -231,7 +232,7 @@ void Wrapper_i_hdf::priv_init(int fr_count)
 	  dset->read(data_f_.at(d_mapf_(cur_type)).at(j),PredType::NATIVE_FLOAT);
 	  break;
 	case V_COMPLEX:
-	  throw "not implemented yet";
+	  throw logic_error("not implemented yet");
 	  
 	  break;
 	case V_STRING:
@@ -273,7 +274,7 @@ void Wrapper_i_hdf::priv_init(int fr_count)
     // clean up data if it died
     e.printError();
     
-    throw "wrapper_i_hdf: constructor error";
+    throw runtime_error("wrapper_i_hdf: constructor error");
     
   }
   
@@ -340,11 +341,11 @@ int Wrapper_i_hdf::get_value(int& out,
 			     int ind,D_TYPE type, int frame) const 
 {
   if(!contains_type(type))
-    throw "wrapper_i_hdf: wrapper does not contain " + DT2str_s(type);
+    throw runtime_error("wrapper_i_hdf: wrapper does not contain " + DT2str_s(type));
   
   
   if(v_type(type) != V_INT)
-    throw "wrapper_i_hdf: wrong data type, not int";
+    throw runtime_error("wrapper_i_hdf: wrong data type, not int");
   out = data_i_.at(d_mapi_(type)).at(frame)[ind]    ;
   
 
@@ -355,11 +356,11 @@ float Wrapper_i_hdf::get_value(float& out,
 			       int ind,D_TYPE type, int frame) const 
 {
   if(!contains_type(type))
-    throw "wrapper_i_hdf: wrapper does not contain " + DT2str_s(type);
+    throw runtime_error("wrapper_i_hdf: wrapper does not contain " + DT2str_s(type));
   
   
   if(v_type(type) != V_FLOAT)
-    throw "wrapper_i_hdf: wrong data type, not float";
+    throw runtime_error("wrapper_i_hdf: wrong data type, not float");
 
 
   
@@ -381,10 +382,10 @@ std::complex<float> Wrapper_i_hdf::get_value(std::complex<float>& out,
 					     int ind,D_TYPE type, int frame) const 
 {
   if(!contains_type(type))
-    throw "wrapper_i_hdf: wrapper does not contain " + DT2str_s(type);
+    throw runtime_error("wrapper_i_hdf: wrapper does not contain " + DT2str_s(type));
   
   if(v_type(type) != V_COMPLEX)
-    throw "wrapper_i_hdf: wrong data type, not complex";
+    throw runtime_error("wrapper_i_hdf: wrong data type, not complex");
   out = data_c_.at(d_mapc_(type)).at(frame)[ind]    ;
   
 

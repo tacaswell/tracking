@@ -27,6 +27,9 @@
 #include "counted_vector.h"
 #include "generic_wrapper.h"
 #include <iostream>
+#include <stdexcept>
+
+using std::runtime_error;
 
 using utilities::Counted_vector;
 using std::vector;
@@ -40,7 +43,7 @@ Counted_vector::Counted_vector( int n_elements):
 void  Counted_vector::add_to_element(int t, float val){
   if(averaged_)
   {
-    throw "can not add to averaged vector";
+    throw runtime_error("can not add to averaged vector");
   }
 
   // let it do the error checking the first time
@@ -54,7 +57,7 @@ void  Counted_vector::add_to_element(int t, float val){
 void  Counted_vector::batch_add_to_element(int t, float val,int count){
   if(averaged_)
   {
-    throw "can not add to averaged vector";
+    throw runtime_error("can not add to averaged vector");
   }
 
   // let it do the error checking the first time

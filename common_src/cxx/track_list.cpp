@@ -26,6 +26,10 @@
 #include "particle_track.h"
 #include "track_shelf.h"
 #include "track_box.h"
+
+#include <stdexcept>
+using std::runtime_error;
+
 using namespace tracking;
 using std::vector;
 using std::set;
@@ -532,7 +536,7 @@ void track_list::set_up_sub_ntwrk(){
     // sanity check
     if(n_sub_net.size() >75 ||p_sub_net.size() >75)
     {
-      throw "subnetwork too big, barfing";
+      throw runtime_error("subnetwork too big, barfing");
     }
     
     //loop over tmp_p

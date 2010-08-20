@@ -29,6 +29,9 @@
 #include <algorithm>
 #include <cmath>
 #include <list>
+#include <stdexcept>
+using std::runtime_error;
+
 using namespace tracking;
  
 using std::vector;
@@ -71,10 +74,10 @@ particle_base::particle_base( int i_ind,Tuplef pos,int frame)
 void particle_base::priv_init()
 {
   if(wrapper_in_ ==NULL)
-    throw "wrapper_in_ not initialized";
+    throw runtime_error("wrapper_in_ not initialized");
 
   if(data_types_ ==NULL)
-    throw "data_types_ not initialized";
+    throw runtime_error("data_types_ not initialized");
   //  unq_id_= running_total_++;
 }
 
@@ -108,7 +111,7 @@ float particle_base::distancesq(const particle_base* part_in)const
 float particle_base::get_value(utilities::D_TYPE type,float & data_io ) const
 {
   if(v_type(type) != utilities::V_FLOAT)
-    throw "particle_base: wrong V_TYPE";
+    throw runtime_error("particle_base: wrong V_TYPE");
   // add special cases for stuff the particle knows about
   wrapper_in_->get_value(data_io,ind_,type,frame_);
   return data_io;
@@ -119,7 +122,7 @@ float particle_base::get_value(utilities::D_TYPE type,float & data_io ) const
 int particle_base::get_value(utilities::D_TYPE type,int & data_io  ) const
 {
   if(v_type(type) != utilities::V_INT)
-    throw "particle_base: wrong V_TYPE";
+    throw runtime_error("particle_base: wrong V_TYPE");
  
   switch(type)
   {
@@ -142,7 +145,7 @@ int particle_base::get_value(utilities::D_TYPE type,int & data_io  ) const
 complex<float> particle_base::get_value(utilities::D_TYPE type,complex<float>&data_io) const
 {
   if(v_type(type) != utilities::V_COMPLEX)
-    throw "particle_base: wrong V_TYPE";
+    throw runtime_error("particle_base: wrong V_TYPE");
 
   switch(type)
   {
@@ -187,14 +190,14 @@ void particle_base::print()const{
 
 void particle_base::intialize_wrapper_in(const Wrapper_in* in){
   if(wrapper_in_ !=NULL)
-    throw "Wrapper in already initialized";
+    throw runtime_error("Wrapper in already initialized");
   wrapper_in_ = in;
 }
 
 
 void particle_base::intialize_data_types(std::set<utilities::D_TYPE>*  data_types){
   if(data_types_ !=NULL)
-    throw "data types already initialized";
+    throw runtime_error("data types already initialized");
   data_types_ = data_types;
 }
 
@@ -305,7 +308,7 @@ complex<float> particle_base::compute_phi_6()const
 {
   if(neighborhood_.size() ==0)
   {
-    throw "no neighborhood";
+    throw runtime_error("no neighborhood");
   }
 
   

@@ -61,6 +61,11 @@ using std::cout;
 using std::endl;
 
 
+// tac 2010-08-13
+// add stdexecpt. updated the error handling
+#include <stdexecpt>
+using std::runtime_error;
+
 
 
 void Image2D::get_data(mxArray *data)const
@@ -90,7 +95,7 @@ void Image2D::set_data(const mxArray *data)
   {
     std::cerr<<"height: "<<height_<<'\t'<<"mat_height: "<<mat_height<<std::endl;
     std::cerr<<"width: "<<width_<<'\t'<<"mat_width: "<<mat_width<<std::endl;
-    throw "Image2D: data is wrong size";
+    throw runtime_error("Image2D: data is wrong size");
   }
   
   double *mat_tmp;

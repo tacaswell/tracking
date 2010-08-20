@@ -94,7 +94,8 @@ void wrapper_i_file::fill_data(string file_name, int row, int col){
   std::complex<float> get_value(std::complex<float>& out,
 				int ind,D_TYPE type, int frame) const 
   {
-    throw "wrapper_i_file: not implemented in this wrapper";
+    throw logic_error( "wrapper_i_file: not implemented in this wrapper");
+
     
   }
   

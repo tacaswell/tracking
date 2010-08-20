@@ -152,7 +152,7 @@ void Generic_wrapper_hdf::add_dset(int rank, const int * dims, V_TYPE type, cons
 				   const std::string & name  )
 {
   if(name =="none")
-    throw "generic_wrapper_hdf: requires real name";
+    throw runtime_error("generic_wrapper_hdf: requires real name");
 
   hsize_t hdims[rank];
   for(int j = 0;j<rank;++j)
@@ -180,7 +180,7 @@ void Generic_wrapper_hdf::add_dset(int rank, const int * dims, V_TYPE type, cons
     mem_type = PredType::NATIVE_FLOAT;
     break;
   default:
-    throw "generic_wrapper_hdf: un implemented types";
+    throw logic_error("generic_wrapper_hdf: un implemented types");
   }
   
   // make data set

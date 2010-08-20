@@ -94,10 +94,10 @@ Wrapper_i_plu * Iden::fill_wrapper(unsigned int frames,unsigned int start)
   unsigned int img_frames = src.getPageCount();
 
   if(start > img_frames)
-    throw "Iden: start is larger than the number of frames in image";
+    throw runtime_error("Iden: start is larger than the number of frames in image");
   
   if(start < 0)
-    throw "Iden: start is negetive, wtf";
+    throw runtime_error("Iden: start is negetive, wtf");
   
 
   if(frames == 0)
@@ -111,7 +111,7 @@ Wrapper_i_plu * Iden::fill_wrapper(unsigned int frames,unsigned int start)
     cout<<"img_frames"<<img_frames<<endl;
     
     src.close(0);
-    throw "Iden: asking for more frames than the stack has";
+    throw runtime_error("Iden: asking for more frames than the stack has");
   }
   
   
@@ -285,7 +285,7 @@ Wrapper_i_plu * Iden::fill_wrapper_avg(unsigned int avg_count,unsigned int frame
     cout<<"img_frames"<<img_frames<<endl;
     
     src.close(0);
-    throw "Iden: asking for more frames than the stack has";
+    throw runtime_error("Iden: asking for more frames than the stack has");
   }
 
   
@@ -335,7 +335,7 @@ Wrapper_i_plu * Iden::fill_wrapper_avg(unsigned int avg_count,unsigned int frame
     
     ptime prev_time,cur_time;
     string time_str;
-    int dtime;
+    int dtime=0;
     
     
 

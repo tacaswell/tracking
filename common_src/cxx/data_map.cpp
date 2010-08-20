@@ -25,6 +25,9 @@
 
 #include "data_map.h"
 #include <iostream>
+#include <stdexcept>
+using std::logic_error;
+
 using namespace utilities;
 using std::map;
 using std::cout;
@@ -41,13 +44,13 @@ Data_map:: Data_map(const std::map<utilities::D_TYPE,int>& in)
   {
     if(!((*it).first<D_TYPE_COUNT))
     {
-      throw "constants wrong, type out of array bounds";
+      throw logic_error("constants wrong, type out of array bounds");
     }
     data_layout_[(*it).first] = (*it).second;
     ++count;
     if(!(count<D_TYPE_COUNT))
     {
-      throw "out of array spaces";
+      throw logic_error("out of array spaces");
     }
   }
 }

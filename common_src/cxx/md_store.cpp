@@ -142,7 +142,7 @@ float Md_store::get_value(int j,float & val)const
       throw logic_error("Md_store:: failure to parse " + entries_[j].key);
   }
   else
-    throw logic_error("Read_congig::get_value, expect pram of type: float, found type: " + entries_[j].type);
+    throw logic_error("Md_store::get_value, expect pram of type: float, found type: " + entries_[j].type);
 }
 
 
@@ -155,7 +155,7 @@ int Md_store::get_value(int j,int & val)const
     else 
       throw logic_error("Md_store:: failure to parse " + entries_[j].key);
   else
-    throw logic_error("Read_congig::get_value, expect pram of type: int, found type: " + entries_[j].type);
+    throw logic_error("Md_store::get_value, expect pram of type: int, found type: " + entries_[j].type);
 }
 
 
@@ -173,7 +173,7 @@ string Md_store::get_value(int j,string & val)const
     return val;
   }
   else
-    throw logic_error("Read_congig::get_value, expect pram of type: string, found type: " + entries_[j].type);
+    throw logic_error("Md_store::get_value, expect pram of type: string, found type: " + entries_[j].type);
 }
 
 
@@ -190,7 +190,7 @@ bool Md_store::get_value(int j,bool & val)const
     
   }
   else
-    throw logic_error("Read_congig::get_value, expect pram of type: float, found type: " + entries_[j].type);
+    throw logic_error("Md_store::get_value, expect pram of type: float, found type: " + entries_[j].type);
 }
 
 

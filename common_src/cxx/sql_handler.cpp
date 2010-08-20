@@ -44,8 +44,7 @@ SQL_handler::SQL_handler(const string & db_name)
   if(rc!=SQLITE_OK)
   {
     cerr<<"SQL error"<<endl;
-    throw "failed to open database";
-    
+    throw runtime_error("failed to open database");
   }
   // set foreign key pragma
   char * err;

@@ -83,7 +83,7 @@ void particle_track::print_t(int more)const{
 
 void particle_track::set_next(particle_track* n_next){
   if(next_!=NULL)
-    throw "nuking the list";
+    throw runtime_error("nuking the list");
   next_ = n_next;
   forward_disp_ = (n_next -> get_position()) - position_;
   
@@ -93,7 +93,7 @@ void particle_track::set_next(particle_track* n_next){
 
 void particle_track::set_prev(particle_track* n_prev){
   if(prev_!=NULL)
-    throw "nuking the list";
+    throw runtime_error("nuking the list");
   prev_ = n_prev;
 }
 
@@ -120,7 +120,7 @@ bool particle_track::step_forwards(int n, const particle_track* & dest)const{
 
 
   if(n<0)
-    throw "negative forward step";
+    throw runtime_error("negative forward step");
   else
   {
     //check for obo bugs
@@ -178,7 +178,7 @@ bool particle_track::step_forwards(int n,  particle_track* & dest){
   
 
   if(n<0)
-    throw "negative forward step";
+    throw runtime_error("negative forward step");
   else
   {
     //check for obo bugs
@@ -215,7 +215,7 @@ bool particle_track::step_backwards(int n, particle_track* & dest){
 
 void particle_track::set_track(Track_box* i_track){
   if(track_!=NULL)
-    throw "moving between lists!";
+    throw runtime_error("moving between lists!");
   track_ = i_track;
 
 }
@@ -261,7 +261,7 @@ float particle_track::distancesq_corrected(const particle_track* part_in)const{
 
   if (shelf_ ==NULL)
     {
-      throw "shelf not defined";
+      throw runtime_error("shelf not defined");
       return 0;
     }
 
@@ -277,7 +277,7 @@ float particle_track::distancesq_corrected(const particle_track* part_in)const{
 {
   if (shelf_ ==NULL)
     {
-      throw "shelf not defined";
+      throw runtime_error("shelf not defined");
       return utilities::Tuplef();
     }
   return forward_disp_ - shelf_->get_mean_forward_disp();
@@ -311,7 +311,7 @@ const utilities::Tuplef particle_track::get_corrected_pos()const
 {
   if (shelf_ ==NULL)
   {
-    throw "shelf not defined";
+    throw runtime_error("shelf not defined");
     return utilities::Tuplef();
   }
   return position_ - shelf_->get_cum_forward_disp();
@@ -349,7 +349,7 @@ void particle_track::clear_data_backward()
 int particle_track::get_value(utilities::D_TYPE type,int & val) const
 {
   if(v_type(type) != utilities::V_INT)
-    throw "particle_base: wrong V_TYPE";
+    throw runtime_error("particle_base: wrong V_TYPE");
  
   switch(type)
   {

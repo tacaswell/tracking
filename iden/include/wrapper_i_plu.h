@@ -30,6 +30,7 @@
 
 #include <complex>
 #include <vector>
+#include <stdexcept>
 #include "wrapper_i.h"
 #include "enum_utils.h"
 #include "data_map.h"
@@ -63,16 +64,10 @@ public:
   void print()const;
 
   
-  float get_value(int, utilities::D_TYPE, int) const
-  {
-    throw "wrapper_i_plu: depreciated ";
-    return -1;
-  }
-  
   int get_value(int& out,int ind,D_TYPE type, int frame) const;
   float get_value(float &out,int ind, utilities::D_TYPE type,int frame )const;
   std::complex<float> get_value(std::complex<float> &out,int ind, utilities::D_TYPE type,int frame )const
-  {throw "wrapper_i_plu:wrapper has no complex support";}
+  {throw std::logic_error("wrapper_i_plu:wrapper has no complex support");}
 
   
   Wrapper_i_plu(int,utilities::Tuple<float,2>);  

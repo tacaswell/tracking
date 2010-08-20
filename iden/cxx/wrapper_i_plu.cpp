@@ -24,7 +24,7 @@
 //the resulting work.
 
 #include<iostream>
-
+#include <stdexcept>
 #include "ipp.h"
 
 #include "wrapper_i_plu.h"
@@ -40,6 +40,7 @@ using std::endl;
 
 using std::vector;
 using std::set;
+using std::runtime_error;
 
 
 using utilities::Data_map;
@@ -47,7 +48,7 @@ using utilities::Data_map;
 void Wrapper_i_plu::add_frame_data(Ipp32f data[][9], int frame,int num)
 {
   if(data_.at(frame) !=NULL)
-    throw "already data at this frame";
+    throw runtime_error("already data at this frame");
 
   if (frame%50==0)
     cout<<"frame "<<frame<<endl;
@@ -70,7 +71,7 @@ int Wrapper_i_plu::get_value(int& out,int ind,D_TYPE type, int frame) const
   if(V_INT!=v_type(type))
   {
     cerr<<"got "<<type<<" which is a "<<v_type(type)<<" need "<<V_INT<<endl;
-    throw "wrapper_i_plu: wrong data type, expect int";
+    throw runtime_error("wrapper_i_plu: wrong data type, expect int");
   }
   
   if(type == D_FRAME)
@@ -92,7 +93,7 @@ float Wrapper_i_plu::get_value(float& out,int ind,D_TYPE type, int frame) const
   if(V_FLOAT!=v_type(type))
   {
     cerr<<"got "<<type<<" which is a "<<v_type(type)<<" need "<<V_FLOAT<<endl;
-    throw "wrapper_i_plu: wrong data type, expect float";
+    throw runtime_error("wrapper_i_plu: wrong data type, expect float");
   }
   
   //  out = (float)(*(*(data_.at(frame) + ind*cols) + data_map_(type)));

@@ -131,7 +131,7 @@ void Image2D::set_data(const WORD * data_in, int rows, int cols,WORD in_step)
   {
     std::cerr<<"height: "<<height_<<'\t'<<"rows: "<<rows<<std::endl;
     std::cerr<<"width: "<<width_<<'\t'<<"cols: "<<cols<<std::endl;
-    throw "Image2D: data is wrong size";
+    throw runtime_error("Image2D: data is wrong size");
   }
   
 
@@ -161,7 +161,7 @@ void Image2D::add_data(const WORD * data_in, int rows, int cols,WORD in_step)
   {
     std::cerr<<"height: "<<height_<<'\t'<<"rows: "<<rows<<std::endl;
     std::cerr<<"width: "<<width_<<'\t'<<"cols: "<<cols<<std::endl;
-    throw "Image2D: data is wrong size";
+    throw runtime_error("Image2D: data is wrong size");
   }
   
 
@@ -181,7 +181,7 @@ void Image2D::trim_max(float cut_percent)
     return;
   
   if(cut_percent>1)
-    throw "image2D: nonsense percent";
+    throw runtime_error("image2D: nonsense percent");
   
   // find max and min
   Ipp32f max=0,min=0;

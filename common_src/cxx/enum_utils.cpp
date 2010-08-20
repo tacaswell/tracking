@@ -111,7 +111,7 @@ std::string DT2str_s(D_TYPE in)
 
 D_TYPE str2DT_s(std::string in)
 {
-  throw "function not written yet";
+  throw logic_error("function not written yet");
   return D_TRACKID;
 }
 

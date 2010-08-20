@@ -229,14 +229,14 @@ void Wrapper_o_hdf_group::store_particle(const particle * p_in)
     cout<<"part_count_ "<<added_count_<<'\t';
     cout<<"group_max_count_ "<<p_count_<<endl;
     cout<<"wrapper_size "<<size_<<endl;
-    throw logic_error("wrapper_o_hdf: trying to add too many particles to group");
+    throw runtime_error("wrapper_o_hdf: trying to add too many particles to group");
   }
   if(part_index == -1)
   {
     cout<<part_index<<endl;
     cout<<added_count_<<endl;
     
-    throw "wrapper_o_hdf_group: something wrong, index = -1";
+    throw runtime_error("wrapper_o_hdf_group: something wrong, index = -1");
   
   }
   
@@ -302,7 +302,7 @@ void Wrapper_o_hdf_group::store_particle_pos(const Tuple<float,3> & cord_in,floa
   {
     cout<<"part_count_ "<<added_count_<<'\t';
     cout<<"group_max_count_ "<<p_count_<<endl;
-    throw logic_error("wrapper_o_hdf: trying to add too many particles to group");
+    throw runtime_error("wrapper_o_hdf: trying to add too many particles to group");
   }
   // set values to temp storage
   for(set<D_TYPE>::const_iterator current_type = d_types_add_.begin();
