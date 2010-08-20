@@ -38,12 +38,14 @@
 #include "wrapper_o.h"
 
 #include "corr.h"
+#include "md_store.h"
 
 using namespace tracking;
 
 
 using utilities::Tuplei;
 using utilities::Tuplef;
+using utilities::Md_store;
 
 using utilities::Wrapper_out;
 
@@ -199,6 +201,30 @@ void hash_case::get_cum_disp(utilities::Array & cum_disp_array, int start){
     cum_disp_array.push(h_case_[j]->get_cum_forward_disp());
   }
 }
+
+
+int hash_case::get_avg_dtime()const
+{
+  float dtime_sum = 0;
+  int dtime_tmp = 0;
+  unsigned int frame_count = 0;
+  
+  vector<Hash_shelf*>::const_iterator it_end = h_case_.end();
+  // the ++ is to skip the first frame which does not have a
+  // a dtime as it has no previous frame to compare too
+  for(vector<Hash_shelf*>::const_iterator it = ++(h_case_.begin());
+      it != it_end; ++it)
+  {
+    const Md_store * cur_store = (*it)->md_store_;
+    if(cur_store)
+    {
+      dtime_sum += cur_store->get_value("dtime",dtime_tmp);
+      ++frame_count;
+    }
+  }
+  return (int) floor(dtime_sum/frame_count + 0.5); 
+}
+
 
 
 // void hash_case::nearest_neighbor_array(utilities::Cell & pos_cell,

@@ -237,9 +237,10 @@ public:
   void fill_in_neighborhood();
 
   /**
-     average density
+     Gets the average dtime between the shelves
    */
-  float average_density() const;
+  int get_avg_dtime()const;
+  
   
   ///Destructor
   ~hash_case();
