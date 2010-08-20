@@ -35,7 +35,7 @@
 #include "array.h"
 #include "cell.h"
 
-#include "wrapper_o.h"
+
 
 #include "corr.h"
 #include "md_store.h"
@@ -47,7 +47,7 @@ using utilities::Tuplei;
 using utilities::Tuplef;
 using utilities::Md_store;
 
-using utilities::Wrapper_out;
+
 
 using std::list;
 using std::cout;
