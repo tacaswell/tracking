@@ -42,6 +42,7 @@
 
 #include "boost/date_time/posix_time/posix_time.hpp"
 
+
 #include "iden.h"
 #include "wrapper_i_plu.h"
 
@@ -76,7 +77,7 @@ using std::runtime_error;
 using utilities::Md_store;
 using utilities::Mm_md_parser;
 using namespace boost::posix_time;
-
+using namespace boost::gregorian;
 
 Wrapper_i_plu * Iden::fill_wrapper(unsigned int frames,unsigned int start)
 {
@@ -309,8 +310,8 @@ Wrapper_i_plu * Iden::fill_wrapper_avg(unsigned int avg_count,unsigned int frame
 
   image = src.lockPage(0);
   WORD scan_step = image.getScanWidth();
-  int rows = image.getHeight();
-  int cols = image.getWidth();
+  unsigned int rows = image.getHeight();
+  unsigned int cols = image.getWidth();
   src.unlockPage(image,false);
   
   Tuple<float,2> dims;
@@ -326,16 +327,17 @@ Wrapper_i_plu * Iden::fill_wrapper_avg(unsigned int avg_count,unsigned int frame
   float scx=0,scy=0;
   string exp_unit,cal_units;
   bool cal_state = false;
-  
+  ptime prev_time,cur_time;
+
   // loop over frames
   for(unsigned int j = 0;j<wrapper_frames;++j)
   {
     float exposure_sum = 0,x = 0,y = 0,z=0,tmp = 0;
     
     
-    ptime prev_time,cur_time;
+    
     string time_str;
-    int dtime=0;
+    unsigned int dtime=0;
     
     
 
@@ -352,6 +354,11 @@ Wrapper_i_plu * Iden::fill_wrapper_avg(unsigned int avg_count,unsigned int frame
       
       // extract meta data from tiff
       Md_store * md_store = mm_md_p.parse_md(image);
+        
+      // deal with time
+      if(k ==0)
+	cur_time  = time_from_string(md_store->get_value("acquisition-time-local",time_str));
+    
       exposure_sum += md_store->get_value("Exposure",tmp);
       if(j == 0)
       {
@@ -360,22 +367,11 @@ Wrapper_i_plu * Iden::fill_wrapper_avg(unsigned int avg_count,unsigned int frame
 	md_store->get_value("Exposure units",exp_unit);
 	md_store->get_value("spatial-calibration-state",cal_state);
 	md_store->get_value("spatial-calibration-units",cal_units);
+	prev_time = cur_time;
 	
       }
       
-      // deal with time
-      if(k ==0 )
-      {
-	cur_time  = time_from_string(md_store->get_value("acquisition-time-local",time_str));
-	prev_time = cur_time;
-	dtime = 0;
-      }
-      else
-      {
-	cur_time  = time_from_string(md_store->get_value("acquisition-time-local",time_str));
-	dtime = (cur_time-prev_time).total_milliseconds();
-	prev_time = cur_time;
-      }
+      
      
   
       x += md_store->get_value("stage-position-x",tmp);
@@ -387,6 +383,11 @@ Wrapper_i_plu * Iden::fill_wrapper_avg(unsigned int avg_count,unsigned int frame
       // clear the input data
       src.unlockPage(image,false);
     }
+    dtime = (cur_time-prev_time).total_milliseconds();
+
+    prev_time = cur_time;
+    
+    
     // average 
     x /=avg_count;
     y /=avg_count;
