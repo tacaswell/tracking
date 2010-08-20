@@ -66,6 +66,7 @@ using std::map;
 
 using std::logic_error;
 using std::runtime_error;
+using std::exception;
 
 
 
@@ -273,18 +274,11 @@ int main(int argc, char * const argv[])
 
 
 
-    
-  for(int j =0;j<20;++j)
-  {
-    particle* p = box.get_particle(j);
-    p->print();
-  }
-    
 
     
     
   hash_case hcase(box,dims,20,wp->get_num_frames());
-  hcase.print();
+  
   bool error_flg = false;
   try
   {
@@ -299,12 +293,6 @@ int main(int argc, char * const argv[])
     
     hdf_w.finalize_wrapper();
   }
-  catch(const char * err)
-  {
-    std::cerr<<"caught on error: ";
-    std::cerr<<err<<endl;
-    error_flg = true;
-  }
   catch(Exception & e)
   {
     std::cerr<<"caught on error: ";
@@ -312,7 +300,12 @@ int main(int argc, char * const argv[])
     
     error_flg = true;
   }
-  
+  catch(exception&e)
+  {
+    std::cerr<<"caught on error: "
+	     <<e.what()<<endl;
+    error_flg = true;
+  }
   catch(...)
   {
     std::cerr<<"unknown error type"<<endl;
