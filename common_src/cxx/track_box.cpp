@@ -34,6 +34,7 @@
 
 #include <stdexcept>
 using std::runtime_error;
+using std::logic_error;
 
 
 using gnuplot::Gnuplot;
@@ -72,9 +73,8 @@ int Track_box::running_count_ = 0;
 // }
 
 
-Track_box::Track_box(particle_track * first){
-  t_first_ = first;
-  length_ = 0;
+Track_box::Track_box(particle_track * first)
+  :t_first_(first),t_last_(first),length_(0){
   id_ = running_count_++;
   if(t_first_ != NULL)
   {
@@ -114,19 +114,32 @@ particle_track* Track_box::at(int n){
 }
 
 
-void Track_box::push_back(particle_track * next){
-  if( next==NULL)
+void Track_box::push_back(particle_track * input_part){
+  if( input_part==NULL)
     return;
 
-  //use the level of indrection so that we don't
-  //have to reimplement the sanity checking
-  //at this point
-  t_last_->set_next(next);
-  next->set_prev(t_last_);
-  next->set_track(this);
-  t_last_ = next;
-  //increment last incase something goes wrong
-  ++length_;
+  // if the track is initialized and has a last particle
+  if(t_last_)
+  {
+    if(!(t_first_))
+      throw logic_error("encountered a track with a last, but no first particle, flip out");
+    
+    // set the current last to point to the input particle
+    t_last_->set_next(input_part);
+    // set the input particle to point back to the old last particle
+    // (still pointed to by t_last_)
+    input_part->set_prev(t_last_);
+  }
+  // else, assume we need to initialize it
+  else
+  {
+    // set length to 0 (look at what reset_track does)
+    length_ = 0;
+    // make the 'input particle the first particle in track
+    t_first_ = input_part;
+  }
+  // update the last particle in the track
+  t_last_ = input_part->reset_track(this,length_);
 }
 
 
