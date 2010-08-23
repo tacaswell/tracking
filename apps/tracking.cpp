@@ -35,13 +35,6 @@
 #include "filter.h"
 
 #include "generic_wrapper_hdf.h"
-#include "corr_gofr.h"
-
-
-#include "gnuplot_i.hpp" //Gnuplot class handles POSIX-Pipe-communication with Gnuplot
-
-#include "track_shelf.h"
-
 
 #include <unistd.h>
 #include <vector>

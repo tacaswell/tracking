@@ -107,7 +107,7 @@ void Accum_sofq::out_to_wrapper(utilities::Generic_wrapper & wrap) const
   
   const float * data_ptr = NULL;
   
-  int nbins = n_bins_;
+  unsigned nbins = n_bins_;
   
   
   data_ptr = &tmp.front();

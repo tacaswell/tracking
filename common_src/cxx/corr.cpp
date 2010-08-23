@@ -63,6 +63,8 @@ using utilities::Tuplef;
 using std::vector;
 using std::runtime_error;
 using std::logic_error;
+using std::cout;
+using std::endl;
 
 
 const std::string TEMPERATURE_STRING = "temperature";
