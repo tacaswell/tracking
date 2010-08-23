@@ -30,7 +30,7 @@
 #include "histogram.h"
 #include "track_box.h"
 #include "particle_track.h"
-
+#include "master_box_t.h"
 #include "counted_vector.h"
 #include "generic_wrapper.h"
 #include "array.h"
@@ -510,3 +510,85 @@ void Track_shelf::output_to_wrapper(utilities::Generic_wrapper & wrapper,const M
     wrapper.close_wrapper();
 
 }
+
+void Track_shelf::init(Master_box & mb)
+{
+  // magic number for look up table
+  const unsigned int look_up_inc = 100;
+  
+
+  // check to make sure track_id is in the wrapper
+
+  // check to make sure that the shelf is empty
+  
+  // add first track
+  Track_box* cur_track = new Track_box(NULL);
+  
+  add_track(cur_track);
+
+  particle *p;
+  int max_sz = mb.size();
+  
+
+  
+
+  // set up clever look up table
+  vector<list<Track_box*>::iterator> pos_lookup_tab;
+  pos_lookup_tab.push_back(tracks_.begin());
+  
+  
+
+  // loop over particles
+  for( int j = 0; j<max_sz; ++j){
+    p = mb.get_particle(j);
+    
+    // get track id of particle
+    int trk_id_s;
+    p->get_wrapper_value(utilities::D_TRACKID,trk_id_s);
+    if(trk_id_s <0)
+      continue;
+    unsigned int trk_id = trk_id_s;
+    
+    
+    // see if it is greater than the existing number of tracks
+    if(trk_id >= track_count_)
+    {
+      // add enough tracks for there to be enough
+      while(track_count_ <= trk_id)
+      {
+	cur_track = new Track_box(NULL);
+	add_track(cur_track);
+	if(((track_count_-1)%look_up_inc) ==0 )
+	  pos_lookup_tab.push_back(--(tracks_.end()));
+	
+      }
+      
+    }
+    // find right track in list
+    else
+    {
+      unsigned int indx = trk_id/look_up_inc;
+      unsigned int remin = trk_id%look_up_inc;
+      if(remin <= look_up_inc/2 || (indx+1) >= pos_lookup_tab.size() )
+      {
+	list<Track_box*>::iterator cur_it = pos_lookup_tab.at(indx);
+	for (unsigned int j = 0; j< remin; ++j)
+	  ++ cur_it;
+	cur_track = *cur_it;
+	
+      }
+      else 
+      {
+	list<Track_box*>::iterator cur_it = pos_lookup_tab.at(indx+1);
+	remin =look_up_inc - remin;
+	for (unsigned int j = 0; j< remin; ++j)
+	  -- cur_it;
+	cur_track = *cur_it;
+      }
+    }
+    cur_track->push_back(p);
+    
+
+  }
+}
+

@@ -122,6 +122,16 @@ public:
   */
   virtual std::complex<float> get_value(utilities::D_TYPE type,std::complex<float>& val) const;
 
+
+  /**
+     Returns the a value associated with the particle directly from the wrapper, by passing
+     all logic in the particle object.
+
+     
+   */
+  template <class T>
+  T get_wrapper_value(utilities::D_TYPE type,T & val) const;
+
   /**
      returns a tuple of the particle's position
    */

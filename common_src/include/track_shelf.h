@@ -44,6 +44,7 @@ namespace tracking{
 //forward declare classes
 class Track_box;
 class particle_track;
+class Master_box;
 
 /**
    Top level class for holding the track boxes. (which are the head of
@@ -189,6 +190,11 @@ public:
      when outputting the tracks.
    */
   void renumber();
+  
+  /**
+     Initializes the tracks in the track shelf based read in trakid
+   */
+  void init(Master_box & mb);
   
   
   ///Constructor

@@ -330,3 +330,14 @@ complex<float> particle_base::compute_phi_6()const
   
   return phi6;
 }
+
+template <class T>
+T particle_base::get_wrapper_value(utilities::D_TYPE type,T & val) const
+{
+  wrapper_in_->get_value(val,ind_,type,frame_);
+  return val;
+}
+
+template int particle_base::get_wrapper_value(utilities::D_TYPE type,int & val) const;
+//template unsigned int particle_base::get_wrapper_value(utilities::D_TYPE type,unsigned int & val) const;
+  
