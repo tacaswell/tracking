@@ -98,6 +98,7 @@ void Hash_shelf::push(particle * p){
 Hash_shelf::Hash_shelf(utilities::Tuplef imgsz, 
 		       float upb, 
 		       int i_frame,
+		       bool own_part,
 		       float z_offset
 		       )
   :md_store_(NULL),
@@ -110,11 +111,11 @@ Hash_shelf::Hash_shelf(utilities::Tuplef imgsz,
    upb_(upb),
    z_offset_(z_offset)
 {  
-  priv_init();
+  priv_init(own_part);
   
 }
 
-void Hash_shelf::priv_init()
+void Hash_shelf::priv_init(bool own_part)
 {
   
   int rank = Tuplef::length_;
@@ -150,9 +151,8 @@ void Hash_shelf::priv_init()
 
   hash_.reserve(hash_dim_prod);
   for(int j = 0; j<hash_dim_prod;j++)
-    hash_.push_back(new hash_box(this,j));
+    hash_.push_back(new hash_box(this,j,own_part));
 }
-
 
 
 

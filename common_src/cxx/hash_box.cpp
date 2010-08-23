@@ -81,3 +81,15 @@ void  hash_box::box_to_list(std::list<particle*>& p_list) const
   }
 }
 
+hash_box::~hash_box()
+{
+  if(owns_particles_)
+  {
+    vector<particle*>::iterator it_end = contents_.end();
+    for(vector<particle*>::iterator it = contents_.begin();
+	it!=it_end; ++it)
+      delete *it;
+  }
+  
+  contents_.clear();
+}

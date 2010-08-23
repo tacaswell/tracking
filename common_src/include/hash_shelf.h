@@ -76,7 +76,6 @@ public:
      @param p pointer to the particle to add
   */
   void push(particle * p);
-
   
   ///Generates the hash value based on a pointer to a particle object
   virtual unsigned int hash_function(const particle* p) const;
@@ -85,7 +84,7 @@ public:
   /**
      Constructor 
    */
-  Hash_shelf(utilities::Tuplef imgsz, float upb,int i_frame,float z_offset = 0);
+  Hash_shelf(utilities::Tuplef imgsz, float upb,int i_frame,bool own_part, float z_offset = 0);
   
 
 
@@ -349,7 +348,7 @@ private:
   /**
      private initialization function
    */
-  void priv_init();
+  void priv_init(bool own_part);
 
   /**
      does the computation to get a region of size 2*range +1 around the center

@@ -43,6 +43,9 @@ class Wrapper_out;
 class Cell;
 class Counted_vector;
 class Accum_case;
+class Wrapper_in;
+class Generic_wrapper;
+class Filter;
 
 
 }
@@ -69,6 +72,7 @@ public:
   Hash_shelf * return_shelf(int n) const{
     return h_case_.at(n);
   }
+
   /**
      Constructor, does no work
    */
@@ -83,7 +87,6 @@ public:
   void  init(Master_box & mb,const utilities::Tuplef & dims, 
 	     float ppb, int frames);
   
-
   ///print out a sensible representation of the data
   void print() const;
   
@@ -214,6 +217,15 @@ public:
   
   ///Destructor
   ~hash_case();
+
+  void init(float box_side_len,
+	    const utilities::Wrapper_in & wrapper,
+	    Track_shelf & tracks,
+	    utilities::Filter & filt,
+	    int min_trk_length);
+
+  
+
 protected:
   /**
      vector of pointers to shelves
@@ -240,7 +252,7 @@ protected:
   
   
 
-  bool inited;
+  bool inited_;
 	    
 	    
 

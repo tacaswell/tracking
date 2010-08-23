@@ -70,6 +70,11 @@ protected:
    */
   int hash_indx_;
   
+  /**
+     If the hash box owns the particles or not
+   */
+  bool owns_particles_;
+  
 public:
   
   ///@name over all control
@@ -77,20 +82,19 @@ public:
   //@{ 
 
   ///constructor with Hash_shelf information
-  hash_box(const Hash_shelf* in,int hash_indx):contents_(),shelf_(in),hash_indx_(hash_indx){
+  hash_box(const Hash_shelf* in,int hash_indx,bool own_part):
+    contents_(),shelf_(in),hash_indx_(hash_indx),owns_particles_(own_part){
 
   }
   /**
      empty constructor
    */
-  hash_box():contents_(),shelf_(NULL),hash_indx_(-1){
-    }
+  hash_box():contents_(),shelf_(NULL),hash_indx_(-1),owns_particles_(false)
+  {}
 
   ///Destructor.  Clears all the pointers to try and avoid stale pointers
-  ~hash_box(){
-    contents_.clear();
-  }
-
+  ~hash_box();
+  
   ///clears all the pointers, but doesn't destroy the box.
   void clear(){contents_.clear();}
 
