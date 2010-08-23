@@ -74,6 +74,7 @@ private:
   
   void priv_init(int f_count =0);
   void make_dtype_pairs(int comp_nuber);
+  void make_dtype_set();
   
   bool two_d_data_;
   

@@ -89,11 +89,33 @@ Wrapper_i_hdf::Wrapper_i_hdf(std::string fname,
   
 }
 
+
+Wrapper_i_hdf::Wrapper_i_hdf(std::string fname,
+	      const std::set<std::pair<utilities::D_TYPE,int > > &dtypes,
+	      unsigned int start,
+	      int f_count,
+	      bool two_d_data)
+   :  file_name_(fname),data_types_(dtypes),total_part_count_(0),two_d_data_(two_d_data),start_(start)
+{
+  make_dtype_set();
+  priv_init(f_count);
+  
+}
+
+
 void Wrapper_i_hdf::make_dtype_pairs(int comp_nuber)
 {
   for(set<D_TYPE>::const_iterator it = data_types_set_.begin();
       it != data_types_set_.end(); ++it)
     data_types_.insert(pair<D_TYPE,int>(*it,comp_nuber));
+}
+
+
+void Wrapper_i_hdf::make_dtype_set()
+{
+  for(set<pair<D_TYPE, int> >::const_iterator it = data_types_.begin();
+      it != data_types_.end(); ++it)
+	data_types_set_.insert((*it).first);
 }
 
 
@@ -214,11 +236,22 @@ void Wrapper_i_hdf::priv_init(int fr_count)
 	dspace.selectAll();
 	int part_count = dspace.getSimpleExtentNpoints();
 	
+	// if the first data set for this frame set the number of particles
 	if(frame_c_.size()==j)
 	  frame_c_.push_back(part_count);
-	else if(frame_c_.at(j) != part_count)
-	  throw runtime_error("wrapper_i_hdf: data sets different sizes");
-	
+	// if the part_count is less than a previous dataset, set the
+	// number of particles to be the smaller number.  This
+	// shouldn't result in memory leaks as the bare arrays are
+	// never returned
+	else if(frame_c_.at(j) > part_count)
+	  frame_c_.at(j) = part_count;
+	// if the current set has more than a previous set, keep the
+	// old value.  these checks are a kludge, need to deal with
+	// this better at the level of writing out the data
+	else if(frame_c_.at(j) < part_count)
+	  continue;
+	// if(frame_c_.at(j) != part_count)
+	//   throw runtime_error("wrapper_i_hdf: data sets different sizes");
 	D_TYPE cur_type = (*it).first;
 	
 	switch(v_type(cur_type))
