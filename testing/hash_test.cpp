@@ -43,9 +43,9 @@ int main(int argc, const char * argv[])
   try
   {
 #if DIM_COUNT == 2
-    Hash_shelf test_shelf(Tuple<float,2>(100,100),5,0);
+    Hash_shelf test_shelf(Tuple<float,2>(100,100),5,0,false);
 #elif DIM_COUNT == 3
-    Hash_shelf test_shelf(Tuple<float,3>(100,100,100),10,0);
+    Hash_shelf test_shelf(Tuple<float,3>(100,100,100),10,0,false);
 #endif
     test_shelf.test();
     
