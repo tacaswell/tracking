@@ -24,6 +24,8 @@ SET(UTIL_SRC
 SET(COMMON_SRC
   ${COMMON_SRC_PATH}/particle_base.cpp
   ${COMMON_SRC_PATH}/master_box_t.cpp
+  ${COMMON_SRC_PATH}/wrapper_i.cpp
+  ${COMMON_SRC_PATH}/md_store.cpp
   ${COMMON_SRC_PATH}/enum_utils.cpp
   )
 
@@ -66,8 +68,6 @@ SET(ACCUM_SCR
 
 SET(COMMON_WRAPPER_SRC
   ${COMMON_SRC_PATH}/data_map.cpp
-  ${COMMON_SRC_PATH}/wrapper_i.cpp
-  ${COMMON_SRC_PATH}/md_store.cpp
   ${COMMON_SRC_PATH}/filter_basic.cpp
 )
 
