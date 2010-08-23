@@ -148,7 +148,8 @@ void mexFunction( int nlhs, mxArray *plhs[],
      
   
     //build hash case
-    hash_case hcase(box,dims,(int)max_r,frames);
+    hash_case hcase;
+    hcase.init(box,dims,(int)max_r,frames);
     cout<<"case built"<<endl;
 
 //     hcase.print();

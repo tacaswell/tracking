@@ -179,7 +179,8 @@ void mexFunction( int nlhs, mxArray *plhs[],
     
     cout<<"total number of particles is: "<<bt.size()<<endl;;
   
-    hash_case hcase(bt,dims,max_r,frames);
+    hash_case hcase;
+    hcase.init(bt,dims,max_r,frames);
     cout<<"case built"<<endl;
     
 

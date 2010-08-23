@@ -123,7 +123,8 @@ int main()
     
       
     
-    hash_case hcase(box,dim_tmp,1,frame_tmp);
+    hash_case hcase;
+    hcase.init(box,dim_tmp,1,frame_tmp);
     cout<<"finished making case"<<endl;
     
 
@@ -181,7 +182,8 @@ int main()
     box.init(wh,filt);
     cout<<"master_box contains "<<box.size()<<" particles"<<endl;
   
-    hash_case hcase(box,wh.get_dims(),neighbor_range,wh.get_num_frames());
+    hash_case hcase;
+    hcase.init(box,wh.get_dims(),neighbor_range,wh.get_num_frames());
     cout<<"hash case filled"<<endl;
     
     

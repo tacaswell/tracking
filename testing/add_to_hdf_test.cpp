@@ -93,7 +93,8 @@ int main(int argc, const char * argv[])
     box.init(wrapper_in,filt);
     cout<<"master_box contains "<<box.size()<<" particles"<<endl;
     
-    hash_case hcase(box,wrapper_in.get_dims(),1,wrapper_in.get_num_frames());
+    hash_case hcase;
+    hcase.init(box,wrapper_in.get_dims(),1,wrapper_in.get_num_frames());
     
     set<D_TYPE> d2;
     d2.insert(utilities::D_INDEX);

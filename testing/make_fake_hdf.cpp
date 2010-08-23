@@ -174,7 +174,8 @@ int main(int argc, const char * argv[])
     cout<<box.size()<<endl;
     
 
-    hash_case hcase(box,Tuple<float,2>(p_c+1,p_c + 1),(p_c+1)/10 + 1,frame_c);
+    hash_case hcase;
+    hcase.init(box,Tuple<float,2>(p_c+1,p_c + 1),(p_c+1)/10 + 1,frame_c);
     string fname = "test.hdf";
 
     

@@ -277,7 +277,8 @@ int main(int argc, char * const argv[])
 
     
     
-  hash_case hcase(box,dims,20,wp->get_num_frames());
+  hash_case hcase;
+  hcase.init(box,dims,20,wp->get_num_frames());
   
   bool error_flg = false;
   try
