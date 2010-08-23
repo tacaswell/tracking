@@ -69,53 +69,23 @@ public:
   Hash_shelf * return_shelf(int n) const{
     return h_case_.at(n);
   }
-
-  //Templated constructor
-  //assumse that incoming data has frames labeled sequentially
-  //starting from 0
-  //   template <class particle>
-  //   hash_case(Master_box<particle> & mb,unsigned int imsz1, 
-  // 	     unsigned int imsz2, unsigned int ppb, int frames);
-
-//   hash_case(Master_box & mb,unsigned int imsz1, 
-// 	    unsigned int imsz2, unsigned int ppb, int frames);
-
   /**
-     constructor
-     @param mb
-     master_bos that the hash_case is based off of
-     @param img_dims
-     vector of the dimensions of the original images (x,y,z,...) (maybe, check this)
-     @param ppb
-     initial pixels per box, this can be rescaled later
-     @param frames
-     the number of frames.  It is assumed that the frames are numbered [0-frames)
-
-  */
-  hash_case(Master_box & mb,const utilities::Tuplef & dims, 
-	    float ppb, int frames);
-
-  
-  //  hash_case();
-
-  /**
-     constructor for an empty hash case
+     Constructor, does no work
    */
-  hash_case(int ppb_in ,int frames);
+  hash_case();
+  
+  
+
+    
+  /**
+     Initializer that actually does the work
+   */
+  void  init(Master_box & mb,const utilities::Tuplef & dims, 
+	     float ppb, int frames);
+  
 
   ///print out a sensible representation of the data
   void print() const;
-
-  /**
-     Rehash all of the hash tables in this case to use the new
-     part per box.  Rehashing seems to be very cheap.  This 
-     looks most useful for tracking to make sure that the hash boxes
-     are an apprioat size.
-     @param ppb
-     new value for pixels per box
-  */
-  void rehash(float ppb);
-
   
 
   /**
@@ -273,11 +243,6 @@ protected:
   bool inited;
 	    
 	    
-  
-
-  void  init(Master_box & mb,const utilities::Tuplef & dims, 
-	     float ppb, int frames);
-  
 
 };
 

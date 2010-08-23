@@ -77,9 +77,6 @@ public:
   */
   void push(particle * p);
 
-
-  ///Changed the pixels per box and re-hashes the shelf
-  void rehash(float unit_per_box);
   
   ///Generates the hash value based on a pointer to a particle object
   virtual unsigned int hash_function(const particle* p) const;

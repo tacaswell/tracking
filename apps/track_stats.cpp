@@ -201,7 +201,8 @@ int main(int argc, char * const argv[])
     
     cout<<wh.get_dims()<<endl;
     
-    hash_case hcase(box,wh.get_dims(),box_side_len,wh.get_num_frames());
+    hash_case hcase;
+    hcase.init(box,wh.get_dims(),box_side_len,wh.get_num_frames());
     cout<<"hash case filled"<<endl;
     
     Track_shelf tracks;

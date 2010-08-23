@@ -163,7 +163,8 @@ int main(int argc,  char *  argv[])
     box.init(wh,filt);
     cout<<"master_box contains "<<box.size()<<" particles"<<endl;
   
-    hash_case hcase(box,wh.get_dims(),neighbor_range,wh.get_num_frames());
+    hash_case hcase;
+    hcase.init(box,wh.get_dims(),neighbor_range,wh.get_num_frames());
     cout<<"hash case filled"<<endl;
     
     

@@ -206,7 +206,8 @@ int main(int argc, char * const argv[])
     Tuple<float,3> dims = wh.get_dims();
     cout<<dims<<endl;
     
-    hash_case hcase(box,dims,max_range,wh.get_num_frames());
+    hash_case hcase;
+    hcase.init(box,dims,max_range,wh.get_num_frames());
 
     cout<<"hash case filled"<<endl;
     

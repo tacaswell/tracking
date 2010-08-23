@@ -182,7 +182,8 @@ int main(int argc, char * const argv[])
     
     
     // fill the hash case
-    hash_case hcase(box,wh.get_dims(),search_range,wh.get_num_frames());
+    hash_case hcase;
+    hcase.init(box,wh.get_dims(),search_range,wh.get_num_frames());
     cout<<"hash case filled"<<endl;
 
     

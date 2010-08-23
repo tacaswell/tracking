@@ -158,26 +158,6 @@ void Hash_shelf::priv_init()
 
 
 
-  /**
-     Remakes the hash table using the same particles using  new
-     pixel per box count
-     @param UPB
-     new pixel per box value
-   */
-void Hash_shelf::rehash(float UPB){
-  list<particle*> tmp;
-  shelf_to_list(tmp);
-  upb_ = UPB;
-  
-  //rebuilds the hash table
-  priv_init();
-  list< particle*>::iterator myEnd = tmp.end();
-  
-  for(list<particle*>::iterator it = tmp.begin(); it!=myEnd; ++it)
-      push(*it);
-}
-
-
 void Hash_shelf::shelf_to_list(std::list<particle*> &tmp) const{
   tmp.clear();
   for(vector<hash_box*>::const_iterator cur_box = hash_.begin(); cur_box<hash_.end(); ++cur_box)

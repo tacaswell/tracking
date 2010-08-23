@@ -63,17 +63,11 @@ void hash_case::print() const{
 }
 
 
-// hash_case::hash_case()
-//   :inited(false){
-
-// }
-
-
-hash_case::hash_case(Master_box & mb,const utilities::Tuplef & dims, 
-		     float ppb, int frames):inited(false){
-  init(mb,dims,ppb,frames);
+hash_case::hash_case()
+  :inited(false){
 
 }
+
   
 
 
@@ -166,12 +160,6 @@ hash_case::~hash_case(){
     delete h_case_.at(j);
   }
   std::cout<<"hc dead"<<std::endl;
-}
-
-void hash_case::rehash(float ppb){
-  for(vector<Hash_shelf*>::iterator it = h_case_.begin();
-      it<h_case_.end(); ++it)
-    (*it)->rehash(ppb);
 }
 
 

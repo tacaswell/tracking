@@ -220,7 +220,8 @@ int main(int argc, char * argv[])
     Tuple<float,2> dims = wh.get_dims();
     cout<<dims<<endl;
     
-    hash_case hcase(box,dims,box_side_len,wh.get_num_frames());
+    hash_case hcase;
+    hcase.init(box,dims,box_side_len,wh.get_num_frames());
     cout<<"hash case filled"<<endl;
     
     Track_shelf tracks;
