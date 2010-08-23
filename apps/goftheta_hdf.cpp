@@ -142,7 +142,8 @@ int main(int argc, const char * argv[])
 
     
     Pair dims = wh.get_dims();
-    hash_case hcase(box,dims,12,wh.get_num_frames());
+    hash_case hcase;
+    hcase.init(box,dims,12,wh.get_num_frames());
 
     cout<<"hash case filled"<<endl;
     
