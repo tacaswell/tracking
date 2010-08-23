@@ -118,6 +118,7 @@ add_executable(corr_test corr_test.cpp
   ${COMMON_SRC} 
   ${UTIL_SRC} 
   ${COMMON_HASH_SRC}
+  ${CORR_SRC}
   )
 set_target_properties(corr_test PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_COUNT=2;TESTING")
 
@@ -130,5 +131,40 @@ add_executable(md_store_hdf md_store_hdf
 set_target_properties(md_store_hdf PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_COUNT=2;TESTING")
 target_link_libraries(md_store_hdf ${HDF5_LIBRARIES} )
 
-add_executable(hdf_bug hdf_bug)
-target_link_libraries(hdf_bug ${HDF5_LIBRARIES} )
+
+
+add_executable(rtt_hc rtt_hc.cpp 
+  ${COMMON_SRC}
+  ${UTIL_SRC}
+  ${HDF_SRC}
+  ${GNU_PLOT_SRC}
+  ${COMMON_TRACK_SRC}
+  ${COMMON_HASH_SRC} 
+  ${HASH_TRACK_SRC}
+  ${COMMON_WRAPPER_SRC} 
+  ${CONFIG_SRC}
+  )
+target_link_libraries(rtt_hc
+  ${HDF5_LIBRARIES} 
+  ${XERCESC_LIBRARY} 
+  )
+set_target_properties(rtt_hc PROPERTIES COMPILE_DEFINITIONS  "PTYPE=1;DIM_COUNT=2")
+
+
+
+add_executable(rtt_ts rtt_ts.cpp 
+  ${COMMON_SRC}
+  ${UTIL_SRC}
+  ${HDF_SRC}
+  ${GNU_PLOT_SRC}
+  ${COMMON_TRACK_SRC}
+  ${COMMON_HASH_SRC} 
+  ${HASH_TRACK_SRC}
+  ${COMMON_WRAPPER_SRC} 
+  ${CONFIG_SRC}
+  )
+target_link_libraries(rtt_ts
+  ${HDF5_LIBRARIES} 
+  ${XERCESC_LIBRARY} 
+  )
+set_target_properties(rtt_ts PROPERTIES COMPILE_DEFINITIONS  "PTYPE=1;DIM_COUNT=2")
