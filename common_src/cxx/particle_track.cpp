@@ -1,4 +1,4 @@
-//Copyright 2008,2009 Thomas A Caswell
+//Copyright 2008-2010 Thomas A Caswell
 //tcaswell@uchicago.edu
 //http://jfi.uchicago.edu/~tcaswell
 //
@@ -85,7 +85,7 @@ void particle_track::set_next(particle_track* n_next){
   if(next_!=NULL)
     throw runtime_error("nuking the list");
   next_ = n_next;
-  forward_disp_ = (n_next -> get_position()) - position_;
+
   
 
 }
@@ -257,7 +257,8 @@ particle_track *  particle_track::reset_track(Track_box * i_track,int & count)
 }
 
 
-float particle_track::distancesq_corrected(const particle_track* part_in)const{
+float particle_track::distancesq_corrected(const particle_track* part_in)const
+{
 
   if (shelf_ ==NULL)
     {
@@ -273,14 +274,22 @@ float particle_track::distancesq_corrected(const particle_track* part_in)const{
 
 }
 
- const utilities::Tuplef particle_track::get_corrected_forward_disp()const
+const utilities::Tuplef particle_track::get_corrected_disp(const particle_track* part_in)const
 {
+  
   if (shelf_ ==NULL)
-    {
-      throw runtime_error("shelf not defined");
-      return utilities::Tuplef();
-    }
-  return forward_disp_ - shelf_->get_mean_forward_disp();
+    throw runtime_error("shelf not defined");
+  
+  if(part_in==NULL)
+    throw runtime_error("");
+  
+  
+  
+  return (
+	  (position_ - shelf_->get_cum_forward_disp()) 
+	  - (
+	     (part_in->position_ )  - ((part_in->shelf_)->get_cum_forward_disp()))
+	  );
 }
 
 void particle_track::clear_track_data(){

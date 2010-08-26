@@ -341,3 +341,13 @@ T particle_base::get_wrapper_value(utilities::D_TYPE type,T & val) const
 template int particle_base::get_wrapper_value(utilities::D_TYPE type,int & val) const;
 //template unsigned int particle_base::get_wrapper_value(utilities::D_TYPE type,unsigned int & val) const;
   
+
+const utilities::Tuplef particle_base::get_disp(const particle_base* part_in)const
+{
+  
+  if(part_in==NULL)
+    throw runtime_error("");
+  
+  return position_ -  part_in->position_;
+  
+}

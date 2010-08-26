@@ -176,6 +176,7 @@ hash_case::~hash_case(){
   std::cout<<"hc dead"<<std::endl;
 }
 
+#if PTYPE == 1
 void hash_case:: compute_mean_disp(){
   Tuplef cum_disp;
   for(vector<Hash_shelf*>::iterator it = h_case_.begin();
@@ -183,7 +184,7 @@ void hash_case:: compute_mean_disp(){
     (*it)->compute_mean_forward_disp(cum_disp);  
   }
 }
-
+#endif	// PTYPE ==1
 void hash_case::get_mean_disp(utilities::Array & mean_disp_array, int start){
   unsigned int tmp = start + mean_disp_array.get_row_num();
   tmp = (tmp > h_case_.size())? h_case_.size():tmp;

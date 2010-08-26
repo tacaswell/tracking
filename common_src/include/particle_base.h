@@ -156,6 +156,14 @@ public:
      Retruns the distance from this particle to part_in
    */
   virtual float distancesq(const particle_base* part_in) const;
+
+  
+  /**
+     Returns the uncorrected forward displacement
+   */
+  const utilities::Tuplef get_disp(const particle_base * part_in)const;
+
+  
   /**
      Returns the distance of the particle from the specified origin
      @param origin the cordinates of the new origin

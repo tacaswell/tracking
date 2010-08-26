@@ -106,17 +106,10 @@ public:
     will be returned.
    */
   particle_track* get_prev(){return prev_;}
-
-  /**
-     Returns the uncorrected forward displacement
-   */
-  const utilities::Tuplef& get_raw_forward_disp()const
-  {return forward_disp_;}
-
   /**
      Returns the corrected forward displacement
    */
-  const utilities::Tuplef get_corrected_forward_disp()const;
+  const utilities::Tuplef get_corrected_disp(const particle_track * part_in)const;
   
   /**
     Returns true if there is a particle n steps forward and
@@ -216,11 +209,6 @@ private:
      and makes looking up the planes cumlative displacemet easier
    */
   Hash_shelf* shelf_;
-
-  /**
-     The foward displacement vector
-   */
-  utilities::Tuplef forward_disp_;
 
   
   bool step_backwards(int n, particle_track* & next);

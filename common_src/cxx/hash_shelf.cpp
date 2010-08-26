@@ -184,22 +184,25 @@ void Hash_shelf::shelf_to_list(std::list<const particle*> &tmp) const{
     }
 }
 
-
+#if PTYPE == 1
 void Hash_shelf::compute_mean_forward_disp(utilities::Tuplef & cum_disp_in){
+
   cumulative_disp_ = cum_disp_in;
   mean_forward_disp_.clear();
   int count = 0;
-  const particle_track* current_part = NULL;
+  const particle_track* current_part=NULL;
+  const particle_track* next_part = NULL;
   for(vector<hash_box*>::iterator cur_box = hash_.begin(); 
       cur_box<hash_.end(); ++cur_box)
   {
     for(vector<particle*>::iterator cur_part = (*cur_box)->begin();
 	cur_part!=(*cur_box)->end(); ++cur_part) 
     {
-      current_part = static_cast<particle_track*>(*cur_part);
-      if(current_part->get_next() != NULL)
+      current_part = (*cur_part);
+      next_part = current_part->get_next();
+      if(next_part)
       {
-	mean_forward_disp_ += (current_part->get_raw_forward_disp());
+	mean_forward_disp_ += current_part->get_disp(next_part);
 	++count;
       }
     }
@@ -208,9 +211,9 @@ void Hash_shelf::compute_mean_forward_disp(utilities::Tuplef & cum_disp_in){
     mean_forward_disp_ /= count;
   
   cum_disp_in += mean_forward_disp_;
-  
-}
 
+}
+#endif
 Hash_shelf::~Hash_shelf()
 {
   for(vector<hash_box*>::iterator it = hash_.begin(); it<hash_.end(); ++it)
