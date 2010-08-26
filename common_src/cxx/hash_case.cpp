@@ -185,25 +185,6 @@ void hash_case:: compute_mean_disp(){
   }
 }
 #endif	// PTYPE ==1
-void hash_case::get_mean_disp(utilities::Array & mean_disp_array, int start){
-  unsigned int tmp = start + mean_disp_array.get_row_num();
-  tmp = (tmp > h_case_.size())? h_case_.size():tmp;
-  mean_disp_array.clear();
-  for(unsigned int j = start; j < tmp;++j){
-    mean_disp_array.push(h_case_[j]->get_mean_forward_disp());
-  }
-}
-
-
-void hash_case::get_cum_disp(utilities::Array & cum_disp_array, int start){
-  unsigned int tmp = start + cum_disp_array.get_row_num();
-  tmp = (tmp > h_case_.size())? h_case_.size():tmp;
-  cum_disp_array.clear();
-  for(unsigned int j = start; j < tmp;++j){
-    cum_disp_array.push(h_case_[j]->get_cum_forward_disp());
-  }
-}
-
 
 int hash_case::get_avg_dtime()const
 {
@@ -226,6 +207,8 @@ int hash_case::get_avg_dtime()const
   }
   return (int) floor(dtime_sum/frame_count + 0.5); 
 }
+
+
 
 #if PTYPE == 1
 void hash_case::init(float box_side_len,
@@ -377,63 +360,3 @@ void hash_case::init(float box_side_len,
 }
 
 #endif	// PTYPE = 1
-
-
-// void hash_case::nearest_neighbor_array(utilities::Cell & pos_cell,
-// 				       utilities::Cell & nn_cell, float range)const
-// {
-//   for(vector<Hash_shelf*>::const_iterator shelf_it = h_case_.begin();
-//       shelf_it!= h_case_.end();++shelf_it)
-//   {
-// //     cout<<"here!! "<<h_case_.size()<<endl;
-    
-//     utilities::Array nn_array(1);
-//     utilities::Array pos_array(1);
-
-//     (*shelf_it)->nearest_neighbor_array(pos_array,nn_array,range);
-//     nn_cell.add_array(nn_array);
-//     pos_cell.add_array(pos_array);
-    
-//   }
-  
-
-// }
-
-
-
-// void hash_case::next_nearest_neighbor_array(utilities::Cell & pos_cell,
-// 				       utilities::Cell & nn_cell ,
-// 				       utilities::Cell & nnn_cell )const
-// {
-//   int j = 0;
-  
-//   for(vector<Hash_shelf*>::const_iterator shelf_it = h_case_.begin();
-//       shelf_it!= h_case_.end();++shelf_it)
-//   {
-//     cout<<"here!! "<<j++<<endl;
-    
-//     utilities::Array nn_array(1);
-//     utilities::Array nnn_array(1);
-//     utilities::Array pos_array(1);
-
-//     (*shelf_it)->next_nearest_neighbor_array(pos_array,nn_array,nnn_array);
-//     nn_cell.add_array(nn_array);
-//     nnn_cell.add_array(nnn_array);
-//     pos_cell.add_array(pos_array);
-    
-//   }
-  
-
-// }
-
-// void hash_case::gofr2D(float max_d, utilities::Histogram2D& gofr2 ) const
-// {
-  
-//   for(vector<Hash_shelf*>::const_iterator shelf_it = h_case_.begin();
-//       shelf_it!= h_case_.end();++shelf_it)
-//   {
-//     (*shelf_it)->gofr2D(max_d,gofr2);
-//   }
-// }
-
-

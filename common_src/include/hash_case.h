@@ -105,42 +105,6 @@ public:
      Compute mean forward displacement for each shelf
    */
   void compute_mean_disp();
-
-  /**
-     Returns the mean displacement of as many planes as the array has rows
-     starting from the plane start
-   */
-  void get_mean_disp(utilities::Array & mean_disp_array, int start=0);
-  /**
-     Returns the cumlative displacement of as many planes as the
-     array has rows starting from the plane start
-   */
-  void get_cum_disp(utilities::Array & cum_disp_array, int start=0);
-
-  /**
-     Averages g(r) over the contained Hash_shelfs 
-   */
-  void gofr_norm(float max_d, int nbins,
-		 std::vector<float>& bin_count,std::vector<float>& bin_r) const;
-
-  /**
-     for computing the direction of the nearest neighbor
-   */
-  void nearest_neighbor_array(utilities::Cell & pos_cell,
-			      utilities::Cell & nn_cell, float range)const;
-
-  /**
-     looks at the first two nn 
-   */
-  void next_nearest_neighbor_array(utilities::Cell & pos_array,
-				   utilities::Cell & nn_array,
-				   utilities::Cell & nnn_array)const;
-  
-  /**
-     pass one at 2-D gofr
-   */
-  void gofr2D(float max_d, utilities::Histogram2D& gofr2 ) const;
-
   /**
      Passes functions all the way down the pyramid, this one for void,
      argument-less functions, non-const
