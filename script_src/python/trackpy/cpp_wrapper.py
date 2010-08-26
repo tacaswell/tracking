@@ -86,9 +86,20 @@ def add_tracking_mdata(comp_pram,i_pram,f_pram,s_pram,conn):
                  "values (?,?,?,?)",params)
     conn.commit()
 
+def add_vanHove_mdata(comp_pram,i_pram,f_pram,s_pram,conn):
+    params = (comp_pram['dset'],comp_pram['write_comp'],
+              comp_pram['iden_read_comp'],comp_pram['track_read_comp'],
+              i_pram['min_track_length'],i_pram['max_step'],
+              f_pram['max_range'],i_pram['nbins'])
+    conn.execute("insert into vanHove_prams " +
+                 "(dset_key,comp_key,iden_key,track_key," +
+                 "min_track_length,max_step,max_range,nbins) "+
+                 "values (?,?,?,?,?,?,?,?)",params)
+    conn.commit()
+
 
     
-_prog_to_fun_lookup = {'gofr_by_plane':add_gofr_plane_mdata,'gofr':add_gofr_mdata, 'msd':add_msd_mdata,'track_stats':add_trk_stat_mdata,'tracking':add_tracking_mdata}
+_prog_to_fun_lookup = {'gofr_by_plane':add_gofr_plane_mdata,'gofr':add_gofr_mdata, 'msd':add_msd_mdata,'track_stats':add_trk_stat_mdata,'tracking':add_tracking_mdata,'vanHove':add_vanHove_mdata}
 
 
 def _make_sure_h5_exists(fname):
@@ -496,6 +507,34 @@ def do_tracking(comp_key,conn,pram_i, pram_f, pram_s = None, rel = True,):
         print "Parameter: " ,ke,' not found'
 
 
+def do_vanHove(track_key,conn,pram_i, pram_f, pram_s = None, rel = True,):
+    prog_name = "vanHove"
+    required_pram_i = ['nbins','max_step','min_track_length']
+    required_pram_f = ['max_range']
+    required_pram_s = None
+        
+    (fin,dset_key) = _get_fin(track_key,conn)
+    (iden_key,) = conn.execute("select iden_key from tracking_prams where comp_key = ?",(track_key,)).fetchone()
+    fout = os.path.dirname(fin) + '/vanHove.h5'
+    
+    
+    
+    comp_prams = {'track_read_comp':track_key,'iden_read_comp':iden_key,'dset':dset_key}
+    comp_prams['write_comp'] =conn.execute("select max(comp_key) from comps;"
+                                           ).fetchone()[0] + 1
+    
+    
+    try:
+        _call_fun(conn,
+                  prog_name,fin,fout,
+                  comp_prams,
+                  required_pram_i,pram_i,
+                  required_pram_f,pram_f,
+                  required_pram_s,pram_s)
+    except KeyError, ke:
+        print "Parameter: " ,ke,' not found'
+
+
 
 
     
@@ -531,7 +570,7 @@ def _call_fun(conn,
 
     """
     
-    req_comp_prams = ['read_comp','write_comp','dset']
+    
     
     config = xml_data()
     
@@ -549,7 +588,7 @@ def _call_fun(conn,
     
     config.add_stanza("comps")
     
-    for p in req_comp_prams:
+    for p in comp_pram:
             config.add_pram(p,'int',comp_pram[p])
 
     config.disp()

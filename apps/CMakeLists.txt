@@ -183,3 +183,21 @@ target_link_libraries(track_stats
   )
 set_target_properties(track_stats PROPERTIES COMPILE_DEFINITIONS  "PTYPE=1;DIM_COUNT=2")
 
+
+add_executable(vanHove vanHove
+  ${COMMON_SRC}
+  ${UTIL_SRC}
+  ${HDF_SRC}
+  ${COMMON_HASH_SRC} 
+  ${COMMON_TRACK_SRC}
+  ${COMMON_WRAPPER_SRC} 
+  ${CONFIG_SRC}
+  ${COMMON_SRC_PATH}/histogram
+  ${TRK_ACCUM_SRC}
+  )
+target_link_libraries(vanHove
+  ${HDF5_LIBRARIES} 
+  ${XERCESC_LIBRARY} 
+  )
+set_target_properties(vanHove PROPERTIES COMPILE_DEFINITIONS  "PTYPE=1;DIM_COUNT=2")
+
