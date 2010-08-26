@@ -134,8 +134,9 @@ void Generic_wrapper_hdf::open_group(const string & name )
   }
   catch(Exception & e)
   {
+    std::cout<<"The error reported by the library is"<<std::endl;
     e.printError();
-    
+    std::cout<<"-----"<<std::endl;
     throw runtime_error("generic_wrapper_hdf: group creation failed");
   }
 
