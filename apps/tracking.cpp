@@ -42,6 +42,7 @@
 #include "read_config.h"
 #include "cl_parse.h"
 #include "md_store.h"
+#include "track_shelf.h"
 
 using std::string;
 using std::vector;
