@@ -100,6 +100,9 @@ SET(CORR_DISPLAY_SRC
   ${COMMON_SRC_PATH}/corr_display.cpp
 )
 
+SET(TRK_ACCUM_SRC
+  ${COMMON_SRC_PATH}/ta_vanHove
+)
 SET(ENV{HDF5_ROOT} "/home/tcaswell/local_installs")
 SET(HDF5_USE_STATIC_LIBRARIES FALSE)
 find_package(HDF5 REQUIRED CXX)

@@ -45,6 +45,7 @@ namespace tracking{
 class Track_box;
 class particle_track;
 class Master_box;
+class Trk_accumulator;
 
 /**
    Top level class for holding the track boxes. (which are the head of
@@ -195,6 +196,11 @@ public:
      Initializes the tracks in the track shelf based read in trakid
    */
   void init(Master_box & mb);
+
+  /**
+     Shove data in to a track accumulator
+   */
+  void compute_corrected_TA(Trk_accumulator & ta)const;
   
   
   ///Constructor

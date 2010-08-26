@@ -38,6 +38,7 @@
 #include "exception.h"
 #include "wrapper_o.h"
 #include "md_store.h"
+#include "track_accum.h"
 
 using std::list;
 using std::pair;
@@ -589,6 +590,41 @@ void Track_shelf::init(Master_box & mb)
     cur_track->push_back(p);
     
 
+  }
+}
+
+
+void Track_shelf::compute_corrected_TA(Trk_accumulator & ta)const
+{
+  //this exception needs to get it's own class or something
+
+  unsigned max_time_step = ta.max_step();
+  const particle_track* current = NULL;
+  const particle_track* next = NULL;
+
+  
+
+  bool not_past_end = false;
+  for(tr_list::const_iterator working_track = tracks_.begin();
+      working_track!=tracks_.end(); working_track++)
+  {
+      
+    //      cout<<"Track legnth: "<<(*working_track)->get_length()<<endl;
+    unsigned track_length = ((*working_track)->get_length()-1);
+    
+    for(unsigned j = 0; j< track_length && j < max_time_step;j++)
+    {
+      not_past_end = false ;
+      current = (*working_track)->get_first();
+      not_past_end = current->step_forwards(j+1,next);
+      while(not_past_end)
+      {
+	ta.add_disp(current->get_corrected_disp(next),j+1);
+	current = next;
+	not_past_end = current->step_forwards(j+1,next);
+
+      }
+    }
   }
 }
 
