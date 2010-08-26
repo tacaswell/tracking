@@ -169,13 +169,19 @@ int main(int argc, char * const argv[])
   // compute the van Hove distributions
   TA_vanHove vanHove(max_step,nbins,max_range);
   tracks.compute_corrected_TA(vanHove);
+
+  
+  int dtime = hcase.get_avg_dtime();
+  float temperature = hcase.get_avg_temp();
+  
   
   
   // set up md store to pass to output 
   Md_store md_store;
   md_store.add_elements(app_prams.get_store());
   md_store.add_elements(comp_prams.get_store());    
-  
+  md_store.add_element("dtime",dtime);
+  md_store.add_element("temperature",temperature);
 
   // make output wrapper and shove data in to it
   try
