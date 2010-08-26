@@ -75,7 +75,7 @@ public:
 
   /**
      Constructor, does no work
-   */
+  */
   hash_case();
   
   
@@ -83,7 +83,7 @@ public:
     
   /**
      Initializer that actually does the work
-   */
+  */
   void  init(Master_box & mb,const utilities::Tuplef & dims, 
 	     float ppb, int frames);
   
@@ -103,7 +103,7 @@ public:
 
   /**
      Compute mean forward displacement for each shelf
-   */
+  */
   void compute_mean_disp();
   /**
      Passes functions all the way down the pyramid, this one for void,
@@ -133,7 +133,7 @@ public:
 
   /**
      returns the number of frames in the hash case
-   */
+  */
   int get_num_frames() const
   {
     return h_case_.size();
@@ -142,41 +142,46 @@ public:
   
   /**
      outputs the hash case to the Wrapper that is passed in
-   */
+  */
   void output_to_wrapper(utilities::Wrapper_out &) const;
   
   /**
      passes a Corr object down the pyramid
-   */
+  */
   void compute_corr(tracking::Corr &) const ;
 
     
   /**
      Passes a Corr_case down the pyramid
-   */
+  */
   void compute_corr(tracking::Corr_case &) const ;
 
     
   /**
      Passes an Accumulator object down the pyramid
-   */
+  */
   void compute_accum(Accumulator & in)const;
 
   /**
      Passes an Accumulator_case down the pyramid, one accumulator per hash_shelf 
-   */
+  */
   void compute_accum(utilities::Accum_case & )const;
   
 
   /**
      fills in the neighborhoods for all of the particles
-   */
+  */
   void fill_in_neighborhood();
 
   /**
      Gets the average dtime between the shelves
-   */
+  */
   int get_avg_dtime()const;
+  
+  /**
+     Gets the average temperature of all the planes in the case
+  */
+  float get_avg_temp()const;
   
   
   ///Destructor
@@ -193,7 +198,7 @@ public:
 protected:
   /**
      vector of pointers to shelves
-   */
+  */
   std::vector<Hash_shelf*> h_case_;
 
 

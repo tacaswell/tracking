@@ -210,6 +210,28 @@ int hash_case::get_avg_dtime()const
 
 
 
+float hash_case::get_avg_temp()const
+{
+  float temperature_sum = 0;
+  float temperature_tmp = 0;
+  unsigned int frame_count = 0;
+  
+  vector<Hash_shelf*>::const_iterator it_end = h_case_.end();
+  // the ++ is to skip the first frame which does not have a
+  // a temperature as it has no previous frame to compare too
+  for(vector<Hash_shelf*>::const_iterator it = ++(h_case_.begin());
+      it != it_end; ++it)
+  {
+    const Md_store * cur_store = (*it)->md_store_;
+    if(cur_store)
+    {
+      temperature_sum += cur_store->get_value("temperature",temperature_tmp);
+      ++frame_count;
+    }
+  }
+  return temperature_sum/frame_count; 
+}
+
 #if PTYPE == 1
 void hash_case::init(float box_side_len,
 		     const Wrapper_in & wrapper,
