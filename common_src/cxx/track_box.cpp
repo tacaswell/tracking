@@ -30,16 +30,13 @@
 
 #include "track_shelf.h"
 
-#include "gnuplot_i.hpp"
+
 
 #include <stdexcept>
 using std::runtime_error;
 using std::logic_error;
 
 
-using gnuplot::Gnuplot;
-using gnuplot::GnuplotException;
-using gnuplot::wait_for_key;
 
 
 using namespace tracking;
@@ -182,52 +179,6 @@ Track_box::~Track_box(){
     }
 }
 
-
-void Track_box::plot_intensity() const
-{
-  std::vector<float> inten_data(length_);
-  std::vector<float> x_data(length_);
-  std::vector<float> y_data(length_);
-  std::vector<float> z_data(length_);
-  const particle_track * cur_part = t_first_;
-  float x_mean =0,y_mean=0;
-  for(int j = 0; j< length_;++j)
-  {
-    cur_part->get_value(utilities::D_I,inten_data[j]);
-    cur_part->get_value(utilities::D_ZPOS,z_data[j]);
-    Tuplef pos = cur_part->get_position();
-    cur_part = cur_part->get_next();
-    x_data[j] = pos[0];
-    y_data[j] = pos[1];
-
-    
-    y_mean +=y_data[j];
-    x_mean +=x_data[j];
-  }
-  y_mean/=length_;
-  x_mean/=length_;
-  
-    
-  for(int j =0;j<length_;++j)
-  {
-    x_data[j] -= x_mean;
-    y_data[j] -= y_mean;
-
-  }
-  
-  
-  Gnuplot g(z_data,inten_data,"intensity","linespoints","z","I");
-  g.set_grid().replot();
-  
-  Gnuplot g2(x_data,y_data,"position", "linespoints");
-  g2.set_grid().replot();
-  
-  wait_for_key();
-  g.remove_tmpfiles();
-  g2.remove_tmpfiles();
-      
-
-}
 
 
 void Track_box::split_to_parts(Track_shelf & shelf)
