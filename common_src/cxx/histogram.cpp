@@ -86,9 +86,9 @@ vectord Histogram::get_bin_edges() const{
 
 
 void Histogram::output_to_wrapper(Generic_wrapper * wrapper_out,
-				  string & g_name,
-				  string & count_name,
-				  string & edges_name,
+				  const string & g_name,
+				  const string & count_name,
+				  const string & edges_name,
 				  const Md_store* g_md_store
 				  )const
 {

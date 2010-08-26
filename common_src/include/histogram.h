@@ -85,9 +85,9 @@ public:
     outside of the 
   */
   void output_to_wrapper(Generic_wrapper * wrapper_out,
-			 std::string & g_name,
-			 std::string & count_name,
-			 std::string & edges_name,
+			 const std::string & g_name,
+			 const std::string & count_name,
+			 const std::string & edges_name,
 			 const Md_store* g_md_store) const;
   
   void display()const;
@@ -158,8 +158,7 @@ void Histogram::add_data_point(T in){
   //  cout<<in<<"\t"<<((int)((tmp_in - bottom_edge_)/bin_width_))<<endl;
   try
   {
-    
-    ++hist_array_.at(((int)((tmp_in - bottom_edge_)/bin_width_)));
+    ++hist_array_.at(((unsigned)((tmp_in - bottom_edge_)/bin_width_)));
   }
   catch(std::exception & e)
   {
