@@ -262,9 +262,11 @@ T Read_config::get_value(const string& key,T & val)const
 }
 
 template int Read_config::get_value(const string& key,int & val)const;
+template unsigned Read_config::get_value(const string& key,unsigned & val)const;
 template float Read_config::get_value(const string& key,float & val)const;
 template string Read_config::get_value(const string& key,string & val)const;
 
 template int Read_config::get_value(int j,int & val)const;
+template unsigned Read_config::get_value(int j,unsigned & val)const;
 template float Read_config::get_value(int j,float & val)const;
 template string Read_config::get_value(int j,string & val)const;
