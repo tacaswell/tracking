@@ -1,0 +1,121 @@
+* Required C++ Libraries: 
+listed as name, version currently in use on my
+development machine, website, and a short description.
+I tend to update the installed libraries semi-consistently.
+
+
+** hdf5 
+   - (1.8.5)
+   -  http://www.hdfgroup.org/downloads/index.html
+   - Used to store particle locations
+   - set HDF5_ROOT in CMakeLists.txt to point to location if in
+   non-standard location
+   - own license, but very permissive
+
+** freeimage 
+   - (CVS version)
+   - http://freeimage.sourceforge.net/
+   - Used to get image data out of *.tif
+   - set FREEIMAGE_ROOT in iden/CMakeLists.txt if in non-standard location.
+   - GPL or commercial, used with commercial license to play nice with IPP
+
+** IPP (5.3.4.080)  http://software.intel.com/en-us/intel-ipp/
+   - Used to process images
+   - set IPP_ROOT in iden/CMakeLists.txt if in non-standard location.
+   - Closed license, I can not distribute the header, 
+     - can't link against non-exempted GPL code
+     - ok against apache, hdf, and free image commercial 
+   
+
+** xerces (3.0.1) http://xerces.apache.org/xerces-c/
+  - Used for parsing xml paramter files
+  - set XERCESC_ROOT in CMakeLists.txt if in non-standard location.
+  - Apache 2.0, kosher to pull into GPL project, kosher to link against IPP
+
+** Boost::date_time (from debian stable) http://www.boost.org/
+ - Used to parse dates
+ - if not in standard location, set BOOST_ROOT
+ - super permissive license 
+
+* external code that is in the repository
+** gnu_wrapper (modified from original) http://code.google.com/p/gnuplot-cpp/
+   - used to make plots in c++
+   - GPL2
+** sqlite (3.6.23.1) http://www.sqlite.org/
+  - used to (in the future) talk to the database of data sets
+  - public domain
+
+* Required python modules:
+ - h5py (svn version) http://code.google.com/p/h5py/
+
+I think the rest of the python used is either included the repository
+or standard python packages.
+
+* Required external programs
+** Cmake
+ - http://www.cmake.org/
+ - build system
+ - more recent the version, the better
+ - need to patch and build from source if you want to compile mex file
+   (see Matlab below)
+
+** GNU compiler
+ - this is what I use, no promises anything else is happy
+ - if you want to compile mex, the version needs to match what your
+   copy of matlab was compiled with
+
+** git or svn
+ - version tracking
+ - prefer git as I think that I will drop the svn repository at some
+   point in the future.  Both repositories are up-to-date as of now
+   (2010-09-05)
+
+* Compile
+Assumes that the source is in SOURCE_PATH and is being built in
+BUILD_PATH which is a different folder.  Running the builds out of
+source is crucial because there are several different configurations
+that are useful and if they are build in source will not play nice
+with each other at all.
+
+** Iden
+This builds two programs, Iden and Iden_avg, for finding features.
+
+In BUILD_PATH call 
+<src lang='shell'> 
+   cmake SOURCE_PATH -DCOMPILE_IDEN=1 -DBUILD_TYPE=release 
+</src> 
+To get debugging or profiling binaries change the last file to 'Debug'
+or 'profile'.  -DBULID_TYPE is optional.
+
+Once that is done calling <src lang='shell'>make</src> in
+BUILD_PATH should compile everything.  If you have the resources to
+throw at it the flag '-j' will compile in parallel.
+
+** Matlab
+This will build a collection of matlab mex files.  Be warned that I do
+not use these regularly and they may be broken and/or not compile.
+
+In BUILD_DIR
+<src lang= shell'>
+    CC=mex CXX=mex cmake MATLAB_MEX_FILE=1 ~/tracking/
+</src>
+note that this sets the environment variable before calling cmake.
+This requires a patch to cmake
+(http://public.kitware.com/Bug/view.php?id=9240)
+to work properly.  Also see
+http://www.vtk.org/Wiki/CMake:MatlabMex
+
+
+** basic
+This builds a collection of programs for processing feature locations.
+These are what I use the most so they likely work properly, but are
+liable to change with out warning and tend to grow in number.
+
+In BUILD_DIR
+<src lang= shell'>
+    cmake SOURCE_PATH -DBULID_TYPE=release
+</src>
+
+** testing
+This compiles a collection of badly documented test programs that may or
+may not test anything 
