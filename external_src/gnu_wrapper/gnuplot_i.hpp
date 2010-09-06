@@ -26,6 +26,7 @@
 ///
 ////////////////////////////////////////////////////////////////////////////////
 
+// original source http://code.google.com/p/gnuplot-cpp/
 
 #ifndef _GNUPLOT_PIPES_H_
 #define _GNUPLOT_PIPES_H_
