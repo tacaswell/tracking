@@ -42,149 +42,181 @@
 @authors Thomas A Caswell
     
 This is an implementation in c++ of the particle tracking algorithms
-developed by Croker and Grier.  This algorithm has been implemented a
-number of times.
+developed by Croker and Grier (<a
+href="http://dx.doi.org/10.1006/jcis.1996.0217">
+http://dx.doi.org/10.1006/jcis.1996.0217</a>).  This algorithm has
+been implemented a number of times (see table).  The primary advantage
+of the C++ implementation over IDL or MATLAB implementations is that
+C++ is significantly faster.  On identical data the C++ code is at
+least ~20x than Dan Blair's MATLAB code.
 
-<TABLE>
-<TR>
-<TD>
+<table>
+<tr>
+<td>
 Crocker and Grier
-</TD>
-<TD>
+</td>
+<td>
 <a href="http://physics.nyu.edu/grierlab/software.html">
 http://physics.nyu.edu/grierlab/software.html
 </a>
-</TD>
-<TD>
+</td>
+<td>
 IDL
-</TD>
-</TR>
+</td>
+</tr>
 
-<TR>
-<TD>
+<tr>
+<td>
 Crocker and Weeks
-</TD>
-<TD>
+</td>
+<td>
 <a href = "http://www.physics.emory.edu/~weeks/idl/">
 http://www.physics.emory.edu/~weeks/idl/
 </a>
-</TD>
-<TD>
+</td>
+<td>
 IDL
-</TD>
-</TR>
+</td>
+</tr>
 
-<TR>
-<TD>
+<tr>
+<td>
 Blair and Dufresne
-</TD>
-<TD>
+</td>
+<td>
 <a herf="http://physics.georgetown.edu/matlab/">
 http://physics.georgetown.edu/matlab/
 </a>
-</TD>
-<TD>
+</td>
+<td>
 MATLAB
-</TD>
-</TR>
+</td>
+</tr>
 
 
-<TR>
-<TD>
+<tr>
+<td>
 Maria Kilfoil
-</TD>
-<TD>
+</td>
+<td>
 <a herf="http://www.physics.mcgill.ca/~kilfoil/downloads.html">
 http://www.physics.mcgill.ca/~kilfoil/downloads.html
 </a>
-</TD>
-<TD>
+</td>
+<td>
 MATLAB
-</TD>
-</TR>
+</td>
+</tr>
 
 
-<TR>
-<TD>
+<tr>
+<td>
 Grahm Milne
-</TD>
-<TD>
+</td>
+<td>
 <a herf="http://faculty.washington.edu/gmilne/tracker.htm">
 http://faculty.washington.edu/gmilne/tracker.htm
 </a>
-</TD>
-<TD>
+</td>
+<td>
 LabVIEW
-</TD>
-</TR>
+</td>
+</tr>
 
-<TR>
-<TD>
+<tr>
+<td>
 Ryan Smith
-</TD>
-<TD>
+</td>
+<td>
 <a herf="http://titan.iwu.edu/~gspaldin/rytrack.html">
 http://titan.iwu.edu/~gspaldin/rytrack.html
 </a>
-</TD>
-<TD>
+</td>
+<td>
 stand alone/IDL GUI
-</TD>
-</TR>
+</td>
+</tr>
 
 
-</TABLE>
-
-The primary advantage of this implementation is that it is
-significantly faster than implantation in IDL or MATLAB.
-It is at least ~20x than Dan Blair's MATLAB code.
+</table>
 
 
-The code is flexible and can be adapted to N-dimensions,
-but only 2 and 3 dimensions have been implemented. Input and
-output are done through wrapper classes so with minimal new code
-basically any input/output format can be dealt with.  Currently there are
-wrappers for text, MATLAB, and HDF5.
-
-Currently track linking and a few basic static measurements
- (g(r),\f$\Phi_6\f$,\f$g(\theta)\f$) have been implemented, but the
- long term goal is to move all static and dynamic measurements in to
- this frame work.  The framework allows any measurement that requires
- information about a particle's neighborhood to be efficiently
- calculated.
-
-
- The identification code is a modified version of Peter Lu's particle
- identification code.  The most current version of PLuTARC, as well as
- a MATLAB wrapper for it, is available at <a
- href="http://plutarc.sourceforge.net/">http://plutarc.sourceforge.net/</a>
- 
- 
-The most recent code is revision, TREV,is available at
-<KBD>svn://innoue.uchicago.edu/tracking/trunk</KBD> or as a <a
-href="http://jfi.uchicago.edu/~tcaswell/track_doc/tars/tarball_rev_TTAR.tar">
-tarball</a>.  This code should be reasonably portable to *nix systems,
-but the library paths will need to be fixed.  As it is the code will not
-work with matlab on a windows machine, but might work as a stand alone. (There
-are lots of couts in the code which matlab in linux can cope with, but matlab
-on windows apparently can't (according to matlab documentation)).
-
-
+<h2>Getting Source</h2>
 The code is also being tracked on 
-<a href="http://github.com/tacaswell/tracking">github</a>
+<a href="http://github.com/tacaswell/tracking">github</a>.
+There is currently no 'stable' version of the code as I am still
+actively developing it.
 
 
-The current 'stable' version is 0.2 and is available at 
-<KBD>svn://innoue.uchicago.edu/tracking/tags/tracking-0.2</KBD>
-or as a <a
-href="http://jfi.uchicago.edu/~tcaswell/track_doc/tars/tracking-0.2.tar">
-tarball</a>.
+<h2>Functionality</h2>
 
+Currently, 
+<ul>
+<li>2D particle location
+<li>3D particle location
+<li>tracking in time
+<li>mean squared displacement
+<li>van Hove distributions
+<li>\f$g(r)\f$ (2D and 3D)
+</ul>
+are written and fully tested and
+<ul>
+<li>\f$\Phi_6\f$
+<li>\f$g(\theta)\f$
+<li>\f$S(\vec{q})\f$
+</ul>
+are partially written or tested.
+
+<h2>Code Features</h2>
+
+
+The code for particle location and further processing of the locations are
+almost completely separate.   The identification code
+is a modified version of Peter Lu's particle identification code.  The most current version of PLuTARC,
+as well as a MATLAB wrapper for it, is available at <a
+href="http://plutarc.sourceforge.net/">http://plutarc.sourceforge.net/</a>.
+The analysis code is newly developed.
+
+
+Parameters are passed into the analysis programs via XML files.  There is
+python code included to generate appropriate XML files.
+
+The code can easily be extended for N-dimensions, but only 2 and 3 are
+currently implemented.  
+
+Input and output is done through a family of
+wrapper classes.  With minimal new code basically any input/output
+format can be dealt with.  There are wrappers written for 
+HDF5 files and interacting with MATLAB.  
+
+The code is very modular and for the most part adding new computations
+to the framework only requires writing a single new subclass.
+ 
+This code should be reasonably portable to *nix systems, but the
+library paths will need to be fixed, see INSTALL for directions and a
+list of required libraries.  The some of the MATLAB related code will
+not work on a windows machine (there are lots of couts in the code
+which matlab in linux can cope with, but matlab on windows apparently
+can't (according to matlab documentation)), but I expect that the rest
+of the code (if it will compile) will work fine.  To my knowledge this
+has not been tested in practice.
+
+
+
+<em>
 Funded by a Keck Grant to Heinrich Jaeger, Sidney Nagel, Wendy Zhang 
 and Margaret Gardel
+</em>
+
+<h2>License</h2>
+
+The following is the license for code written by me and supersedes
+what individual files may say at the top with regards to the
+Additional Permissions.  Files not written by copyright Thomas A
+Caswell have their copyright/license at the top.
 
 
-&copy; 2008,2009,2010  <a href="http://jfi.uchicago.edu/~tcaswell"> Thomas A Caswell</a>
+&copy; 2008-2010  <a href="http://jfi.uchicago.edu/~tcaswell"> Thomas A Caswell</a>
 
 
 This program is free software; you can redistribute it and/or modify
