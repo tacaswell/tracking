@@ -51,7 +51,7 @@ I tend to update the installed libraries semi-consistently.
 I think the rest of the python used is either included the repository
 or standard python packages.
 
-* Required external programs
+* Required External Programs
 ** Cmake
  - http://www.cmake.org/
  - build system
@@ -64,11 +64,16 @@ or standard python packages.
  - if you want to compile mex, the version needs to match what your
    copy of matlab was compiled with
 
-** git or svn
+** git 
  - version tracking
- - prefer git as I think that I will drop the svn repository at some
-   point in the future.  Both repositories are up-to-date as of now
-   (2010-09-05)
+ - http://git-scm.com/
+ - http://github.com/tacaswell/tracking
+ - git://github.com/tacaswell/tracking.git
+ - There is also an svn repository, but it will stop being updated at
+   some point
+** doxygen
+ - optional
+ - used to generate documentation 
 
 * Compile
 Assumes that the source is in SOURCE_PATH and is being built in
@@ -79,6 +84,7 @@ with each other at all.
 
 ** Iden
 This builds two programs, Iden and Iden_avg, for finding features.
+Iden_avg averages frames together before finding particles.
 
 In BUILD_PATH call 
 <src lang='shell'> 
@@ -93,7 +99,8 @@ throw at it the flag '-j' will compile in parallel.
 
 ** Matlab
 This will build a collection of matlab mex files.  Be warned that I do
-not use these regularly and they may be broken and/or not compile.
+not use these regularly and they may not compile, and if they do may
+be broken.  The only one that should be trusted is matlab_process.
 
 In BUILD_DIR
 <src lang= shell'>
@@ -117,5 +124,21 @@ In BUILD_DIR
 </src>
 
 ** testing
-This compiles a collection of badly documented test programs that may or
-may not test anything 
+This compiles a collection of badly documented test programs that may
+or may not test anything useful.  This might get cleaned up some day,
+but it is not high on the to-do list.
+
+
+
+* Install
+I don't do anything fancy to install at this point.
+
+For the python wrappers to work properly 
+<src lang = 'python'>
+_rel_path,_dbg_path
+</src>
+in SOURCE_PATH/script_src/python/trackpy/cpp_wrapper.py
+need to point to BUILD_PATH/apps.
+
+If you do not want to run the python out of the source directory,
+just move it somewhere else.
