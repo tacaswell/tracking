@@ -152,7 +152,7 @@ public:
      Outputs the particles in a track-centric format.  Assumes that
      the wrapper is already initialized.
 
-     @param output wrapper, already initialized
+     @param wrapper output wrapper, already initialized
    */
   void output_to_wrapper(utilities::Wrapper_out & wrapper) const;
 
@@ -163,8 +163,8 @@ public:
      the pigeon hole principle applies.  If not, it will throw an error.
      It also assumes that the tracks are in order in the shelf.
      
-     @param wrapper where to dump the data too.  
- 
+     @param wrapper where to dump the data to.  
+     @param md_store meta data store object
    */
   void output_to_wrapper(utilities::Generic_wrapper & wrapper,
 			 const utilities::Md_store * md_store) const;

@@ -59,8 +59,8 @@ public:
      looks up the value of the given attribute.  The value is
      returned by reference.  The function returns the value.
 
-     @param attr_name attribute name
-     
+     @param[in] attr_name attribute name
+     @param[out] val the value
   */
   template <class T>
   T get_value(const std::string & attr_name,T & val)const;

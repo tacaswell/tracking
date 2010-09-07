@@ -54,9 +54,6 @@ public:
      @param[in] q the direction \f$\hat{q}\f$ to take s(q) along,
      does not need to be a unit vector
      @param[in] n_bins the number of bins to use
-     @param[in] comp_num the computation number
-     @param[in] dset the dset number
-     @param[in] units of q , ie inverse pixels or inverse microns
   */
   Accum_sofq(const utilities::Tuple<float,2>& q_range, 
 	     utilities::Tuplef q, 
@@ -77,7 +74,7 @@ public:
   /**
      Fills a vector with the q values used.  Out is cleared and
      resized as needed.
-     @pram[out] out vector of q values
+     @param[out] out vector of q values
    */
   void get_q_vec(std::vector<float> &out)const;
   

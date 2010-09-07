@@ -134,7 +134,7 @@ class Gnuplot
 	///\brief checks if file is available
 	///
 	/// \param filename --> the filename
-	/// \param mode 	--> the mode [optional,default value = 0]
+	/// 
 	///
 	/// \return file exists (yes == true, no == false)
 	// ---------------------------------------------------------------------------------                                  

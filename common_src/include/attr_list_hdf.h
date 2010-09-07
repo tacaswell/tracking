@@ -74,20 +74,42 @@ public:
   float get_value(const std::string & key, float & value_out) const ;
   void set_value(const std::string & key,  const float & value_in,bool over_write = false) ;
   
+  /**
+     Gets tuple values, templated on tuple length 
+   */
   template<int N>
   utilities::Tuple<float,N> get_value(const std::string & key, utilities::Tuple<float,N> & value_out) const ;
+  /**
+     Sets tuple values, templated on tuple length 
+   */
   template<int N>
   void set_value(const std::string & key,  const utilities::Tuple<float,N> & value_in,bool over_write = false) ;
-  
+  /**
+    Gets string values
+   */
   std::string get_value(const std::string & key,std::string & value_out)const;
+  /**
+     Sets string values
+   */
   void set_value(const std::string & key,const std::string & value_out,bool over_write = false);
   
+  /**
+     Gets bool value.
+   */
   bool get_value(const std::string & key,bool & value_out)const;
+  /**
+     Sets bool value
+   */
   void set_value(const std::string & key,const bool & value_out,bool over_write = false);
 
   
-    
+  /**
+     Gets an unsigned int value
+   */  
   unsigned int get_value(const std::string & key,unsigned int& value_out)const;
+  /**
+     Sets an unsigned int value
+   */  
   void set_value(const std::string & key,const unsigned int & value_out,bool over_write = false);
 
   

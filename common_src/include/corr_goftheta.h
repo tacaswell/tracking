@@ -60,6 +60,9 @@ public:
    */
   Corr_goftheta(int bins,float max,std::string &);
   
+  /**
+     Displays plot of \f$g(\theta)\f$
+   */
   void display() const;
   
   float get_max_range()const
@@ -70,7 +73,7 @@ public:
 
 
   /**
-     normalizes G(\theta) to the average bin count
+     normalizes \f$g(\theta)\f$ to the average bin count
    */
   void normalize(std::vector<float> & out) const;
   

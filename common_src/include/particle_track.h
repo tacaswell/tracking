@@ -256,7 +256,7 @@ private:
      Sets the pointer to the next particle.  If next isn't NULL before
      being set, then this function thows the error "nuking the list"
      to prevent accidental destruction of the track.
-     @param n_nest
+     @param[in] n_next
      pointer to the particle to be set as next
    */
   void set_next(particle_track* n_next);

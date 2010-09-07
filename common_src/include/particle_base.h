@@ -77,10 +77,12 @@ public:
   /**
      Constructor that takes the position of the particle. 
    */
-  particle_base(int ind, utilities::Tuplef pos,int frame=0);
+  particle_base(int ind, utilities::Tuplef pos,int frame = 0);
   
   
-
+  /**
+     Copy constructor
+   */
   particle_base(const particle_base &p);
 
   
@@ -324,7 +326,14 @@ protected:
 
   
 private:
+  /**
+     Fills the position members from the wrapper.  This is done because the
+     position is referenced a lot.
+   */
   void fill_position();
+  /**
+     Private initialization function
+   */
   void priv_init();
 
   /**
