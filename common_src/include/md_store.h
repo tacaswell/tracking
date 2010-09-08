@@ -48,8 +48,7 @@ namespace utilities
 class Attr_list_hdf;
 
 /**
-   A class to hold Md_elements and functions to get information out
-   in a useful way. 
+   A class to hold meta data.  
 */
 class Md_store
 {
@@ -142,9 +141,21 @@ public:
      Add entry
   */
   void add_element(const std::string & key,const std::string & type,const  std::string & value);
+  /**
+     Add entry
+  */
   void add_element(const char * key,const char * type, const char * value);
+  /**
+     Add entry
+  */
   void add_element(const char * key,float val);
+  /**
+     Add entry
+  */
   void add_element(const char * key,int val);
+  /**
+     Add entry
+  */
   void add_element(const char * key,unsigned int val);
   
 
@@ -181,20 +192,43 @@ private:
   */
   struct Md_element
   {
-  
+    /**
+       Constructor from strings
+     */
     Md_element(std::string key_i,std::string type_i,std::string value_i)
       :key(key_i),type(type_i),value(value_i){}
+    /**
+       Constructor from const char *
+     */
     Md_element(const char * key_i,const char * type_i,const char * value_i)
       :key(key_i),type(type_i),value(value_i){}
+    /**
+       Empty constructor
+     */
     Md_element();
+    /**
+       Destructor
+     */
     ~Md_element(){};
+    /**
+       The meta data key
+     */
     std::string key;
+    /**
+       The type of the meta data
+     */
     std::string type;
+    /**
+       The value.  All values are stored as strings to make life easier.
+     */
     std::string value;
   
 
   };
 
+  /**
+     The
+   */
   std::vector<Md_element> entries_;
 };
 

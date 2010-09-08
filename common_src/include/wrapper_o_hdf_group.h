@@ -75,8 +75,19 @@ public:
   */
   static const int format_padding;
   
+  /**
+     constructor
+
+     @param parent [in] the hdf object that the group will be a child of
+     @param g_name [in] the name of the group
+     @param dset [in] the data types that the group will include
+     @param p_count [in] the number of particles in the frame
+     @param size [in] the number of entries to allocate, this is to deal with skipped particles 
+     @param comp_num [in] the computation number
+     @param type [in] enumeration to control group creation behavior
+   */
   Wrapper_o_hdf_group(H5::CommonFG * parent, const std::string & g_name,
-		      std::set<D_TYPE>,
+		      std::set<D_TYPE> dset,
 		      int p_count,
 		      int size,
 		      int comp_num,
@@ -84,40 +95,69 @@ public:
   
 		      
   
-
+  /**
+     Write data to disk
+   */
   void write_to_disk();
   
   
-  
+  /**
+     Add a particle
+   */
   void store_particle(const tracking::particle *);
   
+  /**
+     Add a particle position.  
+   */
   void store_particle_pos(const utilities::Tuple<float,3> & cord,float I);
   
 
 
 
   // group level
+  /**
+     check if the group contains the meta data key
+   */
   bool contains_meta(const std::string & key);
-
+  
+  /**
+     Sets meta data to the group (frame)
+   */
   template <class T>
   void set_meta_data(const std::string & key, const T & val);
   
+  /**
+     gets meta data from the group (frame)
+   */
   template <class T>
   T get_meta_data(const std::string & key, T &  val) const ;
 
+  /**
+     Adds an entire Md_store to the group (frame)
+   */
   void add_meta_store(const Md_store * md_in);
   
 
   // data set level
+  /**
+     check if a data set contains meta data key 
+   */
   bool contains_meta(const std::string & key,D_TYPE dtype);
   
-  
+  /**
+    sets meta data for a data set
+   */
   template <class T>
   void set_meta_data(const std::string & key, const T & val, D_TYPE dtype);
-  
+  /**
+     Gets meta data for a data set
+   */
   template <class T>
   T get_meta_data(const std::string & key, T &  val, D_TYPE dtype) ;
 
+  /**
+     Destructor
+   */
   ~Wrapper_o_hdf_group();
   
 private:

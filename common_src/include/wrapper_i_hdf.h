@@ -54,32 +54,90 @@ private:
      used for that data type.
    */
   std::set<std::pair<utilities::D_TYPE,int> > data_types_;
+  /**
+     Set of data types in the wrapper.  This is mostly redundant, but
+     useful.
+   */
   std::set<utilities::D_TYPE> data_types_set_;
   
+  /**
+     Data map for integer data
+   */
   Data_map d_mapi_;
+  /**
+     Data map for float data
+  */
   Data_map d_mapf_;
+  /**
+     Data map for complex<float> data
+  */
   Data_map d_mapc_;
   
-
+  /**
+     Data structure for integer data. First dimension is data type,
+     second is frame, third in particle index
+   */
   std::vector<std::vector<int*> > data_i_;
+  /**
+     Data structure for float data. First dimension is data type,
+     second is frame, third in particle index
+   */
   std::vector<std::vector<float*> > data_f_;
+  /**
+     Data structure for complex<float> data. First dimension is data
+     type, second is frame, third in particle index
+   */
   std::vector<std::vector<std::complex<float>*> > data_c_;
 
+  /**
+     the number of particles in each frame
+   */
   std::vector<int> frame_c_;
+  /**
+     The number of frames
+   */
   unsigned int  frame_count_;
 
+  /**
+     The total number of particles in all frames
+   */
   unsigned int total_part_count_;
   
+  /**
+     Deletes all allocated data
+   */
   void clean_data();
   
+  /**
+     Private initialization function
+   */
   void priv_init(int f_count =0);
+  /**
+     Turns a set of data types in to a set of pairs assuming they
+     all have the same computation number.
+   */
   void make_dtype_pairs(int comp_nuber);
+  /**
+     Extracts the set of data types from a set of (D_TYPE,comp_num)
+     pairs.
+   */
   void make_dtype_set();
   
+  /**
+     If we are reading in 2D data
+   */
   bool two_d_data_;
   
+  /**
+     A vector of the z-position of each frame.  For 2D data this is
+     the center of the plane, for 3D this provides if we have any
+     drift.
+   */
   std::vector<float> frame_zdata_;
 
+  /**
+     first frame to read in
+   */
   unsigned int start_;
   
   
@@ -123,12 +181,30 @@ public:
   
   ~Wrapper_i_hdf();
   
- 
+  /**
+     Constructor
+
+     @param fname [in] name of hdf file to read in
+     @param dtypes [in] a set of D_TYPES to extract from the hdf file
+     @param comp_number [in] the computation number to read
+     @param start [in] the first frame to read from
+     @param frames [in] the number of frames to read
+   */
   Wrapper_i_hdf(std::string fname,
 		const std::set<utilities::D_TYPE>& dtypes,
-		int comp_nuber,
+		int comp_number,
 		unsigned int start=0,
 		int frames =0);
+  /**
+     Constructor
+
+     @param fname [in] name of hdf file to read in
+     @param dtypes [in] a set of D_TYPES to extract from the hdf file
+     @param comp_number [in] the computation number to read
+     @param start [in] the first frame to read from
+     @param f_count [in] the number of frames to read
+     @param two_d_data [in] if this is 2D data
+   */
 
   Wrapper_i_hdf(std::string fname,
 		const std::set<utilities::D_TYPE> &dtypes,
@@ -137,6 +213,15 @@ public:
 		int f_count,
 		bool two_d_data);
   
+  /**
+     Constructor
+
+     @param fname [in] name of hdf file to read in
+     @param dtypes [in] a set of (D_TYPES,comp_number) pairs to extract from the hdf file
+     @param start [in] the first frame to read from
+     @param f_count [in] the number of frames to read
+     @param two_d_data [in] if this is 2D data
+   */
   
   Wrapper_i_hdf(std::string fname,
 		const std::set<std::pair<utilities::D_TYPE,int > > &dtypes,

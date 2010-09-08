@@ -24,7 +24,7 @@ namespace utilities
 
 /**
    A class to wrap the parsing of the command line to extract the input file, output file
-   and parameter file
+   and parameter file.
  */
 class CL_parse
 {
@@ -37,10 +37,19 @@ public:
      Parses the command line arguments.  Throws 
    */
   void parse() throw(std::invalid_argument);
+  /**
+     Returns the fin string
+   */
   void get_fin(std::string & fin_str) const
   {fin_str = fin_;}
+  /**
+     Returns the fout string
+   */
   void get_fout(std::string & fout_str) const
   {fout_str = fout_;}
+  /**
+     Returns the fpram string
+   */
   void get_fpram(std::string & fpram_str) const
   {fpram_str = fpram_;}
 private:

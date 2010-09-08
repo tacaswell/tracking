@@ -36,8 +36,8 @@ namespace utilities{
 class Generic_wrapper_base;
 
 /**
-   Base class for historgram objects.
-   Implements a linearly spaced histogram.
+
+   Implements a 2D histogram.  This class needs some work.
 
 */
 class Histogram2D{
@@ -82,13 +82,18 @@ public:
     first column is the values of the bins, the second the bottom edge
     of the bins.  The extra entry at the end are the number of entries
     outside of the 
+
+    @todo update to new Generic_wrapper
   */
   void output_to_wrapper(Generic_wrapper_base * wrapper_out);
   
 
   
   ~Histogram2D(){};
-
+  
+  /**
+     Adds a data point using a Tuple 
+   */
   void add_data_point(const utilities::Tuple<float,2> & in );
   
 protected:

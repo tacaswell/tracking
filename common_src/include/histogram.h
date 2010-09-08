@@ -29,7 +29,10 @@
 #include <exception>
 #include <iostream>
 
+namespace gnuplot
+{
 class Gnuplot;
+}
 
 namespace utilities{
 //forward declare
@@ -64,12 +67,17 @@ public:
      Spits something reasonable out to std
    */
   void print() const;
+  /**
+     Get the number of elements added that were greater than the maximum value
+   */
 
   int get_over_count(){
     return over_count_;
   }
 
-
+  /**
+     Get the number of elements added that were less than the minimum value
+   */
   int get_under_count(){
     return under_count_;
   }
@@ -90,8 +98,15 @@ public:
 			 const std::string & edges_name,
 			 const Md_store* g_md_store) const;
   
+  /**
+     displays the histogram using gnuplot
+   */
   void display()const;
-  void display(Gnuplot & g)const;
+  /**
+     displays the histogram using gnuplot
+     @param g Gnuplot object to use
+   */
+  void display(gnuplot::Gnuplot & g)const;
   
   
   

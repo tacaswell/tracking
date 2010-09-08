@@ -50,11 +50,16 @@ class Hash_shelf;
 
 /**
    Class for storing particles in the hash table.  This class will
-   hold a list of any  generation of particles.  The primary purpose
+   hold a list of the particle set in part_def.h.  The primary purpose
    of this class is to sit in a shelf that corresponds to a hash table
-   of the data and to be passed out of shelf functions as a list of
-   the particles selected.
+   of the data.  It can also be used to be passed out of shelf
+   functions as a list of the particles selected, however this is
+   confusing and should not be done.
+
+   @todo rename to proper capitalization
 */
+
+
 class hash_box{
 protected:
   ///Contents of the box
@@ -132,13 +137,15 @@ public:
      Returns an iterator to the front of the contents vector,
      a-la the vector.begin() function.
 
-     figure out who uses this function is used and make private or kill
+     @todo change hash_shelf::get_region() to not use this, then remove this
    */
   std::vector<particle*>::iterator begin(){
     return contents_.begin();
   }
   /**
      a very const version
+
+     @todo remove this
    */
   std::vector<particle*>::const_iterator begin()const{
     return contents_.begin();

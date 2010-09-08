@@ -32,7 +32,8 @@ namespace utilities
 {
 
 /**
-   Enumeration for wrapper types
+   Enumeration for wrapper types.  I do not think that this is used by anything
+   @todo remove this
  */
 typedef enum W_TYPE{                                                                
   W_MATLAB = 0,                                                           

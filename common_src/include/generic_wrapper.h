@@ -35,9 +35,10 @@ class Md_store;
 
 /**
    Try two at a generic wrapper function.  This is based much more on the
-   capabilities of hdf files, not shoving stuff back to matlab
+   capabilities of hdf files, not shoving stuff back to matlab.  At some point
+   a matlab subclass of this needs to get written.
 
-   This is an abstract base class 
+   This is an abstract base class.
 */
 class Generic_wrapper{
 public:
@@ -132,7 +133,9 @@ public:
    */
   virtual void add_meta_data(const Md_store * md_store,const std::string & dset_name)=0;
 
-  
+  /**
+     Destructor
+   */
   virtual ~Generic_wrapper(){};
   
   

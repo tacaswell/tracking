@@ -64,7 +64,9 @@ public:
      Displays plot of \f$g(\theta)\f$
    */
   void display() const;
-  
+  /**
+     Get the maximum range.
+   */
   float get_max_range()const
   {
     return max_range_;

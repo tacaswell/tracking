@@ -35,12 +35,14 @@ namespace tracking
 {
 
 /**
-   Track accumulator that implements van Hove functions.
+   Track accumulator that implements computation of van Hove
+   functions.
  */
 class TA_vanHove: public Trk_accumulator
 {
 
 public:
+  // inherited form Trk_accumulator
   void add_disp(utilities::Tuplef displacement,unsigned steps);
   unsigned max_step()const {return max_step_;}
   
@@ -63,10 +65,19 @@ public:
 			 const utilities::Md_store & md_store)const;
   
 private:
-  
+  /**
+     vector of Histogram objects, one for each time step, for
+     displacement along x.
+   */
   std::vector<utilities::Histogram> x_disp_;
+  /**
+     vector of Histogram objects, one for each time step, for
+     displacement along y.
+   */
   std::vector<utilities::Histogram> y_disp_;
-  
+  /**
+     Maximum time step
+   */
   unsigned max_step_;
   
   

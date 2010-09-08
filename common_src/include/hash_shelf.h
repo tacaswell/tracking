@@ -56,7 +56,8 @@ class Corr;
 class Accumulator;
 
 /**
-   Class to implement the hash table
+   Class to implement the hash table.  This class contains hash_box objects and in contained by 
+   Hash_case objects.
 */
 
 class Hash_shelf{
@@ -78,6 +79,7 @@ public:
   void push(particle * p);
   
   ///Generates the hash value based on a pointer to a particle object
+  ///@todo figure out why this is public and fix it
   virtual unsigned int hash_function(const particle* p) const;
 
 

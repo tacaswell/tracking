@@ -44,7 +44,7 @@ class Track_shelf;
 
 /**
    Box class for dealing with tracks.  Essentially roling my own
-   linked list class
+   linked list class.
 */
 class Track_box{
 public:
@@ -95,11 +95,17 @@ public:
   ///adds the particle next the end of the track
   void push_back(particle_track* next);
 
+  /**
+     Return the track id
+   */
   unsigned int get_id() const
   {
     return id_;
   }
 
+  /**
+     Destructor
+   */
   virtual ~Track_box();
   
   /**

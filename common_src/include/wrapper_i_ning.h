@@ -33,6 +33,8 @@ class params_file;
    is mainly for testing purposes.  The assumption is that the 
    data is stored in space deliniated file with one particle per
    row 
+
+   This class is broken and will not compile
 */
 
 class wrapper_i_ning:public wrapper_i_base{

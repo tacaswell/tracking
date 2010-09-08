@@ -36,9 +36,9 @@ class Track_shelf;
 /**
    List wrapper class for us in the track linking portion of the code.
    It is a list of particle_track pointers and functions to do the looping
-   needed in the track locatign algorithm
+   needed in the track locating algorithm 
 
-   \todo
+   @todo
    need to overhaul to use list objets so that the pointer returning code in Hash_shelf
    can be removed
 */
@@ -74,6 +74,9 @@ protected:
   ///list for the 'next' particles in the subnetworks
   //std::set<particle_track*,bool(*)(particle_track*,particle_track*)> n_sub_net;
   std::set<particle_track*> n_sub_net;
+  /**
+     Track shelf object to put new tracks into
+   */
   Track_shelf* tracks;
 
   ///maximum distance a particle may move
@@ -105,19 +108,25 @@ protected:
   ///for sorting lists of particles
   static bool part_lt(particle_track* a, particle_track* b);
   
-
+  /**
+     Function that does the actual work 
+   */
   void recur_fnc_np(std::vector<std::pair<particle_track*, particle_track*> >* min,
 		    std::vector<std::pair<particle_track*, particle_track*> >* cur,
 		    float disp,float& min_disp,
 		    std::set<particle_track*>::iterator it,
 		    const std::set<particle_track*>::iterator& itend);
-
+  /**
+     Function that does the actual work, works in alternate direction.
+   */
   void recur_fnc_pn(std::vector<std::pair<particle_track*, particle_track*> >* min,
 		    std::vector<std::pair<particle_track*, particle_track*> >* cur,
 		    float disp,float & min_disp,
 		    std::set<particle_track*>::iterator it,
 		    const std::set<particle_track*>::iterator& itend);
-
+  /**
+     Links two particles together and cleans up stuff
+   */
   void  link_pairs(std::vector<std::pair<particle_track*, particle_track*> >& in);
   
 };

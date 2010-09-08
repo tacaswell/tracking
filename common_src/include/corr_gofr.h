@@ -73,9 +73,13 @@ public:
      The bins are spaced linearly.  
    */
   Corr_gofr(int bins,float max,int comp_num,int dset,int read_comp);
-  
+  /**
+     Display on screen using gnuplot
+   */
   void display() const;
-  
+  /**
+     Return the maximum range.  This might get promoted to Corr.
+   */
   float get_max_range()const
   {
     return max_range_;

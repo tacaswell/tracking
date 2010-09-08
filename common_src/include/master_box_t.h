@@ -77,7 +77,9 @@ public:
     data_types.insert(type);
   }
 
-
+  /**
+     Constructor
+   */
   Master_box();
     
   ///Returns the total number of particles contained in the
@@ -102,8 +104,10 @@ public:
      Returns a pointer to the  Md_store for plane j in the input wrapper
    */
   const utilities::Md_store * get_Md_store(unsigned int j) const;
-  
-
+    
+  /**
+     Destructor
+   */
   ~Master_box();
 
 protected:
@@ -128,9 +132,14 @@ protected:
   const utilities::Wrapper_in * in_wrapper_;
   
   //imlement this
+  ///@todo sort out this member
   unsigned int  imagesz1;
+  ///@todo sort out this member
   unsigned int  imagesz2;
 
+  /**
+     A set of the data types known by particles in the Master_box
+   */
   std::set<utilities::D_TYPE> data_types;
 
   /**

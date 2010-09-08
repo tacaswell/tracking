@@ -37,8 +37,13 @@
 namespace tracking
 {
 /**
-   simple g(r) computation
+   s(|q|) computation.  This takes in a specific direction in
+   reciprocal space and computes s(|q|) along that direction.  If the
+   assumption that the particles have no preferred direction holds,
+   then this saves a lot of computation time.
+
 */
+
 class Accum_sofq : public Accumulator
 {
 public:
@@ -96,13 +101,13 @@ private:
   const utilities::Tuple<float,2> q_range_;
   
   /**
-     Spacing of 
+     Spacing of evaluation points in reciprocal space
    */
   const float q_step_;
   
 
   /**
-     direction
+     direction in reciprocal space to evaluate along.
    */
   const utilities::Tuplef q_;
   
@@ -124,8 +129,13 @@ private:
   std::string units_;
   
   
-  
+  /**
+     \f$\i\f$
+   */
   const static std::complex<float> i_;
+  /**
+     \f$\pi\f$
+   */
   const static float pi_;
   
   

@@ -30,14 +30,16 @@ namespace utilities{
 /**
    Base class for the generic wrapper family of functions.  These
    exist because the other wrapper functions are very specific for
-   reading in and writing out particles.  These are intended to by used
+   reading in and writing out particles.  These are intended to be used
    for getting arbitrary data out.
 
    The basic idea is to write to the under ling data structure in
    atomic rows, ie ask for a new row, fill it with what ever, store to
    the underling data structure.
 
-   This is an abstract base class
+   This is an abstract base class.
+
+   @deprecated see Generic_wrapper
 */
 
 class Generic_wrapper_base{
@@ -47,7 +49,7 @@ public:
   /**
      @name row operations
    */
-  //\@{
+  //@{
 
   /**
      Opens a new row to add data to
@@ -61,16 +63,16 @@ public:
    */
   virtual void append_to_row(float data_in) = 0;
   /**
-     finishes the row and sets it to the underlying strucutre
+     finishes the row and sets it to the underlying structure 
    */
   virtual void finish_row() = 0;
-  //\@}
+  //@}
 
 
   /**
      @name wrapper operations
    */
-  //\@{
+  //@{
   
   /**
      Tells the wrapper to setup to accept rows
@@ -81,7 +83,7 @@ public:
    */
   virtual void finalize_wrapper () = 0;
 
-  //\@}
+  //@}
   
   /**
      Constructor
@@ -93,7 +95,13 @@ public:
    */
   virtual ~Generic_wrapper_base(){};
 protected:
+  /**
+     If wrapper is open to write to
+   */
   bool wrapper_open_;
+  /**
+     If a row is open to write to
+   */
   bool row_open_;
 };
 }

@@ -37,7 +37,9 @@ namespace utilities{
 /**
    class for reading configuration from xml files.  This is very simple.
    Each instance can only read from one element in the xml file and the
-   element must be a child of the root. 
+   element must be a child of the root.   This may be better done as a factory to make
+   Md_store objects as all of the functions are implemented by just passing to
+   the Md_store object.
  */
 class Read_config{
 public:
@@ -113,13 +115,18 @@ public:
     return md_store_.get_type(j);
   }
   
-
+  /**
+     Returns a pointer to the internal Md_store
+   */
   const Md_store * get_store()const
   {
     return &md_store_;
   }
   
 private:
+  /**
+     The object that actually handles all of the meta data storage and querying.
+   */
   Md_store md_store_;
   
   

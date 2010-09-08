@@ -32,8 +32,10 @@ namespace utilities{
 /**
    Class for carrying around the posistion and velocity vectors.
    The logic for making this class is a memory concern that there
-   will be millions of these objects.  Also to make some specfic
+   will be millions of these objects.  Also to make some specific
    matlab like functions simpler to implement
+
+   @todo move actual code to a c++ file and use explicit instantiation  
 */
 template<class T,int length>
 class Tuple{

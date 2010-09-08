@@ -33,8 +33,10 @@ class Generic_wrapper;
 class Md_store;
 
 /**
-   A vector class that keeps count of elements being added to the
-   bins for use in averaging scalers, ie msd
+   A class for computing many averages in parallel.   The class has
+   two vectors, one for a running total and the other the number of 
+   elements added to get running total.  This is mostly used in msd
+   related stuff.
  */
 class Counted_vector{
 public:
@@ -115,7 +117,10 @@ protected:
      added to
    */
   std::vector<int> count_array_;
-  
+  /**
+     Flag for if the data is averaged.  This matters because the data
+     is averaged in place, so once it in averaged, more data can't be added.
+   */
   bool averaged_;
   
   

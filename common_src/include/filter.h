@@ -32,14 +32,27 @@ namespace utilities
 class Wrapper_in;
 /**
    ABC for filter objects.  They take in a the index and frame of particle
-   in a returns a bool, true if the particle is good, false if it is bad
+   in a returns a bool, true if the particle is good, false if it is bad.
  */
 class Filter
 {
 public:
-  virtual bool operator() (int,int)=0;
+  /**
+     Returns true if the particle at index in frame passes what every
+     criteria that the subclasses implement.
+   */
+  virtual bool operator() (int index,int frame)=0;
+  /**
+     Sets pointer to Wrapper_in to read data from
+   */
   virtual void set_wrapper(const Wrapper_in * )=0;
+  /**
+     Destructor
+   */
   virtual ~Filter(){};
+  /**
+     Empty constructor 
+   */
   Filter(){};
 };
 
@@ -69,8 +82,14 @@ public:
 class Filter_basic:public Filter
 {
 public:
-  bool operator()(int,int);
+  bool operator()(int ind,int frame);
+  /**
+     Constructor to read threshold values from a HDF file.
+   */
   Filter_basic(const std::string&,int);
+  /**
+     Constructor that just sets the threshold values
+   */
   Filter_basic(float ecut,float rg_cut,float shift_cut);
   void set_wrapper(const Wrapper_in * w_i )
   {
@@ -81,9 +100,21 @@ public:
   {
   }
 private:
+  /**
+     Eccentricity threshold
+   */
   float e_cut_;
+  /**
+     Radius of gyration threshold
+   */
   float rg_cut_;
+  /**
+     Centroid shift threshold
+   */
   float shift_cut_;
+  /**
+     Wrapper to read particle data from
+   */
   const Wrapper_in * wrap_;
 };
 

@@ -34,18 +34,19 @@ namespace utilities
 
 
 /**
-   A class that takes in a hdf object, makes a list of the attributes.
-   The object can then be queried as to what it contains and handles getting
-   meta-data in and out of the hdf_object.  This should be broken out the
-   way that that wrappers are for handling multiple subclasses under the same interface,
-   but that isn't needed yet at this point as the only type of output under active work
-   is hdf.
+   Wraps the attribute functionality of hdf objects.  Eventually this
+   should be split into a base class and the hdf class so that other
+   input/output formats can be handled under the same interface.  It
+   possibly should be merged with md_store objects as well.
+
+   If the underlying object is changed else where, the list of keys
+   will not be updated.
  */
 class Attr_list_hdf
 {
 public:
   /**
-     Constructor, gets 
+     Constructor
    */
   Attr_list_hdf(H5::H5Object * obj);
   /**
@@ -54,7 +55,7 @@ public:
   ~Attr_list_hdf();
 
   /**
-     If the attribute list contains the key.  
+     Returns true If the attribute list contains the key.  
    */
   bool contains_attr(const std::string & key) const;
   
@@ -70,8 +71,13 @@ public:
      need to sort out what to do if this is an inappropriate cast.
   */
   void set_value(const std::string & key,  const int &   value_in,bool over_write = false) ;
-
+  /**
+     Gets float type values
+   */
   float get_value(const std::string & key, float & value_out) const ;
+  /**
+     Sets float type values
+   */
   void set_value(const std::string & key,  const float & value_in,bool over_write = false) ;
   
   /**
@@ -122,7 +128,9 @@ public:
   void remove_attr(const std::string & key);
 
   
-  
+  /**
+     Prints the contents to stdout
+   */
   void print()const;
   
   /**
@@ -132,12 +140,20 @@ public:
   /**
      Returns the type of scalar attributes.  Only works
      for int,float, and string.  All others return V_ERROR.
+
+     \todo make to work for all (or most) types
    */
   utilities::V_TYPE get_type(const std::string& key)const;
   
   
 private:
+  /**
+     List of the keys of the attributes in the object
+   */
   std::list<std::string> keys_;
+  /**
+     Pointer to the hdf object
+   */
   H5::H5Object * obj_;
   
   

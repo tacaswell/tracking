@@ -29,20 +29,39 @@
 namespace utilities{
 class Array;
 /**
-   A base class for collecting arrays in.  Largely inspired by the matlab cell objects
+   A base class for collecting arrays in.  Largely inspired by the matlab cell objects. Only used
+   with matlab code.  This should be removed and the matlab cell functionality be wrapped under
+   Generic_wrapper.
 */
 
 class Cell {
 public:
+  /**
+     Add an Array to the cell array
+   */
   virtual void add_array(const Array & in )=0 ;
+
+  /**
+     Get the length of the cell array
+   */
   int get_length() const{
     return length_;
   }
+  /**
+     Constructor
+     @param l the length, that only seems to be set an a private value
+   */
   Cell(int l);
+  /**
+     Destructor
+   */
   virtual ~Cell(){};
   
 		  
 protected:
+  /**
+     Length of the cell array
+   */
   int length_;
 
   

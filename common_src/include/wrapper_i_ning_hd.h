@@ -32,6 +32,8 @@ namespace tracking{
    is mainly for testing purposes.  The assumption is that the 
    data is stored in space deliniated file with one particle per
    row with the orderin [indx, x, y, I, r2,E]
+
+   This class is broken and will not compile
 */
 
 class wrapper_i_ning_hd:public wrapper_i_ning{

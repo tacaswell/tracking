@@ -32,16 +32,19 @@ namespace utilities{
 class Generic_wrapper_base;
 
 /**
-   Class to accumulate tuples into.
+   Class to accumulate tuples into.  Each tuple added is a row.  The
+   number of columns is set by the size of Tuplei and Tuplef.  This
+   has some very bad naming conventions and is primarily used in the
+   matlab related code.  This class should probably go away.
  */
 class Array{
 public:
   /**
-     Sets the whole array to the specified output wrapper
+     Outputs the whole array to the specified output wrapper.
    */
   void set_array(Generic_wrapper_base * out_wrapper) const;
   /**
-     Adds a tuple to the end of the array
+     Adds a tuple to the end of the array.
    */
   void push(const Tuplef& tuple_in);
   /**

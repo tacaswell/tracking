@@ -29,6 +29,8 @@ namespace utilities{
    Exception class derived from the standard range_error
    class to indicate when a linked list has stepped over it's
    range
+
+   Might kill this.
 */
 class Ll_range_error:public std::range_error{
 public:
@@ -39,6 +41,8 @@ public:
    Exception to report when a function that should return 
    valid pointer from an object, but the field is NULL in the
    object.
+
+   might kill this.
  */
 class Null_field:public std::range_error{
 public:

@@ -106,7 +106,10 @@ public:
 
 #if PTYPE == 1
   /**
-     sets all of the values that the wrapper knows about by asking the particle
+     sets all of the values that the wrapper knows about by asking the particle.
+
+     This function is for outputting the results of 3D linking
+
    */
   virtual void set_all_values(const tracking::Track_box *,const utilities::Tuple<float,3> &) = 0;
 #endif
@@ -194,6 +197,10 @@ public:
    */
   virtual void add_meta_data_list(const Read_config & , const std::set<D_TYPE> &)=0;
 
+
+  /**
+     Adds all the meta data in a Md_store object
+   */
   virtual void add_meta_store(const Md_store * md_in)  =0;
   
   

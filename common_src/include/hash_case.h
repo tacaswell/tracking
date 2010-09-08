@@ -92,12 +92,12 @@ public:
   
 
   /**
-     Links particles in to tracks.
-     @param max_range
-     the maximum displacement a particle is expected to have in
-     a time step
-     @param tracks
-     a Track_shelf object passed in by reference.
+     Links particles in to tracks.  
+     
+     @param max_range [in] the maximum displacement a particle is
+     expected to have in a time step
+     
+     @param tracks [out] a Track_shelf object passed in by reference.
   */
   void link(float max_range, Track_shelf& tracks);
 
@@ -220,7 +220,9 @@ protected:
 
   
   
-
+  /**
+     Bool if the Hash_case has been initialized.
+   */
   bool inited_;
 	    
 	    

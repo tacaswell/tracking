@@ -32,7 +32,9 @@ namespace utilities{
 
 
 /**
-   A N-D array (set by the 
+   A N-D array.
+
+   Not sure what this is used for.  Maybe can get rid of it.
 */
 template <class T,int N>
 class ND_Array{

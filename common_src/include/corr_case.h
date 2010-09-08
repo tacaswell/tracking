@@ -52,14 +52,16 @@ class Corr_gofr;
 
 
 /**
-   A class to hold a stack of accum objects for handing into a hash_case
+   A class to hold a stack of Corr objects for handing into a
+   hash_case.  Very similar to Accum_case.  These are not the most
+   elegant solutions, but they seem to work.
  */
 
 class Corr_case
 {
 public:
   /**
-     Constructor for filling with accum_sofq.  The pointer does
+     Constructor for filling with Corr_gofr.  The pointer does
      nothing, but is passed into set the type.
   */
   Corr_case(const tracking::Corr_gofr*,
@@ -100,7 +102,9 @@ public:
   {
     return corr_vec_.size();
   }
-  
+  /**
+     Destructor 
+   */
   ~Corr_case();
   
 private:

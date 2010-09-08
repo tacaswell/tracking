@@ -79,7 +79,9 @@ public:
      Adds the temperature for a plane. 
    */
   void add_plane_temperature(float temp);
-  
+  /**
+     Destructor
+   */
   virtual ~Corr(){};
 protected:
   Corr();
@@ -95,7 +97,7 @@ protected:
 };
 
 /**
-   A subclass of Corr that does nothing
+   A subclass of Corr that does nothing.  This is useful for testing
  */
 class Dummy_corr:public Corr
 {

@@ -38,8 +38,8 @@
 namespace tracking
 {
 /**
-   simple g(r) computation
- */
+   Computes \f$s(\vec{q})\f$
+*/
 class Accum_sofq_ND : public Accumulator
 {
 public:
@@ -60,8 +60,15 @@ public:
    */
   void get_magnitude(utilities::ND_Array<float,utilities::Tuplei::length_>&)const;
   
+
+  /**
+     Plots the result using gnuplot
+   */
   void display() const;
   
+  /**
+     Returns the dimensions of bins
+   */
   const utilities::Tuplei & get_n_bins() const
   {return n_bins_;}
   

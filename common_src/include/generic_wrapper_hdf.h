@@ -59,6 +59,14 @@ public:
   
   void add_dset(int rank, const unsigned int * dims, V_TYPE , const void *,const std::string & name );
   
+  /**
+     Constructor
+
+     @param fname the name of the file to write to
+     @param add_to_file if the file already exists
+
+     @todo replace bool with enum
+   */
   Generic_wrapper_hdf(std::string fname, bool add_to_file = true);
   
   

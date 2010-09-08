@@ -49,9 +49,7 @@ class Trk_accumulator;
 
 /**
    Top level class for holding the track boxes. (which are the head of
-   the linked lists made of particle_track objects) eventually I think
-   all the track_* classes but this one will be made completely
-   private with friend functions.
+   the linked lists made of particle_track objects).
 */
 class Track_shelf{
 
@@ -78,6 +76,9 @@ public:
    */
   void remove_short_tracks(int min_length);
 
+  /**
+     Print Track_shelf to stdout
+   */
   void print();
 
   /**
@@ -93,15 +94,24 @@ public:
 
   /**
      Generates the MSD plot for all the tarcks in this shelf.
+
+     @deprecated This computation should be done with a Trk_accumulator
    */
   void msd(std::vector<double> & msd_vec,std::vector<int> & entry_count)const;
 
   
   /**
      Generates the corrected MSD plot for all the tarcks in this shelf.
+     
+     @deprecated This computation should be done with a Trk_accumulator
    */
   void msd_corrected(utilities::Counted_vector & msd)const;
-
+  
+  /**
+     Generates the corrected MSD, mean displacement and <|d|^4> plot for all the tarcks in this shelf.
+     
+     @deprecated This computation should be done with a Trk_accumulator
+   */
   void msd_corrected(utilities::Counted_vector & md,
 		     utilities::Counted_vector & msd,
 		     utilities::Counted_vector & msd_sq)const;
@@ -120,6 +130,8 @@ public:
      track length 
      @param disp_sq_hist histogram to be filled.  Is not
      cleared.
+
+     @deprecated This computation should be done with a Trk_accumulator
    */
   void disp_sq_hist(int time_step,
 		    utilities::Histogram & disp_sq_hist

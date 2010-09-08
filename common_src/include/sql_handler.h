@@ -37,16 +37,32 @@ class Read_config;
 class SQL_handler
 {
 public:
+  /**
+     Constructor.  Assumes a very specific database layout, see
+     external documentation
+   */
   SQL_handler(const std::string& db_name);
+  /**
+     Destructor
+   */
   ~SQL_handler();
+  /**
+     Adds an entry to the comps table.
+   */
   void add_comp(int dset_key,
 		int comp_key,
 		const std::string &fin,
 		const std::string & fout,
 		const std::string & function);
+  /**
+     Adds an entry to the iden_prams table.
+   */
   void add_iden_comp_prams(const Read_config & prams,int dset_key,int comp_key);
 
 private:
+  /**
+     Pointer to the data base object
+   */
   sqlite3 * db_;
   
 

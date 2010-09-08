@@ -46,16 +46,22 @@ namespace tracking
 
 
 /**
-   An ABC of objects that can be handed into hash_case and calculates
-   correlation functions. 
- */
+   An ABC of objects that accumulate information from particles.  In
+   my naming scheme Accumulator objects are for measurements that do
+   not care about a particles neighborhood, ex \f$s(q)\f$.  This is
+   different than Corr objects that deal with measurements that depend
+   on the neighborhood around the particle.
+
+   This may need to pick up temperature functionality like 
+   Corr. This class and Corr might be able to be merged.
+
+*/
 class Accumulator
 {
 public:
   /**
-     takes in a particle_base object.  For correlations that need the
-     tracking information this should throw an error or something
-     clever like that
+     Adds a particle.  The sub class determines what is computed from
+     the particle.
    */
   virtual void add_particle(const particle *) = 0;
 
@@ -64,8 +70,7 @@ public:
    */
   virtual void out_to_wrapper(utilities::Generic_wrapper & ) const =0;
   /**
-     returns the maximum range that the Corr object looks out to.  This is needed so
-     that the Hash_shelf can properly limit the particles that it hands in
+     Destructor
    */
   virtual ~Accumulator(){}; 
   

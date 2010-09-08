@@ -68,22 +68,42 @@ public:
 
 
   /**
-       Returns the value of the type specified from the particle selected
+     Returns the value of the type specified from the particle selected.
+     @param out [out] the value
+     @param ind [in] the index of the particle
+     @param type [in] the D_TYPE
+     @param frame [in] the frame the particle is in
+
+     @return the value
   */
   virtual int get_value(int& out,
 			int ind,D_TYPE type, int frame) const = 0;
   /**
-     Returns the value of the type specified from the particle selected
+     Returns the value of the type specified from the particle selected.
+     @param out [out] the value
+     @param ind [in] the index of the particle
+     @param type [in] the D_TYPE
+     @param frame [in] the frame the particle is in
+
+     @return the value
    */
   virtual float get_value(float& out,
 			  int ind,D_TYPE type, int frame) const = 0;
   /**
      Returns the value of the type specified from the particle selected
+
+     @param out [out] the value
+     @param ind [in] the index of the particle
+     @param type [in] the D_TYPE
+     @param frame [in] the frame the particle is in
+
+     @return the value
    */
   virtual std::complex<float> get_value(std::complex<float>& out,
 				   int ind,D_TYPE type, int frame) const = 0;
   /**
      Returns a set of the data types.  Use the other version
+     
    */
   virtual std::set<D_TYPE> get_data_types() const =0;
 
@@ -120,7 +140,7 @@ public:
 
 
   /**
-     \defgroup Meta data handling functions
+     @name Meta data handling functions
    */
   /*@{*/
   /**

@@ -33,14 +33,15 @@ class Generic_wrapper;
 
 
 /**
-   A class to hold a stack of accum objects for handing into a hash_case
+   A class to hold a stack of accum objects for handing into a hash_case.  Mostly a wrapper
+   of a std::vector.  Takes care of construction and destruction of the accum* objects.
  */
 
 class Accum_case
 {
 public:
   /**
-     Constructor for filling with accum_sofq.  The pointer does
+     Constructor for filling with Accum_sofq.  The pointer does
      nothing, but is passed into set the type.
   */
   Accum_case(const tracking::Accum_sofq*,
@@ -88,13 +89,31 @@ public:
   {
     return accum_vec_.size();
   }
-  
+  /**
+     Destructor
+   */
   ~Accum_case();
   
 private:
+  /**
+     Number of frames
+   */
   int frame_count_;
+  /**
+     structure to hold the Accumulator ojbects
+   */
   std::vector< tracking::Accumulator*> accum_vec_;
+  /**
+     Computation number.
+
+     This will probably be replaced with an Md_store object
+   */
   int comp_num_;
+  /**
+     dest number
+
+     This will probably be replaced with an Md_store object
+   */
   int dset_;
   
 

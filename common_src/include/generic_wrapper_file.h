@@ -27,7 +27,13 @@
 #ifndef GWRAPPER_FILE
 #define GWRAPPER_FILE
 namespace utilities{
+/**
+   A generic wrapper for outputting to a file.
 
+   This class is not finished
+
+   @todo delete this class
+ */
 class Generic_wrapper_file:public Generic_wrapper_base{
 
 

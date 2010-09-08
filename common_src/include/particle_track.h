@@ -38,9 +38,9 @@ class Hash_shelf;
 class hash_case;
 
 /**
-   Class for use in particles once they have been tracked.  This class carries
-   additional information about which track the particle is in, where in
-   the track it is. 
+   Class for particles that are aware of tracking.  This class carries
+   additional information about which track the particle is in and some 
+   members needed for tracking.
  */
 class particle_track :public particle_base{
   
@@ -115,6 +115,9 @@ public:
     Returns true if there is a particle n steps forward and
     passes a pointer to it out as a reference, if there is
     not a particle, returns false.
+    @param  n [in] number of steps to take
+    @param next [out]  pointer to the nth particle
+    @return true if the nth particle exists
    */
   bool step_forwards(int n,const particle_track* & next)const;
 
@@ -123,6 +126,11 @@ public:
     Returns true if there is a particle n steps backwards and
     passes a pointer to it out as a reference, if there is
     not a particle, returns false.
+    @todo fix naming sematics
+    @param n [in]  number of steps to take
+    @param next [out] pointer to the nth particle
+    @return true if the nth particle exists
+
    */
    bool step_backwards(int n,const particle_track* & next)const;
 
@@ -164,11 +172,11 @@ public:
   bool has_track()const;
   
   /**
-     returns if a particle_base.has a next
+     returns if a particle has a next
    */
   bool has_next()const;
   /**
-     returns the position with the cumulative distribution subtracted off
+     returns the position with the cumulative displacement subtracted off
    */
   const utilities::Tuplef get_corrected_pos()const;
   
@@ -184,7 +192,7 @@ public:
   */
   std::list<std::pair<particle_track*, float> >* p_pos_link;
 
-      
+  
   float get_value(utilities::D_TYPE type,float & val) const;
   int get_value(utilities::D_TYPE type,int &val) const;
   std::complex<float> get_value(utilities::D_TYPE type,
@@ -210,8 +218,23 @@ private:
    */
   Hash_shelf* shelf_;
 
-  
+  /**
+    Returns true if there is a particle n steps forward and
+    passes a pointer to it out as a reference, if there is
+    not a particle, returns false.  Private, non-const version
+    @param  n [in] number of steps to take
+    @param next [out]  pointer to the nth particle
+    @return true if the nth particle exists
+   */
   bool step_backwards(int n, particle_track* & next);
+  /**
+    Returns true if there is a particle n steps forward and
+    passes a pointer to it out as a reference, if there is
+    not a particle, returns false.  Private, non-const version
+    @param  n [in] number of steps to take
+    @param next [out]  pointer to the nth particle
+    @return true if the nth particle exists
+   */
   bool step_forwards(int n,particle_track* & next);  
   
 
