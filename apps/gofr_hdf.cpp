@@ -84,6 +84,51 @@ using tracking::Corr_gofr;
 static string APP_NAME = "gofr :: ";
 
 
+/**
+   \page gofr_doc g(r) HDF Documentation
+
+   This program takes in an hdf file of particle locations, computes 
+   \f$g(r)\f$, and writes the results out to an hdf file.
+
+   The program expects three input arguments
+   <dl>
+     <dt>-i ifname</dt>
+     <dd>the full path of the input file</dd>
+     <dt>-o ofname</dt>
+     <dd>the full path of the output files</dd>
+     <dt>-c cfname</dt>
+     <dd>the full path of the xml configuration file</dd>
+   </dl>
+   
+   Required function parameters in the xml file are
+   <dl>
+     <dt>nbins  </dt>
+     <dd><em>int</em> The number of bins to use</dd>
+     <dt>max_range </dt>
+     <dd><em>float</em> The maximum radius to compute g(r) to.  This will also have
+       an effet on the statistics of g(r) as only particles
+       at least <kbd> max_range</kbd> away from the edge can be used.
+     </dd>
+     <dt>grp_name </dt>
+     <dd><em>string</em> the name of the top level group to write the results to.  This may 
+       be removed</dd>
+   </dl>
+
+   Required logistics parameters in the xml file are
+   <dl>
+     <dt>read_comp </dt>
+     <dd><em>int</em> the computation key of the data to read in</dd>
+     <dt>write_comp </dt>
+     <dd><em>int</em>  the computation key of the data to be written out</dd>
+     <dt>dset </dt>
+     <dd><em>int</em> the dset number of the data being worked on</dd>
+   </dl>
+   All of these numbers refer to the data base scheme, documented else
+   where.
+       
+
+ */
+
 int main(int argc, char * argv[])
 {
 

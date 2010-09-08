@@ -157,7 +157,7 @@ Currently,
 <li>tracking in time
 <li>mean squared displacement
 <li>van Hove distributions
-<li>\f$g(r)\f$ (2D and 3D)
+<li>\f$g(r)\f$ (2D and 3D) (\ref gofr_doc "doc")
 </ul>
 are written and fully tested and
 <ul>
