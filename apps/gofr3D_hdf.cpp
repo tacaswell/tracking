@@ -189,7 +189,7 @@ int main(int argc, char * const argv[])
     };
     set<D_TYPE> data_types = set<D_TYPE>(tmp, tmp+3);
     
-    /// @TODO these parameters need to be passed in
+    /// @todo these parameters need to be passed in
     Wrapper_i_hdf wh(in_file,data_types,read_comp_number,0,1,false);
 
     

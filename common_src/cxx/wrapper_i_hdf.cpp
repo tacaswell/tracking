@@ -142,7 +142,7 @@ void Wrapper_i_hdf::priv_init(int fr_count)
     else
     {
       /**
-	 @TODO deal with this better, don't have any data 
+	 @todo deal with this better, don't have any data 
        */
       frame_count_ = 1;
     }
@@ -502,7 +502,7 @@ float Wrapper_i_hdf::get_xy_scale() const
 {
 
   /**
-     /TODO make it actually ask the hdf for the calibration,
+     /todo make it actually ask the hdf for the calibration,
    */
   return (6.45/60);
 
