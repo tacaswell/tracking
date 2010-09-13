@@ -17,7 +17,13 @@ include(LibFindMacros)
 
 
 
-SET(IPP_PROCESS_INCLUDE "/home/tcaswell/intel/ipp/5.3.4.080/em64t/include/")
+
+# Include dir
+find_path(IPP_PROCESS_INCLUDE
+  NAMES ipp.h
+  HINTS $ENV{IPP_ROOT}/include
+)
+
 SET(IPP_PROCESS_INCLUDES  IPP_PROCESS_INCLUDE)
 
 # Finally the library itself
