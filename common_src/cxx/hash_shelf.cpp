@@ -66,8 +66,21 @@ const int max_hash_dim_prod = 100*100*100;
 void Hash_shelf::push(particle * p){
   try{
     //cout<<hash_function(p)<<endl;
+    unsigned int hash_val = hash_function(p);
     
-    (hash_.at(hash_function(p)))->push(p);
+    hash_box * tmp_box = hash_.at(hash_val);
+    // check if box exsits
+    if(tmp_box == NULL)
+    {
+      // if not, make it
+      tmp_box = new hash_box(this,hash_val,own_part_);
+      // put in to 
+      hash_.at(hash_val) = tmp_box;
+    }
+    // put particle in to box
+    tmp_box->push(p);
+
+    // update largest index in hash_shelf
     int tmp_ind = p->get_ind();
     if(tmp_ind > max_part_indx_)
       max_part_indx_ = tmp_ind;
@@ -77,17 +90,21 @@ void Hash_shelf::push(particle * p){
     cout << e.what() << endl;
     float tmp;
     
-    std::cout<<"hash value: "<<hash_function(p)<<"\t"<<"hash table size "<<hash_.size()<<std::endl;
-    std::cout<<p->get_value(utilities::D_YPOS,tmp)<<"\t"<<p->get_value(utilities::D_XPOS,tmp)<<std::endl;
+    std::cout<<"hash value: "
+	     <<hash_function(p)<<"\t"<<"hash table size "
+	     <<hash_.size()<<std::endl;
+    std::cout<<p->get_value(utilities::D_YPOS,tmp)<<"\t"
+	     <<p->get_value(utilities::D_XPOS,tmp)<<std::endl;
+    
     p->print();
     throw;
 
   }
   
   ++particle_count_;
-//   cout<<"particle: "<<endl;
-//   p->print();
-//   cout<<"hash_box: "<<hash_function(p)<<endl;
+  //   cout<<"particle: "<<endl;
+  //   p->print();
+  //   cout<<"hash_box: "<<hash_function(p)<<endl;
 }
 
 
@@ -109,13 +126,14 @@ Hash_shelf::Hash_shelf(utilities::Tuplef imgsz,
    hash_cum_dim_(0),
    img_dims_(imgsz),
    upb_(upb),
-   z_offset_(z_offset)
+   z_offset_(z_offset),
+   own_part_(own_part)
 {  
-  priv_init(own_part);
+  priv_init();
   
 }
 
-void Hash_shelf::priv_init(bool own_part)
+void Hash_shelf::priv_init()
 {
   
   int rank = Tuplef::length_;
@@ -149,9 +167,7 @@ void Hash_shelf::priv_init(bool own_part)
   
 
 
-  hash_.reserve(hash_dim_prod);
-  for(int j = 0; j<hash_dim_prod;j++)
-    hash_.push_back(new hash_box(this,j,own_part));
+  hash_.resize(hash_dim_prod,NULL);
 }
 
 
@@ -161,27 +177,27 @@ void Hash_shelf::priv_init(bool own_part)
 void Hash_shelf::shelf_to_list(std::list<particle*> &tmp) const{
   tmp.clear();
   for(vector<hash_box*>::const_iterator cur_box = hash_.begin(); cur_box<hash_.end(); ++cur_box)
-    {
+  {
       
-      for(vector<particle*>::iterator cur_part = (*cur_box)->begin();
-	  cur_part!=(*cur_box)->end(); ++cur_part)
-	{
-	  tmp.push_back(*cur_part);
-	}
+    for(vector<particle*>::iterator cur_part = (*cur_box)->begin();
+	cur_part!=(*cur_box)->end(); ++cur_part)
+    {
+      tmp.push_back(*cur_part);
     }
+  }
 }
 
 void Hash_shelf::shelf_to_list(std::list<const particle*> &tmp) const{
   tmp.clear();
   for(vector<hash_box*>::const_iterator cur_box = hash_.begin(); cur_box<hash_.end(); ++cur_box)
-    {
+  {
       
-      for(vector<particle*>::const_iterator cur_part = (*cur_box)->begin();
-	  cur_part!=(*cur_box)->end(); ++cur_part)
-	{
-	  tmp.push_back(*cur_part);
-	}
+    for(vector<particle*>::const_iterator cur_part = (*cur_box)->begin();
+	cur_part!=(*cur_box)->end(); ++cur_part)
+    {
+      tmp.push_back(*cur_part);
     }
+  }
 }
 
 #if PTYPE == 1
@@ -329,8 +345,8 @@ unsigned int Hash_shelf::hash_function(const particle* p) const
   }
   return indx;
   
-// tac 2010-03-25 Changed to copying the code from this function to
-// avoid extra casts to and from 
+  // tac 2010-03-25 Changed to copying the code from this function to
+  // avoid extra casts to and from 
 
   //return tuple_to_indx(cur_pos);
   
@@ -403,15 +419,18 @@ void Hash_shelf::get_region(int n,vector<const particle*> & out_vector,int range
     Tuplei tmp = range_indx_to_tuple(j,region_sides);
     tmp += bottom_corner;
     if(testing)
-       cout<<j <<'\t'<<tmp<<endl;
+      cout<<j <<'\t'<<tmp<<endl;
     
     int tmp_indx = tuple_to_indx(tmp);
     hash_box* cur_box = (hash_.at(tmp_indx));
-    vector<particle *>::const_iterator it_end = cur_box->end();
-    for(vector<particle *>::const_iterator it = cur_box->begin();
-	it!=it_end;++it)
+    if(cur_box)
     {
-      out_vector.push_back(*it);
+      vector<particle *>::const_iterator it_end = cur_box->end();
+      for(vector<particle *>::const_iterator it = cur_box->begin();
+	  it!=it_end;++it)
+      {
+	out_vector.push_back(*it);
+      }
     }
     
   }
@@ -433,11 +452,14 @@ void Hash_shelf::get_region(int n,list< particle*> & out_vector,int range) const
     
     int tmp_indx = tuple_to_indx(tmp);
     hash_box* cur_box = (hash_.at(tmp_indx));
-    vector<particle *>::const_iterator it_end = cur_box->end();
-    for(vector<particle *>::const_iterator it = cur_box->begin();
-	it!=it_end;++it)
+    if(cur_box)
     {
-      out_vector.push_back(*it);
+      vector<particle *>::const_iterator it_end = cur_box->end();
+      for(vector<particle *>::const_iterator it = cur_box->begin();
+	  it!=it_end;++it)
+      {
+	out_vector.push_back(*it);
+      }
     }
     
   }
@@ -509,7 +531,8 @@ void Hash_shelf::get_region(particle* n,hash_box * out_box,int range) const
     
     int tmp_indx = tuple_to_indx(tmp);
     hash_box* cur_box = (hash_.at(tmp_indx));
-    out_box->append(cur_box);
+    if(cur_box)
+      out_box->append(cur_box);
     
   }
 }
@@ -517,15 +540,14 @@ void Hash_shelf::get_region(particle* n,hash_box * out_box,int range) const
 
 list<particle_track*> * Hash_shelf::shelf_to_list() const{
   list<particle_track*>* tmp = new list<particle_track*>; 
-  for( vector<hash_box* >::const_iterator cur_box = hash_.begin(); cur_box<hash_.end(); ++cur_box)
-  {                                                                                             
-                                                                                                  
-    for(vector<particle*>::iterator cur_part = (*cur_box)->begin();                             
-	cur_part!=(*cur_box)->end(); ++cur_part)                                                 
-    {                                                                                          
-      tmp->push_back(static_cast<particle_track*>(*cur_part));                                 
-    }                                                                                          
-  }                                                                                             
-                                                                                                  
-  return tmp;                                                                                     
+  for( vector<hash_box* >::const_iterator cur_box = hash_.begin(); 
+       cur_box<hash_.end(); ++cur_box)
+  {
+    for(vector<particle*>::iterator cur_part = (*cur_box)->begin();
+	cur_part!=(*cur_box)->end(); ++cur_part)
+    {
+      tmp->push_back(static_cast<particle_track*>(*cur_part));
+    }
+  }
+  return tmp;
 }   

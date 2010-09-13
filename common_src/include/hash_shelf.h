@@ -329,8 +329,14 @@ private:
    */
   float z_offset_;
   
+  
+  /**
+     bool if the hash_box objects in this hash shelf are to own their particles.
 
-
+     this needs to be kept track of because boxes are created on the fly.
+   */
+  bool own_part_;
+  
 
   /**
      converts a coordinate tuple in the hash shelf to an index
@@ -350,7 +356,7 @@ private:
   /**
      private initialization function
    */
-  void priv_init(bool own_part);
+  void priv_init();
 
   /**
      does the computation to get a region of size 2*range +1 around the center

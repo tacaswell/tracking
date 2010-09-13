@@ -107,7 +107,9 @@ void Hash_shelf::output_to_wrapper(Wrapper_out & wrapper) const
   for(vector<hash_box*>::const_iterator current_box = hash_.begin();
       current_box != hash_.end();++current_box)
   {
-    (*current_box)->output_to_wrapper(wrapper);
+    hash_box * tmp_box = *current_box;
+    if(tmp_box)
+      (tmp_box)->output_to_wrapper(wrapper);
   }
   wrapper.close_group();
 }
@@ -173,8 +175,9 @@ void Hash_shelf::pass_fun_to_part(void(particle::*fun)())
   for(vector<hash_box*>::iterator it = hash_.begin();
       it!=myend;++it)
   {
-    (*it)->pass_fun_to_part(fun);
-    
+    hash_box *tmp_box= *it;
+    if(tmp_box)
+      (tmp_box)->pass_fun_to_part(fun);
   }
 }
 void hash_box::pass_fun_to_part(void(particle::*fun)())
@@ -210,8 +213,9 @@ void Hash_shelf::pass_fun_to_part(void(particle::*fun)()const)const
   for(vector<hash_box*>::const_iterator it = hash_.begin();
       it!=myend;++it)
   {
-    (*it)->pass_fun_to_part(fun);
-    
+    hash_box *tmp_box = *it;
+    if(tmp_box)
+      (tmp_box)->pass_fun_to_part(fun);
   }
 }
 void hash_box::pass_fun_to_part(void(particle::*fun)()const)const
@@ -275,7 +279,12 @@ void Hash_shelf::compute_accum(Accumulator & in) const
   vector<hash_box*>::const_iterator end_it = hash_.end();
   for(vector<hash_box*>::const_iterator box_it = hash_.begin();
       box_it != end_it; ++box_it)
-    (*box_it)->compute_accum(in);
+  {
+    hash_box *tmp_box = *box_it;
+    if(tmp_box)
+      (tmp_box)->compute_accum(in);
+  }
+  
 }
 
 void hash_box::compute_accum(Accumulator & in)const
@@ -302,7 +311,7 @@ void hash_case::fill_in_neighborhood()
   }
 }
 
-
+///@todo change this to use not hash_box objects as containers
 void Hash_shelf::fill_in_neighborhood()
 {
   //  cout<<"particle_count_"<<particle_count_<<endl;
@@ -316,10 +325,13 @@ void Hash_shelf::fill_in_neighborhood()
   list<particle*> current_box;
   list<particle*> current_region;
   
-  for(int j = 0; j<(int)hash_.size(); ++j)
+  for(unsigned int j = 0; j<hash_.size(); ++j)
   {
     current_region.clear();
     current_box.clear();
+    
+    if(hash_[j]==NULL)
+      continue;
     
     hash_[j]->box_to_list(current_box);
     if(current_box.empty())
