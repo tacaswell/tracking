@@ -130,7 +130,7 @@ private:
   
   
   /**
-     \f$\i\f$
+     \f$i\f$
    */
   const static std::complex<float> i_;
   /**

@@ -212,7 +212,7 @@ and Margaret Gardel
 
 The following is the license for code written by me and supersedes
 what individual files may say at the top with regards to the
-Additional Permissions.  Files not written by copyright Thomas A
+Additional Permissions.  Files not copyright Thomas A
 Caswell have their copyright/license at the top.
 
 
