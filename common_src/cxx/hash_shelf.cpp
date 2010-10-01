@@ -540,14 +540,14 @@ void Hash_shelf::get_region(particle* n,hash_box * out_box,int range) const
 
 list<particle_track*> * Hash_shelf::shelf_to_list() const{
   list<particle_track*>* tmp = new list<particle_track*>; 
-  for( vector<hash_box* >::const_iterator cur_box = hash_.begin(); 
-       cur_box<hash_.end(); ++cur_box)
+  for( vector<hash_box* >::const_iterator cur_box_it = hash_.begin(); 
+       cur_box_it<hash_.end(); ++cur_box_it)
   {
-    for(vector<particle*>::iterator cur_part = (*cur_box)->begin();
-	cur_part!=(*cur_box)->end(); ++cur_part)
-    {
-      tmp->push_back(static_cast<particle_track*>(*cur_part));
-    }
+    hash_box* cur_box = *cur_box_it;
+    if(cur_box)
+      for(vector<particle*>::iterator cur_part = (cur_box)->begin();
+	  cur_part!=(cur_box)->end(); ++cur_part)
+	tmp->push_back(static_cast<particle_track*>(*cur_part));
   }
   return tmp;
 }   
