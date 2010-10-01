@@ -277,20 +277,25 @@ void Wrapper_i_hdf::priv_init(int fr_count)
 	case V_ERROR:
 	  throw logic_error("wrapper_i_hdf: The data type should not have been " + VT2str_s(v_type(cur_type)));
       	}
-	// clean up hdf stuff
-
-	delete dset;
-
 	
+	// clean up hdf stuff
+	dset->close();
+	delete dset;
+	dset = NULL;
       }
-
+      frame->close();
+      
       delete frame;
+      frame = NULL;
       
     }
+    file->close();
     
 
     delete file;
-
+    
+    file = NULL;
+    
     // shift all of the z by the minimum to start at zero
     if(two_d_data_)
     {
@@ -494,6 +499,11 @@ Tuplef Wrapper_i_hdf::get_dims()const
   {
     attr_list.get_value("dims",tmp);
   }
+  group.close();
+  file.close();
+  
+    
+
   return Tuplef(tmp);
   
 }
