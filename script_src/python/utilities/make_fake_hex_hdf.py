@@ -21,6 +21,7 @@ import matplotlib.pyplot as plt
 import random
 import itertools
 import h5py
+import numpy as np
 
 def _make_rot_mat(angle):
     return matrix([[cos(angle), -sin(angle)],[sin(angle),cos(angle)]])
@@ -47,6 +48,8 @@ def grid_centers(sz,spacing):
         for y in range(spacing,(sz+1)*spacing,spacing):
             yield matrix([x,y]).T
 
+def _add_noise(cords,mag):
+    return   [c + np.matrix(np.random.standard_normal(len(c))*mag).T for c in cords]
 
         
 class hex_plane:
@@ -56,43 +59,52 @@ class hex_plane:
         self.x = zeros(self.part_count)
         self.y = zeros(self.part_count)
         # 
-    def to_hdf(self,h):
-        # open plane
-        # dump x,y
-        # close plane
-        # add any extra meta-data (z-posistion)
-        pass
 
 
+def make_hdf_file(f_count,grd_sz,spc):
 
-def _main():
-    f_count = 1
-    grd_sz = 5
-    spc = 6
     
-    f = h5py.File("test.h5",'w')
+    f = h5py.File("test3.h5",'w')
        
     f.attrs.create('dims',[(grd_sz+1)* spc,(grd_sz+1)* spc],None,'float32')
     f.attrs.create('number-of-planes',f_count,None,'int32')
     f.attrs.create('version',1,None,'int32')
-
+    g = f.create_group("parameters")
     for fr in range(0,f_count):
         clusters = []
         cents = grid_centers(grd_sz,spc)
         for a,c in itertools.izip(range(0,grd_sz*grd_sz),cents):
             print a
             print (pi/3) * (a/(grd_sz*grd_sz) + 0*fr/f_count) /pi * 180
-            clusters.extend(_make_cluster(c,(pi/3) * (a/(grd_sz*grd_sz) + 0*fr/f_count)))
-
+            clusters.extend(_add_noise(_make_cluster(c,(pi/3) * (a/(grd_sz*grd_sz) + 0*fr/f_count)),.05))
+            
+            
         clust = hstack(clusters)
         g = f.create_group("frame%(#)06d"%{"#":fr})
-        g.create_dataset('x_0000000',data=clust[0,:])
-        g.create_dataset('y_0000000',data=clust[1,:])
-        
+        g.create_dataset('x_0000000',data=np.squeeze(np.array(clust[0,:])))
+        g.create_dataset('y_0000000',data=np.squeeze(np.array(clust[1,:])))
+        g.create_dataset('R2_0000000',data=zeros(size(clusters,0)))
+        g.create_dataset('x_shift_0000000',data=zeros(size(clusters,0)))
+        g.create_dataset('y_shift_0000000',data=zeros(size(clusters,0)))
+        g.create_dataset('eccentricity_0000000',data=zeros(size(clusters,0)))
+        g.attrs.create('Exposure',1)
+        g.attrs.create('Exposure units','ms')
+        g.attrs.create('stage-position-x',0)
+        g.attrs.create('stage-position-y',0)
         g.attrs.create('z-position', fr,None,'float32')
+        g.attrs.create('dtime',1)
+        g.attrs.create('acquisition-time-local', '3141-05-09 02:06:53.58')
+        g.attrs.create('temperature',0)
+
+        
+        
 
     f.close()
+    del f
+def _main():
+    make_hdf_file(10,5,6)
 
-_main()
+if __name__ == "__main__":
+    _main()
 
 
