@@ -72,8 +72,8 @@ void hash_case::output_to_wrapper(Wrapper_out & wrapper) const
 {
 
 
-  wrapper.add_meta_data("dims",h_case_[0]->get_img_dims());
-  wrapper.add_meta_data("number-of-planes",(int)h_case_.size());
+  wrapper.add_meta_data("dims",h_case_[0]->get_img_dims(),true);
+  wrapper.add_meta_data("number-of-planes",(int)h_case_.size(),true);
     
   
   for(vector<Hash_shelf*>::const_iterator current_shelf= h_case_.begin();

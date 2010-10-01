@@ -149,28 +149,37 @@ public:
    */
   Wrapper_out(){};
 
-
+  /**
+     @name Group level metadata
+     adds meta data to a group
+  */
+  //@{
   /**
      Adds a float meta-data
    */
-  virtual void add_meta_data(const std::string & key, float val,bool root_group=true)=0;
+  virtual void add_meta_data(const std::string & key, float val,bool root_group)=0;
   /**
      Adds a Triple meta-data
    */
-  virtual void add_meta_data(const std::string & key, const Tuple<float,3> & val,bool root_group=true)=0;
+  virtual void add_meta_data(const std::string & key, const Tuple<float,3> & val,bool root_group)=0;
   /**
      Adds a Pair meta-data
    */
-  virtual void add_meta_data(const std::string & key, const Tuple<float,2>& val,bool root_group=true)=0;
+  virtual void add_meta_data(const std::string & key, const Tuple<float,2>& val,bool root_group)=0;
   /**
      Adds a string meta-data
    */
-  virtual void add_meta_data(const std::string & key,  const std::string & val,bool root_group=true)=0;
+  virtual void add_meta_data(const std::string & key,  const std::string & val,bool root_group)=0;
   /**
      Adds an integer meta-data
    */
-  virtual void add_meta_data(const std::string & key, int val,bool root_group=true)=0;
-  
+  virtual void add_meta_data(const std::string & key, int val,bool root_group)=0;
+  //@}
+
+  /**
+     Adds metadata for datasets
+   */
+  //@{
   /**
      Adds a float meta-data for a data set
    */
@@ -196,7 +205,7 @@ public:
      Adds all parameters from the Read_config object to the data sets in the set
    */
   virtual void add_meta_data_list(const Read_config & , const std::set<D_TYPE> &)=0;
-
+  //@}
 
   /**
      Adds all the meta data in a Md_store object
