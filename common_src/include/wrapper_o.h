@@ -104,7 +104,7 @@ public:
   virtual void set_all_values(const tracking::particle *)=0;
 
 
-#if PTYPE == 1
+#ifdef TRACKING_FLG
   /**
      sets all of the values that the wrapper knows about by asking the particle.
 

@@ -101,6 +101,7 @@ void Hash_shelf::output_to_wrapper(Wrapper_out & wrapper) const
   //   cout<<e.what()<<endl;
   // }
 
+
   if(md_store_)
     wrapper.add_meta_store(md_store_);
   

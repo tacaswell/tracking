@@ -200,7 +200,7 @@ void Hash_shelf::shelf_to_list(std::list<const particle*> &tmp) const{
   }
 }
 
-#if PTYPE == 1
+#ifdef TRACKING_FLG
 void Hash_shelf::compute_mean_forward_disp(utilities::Tuplef & cum_disp_in){
 
   cumulative_disp_ = cum_disp_in;

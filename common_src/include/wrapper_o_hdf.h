@@ -90,7 +90,7 @@ public:
 
   
   void set_all_values(const tracking::particle *);
-#if PTYPE == 1
+#ifdef TRACKING_FLG
   void set_all_values(const tracking::Track_box *,const utilities::Tuple<float,3> &);
 #endif
   void set_value(D_TYPE,const tracking::particle *);

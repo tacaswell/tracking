@@ -90,21 +90,6 @@ public:
   ///print out a sensible representation of the data
   void print() const;
   
-
-  /**
-     Links particles in to tracks.  
-     
-     @param max_range [in] the maximum displacement a particle is
-     expected to have in a time step
-     
-     @param tracks [out] a Track_shelf object passed in by reference.
-  */
-  void link(float max_range, Track_shelf& tracks);
-
-  /**
-     Compute mean forward displacement for each shelf
-  */
-  void compute_mean_disp();
   /**
      Passes functions all the way down the pyramid, this one for void,
      argument-less functions, non-const
@@ -187,12 +172,33 @@ public:
   ///Destructor
   ~hash_case();
 
+#ifdef TRACKING_FLG
+  /**
+     Initialization function for related to tracking
+   */
   void init(float box_side_len,
 	    const utilities::Wrapper_in & wrapper,
 	    Track_shelf & tracks,
 	    utilities::Filter & filt,
 	    int min_trk_length);
 
+  
+  /**
+     Links particles in to tracks.  
+     
+     @param max_range [in] the maximum displacement a particle is
+     expected to have in a time step
+     
+     @param tracks [out] a Track_shelf object passed in by reference.
+  */
+  void link(float max_range, Track_shelf& tracks);
+
+  /**
+     Compute mean forward displacement for each shelf
+  */
+  void compute_mean_disp();
+
+#endif
   
 
 protected:

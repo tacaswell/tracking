@@ -207,7 +207,7 @@ void Wrapper_o_hdf::set_all_values(const particle* p_in)
 }
 
 
-#if PTYPE == 1
+#ifdef TRACKING_FLG
 void Wrapper_o_hdf::set_all_values(const tracking::Track_box * in,const utilities::Tuple<float,3> & scale) 
 {
   if(!group_open_)

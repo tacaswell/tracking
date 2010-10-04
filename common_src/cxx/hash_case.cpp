@@ -139,7 +139,7 @@ void hash_case::init(Master_box & mb,const utilities::Tuplef & dims,
       }
       
       h_case_.at(cf)->push(p);
-#if PTYPE == 1
+#ifdef TRACKING_FLG
       p->set_shelf(h_case_.at(cf));
 #endif
     }
@@ -176,7 +176,7 @@ hash_case::~hash_case(){
   std::cout<<"hc dead"<<std::endl;
 }
 
-#if PTYPE == 1
+#ifdef TRACKING_FLG
 void hash_case:: compute_mean_disp(){
   Tuplef cum_disp;
   for(vector<Hash_shelf*>::iterator it = h_case_.begin();
@@ -232,7 +232,7 @@ float hash_case::get_avg_temp()const
   return temperature_sum/frame_count; 
 }
 
-#if PTYPE == 1
+#ifdef TRACKING_FLG
 void hash_case::init(float box_side_len,
 		     const Wrapper_in & wrapper,
 		     Track_shelf & tracks,

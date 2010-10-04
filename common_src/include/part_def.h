@@ -37,6 +37,7 @@ class particle_track;
 #if PTYPE == 0
 typedef particle_base particle;
 #elif PTYPE == 1
+#define TRACKING_FLG
 typedef particle_track particle;
 #endif
 }
