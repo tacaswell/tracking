@@ -149,30 +149,89 @@ public:
 
   /**
      @name Group level metadata
-     adds meta data to a group
+     adds meta data to a group that is independent of individual computations
   */
   //@{
   /**
      Adds a float meta-data
    */
-  virtual void add_meta_data(const std::string & key, float val,bool root_group)=0;
+  virtual void add_meta_data(const std::string & key, float val)=0;
   /**
      Adds a Triple meta-data
    */
-  virtual void add_meta_data(const std::string & key, const Tuple<float,3> & val,bool root_group)=0;
+  virtual void add_meta_data(const std::string & key, const Tuple<float,3> & val)=0;
   /**
      Adds a Pair meta-data
    */
-  virtual void add_meta_data(const std::string & key, const Tuple<float,2>& val,bool root_group)=0;
+  virtual void add_meta_data(const std::string & key, const Tuple<float,2>& val)=0;
   /**
      Adds a string meta-data
    */
-  virtual void add_meta_data(const std::string & key,  const std::string & val,bool root_group)=0;
+  virtual void add_meta_data(const std::string & key,  const std::string & val)=0;
   /**
      Adds an integer meta-data
    */
-  virtual void add_meta_data(const std::string & key, int val,bool root_group)=0;
+  virtual void add_meta_data(const std::string & key, int val)=0;
   //@}
+
+  
+  /**
+     @name Root level
+     adds meta data to the root group 
+  */
+  //@{
+  /**
+     Adds a float meta-data
+   */
+  virtual void add_meta_data_root(const std::string & key, float val)=0;
+  /**
+     Adds a Triple meta-data
+   */
+  virtual void add_meta_data_root(const std::string & key, const Tuple<float,3> & val)=0;
+  /**
+     Adds a Pair meta-data
+   */
+  virtual void add_meta_data_root(const std::string & key, const Tuple<float,2>& val)=0;
+  /**
+     Adds a string meta-data
+   */
+  virtual void add_meta_data_root(const std::string & key,  const std::string & val)=0;
+  /**
+     Adds an integer meta-data
+   */
+  virtual void add_meta_data_root(const std::string & key, int val)=0;
+  //@}
+
+
+  
+  /**
+     @name Group level metadata
+     adds meta data to a group that is specific the current computation
+  */
+  //@{
+  /**
+     Adds a float meta-data
+   */
+  virtual void add_meta_data_comp(const std::string & key, float val)=0;
+  /**
+     Adds a Triple meta-data
+   */
+  virtual void add_meta_data_comp(const std::string & key, const Tuple<float,3> & val)=0;
+  /**
+     Adds a Pair meta-data
+   */
+  virtual void add_meta_data_comp(const std::string & key, const Tuple<float,2>& val)=0;
+  /**
+     Adds a string meta-data
+   */
+  virtual void add_meta_data_comp(const std::string & key,  const std::string & val)=0;
+  /**
+     Adds an integer meta-data
+   */
+  virtual void add_meta_data_comp(const std::string & key, int val)=0;
+  //@}
+
+
 
   /**
      Adds metadata for datasets

@@ -100,8 +100,6 @@ public:
 
   void close_group();
   void finalize_wrapper();
-
-  void reset_wrapper(params * param);
   
   void print()const;
   int  num_entries()const{return 0;};
@@ -115,25 +113,31 @@ public:
 
   
 
-  void add_meta_data(const std::string & key, float val,bool root_group = true);
-  void add_meta_data(const std::string & key, const Tuple<float,2> & val,bool root_group = true);
-  void add_meta_data(const std::string & key, const Tuple<float,3> & val,bool root_group = true);
-  
-  
-
-  void add_meta_data(const std::string & key,  const std::string & val,bool root_group = true);
-
-  void add_meta_data(const std::string & key, int val,bool root_group = true);
+  void add_meta_data(const std::string & key, float val);
+  void add_meta_data(const std::string & key, const Tuple<float,2> & val);
+  void add_meta_data(const std::string & key, const Tuple<float,3> & val);
+  void add_meta_data(const std::string & key,  const std::string & val);
+  void add_meta_data(const std::string & key, int val);
 
   
+  void add_meta_data_root(const std::string & key, float val);
+  void add_meta_data_root(const std::string & key, const Tuple<float,2> & val);
+  void add_meta_data_root(const std::string & key, const Tuple<float,3> & val);
+  void add_meta_data_root(const std::string & key,  const std::string & val);
+  void add_meta_data_root(const std::string & key, int val);
+
+  
+  void add_meta_data_comp(const std::string & key, float val);
+  void add_meta_data_comp(const std::string & key, const Tuple<float,2> & val);
+  void add_meta_data_comp(const std::string & key, const Tuple<float,3> & val);
+  void add_meta_data_comp(const std::string & key,  const std::string & val);
+  void add_meta_data_comp(const std::string & key, int val);
+
+
   void add_meta_data(const std::string & key, float val,D_TYPE dset_type);
-  
   void add_meta_data(const std::string & key, const Tuple<float,2> & val,D_TYPE dset_type);
-  
   void add_meta_data(const std::string & key, const Tuple<float,3> & val,D_TYPE dset_type);
-  
   void add_meta_data(const std::string & key,  const std::string & val,D_TYPE dset_type);
-  
   void add_meta_data(const std::string & key, int val,D_TYPE dset_type);
 
   void add_meta_data_list(const Read_config & , const std::set<D_TYPE> &);
@@ -209,7 +213,7 @@ private:
   /**
      formats group names
    */
-  std::string format_name(int in)const;
+  std::string format_name_(int in)const;
   
   /**
      object for current group

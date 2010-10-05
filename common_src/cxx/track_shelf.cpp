@@ -407,8 +407,8 @@ void Track_shelf::output_link_to_wrapper(Wrapper_out & wrapper,
  
   
 
-  wrapper.add_meta_data("dims",dim,true);
-  wrapper.add_meta_data("number-of-planes",1,true);
+  wrapper.add_meta_data_root("dims",dim);
+  wrapper.add_meta_data_root("number-of-planes",1);
   wrapper.open_group(0,track_count_);
   tr_list::const_iterator myend =  tracks_.end();
   

@@ -128,11 +128,13 @@ void Wrapper_o_hdf::initialize_wrapper()
   {
     throw runtime_error("failure to create or open file");
   }
-
+  // this needs to go here because the add 
+  wrapper_open_ = true;
+  
   if(file_type_ != APPEND_FILE)
   {
     dset_pram_group_ = new Group(file_->createGroup("parameters"));
-    add_meta_data("version",1,true);
+    add_meta_data_root("version",1);
   }
   else
     dset_pram_group_ = new Group(file_->openGroup("parameters"));
@@ -148,7 +150,7 @@ void Wrapper_o_hdf::initialize_wrapper()
   
   
   
-  wrapper_open_ = true;
+
 }
 
 void Wrapper_o_hdf::open_group(int group_indx,int p_count,int wrapper_size)
@@ -181,7 +183,7 @@ void Wrapper_o_hdf::open_group(int group_indx,int p_count,int wrapper_size)
     
 
     current_group_ = new Wrapper_o_hdf_group(file_,
-					     format_name(group_indx),
+					     format_name_(group_indx),
 					     d_types_add_,
 					     p_count,
 					     wrapper_size,
@@ -270,12 +272,7 @@ void Wrapper_o_hdf::finalize_wrapper()
   } 
 }
 
-       
-void Wrapper_o_hdf::reset_wrapper(params * param)
-{
-  throw logic_error("not implemented");
-}
-
+ 
        
 void Wrapper_o_hdf::print()const
 {
@@ -297,7 +294,7 @@ const set<D_TYPE>& Wrapper_o_hdf::get_content_tpyes() const
 
 
 
-string Wrapper_o_hdf::format_name(int in)const
+string Wrapper_o_hdf::format_name_(int in)const
 {
   std::ostringstream o;
   o.width(format_padding_);
@@ -306,91 +303,103 @@ string Wrapper_o_hdf::format_name(int in)const
   return  group_prefix_ + o.str();
 }
 
-  
-
-
-
-void Wrapper_o_hdf::add_meta_data(const std::string & key, float val,bool root_group )
+// root meta data
+template<class T>
+void local_add_meta_data_root(const std::string & key, T val,bool wrapper_open,H5File * file)
 {
-  
-
-  if( root_group)
+  if(wrapper_open)
   {
-    Group * group =  new Group(file_->openGroup("/"));
+    Group * group =  new Group(file->openGroup("/"));
     Attr_list_hdf atr_lst(group);
     atr_lst.set_value(key,val);
+    group->close();
+    
     delete group;
-    
-    
   }
-  else if(group_open_)
-    current_group_->set_meta_data(key,val);
-  
-  
-    
+  else
+    throw runtime_error("wrapper_o_hdf::add_meta_data_root the wrapper is not open");
 }
 
-void Wrapper_o_hdf::add_meta_data(const std::string & key, const Tuple<float,3> & val,bool root_group )
+// individual instantiations because virtual functions and templates don't get along
+void Wrapper_o_hdf::add_meta_data_root(const std::string & key, float val)
 {
-  
-  if( root_group)
-  {
-    Group group =  file_->openGroup("/");
-    Attr_list_hdf  atr_lst(&group);
-    atr_lst.set_value(key,val);
-  }
-  else if(group_open_)
-    current_group_->set_meta_data(key,val);
-  
-  
+  local_add_meta_data_root(key,val,wrapper_open_,file_);
 }
-
-
-void Wrapper_o_hdf::add_meta_data(const std::string & key, const Tuple<float,2> & val,bool root_group )
+void Wrapper_o_hdf::add_meta_data_root(const std::string & key, const Tuple<float,2> & val)
 {
-
-  
-  if( root_group)
-  {
-    Group  group =  file_->openGroup("/");
-    Attr_list_hdf  atr_lst(&group);
-    atr_lst.set_value(key,val);
-
-  }
-  else if(group_open_)
-    current_group_->set_meta_data(key,val);
-  
-  
-  
+  local_add_meta_data_root(key,val,wrapper_open_,file_);
 }
-
-void Wrapper_o_hdf::add_meta_data(const std::string & key, const std::string & val,bool root_group )
+void Wrapper_o_hdf::add_meta_data_root(const std::string & key, const Tuple<float,3> & val)
 {
-    
-  if( root_group)
-  {
-    Group  group =  file_->openGroup("/");
-    Attr_list_hdf  atr_lst(&group);
-    atr_lst.set_value(key,val);
-
-  }
-  else if(group_open_)
-    current_group_->set_meta_data(key,val);
+  local_add_meta_data_root(key,val,wrapper_open_,file_);
 }
-void Wrapper_o_hdf::add_meta_data(const std::string & key, int val,bool root_group)
+void Wrapper_o_hdf::add_meta_data_root(const std::string & key,  const std::string & val)
 {
-  
-  if( root_group)
-  {
-    Group group =  file_->openGroup("/");
-    Attr_list_hdf atr_lst(&group);
-    atr_lst.set_value(key,val);
-  }
-  else if(group_open_)
-    current_group_->set_meta_data(key,val);
+  local_add_meta_data_root(key,val,wrapper_open_,file_);
+}
+void Wrapper_o_hdf::add_meta_data_root(const std::string & key, int val)
+{
+  local_add_meta_data_root(key,val,wrapper_open_,file_);
 }
 
 
+// group (frame) level meta data 
+template<class T>
+void local_add_meta_data(const std::string & key, T val,bool group_open, Wrapper_o_hdf_group * current_group)
+{
+  if(group_open)
+    current_group->set_meta_data(key,val);
+  else
+    throw runtime_error("wrapper_o_hdf::add_meta_data there is no open group");
+}
+
+
+void Wrapper_o_hdf::add_meta_data(const std::string & key, float val)
+{
+  local_add_meta_data(key,val,group_open_,current_group_);
+}
+void Wrapper_o_hdf::add_meta_data(const std::string & key, const Tuple<float,2> & val)
+{
+  local_add_meta_data(key,val,group_open_,current_group_);
+}
+void Wrapper_o_hdf::add_meta_data(const std::string & key, const Tuple<float,3> & val)
+{
+  local_add_meta_data(key,val,group_open_,current_group_);
+}
+void Wrapper_o_hdf::add_meta_data(const std::string & key,  const std::string & val)
+{
+  local_add_meta_data(key,val,group_open_,current_group_);
+}
+void Wrapper_o_hdf::add_meta_data(const std::string & key, int val)
+{
+  local_add_meta_data(key,val,group_open_,current_group_);
+}
+
+  
+void Wrapper_o_hdf::add_meta_data_comp(const std::string & key, float val)
+{
+  string tmp_key = format_name(key,comp_number_);
+  local_add_meta_data(tmp_key,val,group_open_,current_group_);
+}
+void Wrapper_o_hdf::add_meta_data_comp(const std::string & key, const Tuple<float,2> & val){
+  string tmp_key = format_name(key,comp_number_);
+  local_add_meta_data(tmp_key,val,group_open_,current_group_);
+}
+void Wrapper_o_hdf::add_meta_data_comp(const std::string & key, const Tuple<float,3> & val){
+  string tmp_key = format_name(key,comp_number_);
+  local_add_meta_data(tmp_key,val,group_open_,current_group_);
+}
+void Wrapper_o_hdf::add_meta_data_comp(const std::string & key,  const std::string & val){
+  string tmp_key = format_name(key,comp_number_);
+  local_add_meta_data(tmp_key,val,group_open_,current_group_);
+}
+void Wrapper_o_hdf::add_meta_data_comp(const std::string & key, int val){
+  string tmp_key = format_name(key,comp_number_);
+  local_add_meta_data(tmp_key,val,group_open_,current_group_);
+}
+
+
+// 
 template <class T> 
 void local_add_meta(const std::string & key, T val,D_TYPE dset_type,bool wrapper_open,int comp_number,Group * dset_pram_group )
 {
@@ -403,8 +412,6 @@ void local_add_meta(const std::string & key, T val,D_TYPE dset_type,bool wrapper
   }
   else
     throw std::logic_error("void Wrapper_o_hdf::add_meta_data_(const std::string & key, T val,D_TYPE dset_type) \n\t can't add meta data while the warpper is closed");
-  
-
 }
 
 
@@ -433,6 +440,8 @@ void Wrapper_o_hdf::add_meta_data(const std::string & key, const Tuple<float,3>&
 {
   local_add_meta(key,val,dset_type,wrapper_open_,comp_number_,dset_pram_group_);
 }
+
+
 
 void Wrapper_o_hdf::add_meta_data_list(const Read_config & config, const std::set<D_TYPE> & d_types)
 {

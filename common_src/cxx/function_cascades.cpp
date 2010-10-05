@@ -72,8 +72,8 @@ void hash_case::output_to_wrapper(Wrapper_out & wrapper) const
 {
 
 
-  wrapper.add_meta_data("dims",h_case_[0]->get_img_dims(),true);
-  wrapper.add_meta_data("number-of-planes",(int)h_case_.size(),true);
+  wrapper.add_meta_data_root("dims",h_case_[0]->get_img_dims());
+  wrapper.add_meta_data_root("number-of-planes",(int)h_case_.size());
     
   
   for(vector<Hash_shelf*>::const_iterator current_shelf= h_case_.begin();
@@ -100,6 +100,11 @@ void Hash_shelf::output_to_wrapper(Wrapper_out & wrapper) const
   // {
   //   cout<<e.what()<<endl;
   // }
+
+#ifdef TRACKING_FLG
+  // add 
+  //  wrapper.add_meta_data(
+#endif //PYTYPE == 1
 
 
   if(md_store_)
@@ -143,7 +148,7 @@ void Track_box::output_to_wrapper(Wrapper_out & wrapper) const
 {
   wrapper.open_group(id_,length_);
   // add meta data
-  wrapper.add_meta_data("init_plane",t_first_->get_frame(),false);
+  wrapper.add_meta_data("init_plane",t_first_->get_frame());
   
 
   particle_track * cur_part = t_first_;
