@@ -113,6 +113,8 @@ public:
    */
   virtual void set_all_values(const tracking::Track_box *,const utilities::Tuple<float,3> &) = 0;
 #endif
+
+
   /**
      Closes the currently open group.
      Throws an error if there is no open group.
@@ -125,12 +127,6 @@ public:
   */
   virtual   void finalize_wrapper()=0;
   
-  
-  /*
-     changes where the wrapper is pointing (ie, write out to a
-     different array or file or some thin
-   */
-  //virtual void reset_wrapper(params * param)=0;
   //\@}
   
    
@@ -148,6 +144,8 @@ public:
      empty constructor 
    */
   Wrapper_out(){};
+
+  
 
   /**
      @name Group level metadata
