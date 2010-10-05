@@ -103,7 +103,8 @@ void Hash_shelf::output_to_wrapper(Wrapper_out & wrapper) const
 
 #ifdef TRACKING_FLG
   // add 
-  //  wrapper.add_meta_data(
+  wrapper.add_meta_data_comp("mean_forward_displacement",mean_forward_disp_);
+  wrapper.add_meta_data_comp("cumulative_displacement",cumulative_disp_);
 #endif //PYTYPE == 1
 
 
