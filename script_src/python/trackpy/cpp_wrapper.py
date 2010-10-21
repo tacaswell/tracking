@@ -149,7 +149,7 @@ def do_link3D(key,conn,pram_i, pram_f, pram_s = None, rel = True,):
     
 
 
-def do_Iden(key,conn):
+def do_Iden(key,conn,iden_params):
     # see if the file has already been processed
     prog_name = "Iden"
     prog_path = "/home/tcaswell/misc_builds/iden_rel/iden/apps/"
@@ -172,31 +172,21 @@ def do_Iden(key,conn):
     ##     return
 
     comp_num = conn.execute("select max(comp_key) from comps;").fetchone()[0] + 1
-
-    hwhm = 1.2
-    p_rad = 4
-    threshold = 2
-    shift_cut = 1.5
-    rg_cut = 7.5
-    e_cut = .6
-    top_cut = 0.01
-    d_rad = 3
-    mask_rad = 4
     
     prams = xml_data()
     prams.add_stanza("comp")
     prams.add_pram("number","int",comp_num)
     #prams.merge_File(fpram,"iden")
     prams.add_stanza("iden")
-    prams.add_pram("threshold" ,"float" ,threshold)
-    prams.add_pram("hwhm" ,"float" ,hwhm)
-    prams.add_pram("shift_cut" ,"float" ,shift_cut)
-    prams.add_pram("rg_cut" ,"float" ,rg_cut)
-    prams.add_pram("e_cut" ,"float" ,e_cut)
-    prams.add_pram("top_cut" ,"float" ,top_cut)
-    prams.add_pram("p_rad" ,"int" ,str(p_rad))
-    prams.add_pram("d_rad" ,"int" ,d_rad)
-    prams.add_pram("mask_rad" ,"int" ,mask_rad)
+    prams.add_pram("threshold","float",str(iden_params["threshold"]))
+    prams.add_pram("hwhm","float",str(iden_params["hwhm"]))
+    prams.add_pram("shift_cut","float",str(iden_params["shift_cut"]))
+    prams.add_pram("rg_cut","float",str(iden_params["rg_cut"]))
+    prams.add_pram("e_cut","float",str(iden_params["e_cut"]))
+    prams.add_pram("top_cut","float",str(iden_params["top_cut"]))
+    prams.add_pram("p_rad","int",str(iden_params["p_rad"]))
+    prams.add_pram("d_rad","int",str(iden_params["d_rad"]))
+    prams.add_pram("mask_rad","int",str(iden_params["mask_rad"]))
 
     
     fxml = prams.write_to_tmp()
@@ -227,19 +217,24 @@ def do_Iden(key,conn):
 
     # if it works, then returns zero
     if rc == 0:
-        params = (key,comp_num,threshold,top_cut,p_rad,hwhm,d_rad,mask_rad,shift_cut,rg_cut,e_cut)
+        
         print "entering into database"
         conn.execute("insert into comps (dset_key,date,fin,fout,function) values (?,?,?,?,?);",
                      (key,date.today().isoformat(),fin,fout,prog_name))
             
         conn.execute("insert into Iden_prams" +
                      " (dset_key,comp_key,threshold,top_cut,p_rad,hwhm,d_rad,mask_rad,shift_cut,rg_cut,e_cut) " +
-                     "values (?,?,?,?,?,?,?,?,?,?,?);",params)
+                     "values (?,?,?,?,?,?,?,?,?,?,?);",
+                     (key,comp_key,iden_params["threshold"],
+                      iden_params["top_cut"],iden_params["p_rad"],
+                      iden_params["hwhm"],iden_params["d_rad"],
+                      iden_params["mask_rad"],iden_params["shift_cut"],
+                      iden_params["rg_cut"],iden_params["e_cut"]))
         conn.commit()
 
 
 
-def do_Iden_avg(key,conn,frames):
+def do_Iden_avg(key,conn,frames,iden_params):
     # see if the file has already been processed
     prog_name = "Iden_avg"
     prog_path = "/home/tcaswell/misc_builds/iden_rel/iden/apps/"
@@ -261,26 +256,24 @@ def do_Iden_avg(key,conn,frames):
     ##     print fpram
     ##     return
 
-    comp_num = conn.execute("select max(comp_key) from comps;").fetchone()[0] + 1
+    comp_key = conn.execute("select max(comp_key) from comps;").fetchone()[0] + 1
 
-    hwhm = 1.2
-    p_rad = 4
     prams = xml_data()
     prams.add_stanza("comp")
-    prams.add_pram("number","int",comp_num)
+    prams.add_pram("number","int",comp_key)
     
     #prams.merge_File(fpram,"iden")
 
     prams.add_stanza("iden")
-    prams.add_pram("threshold" ,"float" ,"2.000000")
-    prams.add_pram("hwhm" ,"float" ,hwhm)
-    prams.add_pram("shift_cut" ,"float" ,"1.500000")
-    prams.add_pram("rg_cut" ,"float" ,"7.500000")
-    prams.add_pram("e_cut" ,"float" ,"0.600000")
-    prams.add_pram("top_cut" ,"float" ,"0.010000")
-    prams.add_pram("p_rad" ,"int" ,"4")
-    prams.add_pram("d_rad" ,"int" ,"3")
-    prams.add_pram("mask_rad" ,"int" ,"4")
+    prams.add_pram("threshold" ,"float" ,str(iden_params['threshold']))
+    prams.add_pram("hwhm","float",str(iden_params["hwhm"]))
+    prams.add_pram("shift_cut","float",str(iden_params["shift_cut"]))
+    prams.add_pram("rg_cut","float",str(iden_params["rg_cut"]))
+    prams.add_pram("e_cut","float",str(iden_params["e_cut"]))
+    prams.add_pram("top_cut","float",str(iden_params["top_cut"]))
+    prams.add_pram("p_rad","int",str(iden_params["p_rad"]))
+    prams.add_pram("d_rad","int",str(iden_params["d_rad"]))
+    prams.add_pram("mask_rad","int",str(iden_params["mask_rad"]))
 
     prams.add_stanza("frames")
     prams.add_pram("avg_count","int",str(frames))
@@ -314,18 +307,27 @@ def do_Iden_avg(key,conn,frames):
 
     # if it works, then returns zero
     if rc == 0:
-        params = (key,comp_num,2,0.01,p_rad,hwhm,4,4,1.5,7.5,.6,frames)
+        
         print "entering into database"
         conn.execute("insert into comps (dset_key,date,fin,fout,function) values (?,?,?,?,?);",
                      (key,date.today().isoformat(),fin,fout,prog_name))
             
-        conn.execute("insert into Iden_avg_prams" +
-                     " (dset_key,comp_key,threshold,top_cut,p_rad,hwhm,d_rad,mask_rad,shift_cut,rg_cut,e_cut,avg_count) " +
-                     "values (?,?,?,?,?,?,?,?,?,?,?,?);",params)
+        conn.execute("insert into Iden_avg_prams" + 
+                     " (dset_key,comp_key,threshold,top_cut,p_rad,hwhm,d_rad,"
+                     +"mask_rad,shift_cut,rg_cut,e_cut,avg_count) "
+                     + "values (?,?,?,?,?,?,?,?,?,?,?,?);",
+                     (key,comp_key,iden_params["threshold"],
+                      iden_params["top_cut"],iden_params["p_rad"],
+                      iden_params["hwhm"],iden_params["d_rad"],
+                      iden_params["mask_rad"],iden_params["shift_cut"],
+                      iden_params["rg_cut"],iden_params["e_cut"],frames
+                      )
+                     )
         conn.commit()
 
     
     
+
 def do_gofr(comp_key,conn,pram_i, pram_f, pram_s = None, rel = True,):
     """
     Computes gofr 
@@ -524,7 +526,8 @@ def do_vanHove(track_key,conn,pram_i, pram_f, pram_s = None, rel = True,):
     
        
     (fin,dset_key) = _get_fin(track_key,conn)
-    (iden_key,) = conn.execute("select iden_key from tracking_prams where comp_key = ?",(track_key,)).fetchone()
+    (iden_key,) = conn.execute("select iden_key from tracking_prams where comp_key = ?",
+                               (track_key,)).fetchone()
     fout = os.path.dirname(fin) + '/vanHove.h5'
     
     
