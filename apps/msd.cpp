@@ -294,11 +294,6 @@ int main(int argc, char * const argv[])
     std::cerr<<err<<endl;
     return -1;
   } 
-  catch( char const * err){
-    std::cerr<<"caught on error: ";
-    std::cerr<<err<<endl;
-    return -1;
-  } 
   catch(const string & err)
   {
     std::cerr<<"caught on error: ";
