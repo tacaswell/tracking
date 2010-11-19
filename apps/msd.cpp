@@ -72,7 +72,7 @@ using utilities::Md_store;
 using namespace tracking;
 
 
-static string APP_NAME = "tracking :: ";
+static string APP_NAME = "msd :: ";
 
 int main(int argc, char * const argv[])
 {
@@ -290,11 +290,6 @@ int main(int argc, char * const argv[])
     
   }
   catch(const char * err){
-    std::cerr<<"caught on error: ";
-    std::cerr<<err<<endl;
-    return -1;
-  } 
-  catch( char const * err){
     std::cerr<<"caught on error: ";
     std::cerr<<err<<endl;
     return -1;

@@ -64,7 +64,7 @@ using tracking::Master_box;
 using tracking::TA_vanHove;
 
 
-static string APP_NAME = "rtt_hc :: ";
+static string APP_NAME = "vanHove :: ";
 
 int main(int argc, char * const argv[])
 {
