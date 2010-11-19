@@ -34,7 +34,8 @@ void CL_parse::parse() throw(std::invalid_argument)
 {
   int optchar;
   bool found_i=false,found_o= false,found_c = false;
-    
+  found_db_ = false;
+  
   while((optchar = getopt(argc_,argv_,"i:o:c:")) !=-1)
   {
     switch(optchar)
@@ -50,6 +51,10 @@ void CL_parse::parse() throw(std::invalid_argument)
     case 'c':
       fpram_ = string(optarg);
       found_c = true;
+      break;
+    case 'd':
+      fdb_ = string(optarg);
+      found_db_ = true;
       break;
       
     case '?':
