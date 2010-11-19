@@ -72,7 +72,7 @@ using utilities::Md_store;
 using namespace tracking;
 
 
-static string APP_NAME = "tracking :: ";
+static string APP_NAME = "msd :: ";
 
 int main(int argc, char * const argv[])
 {
