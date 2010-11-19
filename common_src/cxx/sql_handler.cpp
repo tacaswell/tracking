@@ -16,10 +16,11 @@
 //along with this program; if not, see <http://www.gnu.org/licenses>.
 
 #include "sql_handler.h"
-#include <sqlite3.h>
+#include "sqlite3.h"
 #include "boost/date_time/gregorian/gregorian.hpp"
 #include <iostream>
 #include <stdexcept>
+#include <stdio.h>
 #include "read_config.h"
 
 
@@ -32,6 +33,7 @@ using std::cerr;
 using std::endl;
 using std::invalid_argument;
 using std::runtime_error;
+
 
 
 using namespace boost::gregorian;
