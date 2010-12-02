@@ -27,8 +27,18 @@ struct sqlite3;
 
 namespace utilities
 {
-class Read_config;
+class Md_store;
 
+/**
+   Enumeration for functions that maps to the tables in the database
+ */
+typedef enum F_TYPE{
+  F_NOFUNCTION =0,
+  F_IDEN ,
+  F_TRACKING,
+  F_MSD,
+}F_TYPE
+    
 /**
    Class to wrap around the sqlite3 interface to deal with making connections to
    data basese, cleaning up after them etc.  Will have both functions do to 
@@ -41,32 +51,73 @@ public:
      Constructor.  Assumes a very specific database layout, see
      external documentation
    */
-  SQL_handler(const std::string& db_name);
+  SQL_handler();
   /**
      Destructor
    */
   ~SQL_handler();
+  
+  
   /**
-     Adds an entry to the comps table.
-   */
-  void add_comp(int dset_key,
-		int comp_key,
-		const std::string &fin,
-		const std::string & fout,
-		const std::string & function);
+     Opens the data base connection
+     @param [in] db_name the full path of data base file. 
+  */
+  void open_connection(const std::string& db_name);
+ 
   /**
-     Adds an entry to the iden_prams table.
+     Closes the connection
    */
-  void add_iden_comp_prams(const Read_config & prams,int dset_key,int comp_key);
+  void close_connection();
+  
+  /**
+     Adds an entry to the comps table, open a transaction, and return the comp_key
 
+     @param [in] dset_key the key of the data set the function is
+     working on 
+     @param [out] comp_key the key of the computation,
+     taken from the database 
+     @param [in] f_type the type of computation being done.  The guts
+     of this object need to know to handle the meta-data for each
+     function.
+     @return the computation key
+   */
+  int start_comp(int dset_key,
+		 int & comp_key,
+		 F_TYPE f_type
+		 )
+  /**
+     Adds the function specific meta-data to the table
+   */
+  void add_mdata(const Md_store & md_store);
+  
+  /**
+     Commits the transactions
+   */
+  void commit();
+  /**
+     Rolls back the transaction
+   */
+  void rollback();
+  
 private:
   /**
      Pointer to the data base object
    */
   sqlite3 * db_;
   
-
-
+  /**
+     Flag if the connection is open
+   */
+  bool conn_open_;
+  /**
+     Flag if there is an open transaction
+   */
+  bool trans_open_;
+  /**
+     Type of the current transaction
+   */
+  F_TYPE trans_type_;
+  
 };
 
 }
