@@ -80,7 +80,30 @@ class xml_data:
         if self.fname:
             if os.path.isfile(self.fname):
                 os.remove(self.fname)
+
+
+def parse_xml_to_dic(fname):
+    '''This is a hacky function to convert the xml files produced by
+    matlab into the dictionaries that the python code expects to be
+    handed in (which will be turned back in to xml files to be handed
+    in to the c++)'''
+    tmp_doc = xml.dom.minidom.parse(fname)
+    tmp_stanza = tmp_doc.getElementsByTagName('iden').item(0)
+    prams = tmp_stanza.getElementsByTagName("param")
+    iden_prams  = {}
+
+    for p in prams:
+        key = p.getAttribute('key')
+        dtype = p.getAttribute('type')
+        val = p.getAttribute('value')
+        if dtype == 'int':
+            iden_prams[key] = int(val)
+        elif dtype == 'float':
+            iden_prams[key] = float(val)
+        else:
+            raise Expecption('un handled type')
         
+    return iden_prams
 
 def _test_fun():
     '''
