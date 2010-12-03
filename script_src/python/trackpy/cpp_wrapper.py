@@ -176,6 +176,7 @@ def do_Iden(key,conn,iden_params):
     prams = xml_data()
     prams.add_stanza("comp")
     prams.add_pram("number","int",comp_num)
+    prams.add_pram("dset_key","int",key)
     #prams.merge_File(fpram,"iden")
     prams.add_stanza("iden")
     prams.add_pram("threshold","float",str(iden_params["threshold"]))
@@ -225,7 +226,7 @@ def do_Iden(key,conn,iden_params):
         conn.execute("insert into Iden_prams" +
                      " (dset_key,comp_key,threshold,top_cut,p_rad,hwhm,d_rad,mask_rad,shift_cut,rg_cut,e_cut) " +
                      "values (?,?,?,?,?,?,?,?,?,?,?);",
-                     (key,comp_key,iden_params["threshold"],
+                     (key,comp_num,iden_params["threshold"],
                       iden_params["top_cut"],iden_params["p_rad"],
                       iden_params["hwhm"],iden_params["d_rad"],
                       iden_params["mask_rad"],iden_params["shift_cut"],
@@ -261,7 +262,7 @@ def do_Iden_avg(key,conn,frames,iden_params):
     prams = xml_data()
     prams.add_stanza("comp")
     prams.add_pram("number","int",comp_key)
-    
+    prams.add_pram("dset_key","int",key)
     #prams.merge_File(fpram,"iden")
 
     prams.add_stanza("iden")
