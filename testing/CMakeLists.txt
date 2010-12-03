@@ -79,8 +79,9 @@ add_executable(read_write_add_test read_write_add_test.cpp
   ${HDF_SRC}
   ${GNU_PLOT_SRC} 
   ${CONFIG_SRC}
+  ${COMMON_TRACK_SRC}
   )
-set_target_properties(read_write_add_test PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_COUNT=2;TESTING")
+set_target_properties(read_write_add_test PROPERTIES COMPILE_DEFINITIONS  "PTYPE=1;DIM_COUNT=2;TESTING")
 target_link_libraries(read_write_add_test ${HDF5_LIBRARIES}  ${XERCESC_LIBRARY} )
 
 add_executable(template_test template_testing.cpp)

@@ -42,6 +42,7 @@
 #include "master_box_t.h"
 
 #include "particle_base.h"
+#include "particle_track.h"
 #include "hash_case.h"
 
 #include "wrapper_o_hdf.h"
