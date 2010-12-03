@@ -38,7 +38,11 @@ typedef enum F_TYPE{
   F_TRACKING,
   F_MSD,
 }F_TYPE
-    
+  
+
+std::string ftype_to_str(F_TYPE f);
+
+  
 /**
    Class to wrap around the sqlite3 interface to deal with making connections to
    data basese, cleaning up after them etc.  Will have both functions do to 
@@ -84,14 +88,16 @@ public:
   int start_comp(int dset_key,
 		 int & comp_key,
 		 F_TYPE f_type
-		 )
+		 );
+  
   /**
      Adds the function specific meta-data to the table
    */
   void add_mdata(const Md_store & md_store);
   
   /**
-     Commits the transactions
+     Commits the transactions.  If the transaction is not committed
+     before the object is destroyed it will be rolled back.
    */
   void commit();
   /**
@@ -117,6 +123,11 @@ private:
      Type of the current transaction
    */
   F_TYPE trans_type_;
+
+  /**
+     The computation key
+   */
+  int comp_key_;
   
 };
 

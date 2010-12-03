@@ -21,10 +21,10 @@
 #include <iostream>
 #include <stdexcept>
 #include <stdio.h>
-#include "read_config.h"
+#include "md_store.h"
 
 
-using utilities::Read_config;
+using utilities::Md_store;
 
 using utilities::SQL_handler;
 using std::string;
@@ -38,8 +38,52 @@ using std::runtime_error;
 
 using namespace boost::gregorian;
 
+/*
+   Local helper function for formatting error messages from sqlite
+ */
+string err_format(string txt,int error);
 
-SQL_handler::SQL_handler(const string & db_name)
+/*
+  Wrapper for sqlite3_exec 
+ */
+
+void exec_wrapper(sqlite3* db, std::string cmd);
+/*
+  local helper functions for binding.  These functions eat the status
+messages from sqlite and either return  if everything is ok, or throw
+an exception if there is any error.
+ */
+void txt_bind(sqlite3_stmt* stmt, int indx,const string &  txt);
+void int_bind(sqlite3_stmt* stmt, int indx,int val);
+void float_bind(sqlite3_stmt* stmt, int indx,float val);
+
+/*
+  local functions   
+ */
+
+
+SQL_handler::SQL_handler()
+ :db_(NULL),
+  conn_open_(false),
+  trans_open_(false),
+  trans_type_(F_NOFUNCTION)
+{
+}
+
+SQL_handler::~SQL_handler()
+{
+  try
+  {
+    close();
+  }
+  catch(...)
+  {
+    cout<<"There was an error taking apart the sql_handler object.  Check database integrity"<<endl;
+  }
+}
+
+
+SQL_handler::open_connection(const string & db_name)
 {
   // open database
   int rc = sqlite3_open(db_name.c_str(), &db_);
@@ -55,50 +99,152 @@ SQL_handler::SQL_handler(const string & db_name)
   {
     fprintf(stderr, "SQL error: %s\n", err);
     sqlite3_free(err);
+    throw runtime_error("failed to open data base");
+    
   }
-}
-
-SQL_handler::~SQL_handler()
-{
-  sqlite3_close(db_);
-}
-
-string err_format(string txt,int error)
-{
-  return (*(std::stringstream*)(&((std::stringstream() << txt.c_str() << error)))).str();
-}
-
-int txt_bind(sqlite3_stmt* stmt, int indx,const string &  txt)
-{
-  int rc = sqlite3_bind_text(stmt,indx,txt.c_str(),-1,SQLITE_STATIC);
-  
-  if( rc!= SQLITE_OK)
-    throw runtime_error(err_format("failed to bind sql_paramater error: ",rc));
-
-  return rc;
+  conn_open_ = true;
   
 }
 
-int int_bind(sqlite3_stmt* stmt, int indx,int val)
+void SQL_handler::close()
 {
+  if(conn_open_ | db_)
+  {
+    // clean up any existing transaction by getting rid of it so
+    // crashes don't make clutter
+    if(trans_open_)
+      rollback();
+    sqlite3_close(db_);
+  }
+  db_ = NULL;
+  conn_open_ = false;
+}
+
+
+int SQL_handler::start_comp(int dset_key,
+		 int & comp_key,
+		 F_TYPE f_type)
+{
+  int rc;
+  char * err;
+  string func_name;
+
+  sqlite3_stmt * stmt;
+
+  // make sure that there is an open data base connection
+  if (!conn_open_)
+    throw runtime_error("there is no open data base connection");
+  // make sure there is not already an open transaction
+  if(trans_open_)
+    throw runtime_error("there is already an open transaction, can not open a new one");
+  // check to make sure that the function type is valid, get name
+  if(trans_type_ == F_NOFUNCTION)
+    throw runtime_error("did not pass in a valid function");
+  func_name = ftype_to_str(trans_type_);
   
-  int rc =sqlite3_bind_int(stmt,indx,val) ;
+  // open transaction
+  exec_wrapper(db_,"BEGIN EXCLUSIVE TRANSACTION");
+  
+  // add computation to comps table
+  
+  // base statement
+  const char * base_stmt = "insert into comps (dset_key,function) values (?,?);";
+  
+  // prepare statement
+  rc = sqlite3_prepare_v2(db_,base_stmt,-1,&stmt,NULL);
+  
   if(rc != SQLITE_OK)
-    throw runtime_error(err_format("failed to bind sql_paramater ",rc));
-  return rc;
+    throw runtime_error("failed to prepare statement");
+  // bind in the two arguements
+  int_bind(stmt,1,dset_key);
+  txt_bind(stmt,2,func_name);
+  // acctually shove it into the data base
+  rc  =  sqlite3_step(stmt);
+  if(rc  != SQLITE_DONE)
+    throw runtime_error(err_format("failed to execute sql statement",rc));
+  rc = sqlite3_finalize(stmt);
+  if(rc  != SQLITE_OK)
+    throw runtime_error(err_format("failed to take apart",rc));
+  
+  comp_key = sqlite3_last_insert_rowid();
+  
+  // set object values
+  trans_type_ = f_type;
+  trans_open_ = true;
+  comp_key_ = comp_key;
+  
+  return comp_key;
+}
+
+void SQL_handler::add_mdata(const Md_store & md_store)
+{
+  // sanity checks
+  if (!conn_open_)
+    throw runtime_error("there is no open data base connection");
+  // make sure there is not already an open transaction
+  if(!trans_open_)
+    throw runtime_error("there is no open transaction");
+  int comp_key;
+  md_store.get_value("comp_key",comp_key);
+  
+  if (comp_key != comp_key_)
+    throw runtime_error("comp key from creation and the md_store do not match");
+  
+  // switch on trans_type_.  Farm actual work out to local functions
+  // to keep this function clean and readable
+  switch(trans_type_)
+  {
+  case F_NOFUNCTION:
+    throw logic_error("should never get to this point with out a real function type");
+  case F_IDEN:
+    md_iden(db_,md_store);
+    break;
+  case F_TRACKING:
+    md_tracking(db_,md_store);
+    break;
+  case F_MSD:
+    md_msd(db_,md_store);
+    break;
+
+  }
   
 }
 
+			    
+  
 
-int float_bind(sqlite3_stmt* stmt, int indx,float val)
+void SQL_handler::commit()
 {
   
-  int rc =sqlite3_bind_int(stmt,indx,val) ;
-  if(rc != SQLITE_OK)
-    throw runtime_error(err_format("failed to bind sql_paramater ",rc));
-  return rc;
+  // check to make sure this action makes sense
+  // make sure that there is an open data base connection
+  if (!conn_open_)
+    throw runtime_error("there is no open data base connection");
+  // make sure there is not already an open transaction
+  if(!trans_open_)
+    throw runtime_error("there is no open transaction");
+  exec_wrapper(db_,"END TRANSACTION");
+  trans_open_ = false;
+  trans_type_ = F_NOFUNCTION;
   
 }
+
+void SQL_handler::rollback()
+{
+  
+  // check to make sure this action makes sense
+  // make sure that there is an open data base connection
+  if (!conn_open_)
+    throw runtime_error("there is no open data base connection");
+  // make sure there is not already an open transaction
+  if(!trans_open_)
+    throw runtime_error("there is no open transaction");
+  exec_wrapper(db_,"ROLLBACK");
+  trans_open_ = false;
+  trans_type_ = F_NOFUNCTION;
+  
+}
+
 
 
 void SQL_handler::add_comp(int dset_key,int comp_key,const string &fin,const string & fout,const string & function)
@@ -166,3 +312,74 @@ void SQL_handler::add_iden_comp_prams(const Read_config & prams,int dset_key,int
 
 
 }
+
+
+void txt_bind(sqlite3_stmt* stmt, int indx,const string &  txt)
+{
+  int rc = sqlite3_bind_text(stmt,indx,txt.c_str(),-1,SQLITE_STATIC);
+  
+  if( rc!= SQLITE_OK)
+    throw runtime_error(err_format("failed to bind sql_paramater error: ",rc));
+
+
+  
+}
+
+void int_bind(sqlite3_stmt* stmt, int indx,int val)
+{
+  
+  int rc =sqlite3_bind_int(stmt,indx,val) ;
+  if(rc != SQLITE_OK)
+    throw runtime_error(err_format("failed to bind sql_paramater ",rc));
+ 
+}
+
+
+void float_bind(sqlite3_stmt* stmt, int indx,float val)
+{
+  
+  int rc =sqlite3_bind_double(stmt,indx,val) ;
+  if(rc != SQLITE_OK)
+    throw runtime_error(err_format("failed to bind sql_paramater ",rc));
+
+  
+}
+
+string err_format(string txt,int error)
+{
+  return (*(std::stringstream*)(&((std::stringstream() << txt.c_str() << error)))).str();
+}
+
+std::string utilities::ftype_to_str(F_TYPE f)
+{
+  switch(f)
+  {
+  case F_NOFUNCTION:
+    throw runtime_error("no function given");
+  case F_IDEN:
+    return "Iden";
+  case F_TRACKING:
+    return "tracking";
+  case F_MSD:
+    return "msd";
+  }
+  return "";
+}
+
+    
+  
+void exec_wrapper(sqlite3* db,std::string cmd)
+{
+  int rc;
+  char * err;
+  rc = sqlite3_exec(db,cmd.c_str(),NULL,NULL,&err);
+  if(rc!=SQLITE_OK)
+  {
+    fprintf(stderr, "SQL error: %s\n", err);
+    sqlite3_free(err);
+    throw runtime_error("failed on: " + cmd);
+  }
+}
+
+  
+    
