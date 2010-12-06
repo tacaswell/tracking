@@ -107,6 +107,12 @@ void Md_store::add_element(const char * key,unsigned int val)
 }
 
 
+void Md_store::add_element(const char * key,const char * val)
+{
+  entries_.push_back(Md_element(key,"string",val));
+}
+
+
 void Md_store::print() const
 {
   for(unsigned int j = 0; j<entries_.size();++j)

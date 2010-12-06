@@ -27,8 +27,35 @@ struct sqlite3;
 
 namespace utilities
 {
-class Read_config;
+class Md_store;
 
+/**
+   Enumeration for functions that maps to the tables in the database.
+   The values of the enumeration need to stay synced with the values
+   of func_names table in the database.  This should be replaced with
+   something more flexible eventually.
+ */
+typedef enum F_TYPE{
+  F_NOFUNCTION    = 0,
+  F_IDEN          = 1,
+  F_IDEN_AVG      = 2,
+  F_GOFR          = 3,
+  F_GOFR3D        = 4,
+  F_GOFR_BY_PLANE = 5,
+  F_LINK3D        = 6,
+  F_MSD           = 7,
+  F_PHI6          = 8,
+  F_TRACK_STATS   = 9,
+  F_TRACKING      = 10,
+  F_VANHOVE       = 11,
+  F_MSD_SWEEP     = 12
+}F_TYPE;
+
+  
+
+std::string ftype_to_str(F_TYPE f);
+
+  
 /**
    Class to wrap around the sqlite3 interface to deal with making connections to
    data basese, cleaning up after them etc.  Will have both functions do to 
@@ -41,32 +68,103 @@ public:
      Constructor.  Assumes a very specific database layout, see
      external documentation
    */
-  SQL_handler(const std::string& db_name);
+  SQL_handler();
   /**
      Destructor
    */
   ~SQL_handler();
+  
+  
   /**
-     Adds an entry to the comps table.
-   */
-  void add_comp(int dset_key,
-		int comp_key,
-		const std::string &fin,
-		const std::string & fout,
-		const std::string & function);
+     Opens the data base connection
+     @param [in] db_name the full path of data base file. 
+  */
+  void open_connection(const std::string& db_name);
+ 
   /**
-     Adds an entry to the iden_prams table.
+     Closes the connection
    */
-  void add_iden_comp_prams(const Read_config & prams,int dset_key,int comp_key);
+  void close_connection();
+  
+  /**
+     Adds an entry to the comps table, open a transaction, and return the comp_key
 
+     @param [in] dset_key the key of the data set the function is
+     working on 
+     @param [out] comp_key the key of the computation,
+     taken from the database 
+     @param [in] f_type the type of computation being done.  The guts
+     of this object need to know to handle the meta-data for each
+     function.
+     @return the computation key
+   */
+  int start_comp(int dset_key,
+		 int & comp_key,
+		 F_TYPE f_type
+		 );
+  
+  /**
+     Adds the function specific meta-data to the table
+   */
+  void add_mdata(const Md_store & md_store);
+  
+  /**
+     Commits the transactions.  If the transaction is not committed
+     before the object is destroyed it will be rolled back.  If commit is called
+     with out an open transaction, throws runtime_error.
+
+     If successful, resets transaction values
+   */
+  void commit();
+  /**
+     Rolls back the transaction.  If there is no connection or
+     transaction open, does nothing.
+
+     If successful, resets transaction values
+   */
+  void rollback();
+
+
+  /**
+     Testing structure
+   */
+  void make_test_db();
+
+  /**
+     get the meta data for a computation
+   */
+  void get_comp_mdata(int comp_key,Md_store & md_store,std::string table_name);
+  
+protected:
+  void iden_md_fun( const  Md_store& md_store);
+  void tracking_md_fun( const Md_store & md_store);
+  void msd_md_fun( const Md_store & md_store);
+  void msd_sweep_md_fun( const Md_store & md_store);
+  
 private:
   /**
      Pointer to the data base object
    */
   sqlite3 * db_;
   
+  /**
+     Flag if the connection is open
+   */
+  bool conn_open_;
+  /**
+     Flag if there is an open transaction
+   */
+  bool trans_open_;
+  /**
+     Type of the current transaction
+   */
+  F_TYPE trans_type_;
 
-
+  /**
+     The computation key
+   */
+  int comp_key_;
+  
 };
 
 }

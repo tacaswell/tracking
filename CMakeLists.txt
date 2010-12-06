@@ -92,9 +92,8 @@ SET(HDF_SRC
   )
 
 set(SQL_CODE
-  ${EXTERNAL_SRC_PATH}/sqlite-3.6.23.1/sqlite3.c
   ${COMMON_SRC_PATH}/sql_handler.cpp
-)
+  )
 
 SET(CORR_DISPLAY_SRC
   ${COMMON_SRC_PATH}/corr_display.cpp
@@ -119,6 +118,12 @@ MESSAGE (STATUS "${Boost_LIBRARIES}")
 set(ENV{XERCESC_ROOT} "/home/tcaswell/local_installs")
 find_package(XercesC REQUIRED)
 include_directories(${XERCESC_INCLUDE_DIR})
+
+
+
+set(ENV{SQLITE3_ROOT} "/home/tcaswell/local_installs")
+find_package(SQLITE3 REQUIRED)
+include_directories(${SQLITE3_INCLUDE_DIR})
 
 
 include_directories(${TRACKING_SOURCE_DIR}/common_src/include)

@@ -111,7 +111,7 @@ add_executable(sql_test sql_test.cpp
   ${SQL_CODE}
 )
 set_target_properties(sql_test PROPERTIES COMPILE_DEFINITIONS  "TESTING")
-target_link_libraries(sql_test ${Boost_LIBRARIES} ${dl_LIBRARY} ${XERCESC_LIBRARY} )
+target_link_libraries(sql_test ${Boost_LIBRARIES} ${dl_LIBRARY} ${XERCESC_LIBRARY} ${SQLITE3_LIBRARY} )
 
 
 

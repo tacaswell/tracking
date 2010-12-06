@@ -52,10 +52,22 @@ public:
    */
   void get_fpram(std::string & fpram_str) const
   {fpram_str = fpram_;}
+  /**
+     Returns the fdb string
+   */
+  void get_fdb(std::string & fdb_str) const
+  {if(found_db_)
+      fdb_str = fdb_;
+    else
+      throw std::invalid_argument("optional argument -d not passed in"); 
+ } 
 private:
   std::string fin_;
   std::string fout_;
   std::string fpram_;
+  std::string fdb_;
+  bool found_db_;
+  
   char * const*  argv_;
   const int argc_;
   
