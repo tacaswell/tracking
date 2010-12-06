@@ -146,19 +146,21 @@ public:
   */
   void add_element(const char * key,const char * type, const char * value);
   /**
-     Add entry
+     Add float entry
   */
   void add_element(const char * key,float val);
   /**
-     Add entry
+     Add int entry
   */
   void add_element(const char * key,int val);
   /**
-     Add entry
+     Add unsigned in entry
   */
   void add_element(const char * key,unsigned int val);
-  
-
+  /**
+     Add string entry
+   */
+  void add_element(const char * key,const char *  val);
   /**
      Add all elements in md_in to this Md_store object
    */
