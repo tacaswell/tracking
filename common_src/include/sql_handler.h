@@ -30,14 +30,27 @@ namespace utilities
 class Md_store;
 
 /**
-   Enumeration for functions that maps to the tables in the database
+   Enumeration for functions that maps to the tables in the database.
+   The values of the enumeration need to stay synced with the values
+   of func_names table in the database.  This should be replaced with
+   something more flexible eventually.
  */
 typedef enum F_TYPE{
-  F_NOFUNCTION =0,
-  F_IDEN ,
-  F_TRACKING,
-  F_MSD,
-}F_TYPE
+  F_NOFUNCTION    = 0,
+  F_IDEN          = 1,
+  F_IDEN_AVG      = 2,
+  F_GOFR          = 3,
+  F_GOFR3D        = 4,
+  F_GOFR_BY_PLANE = 5,
+  F_LINK3D        = 6,
+  F_MSD           = 7,
+  F_PHI6          = 8,
+  F_TRACK_STATS   = 9,
+  F_TRACKING      = 10,
+  F_VANHOVE       = 11,
+  F_MSD_SWEEP     = 12
+}F_TYPE;
+
   
 
 std::string ftype_to_str(F_TYPE f);
@@ -97,13 +110,36 @@ public:
   
   /**
      Commits the transactions.  If the transaction is not committed
-     before the object is destroyed it will be rolled back.
+     before the object is destroyed it will be rolled back.  If commit is called
+     with out an open transaction, throws runtime_error.
+
+     If successful, resets transaction values
    */
   void commit();
   /**
-     Rolls back the transaction
+     Rolls back the transaction.  If there is no connection or
+     transaction open, does nothing.
+
+     If successful, resets transaction values
    */
   void rollback();
+
+
+  /**
+     Testing structure
+   */
+  void make_test_db();
+
+  /**
+     get the meta data for a computation
+   */
+  void get_comp_mdata(int comp_key,Md_store & md_store,std::string table_name);
+  
+protected:
+  void iden_md_fun( const  Md_store& md_store);
+  void tracking_md_fun( const Md_store & md_store);
+  void msd_md_fun( const Md_store & md_store);
+  void msd_sweep_md_fun( const Md_store & md_store);
   
 private:
   /**
