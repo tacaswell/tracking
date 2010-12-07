@@ -28,6 +28,7 @@
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
+#include <cmath>
 namespace utilities{
 /**
    Class for carrying around the posistion and velocity vectors.
