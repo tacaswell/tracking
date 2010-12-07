@@ -211,6 +211,9 @@ void Hash_shelf::compute_mean_forward_disp(utilities::Tuplef & cum_disp_in){
   for(vector<hash_box*>::iterator cur_box = hash_.begin(); 
       cur_box<hash_.end(); ++cur_box)
   {
+    if(*cur_box)
+    {
+      
     for(vector<particle*>::iterator cur_part = (*cur_box)->begin();
 	cur_part!=(*cur_box)->end(); ++cur_part) 
     {
@@ -222,6 +225,8 @@ void Hash_shelf::compute_mean_forward_disp(utilities::Tuplef & cum_disp_in){
 	++count;
       }
     }
+    }
+    
   }
   if(count > 0)
     mean_forward_disp_ /= count;
