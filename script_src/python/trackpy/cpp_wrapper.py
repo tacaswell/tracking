@@ -395,7 +395,7 @@ def do_msd(comp_key,conn,pram_i, pram_f, pram_s = None, rel = True,):
     res = conn.execute("select fout,dset_key from comps where comp_key=? ;",
                        (comp_key,)).fetchone()
     read_comp = comp_key
-
+    
     print res
     print comp_key
     if res is None:
@@ -419,6 +419,44 @@ def do_msd(comp_key,conn,pram_i, pram_f, pram_s = None, rel = True,):
                   required_pram_s,pram_s)
     except KeyError, ke:
         print "Parameter: " ,ke,' not found'
+
+
+def do_msd_sweep(track_key,conn,pram_i,pram_f=None,pram_s =None,rel = True):
+    """
+    computes msd for a range of minimum track lengths
+    """
+    prog_name = "msd_sweep"
+    required_pram_i = ['trk_len_min','trk_len_step','steps']
+    required_pram_f = None
+    required_pram_s = None
+    
+    # see if the file has already been processed
+    res = conn.execute("select fout,iden_key,dset_key from tracking where comp_key=? ;",
+                       (track_key,)).fetchone()
+    
+    
+    print res
+    
+    if res is None:
+        raise utils.dbase_error('no entry found')
+    
+    (fin,iden_key,dset_key) = res
+    fout = os.path.dirname(fin) + '/msd_sweep.h5'
+    comp_prams = {'iden_key':iden_key,'dset_key':dset_key,'track_key':track_key}
+    
+    
+    
+    
+    
+    try:
+        _call_fun_no_sql( prog_name,fin,fout,
+                  comp_prams,
+                  required_pram_i,pram_i,
+                  required_pram_f,pram_f,
+                  required_pram_s,pram_s)
+    except KeyError, ke:
+        print "Parameter: " ,ke,' not found'
+
 
     
 
@@ -629,6 +667,75 @@ def _call_fun(conn,
         conn.commit()
     else:
         print "ERROR!!!"
+
+def _call_fun_no_sql(prog_name,fin,fout,
+                     comp_pram,
+                     req_i_pram,
+                     i_pram,
+                     req_f_pram,
+                     f_pram,
+                     req_s_pram = None,
+                     s_pram = None,
+                     db_path = None,
+                     rel = True):
+    """
+    prog_name : the name of the analysis program to be called
+    
+    fin : the hdf file to be read into
+    
+    fout : the hdf file to write the results to
+    
+    comp_pram : a dictionary of the computation/logistic parameters
+    
+    req_[ifs]_pram : list of required [integer,float,string]
+                     parameters to be passed to the program, the
+                     string list is optional
+    
+    [ifs]_pram : dictionary of [integer,float,string] parameters to be
+                 passed to the program, must include the parameters in
+                 the req_[ifs]_pram list.  The string dictionary is
+                 optional.
+             
+    rel : bool that sets if debugging or release version of the program 
+
+    """
+    
+    if db_path is None:
+        db_path = '/home/tcaswell/colloids/proc_db.db'
+    
+    config = xml_data()
+    
+    config.add_stanza(prog_name)
+    if req_i_pram is not None :
+        print i_pram
+        for p in req_i_pram:
+            config.add_pram(p,'int',i_pram[p])
+    if req_f_pram is not None :
+        for p in req_f_pram:
+            config.add_pram(p,'float',f_pram[p])
+    if req_s_pram is not None :
+        for p in req_s_pram:
+            config.add_pram(p,'string',s_pram[p])
+
+    
+    config.add_stanza("comps")
+    
+    for p in comp_pram:
+            config.add_pram(p,'int',comp_pram[p])
+
+
+    config.add_stanza("files")
+    config.add_pram('db_path','string',db_path)
+    config.disp()
+    cfile = config.write_to_tmp()
+
+    print fin
+    print fout
+
+    if rel: prog_path = _rel_path
+    else: prog_path = _dbg_path
+    rc = subprocess.call(["time",prog_path + prog_name,'-i',fin,'-o',fout, '-c',cfile ])
+    print rc
     
 
 
