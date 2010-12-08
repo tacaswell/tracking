@@ -51,7 +51,7 @@ void TA_msd::add_disp(Tuplef displacement,unsigned step)
   if(step > max_step_)
     throw runtime_error("TA_msd::add_disp step out of range");
   
-  summed_displacement_[step-1] += displacement.magnitude();
+  summed_displacement_[step-1] += displacement.magnitude_sqr();
   ++(segment_count_[step-1]);
   
 }
