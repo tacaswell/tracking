@@ -128,7 +128,7 @@ public:
   /**
      Testing structure
    */
-  void make_test_db();
+  void make_test_db(std::string fname = "");
 
   /**
      get the meta data for a computation

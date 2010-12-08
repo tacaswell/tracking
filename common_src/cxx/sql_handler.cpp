@@ -260,9 +260,16 @@ void SQL_handler::rollback()
 
 
 
-void SQL_handler::make_test_db()
+void SQL_handler::make_test_db(string fname)
 {
-  open_connection(":memory:");
+  if(fname.compare("") == 0)
+  {
+    cout<<"using in memory db"<<endl;
+    fname = ":memory:";
+  }
+  cout<<fname<<endl;
+  
+  open_connection(fname);
   exec_wrapper(db_,
 	       "CREATE TABLE dsets ("
 	       "dset_key INTEGER PRIMARY KEY ASC AUTOINCREMENT,"
@@ -328,12 +335,28 @@ void SQL_handler::make_test_db()
 	       "trk_len_min  INTEGER  NOT NULL    ,"
 	       "trk_len_step INTEGER  NOT NULL    ,"
 	       "steps        INTEGER  NOT NULL    ,"
-	       "FOREIGN KEY(comp_key)  REFERENCES comps(comp_key),		"
+	       "FOREIGN KEY(comp_key)  REFERENCES comps(comp_key),"
 	       "FOREIGN KEY(dset_key)  REFERENCES dsets(dset_key),"
 	       "FOREIGN KEY(track_key) REFERENCES tracking(comp_key),"
 	       "FOREIGN KEY(iden_key) REFERENCES iden(comp_key)"
 	       ");");
-  
+
+  exec_wrapper(db_,
+	       "CREATE TABLE msd ("
+	       "comp_key INTEGER PRIMARY KEY,"
+	       "iden_key INTEGER NOT NULL,"
+	       "track_key INTEGER NOT NULL,"
+	        "dset_key INTEGER NOT NULL,"
+	        "msd_steps INTEGER NOT NULL,"
+	       "min_track_length INTEGER NOT NULL,"
+	       "fin TEXT NOT NULL,"
+	       "fout TEXT NOT NULL,"
+	       
+	       "FOREIGN KEY(dset_key) REFERENCES dsets(dset_key),"
+	        "FOREIGN KEY(comp_key) REFERENCES comps(comp_key),"
+	        "FOREIGN KEY(track_key) REFERENCES tracking(comp_key)"
+	       ");");
+
   
   exec_wrapper(db_,
 	       "insert into func_names (func_name,func_key) values  ('iden',1);"
@@ -462,11 +485,66 @@ void SQL_handler::iden_md_fun(const  Md_store & md_store)
   
 void SQL_handler::msd_md_fun(const  Md_store & md_store)
 {
+  // house keeping
+  int tmp_int;
+  string  tmp_str;
+  int rc;
+  sqlite3_stmt * stmt;
+
+
+
+  // set up statement to be executed
+  const char * base_stmt = "insert into msd "
+    "(comp_key,iden_key,track_key,dset_key,msd_steps,min_track_length,fin,fout) "
+    "values (?,?,?, ? ,?,?,?,?)";
+    
+
+  // prepare the sql statement
+  rc = sqlite3_prepare_v2(db_,base_stmt,-1,&stmt,NULL);
+  if(rc != SQLITE_OK)
+  {
+    sqlite3_finalize(stmt);
+    throw runtime_error(err_format("failed to prepare statement",rc));
+  }
+  
+  
+  // bind in the values
+  int_bind  (stmt,1,md_store.get_value("comp_key"    ,tmp_int  ));
+  int_bind  (stmt,2,md_store.get_value("iden_key"    ,tmp_int  ));  
+  int_bind  (stmt,3,md_store.get_value("track_key"   ,tmp_int  ));
+  int_bind  (stmt,4,md_store.get_value("dset_key"    ,tmp_int  ));
+  
+  int_bind  (stmt,5,md_store.get_value("msd_steps" ,tmp_int  ));
+  int_bind  (stmt,6,md_store.get_value("min_track_length",tmp_int  ));
+  
+  txt_bind  (stmt,7,md_store.get_value("fin",tmp_str  ));
+  txt_bind  (stmt,8,md_store.get_value("fout",tmp_str  ));
+
+  // try running the statement
+  rc  =  sqlite3_step(stmt);
+  // if not happy, roll back.  finalize will also return an error if 
+  if(rc  != SQLITE_DONE)
+    cout<<err_format("binding or insertion did not go well error",rc)<<endl;
+  
+  
+  
+  // clean up statement, this needs to be done before throwing so that the db will close
+  rc = sqlite3_finalize(stmt);
+  
+  // if it does not return done, rollback the transaction and throw
+  if(rc  != SQLITE_OK)
+  {
+    rollback();
+    throw runtime_error(err_format("failed to take apart",rc));
+  }
+  
+  
   return;
 }
 
 void SQL_handler::msd_sweep_md_fun(const  Md_store & md_store)
 {
+
   int tmp_int;
   
   int rc;
@@ -534,7 +612,11 @@ void SQL_handler::get_comp_mdata(int comp_key,Md_store & md_store, string table_
   // prepare the statement
   rc = sqlite3_prepare_v2(db_,base_stmt.c_str(),-1,&stmt,NULL);
   if(rc != SQLITE_OK)
+  {
+    sqlite3_finalize(stmt);
     throw runtime_error(err_format("failed to prepare statement",rc));
+  }
+  
   // bind in the comp_key
   int_bind(stmt,1,comp_key);
   
@@ -676,7 +758,7 @@ void exec_wrapper(sqlite3* db,std::string cmd)
   {
     fprintf(stderr, "SQL error: %s\n", err);
     sqlite3_free(err);
-    throw runtime_error("failed on: " + cmd);
+    throw runtime_error(err_format("failed on: " + cmd,rc));
   }
 }
 
