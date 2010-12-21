@@ -18,3 +18,12 @@ target_link_libraries(mm_md_test
   )
 
 
+add_executable(im_series_test im_series_test
+  ${MD_PARSE_SRC}
+  ${IMG_WRAPPER}
+  )
+set_target_properties(im_series_test PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_COUNT=2")
+target_link_libraries(im_series_test
+  ${FreeImage_LIBRARIES}
+  ${XERCESC_LIBRARY}
+  )

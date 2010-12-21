@@ -18,6 +18,11 @@ SET(MD_PARSE_SRC
   ${COMMON_SRC_PATH}/enum_utils
   )
 
+SET(IMG_WRAPPER
+  ${IDEN_SRC_PATH}/image_series
+  ${IDEN_SRC_PATH}/image_stack
+)
+
 set(ENV{IPP_ROOT} "/home/tcaswell/intel/ipp/5.3.4.080/em64t/")
 find_package(IPP REQUIRED)
 set(ENV{FREEIMAGE_ROOT} "/home/tcaswell/local_installs/usr/")
