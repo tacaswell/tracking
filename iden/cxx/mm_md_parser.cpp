@@ -170,7 +170,7 @@ Mm_md_parser::~Mm_md_parser()
 
 
 
-Md_store * Mm_md_parser::parse_md(fipImage & image) const 
+Md_store * Mm_md_parser::parse_md(const fipImage & image) const 
 {
 
   Md_store * md_store = new Md_store();

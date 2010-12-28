@@ -66,7 +66,7 @@ class Mm_md_parser
 public:
   Mm_md_parser();
   ~Mm_md_parser();
-  Md_store * parse_md(fipImage & img_in) const ;
+  Md_store * parse_md(const fipImage & img_in) const ;
   
 private:
   XMLCh* elm_name_ ;
