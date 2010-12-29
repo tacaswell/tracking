@@ -42,6 +42,10 @@
 
 #include "image_base.h"
 #include "mm_md_parser.h"
+
+struct dirent;
+
+
 namespace utilities
 {
 
@@ -49,16 +53,19 @@ namespace utilities
 class Image_series:public Image_base
 {
 public:
-  Image_series(const std::string & base_name,int padding);
-  ~Image_series();
+  Image_series();
+    ~Image_series();
   void select_plane(unsigned int plane);
-  const WORD * get_plane_pixels();
-  Md_store * get_plane_md() ;
-  Tuple<unsigned int,2> get_plane_dims();
-  WORD get_plate_scan_step();
-private:
+  const WORD * get_plane_pixels() const;
+  Md_store * get_plane_md() const;
+  Tuple<unsigned int,2> get_plane_dims()const;
+  WORD get_plate_scan_step()const;
+  int get_frame_count() const;
+  bool init(const std::string & base_name);
   
-  std::string base_name_;
+private:
+  std::string basename_;
+  std::string dirname_;
   unsigned int cur_plane_;
   
   bool image_open_;
@@ -69,9 +76,16 @@ private:
  
   int padding_;
   
-};
+  int planecount_;
 
-std::string format_name(const std::string & base_name,unsigned int plane,int padding);  
+
+  
+};
+std::string format_name(const std::string & dirname,
+			const std::string & basename,
+			int padding,
+			unsigned int plane);  
+
 }
 
 

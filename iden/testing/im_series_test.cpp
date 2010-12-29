@@ -36,7 +36,10 @@ int main()
  
   cout<<"trying series code"<<endl;
   
-  Image_series im_sr(base_name,3);
+  Image_series im_sr;
+  im_sr.init(base_name);
+  cout<<"plane count: "<<im_sr.get_frame_count()<<endl;
+  
   for( int j = 0; j<2;++j)
   {
     im_sr.select_plane(1+j*100);
@@ -48,6 +51,7 @@ int main()
   cout<<"trying stack code"<<endl;
   Image_stack im_sk(fname);
   cout<<"object built"<<endl;
+  cout<<"plane count: "<<im_sk.get_frame_count()<<endl;
   for( int j = 1; j<2;++j)
   {
 

@@ -37,7 +37,13 @@
 //this Program grant you additional permission to convey the resulting
 //work.
 #include <iostream>
-
+// change this to boost eventually 
+#include <dirent.h>
+#include <libgen.h>
+#include <string.h>
+#include <stdlib.h>
+#include <fnmatch.h>
+#include <string>
 #include "image_series.h"
 
 #include "FreeImagePlus.h"
@@ -47,28 +53,97 @@
 #include "mm_md_parser.h"
 #include "md_store.h"
 
+
+
 using utilities::Image_series;
 using utilities::Md_store;
+using utilities::format_name;
+
 using std::endl;
 using std::cout;
 using std::runtime_error;
+using std::string;
 
 
-Image_series::Image_series(const std::string& fname,int padding)
-:base_name_(fname),padding_(padding)
+Image_series::Image_series():padding_(0)
+{}
+
+const char * selector_name = NULL;
+
+int selector(const struct dirent * d)
 {
+  const char* name = (d->d_name);
+  if(name[0] == '.')
+    return 0;
+  // add check to make sure that the name matches the base name, at
+  // this point I am going to trust that data was collected in a clan
+  // way
+  
+  return 1;
+}
+
+bool Image_series::init(const string & base_name )
+{
+  // strip the path off of the base_name
+  
+  const char * tmp;
+  int slen = (base_name.length()+1);
+  
+  char * base_name_temp = new char[slen*sizeof(char)];
+  
+  memcpy(base_name_temp,base_name.c_str(),slen);
+  tmp = dirname(base_name_temp);
+  dirname_ = string(tmp);
+  
+  memcpy(base_name_temp,base_name.c_str(),slen);
+  tmp = basename(base_name_temp);
+  basename_ = string(tmp);
+  
+  delete [] base_name_temp;
+  base_name_temp = NULL;
+  
+
+  
+  
+  // sort out how many there are
+  selector_name = basename_.c_str();
+  
+  
+  dirent ** namelist;
+  planecount_ = scandir(dirname_.c_str(),&namelist,selector,alphasort);
+  
+  
+
+  for(int j = 0; j<planecount_;++j)
+    free (namelist[j]);
+  free(namelist);
+  // sort out padding
+  padding_ = 1;
+  int div = 10;
+  while(planecount_/div)
+    ++padding_,div*=10;
+  
+  
+  
+  
+  
+  // make sure that they are there
+  // eventually 
+  
   // load multi page
   FreeImage_Initialise();
   BOOL bMemoryCache = TRUE;
   src_ = fipMultiPage(bMemoryCache);
   // Open src file (read-only, use memory cache)
-  src_.open(format_name(fname,1,padding_).c_str(), FALSE, TRUE);
+  src_.open(format_name(dirname_,basename_,padding_,1).c_str(), FALSE, TRUE);
 
   image_ = src_.lockPage(0);
-  
+
+
+
+  return true;
   
 }
-
 
 void Image_series::select_plane(unsigned int plane)
 {
@@ -87,9 +162,9 @@ void Image_series::select_plane(unsigned int plane)
   BOOL bMemoryCache = TRUE;
   src_ = fipMultiPage(bMemoryCache);
   // Open src file (read-only, use memory cache)
-  bool opened = src_.open(format_name(base_name_,cur_plane_,padding_).c_str(), FALSE, TRUE);
+  bool opened = src_.open(format_name(dirname_,basename_,padding_,plane).c_str(), FALSE, TRUE);
   if(!opened)
-      throw(runtime_error("failed to open file: " + format_name(base_name_,cur_plane_,padding_)));
+    throw(runtime_error("failed to open file: " + format_name(dirname_,basename_,padding_,plane)));
   
   
   
@@ -99,28 +174,25 @@ void Image_series::select_plane(unsigned int plane)
   if(!isvalid)
   {
     throw(runtime_error("could not open the image plane of " 
-			+ format_name(base_name_,cur_plane_,padding_)));
+			+ format_name(dirname_,basename_,padding_,plane)));
+    
+			
   }
   
 
 }
 
-const WORD * Image_series::get_plane_pixels()
+const WORD * Image_series::get_plane_pixels() const
 {
   return (WORD *) image_.accessPixels();
 }
 
-Md_store * Image_series::get_plane_md()
+Md_store * Image_series::get_plane_md() const
 {
-
-  
-  
-
   return mm_md_p_.parse_md(image_);
-
 }
 
-utilities::Tuple<unsigned int,2> Image_series::get_plane_dims()
+utilities::Tuple<unsigned int,2> Image_series::get_plane_dims() const
 {
   Tuple<unsigned int,2> tmp;
   int rows = image_.getHeight();
@@ -130,11 +202,16 @@ utilities::Tuple<unsigned int,2> Image_series::get_plane_dims()
   return tmp;
 }
 
-WORD Image_series::get_plate_scan_step()
+WORD Image_series::get_plate_scan_step() const
 {
   return image_.getScanWidth();
 }
 
+int Image_series::get_frame_count() const
+{
+  return planecount_;
+  
+}
 
 
 Image_series::~Image_series()
@@ -148,16 +225,17 @@ Image_series::~Image_series()
   
 }
 
+std::string utilities::format_name(const std::string & dirname,
+			const std::string & basename,
+			int padding,
+			unsigned int plane)
 
-std::string utilities::format_name(const std::string & base_name,unsigned int plane,int padding)
 {
-
   
   std::ostringstream o;
   o.width(padding);
   o.fill('0');
   o<<std::right<<plane;
-  return  base_name +  o.str() + ".tif";
- 
-
+  return  dirname + '/' + basename +  o.str() + ".tif";
+  
 }

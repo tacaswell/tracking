@@ -99,12 +99,12 @@ void Image_stack::select_plane(unsigned int plane)
   
 }
 
-const WORD * Image_stack::get_plane_pixels()
+const WORD * Image_stack::get_plane_pixels() const
 {
   return (WORD *) image_.accessPixels();
 }
 
-Md_store * Image_stack::get_plane_md()
+Md_store * Image_stack::get_plane_md()const 
 {
   
   
@@ -112,7 +112,7 @@ Md_store * Image_stack::get_plane_md()
 
 }
 
-utilities::Tuple<unsigned int,2> Image_stack::get_plane_dims()
+utilities::Tuple<unsigned int,2> Image_stack::get_plane_dims()const
 {
   Tuple<unsigned int,2> tmp;
   int rows = image_.getHeight();
@@ -122,8 +122,13 @@ utilities::Tuple<unsigned int,2> Image_stack::get_plane_dims()
   return tmp;
 }
 
-WORD Image_stack::get_plate_scan_step()
+WORD Image_stack::get_plate_scan_step() const
 {
   return image_.getScanWidth();
 }
 
+
+int Image_stack::get_frame_count() const
+{
+  return src_.getPageCount();
+}

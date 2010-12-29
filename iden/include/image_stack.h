@@ -51,10 +51,12 @@ public:
   Image_stack(std::string fname);
   ~Image_stack();
   void select_plane(unsigned int plane);
-  const WORD * get_plane_pixels();
-  Md_store * get_plane_md() ;
-  Tuple<unsigned int,2> get_plane_dims();
-  WORD get_plate_scan_step();
+  const WORD * get_plane_pixels() const;
+  Md_store * get_plane_md() const;
+  Tuple<unsigned int,2> get_plane_dims()const;
+  WORD get_plate_scan_step() const;
+  int get_frame_count() const;
+  
 private:
   std::string fname_;
   unsigned int cur_plane_;
@@ -64,7 +66,7 @@ private:
   fipMultiPage src_;
   
   fipImage image_;
-  Mm_md_parser mm_md_p_;
+  mutable Mm_md_parser mm_md_p_;
   
 };
 

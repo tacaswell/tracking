@@ -77,7 +77,7 @@ public:
      until the object is closed or until the plane is changed, which
      ever comes first.
    */
-  virtual const WORD * get_plane_pixels() = 0;
+  virtual const WORD * get_plane_pixels() const = 0;
 
   
 
@@ -85,18 +85,22 @@ public:
      Returns the current plane's meta data.  Returns a pointer that
     needs to be cleaned up.  
    */
-  virtual Md_store * get_plane_md() = 0;
+  virtual Md_store * get_plane_md() const = 0;
   
   /**
      Returns the plane dimensions
    */
-  virtual Tuple<unsigned int,2> get_plane_dims() = 0;
+  virtual Tuple<unsigned int,2> get_plane_dims() const = 0;
   
   /**
      returns the plane scan_step
    */
-  virtual WORD get_plate_scan_step() = 0;
+  virtual WORD get_plate_scan_step() const = 0;
   
+  /**
+     Returns the number of planes in the image
+   */
+  virtual int get_frame_count() const = 0;
   
 };
 
