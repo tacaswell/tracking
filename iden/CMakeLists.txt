@@ -18,7 +18,7 @@ SET(MD_PARSE_SRC
   ${COMMON_SRC_PATH}/enum_utils
   )
 
-SET(IMG_WRAPPER
+SET(IMG_WRAPPER_SRC
   ${IDEN_SRC_PATH}/image_series
   ${IDEN_SRC_PATH}/image_stack
 )
