@@ -75,18 +75,11 @@ int main(int argc, char * const argv[])
 {
 
   		   
-  string in_file ;
-  string out_file ;
   string pram_file ;
-
-    
-  
   try
   {
     CL_parse cl(argc,argv);
     cl.parse();
-    cl.get_fin(in_file);
-    cl.get_fout(out_file);
     cl.get_fpram(pram_file);
   }
   catch(std::invalid_argument &e )
@@ -131,12 +124,18 @@ int main(int argc, char * const argv[])
     return -1;
   }
 
-  // parse out the data base name
+  // parse out the file names
   string db_path;
+  string in_file ;
+  string out_file ;
+
   Read_config files(pram_file,"files");
   try
   {
     files.get_value("db_path",db_path);
+    files.get_value("fin",in_file);
+    files.get_value("fout",out_file);
+
   }
   catch(logic_error & e)
   {
