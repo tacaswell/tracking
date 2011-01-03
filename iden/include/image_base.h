@@ -95,7 +95,7 @@ public:
   /**
      returns the plane scan_step
    */
-  virtual WORD get_plate_scan_step() const = 0;
+  virtual WORD get_scan_step() const = 0;
   
   /**
      Returns the number of planes in the image

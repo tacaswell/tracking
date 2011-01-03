@@ -54,7 +54,7 @@ public:
   const WORD * get_plane_pixels() const;
   Md_store * get_plane_md() const;
   Tuple<unsigned int,2> get_plane_dims()const;
-  WORD get_plate_scan_step() const;
+  WORD get_scan_step() const;
   int get_frame_count() const;
   
 private:

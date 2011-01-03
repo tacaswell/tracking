@@ -114,7 +114,7 @@ bool Image_series::init(const string & base_name )
   
   
 
-  for(int j = 0; j<planecount_;++j)
+  for(unsigned int j = 0; j<planecount_;++j)
     free (namelist[j]);
   free(namelist);
   // sort out padding
@@ -155,14 +155,20 @@ void Image_series::select_plane(unsigned int plane)
   src_.close(0);
   
   // add some sanity checks
+  if(!(plane < planecount_))
+    throw runtime_error("trying to acces a plane that does not exist");
+  
   cur_plane_ = plane;
 
-
+  // to deal with the fact that the naming from mm starts at 1, not 0
+  plane = cur_plane_ + 1;
+  
   // open the next file
   BOOL bMemoryCache = TRUE;
   src_ = fipMultiPage(bMemoryCache);
   // Open src file (read-only, use memory cache)
-  bool opened = src_.open(format_name(dirname_,basename_,padding_,plane).c_str(), FALSE, TRUE);
+  
+  bool opened = src_.open(format_name(dirname_,basename_,padding_,plane).c_str(), FALSE, TRUE); 
   if(!opened)
     throw(runtime_error("failed to open file: " + format_name(dirname_,basename_,padding_,plane)));
   
@@ -202,7 +208,7 @@ utilities::Tuple<unsigned int,2> Image_series::get_plane_dims() const
   return tmp;
 }
 
-WORD Image_series::get_plate_scan_step() const
+WORD Image_series::get_scan_step() const
 {
   return image_.getScanWidth();
 }

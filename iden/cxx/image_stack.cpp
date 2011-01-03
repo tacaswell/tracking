@@ -122,7 +122,7 @@ utilities::Tuple<unsigned int,2> Image_stack::get_plane_dims()const
   return tmp;
 }
 
-WORD Image_stack::get_plate_scan_step() const
+WORD Image_stack::get_scan_step() const
 {
   return image_.getScanWidth();
 }
