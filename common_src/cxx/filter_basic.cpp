@@ -27,6 +27,7 @@
 #include "wrapper_i.h"
 #include "enum_utils.h"
 #include "attr_list_hdf.h"
+#include "md_store.h"
 #include "H5Cpp.h"
 
 using namespace utilities;
@@ -69,7 +70,7 @@ Filter_basic::Filter_basic(const std::string & fname,int comp_num):
 }
 
 
-bool Filter_basic::operator()(int ind, int frame)
+bool Filter_basic::operator()(int ind, int frame)const
 {
   float x,y;
   if(wrap_->get_value(x,ind,D_E,frame)>e_cut_ || wrap_->get_value(y,ind,D_R2,frame)>rg_cut_)
@@ -81,3 +82,14 @@ bool Filter_basic::operator()(int ind, int frame)
     return false;
   return true;
 }
+
+Md_store Filter_basic::get_parameters()const
+{
+  Md_store tmp;
+  tmp.add_element("e_cut",e_cut_);
+  tmp.add_element("rg_cut",rg_cut_);
+  tmp.add_element("shift_cut",shift_cut_);
+  
+  return Md_store(tmp);
+}
+
