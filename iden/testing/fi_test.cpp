@@ -100,7 +100,9 @@ struct Config_pram
 void parse_description(string& des,vector<Config_pram> & prams_);
 void parse_elements(DOMNode* pram_elm, vector<Config_pram> & prams_,XMLCh* pram_str,XMLCh* key_str,XMLCh* value_str,XMLCh* type_str);
 
-static string fname = "/home/tcaswell/colloids/data/polyNIPAM_batch_12/20100524/4/exp2/27-7_27-1_27-6_vslow.tif";
+//static string fname = "/home/tcaswell/colloids/data/polyNIPAM_batch_12/20100524/4/exp2/27-7_27-1_27-6_vslow.tif";
+static string fname = "/home/tcaswell/colloids/2010/data/polyNIPAM_batch_12/2010-10-03/ssd_test/t3/test3_001.tif";
+
 static const char*  gMemBufId = "ImageDescription";
 int main()
 {
