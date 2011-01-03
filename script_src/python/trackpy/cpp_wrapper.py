@@ -153,8 +153,8 @@ def do_Iden(key,conn,iden_params):
     # see if the file has already been processed
     prog_name = "Iden"
     prog_path = "/home/tcaswell/misc_builds/iden_rel/iden/apps/"
-    res = conn.execute("select fout,comp_key from comps where dset_key=? and function='Iden';",(key,)).fetchall()
-    fin = conn.execute("select fname from dsets where key = ?;",(key,)).fetchone()[0]
+    res = conn.execute("select fout,comp_key from iden where dset_key=?;",(key,)).fetchall()
+    fin = conn.execute("select fname from dsets where dset_key = ?;",(key,)).fetchone()[0]
     if os.path.isfile(fin.replace('.tif','-file002.tif')):
         print "multi-part tiff, can't cope yet"
         return
@@ -177,6 +177,7 @@ def do_Iden(key,conn,iden_params):
     prams.add_stanza("comp")
     prams.add_pram("number","int",comp_num)
     prams.add_pram("dset_key","int",key)
+    prams.add_pram("file_name","string",fout)
     #prams.merge_File(fpram,"iden")
     prams.add_stanza("iden")
     prams.add_pram("threshold","float",str(iden_params["threshold"]))
@@ -220,17 +221,25 @@ def do_Iden(key,conn,iden_params):
     if rc == 0:
         
         print "entering into database"
-        conn.execute("insert into comps (dset_key,date,fin,fout,function) values (?,?,?,?,?);",
-                     (key,date.today().isoformat(),fin,fout,prog_name))
-            
-        conn.execute("insert into Iden_prams" +
-                     " (dset_key,comp_key,threshold,top_cut,p_rad,hwhm,d_rad,mask_rad,shift_cut,rg_cut,e_cut) " +
-                     "values (?,?,?,?,?,?,?,?,?,?,?);",
-                     (key,comp_num,iden_params["threshold"],
-                      iden_params["top_cut"],iden_params["p_rad"],
-                      iden_params["hwhm"],iden_params["d_rad"],
-                      iden_params["mask_rad"],iden_params["shift_cut"],
-                      iden_params["rg_cut"],iden_params["e_cut"]))
+        conn.execute("insert into comps (dset_key,func_key) values (?,?);",(key,1))
+        
+        p = (key,
+             comp_num,
+             iden_params["threshold"],
+             iden_params["top_cut"],
+             iden_params["p_rad"],
+             iden_params["hwhm"],
+             iden_params["d_rad"],
+             iden_params["mask_rad"],
+             1,
+             fout,
+             date.today().isoformat()
+             )
+        
+        conn.execute("insert into iden "+
+                     "(dset_key,comp_key,threshold,top_cut,p_rad,hwhm,d_rad,mask_rad,frames_avged,fout,date) "+
+                     "values (?,?,?,?,?,?,?,?,?,?,?);"
+                     ,p)
         conn.commit()
 
 
@@ -532,18 +541,19 @@ def do_tracking(comp_key,conn,pram_i, pram_f, pram_s = None, rel = True,):
     required_pram_f = ['search_range']
     required_pram_s = None
         
-    (fin,dset_key) = _get_fin(comp_key,conn)
+    (fin,dset_key) = conn.execute("select fout,dset_key from iden where comp_key = ?",
+                                  (comp_key,)).fetchone()
     
     fout = fin
     
     
-    comp_prams = {'read_comp':comp_key,'dset':dset_key}
+    comp_prams = {'iden_key':comp_key,'dset_key':dset_key}
     comp_prams['write_comp'] =conn.execute("select max(comp_key) from comps;"
                                            ).fetchone()[0] + 1
     
     
     try:
-        _call_fun(conn,
+        _call_fun_no_sql(
                   prog_name,fin,fout,
                   comp_prams,
                   required_pram_i,pram_i,
@@ -656,10 +666,13 @@ def _call_fun(conn,
     # if it works, then returns zero
     #if False:
     if rc == 0:
+        # look up function key
+        (func_key,) = conn.execute("select func_key from func_names where func_name = ?",(prog_name,))
         print "entering into database"
-        conn.execute("insert into comps (comp_key,dset_key,date,fin,fout,function) "
-                     +"values (?,?,?,?,?,?);",
-                     (comp_pram['write_comp'],comp_pram['dset'],date.today().isoformat(),fin,fout,prog_name))
+        conn.execute("insert into comps (comp_key,dset_key,func_key) "
+                     + "values (?,?,?);",
+                     (comp_pram['write_comp'],comp_pram['dset'],func_key)
+                     )
         
         if prog_name in _prog_to_fun_lookup:
             _prog_to_fun_lookup[prog_name](comp_pram,i_pram,f_pram,s_pram,conn)
@@ -726,6 +739,8 @@ def _call_fun_no_sql(prog_name,fin,fout,
 
     config.add_stanza("files")
     config.add_pram('db_path','string',db_path)
+    config.add_pram('fin','string',fin)
+    config.add_pram('fout','string',fout)
     config.disp()
     cfile = config.write_to_tmp()
 
@@ -734,7 +749,7 @@ def _call_fun_no_sql(prog_name,fin,fout,
 
     if rel: prog_path = _rel_path
     else: prog_path = _dbg_path
-    rc = subprocess.call(["time",prog_path + prog_name,'-i',fin,'-o',fout, '-c',cfile ])
+    rc = subprocess.call(["time",prog_path + prog_name,'-c',cfile ])
     print rc
     
 
