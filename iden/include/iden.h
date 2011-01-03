@@ -53,6 +53,8 @@ class Master_box;
 namespace utilities
 {
 class Wrapper_i_plu;
+class Image_base;
+
 }
 
 
@@ -70,7 +72,7 @@ public:
   };			// needs arguements
   ~Iden(){};
   
-  void set_fname(const std::string &);
+  void set_image_src(utilities::Image_base * image);
   void set_params(const Params& param_in);
   
   utilities::Wrapper_i_plu * fill_wrapper(unsigned int frames=0,unsigned int start=0);
@@ -78,9 +80,10 @@ public:
   
 private:
   /**
-     name of the file to be working on
+     The source of the images to process
    */
-  std::string fname_;
+  utilities::Image_base * img_src_;
+  
   /**
      Parameter object, holds the parameters for the image processing
    */

@@ -54,6 +54,11 @@
 #include "attr_list_hdf.h"
 #include "read_config.h"
 
+
+#include "image_stack.h"
+#include "image_series.h"
+
+
 #include "H5Cpp.h"
 //#include "gnuplot_i.hpp" //Gnuplot class handles POSIX-Pipe-communikation with Gnuplot
 
@@ -84,6 +89,12 @@ using utilities::Filter_basic;
 using utilities::Filter_trivial;
 using utilities::D_TYPE;
 using utilities::V_TYPE;
+
+
+using utilities::Image_stack;
+using utilities::Image_series;
+using utilities::Image_base;
+
 
 using tracking::Master_box;
 using tracking::particle;
@@ -247,7 +258,14 @@ int main(int argc, char * const argv[])
     
 
   Iden iden(p);
-  iden.set_fname(in_file);
+
+  Image_base * img_src;
+  img_src = new Image_stack(in_file);
+  
+  
+  iden.set_image_src(img_src);
+
+  
 
   
 
@@ -255,7 +273,9 @@ int main(int argc, char * const argv[])
     
   Wrapper_i_plu *  wp = iden.fill_wrapper_avg(avg_count);
   cout<<"number of entries in wrapper: "<<wp->get_num_entries()<<endl;
-    
+  
+  delete img_src;
+  
 
   dims = wp->get_dims();
   

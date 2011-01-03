@@ -54,6 +54,9 @@
 #include "attr_list_hdf.h"
 #include "read_config.h"
 
+#include "image_stack.h"
+#include "image_series.h"
+
 #include "H5Cpp.h"
 //#include "gnuplot_i.hpp" //Gnuplot class handles POSIX-Pipe-communikation with Gnuplot
 
@@ -65,6 +68,7 @@ using std::string;
 using std::map;
 
 using std::logic_error;
+using std::runtime_error;
 
 
 using utilities::Wrapper_i_plu;
@@ -81,6 +85,10 @@ using utilities::Filter_basic;
 using utilities::Filter_trivial;
 using utilities::D_TYPE;
 using utilities::V_TYPE;
+
+using utilities::Image_stack;
+using utilities::Image_series;
+using utilities::Image_base;
 
 using tracking::Master_box;
 using tracking::particle;
@@ -107,16 +115,12 @@ int main(int argc, char * const argv[])
   
     
   int optchar;
-  bool found_i=false,found_o= false,found_c = false;
+  bool found_o= false,found_c = false;
     
   while((optchar = getopt(argc,argv,"i:o:c:")) !=-1)
   {
     switch(optchar)
     {
-    case 'i':
-      data_file = string(optarg);
-      found_i = true;
-      break;
     case 'o':
       proc_file = string(optarg);
       found_o = true;
@@ -135,7 +139,7 @@ int main(int argc, char * const argv[])
     }
   }
 
-  if(!(found_i && found_o && found_c))
+  if(!(found_o && found_c))
   {
     cerr<<"input failed"<<endl;
     cout<<"-i input filename"<<endl;
@@ -154,37 +158,7 @@ int main(int argc, char * const argv[])
   int comp_num;
   string grp_name;
   
-
-  // // read parameters out of hdf file 
-  // H5File * file = new H5File(proc_file,H5F_ACC_RDONLY);
-
-  // Group * group = new Group(file->openGroup("/"));
   
-  // Attr_list_hdf * attr_list = new Attr_list_hdf(group);
-  
-  // if(!attr_list->contains_attr("number-of-planes"))
-  //   throw logic_error("Can't find number of planes");
-
-  
-  // if(!attr_list->contains_attr("dims"))
-  //   throw logic_error("Can't find dimensions");
-
-  // frame_c = attr_list->get_value("number-of-planes",frame_c);
-  // cout<<"planes"<<endl;
-  // dims = attr_list->get_value("dims",dims);
-  // cout<<"dims"<<endl;
-  // delete attr_list;
-  // attr_list = NULL;
-  
-      
-  // delete group;
-  // group=NULL;
-  
-
-  // delete file;
-  // file= NULL;
-
-
   // read parameters out of the input xml that have to do with the 
   // particle location
   Read_config iden_prams(pram_file,"iden");
@@ -212,6 +186,10 @@ int main(int argc, char * const argv[])
   }
 
 
+  // build the parameters object for shoving into the iden object
+  Params p(feature_rad,hwhm,dilation_rad,thresh,mask_rad,top_cut);
+  p.PrintOutParameters(std::cout);
+
   
   // read parameters from xml that have do to with logistics
   Read_config comp_prams(pram_file,"comp");
@@ -219,23 +197,29 @@ int main(int argc, char * const argv[])
     throw logic_error("process: parameter file does not have enough parameters for the logistics");
   if(!comp_prams.get_value("number",comp_num))
     throw logic_error("process: failure to parse computation number");
-  // if (comp_prams.contains_key("grp_name"))
-  //   if(!comp_prams.get_value("grp_name",grp_name))
-  //     throw logic_error("process: failure to parse group name");
     
-
   
-  Params p(feature_rad,hwhm,dilation_rad,thresh,mask_rad,top_cut);
-  p.PrintOutParameters(std::cout);
+  // read file name from the xml file
+  Image_base * img_src;
+  if(comp_prams.contains_key("base_name"))
+  {
+    string base_name;
+    comp_prams.get_value("base_name",base_name);
+    Image_series * tmp = new Image_series();
+    tmp->init(base_name);
+    img_src = tmp;
+  }
+  else if(comp_prams.contains_key("file_name"))
+  {
+    string file_name;
+    comp_prams.get_value("file_name",file_name);
+    img_src = new Image_stack(file_name);
+  }
+  else
+    throw runtime_error("did not provide a file name in the xml file");
   
-    
-
-  
-  
-    
-
   Iden iden(p);
-  iden.set_fname(data_file);
+  iden.set_image_src(img_src);
 
   
 
@@ -243,6 +227,7 @@ int main(int argc, char * const argv[])
     
   Wrapper_i_plu *  wp = iden.fill_wrapper();
   cout<<"number of entries in wrapper: "<<wp->get_num_entries()<<endl;
+
 
   
   
@@ -310,6 +295,9 @@ int main(int argc, char * const argv[])
   // clean up wrapper
   delete wp;
   wp = NULL;
+  
+  delete img_src;
+  img_src = NULL;
   
 
   if(error_flg)

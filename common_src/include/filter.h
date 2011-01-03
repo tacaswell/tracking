@@ -30,6 +30,8 @@
 namespace utilities
 {
 class Wrapper_in;
+class Md_store;
+
 /**
    ABC for filter objects.  They take in a the index and frame of particle
    in a returns a bool, true if the particle is good, false if it is bad.
@@ -41,7 +43,7 @@ public:
      Returns true if the particle at index in frame passes what every
      criteria that the subclasses implement.
    */
-  virtual bool operator() (int index,int frame)=0;
+  virtual bool operator() (int index,int frame)const = 0;
   /**
      Sets pointer to Wrapper_in to read data from
    */
@@ -63,7 +65,7 @@ public:
 class Filter_trivial:public Filter
 {
 public:
-  bool operator()(int,int)
+  bool operator()(int,int)const
   {
     return true;
   }
@@ -82,7 +84,7 @@ public:
 class Filter_basic:public Filter
 {
 public:
-  bool operator()(int ind,int frame);
+  bool operator()(int ind,int frame) const;
   /**
      Constructor to read threshold values from a HDF file.
    */
@@ -96,6 +98,14 @@ public:
     wrap_ = w_i;
   }
   
+  /**
+     Returns the filter parameters in a md_store object
+   */
+  Md_store get_parameters()const;
+  
+  /**
+     Destructor
+   */
   ~Filter_basic()
   {
   }

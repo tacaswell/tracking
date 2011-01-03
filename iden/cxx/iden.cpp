@@ -50,11 +50,13 @@
 #include "data_proc1.h"
 
 #include "ipp.h"
-#include "FreeImagePlus.h"
+
 
 #include "tuple.h"
 
-#include "mm_md_parser.h"
+#include "image_base.h"
+
+
 #include "md_store.h"
 using std::string;
 
@@ -75,7 +77,7 @@ using utilities::Tuple;
 using std::runtime_error;
 
 using utilities::Md_store;
-using utilities::Mm_md_parser;
+
 using namespace boost::posix_time;
 using namespace boost::gregorian;
 
@@ -84,15 +86,7 @@ Wrapper_i_plu * Iden::fill_wrapper(unsigned int frames,unsigned int start)
   
   
   Wrapper_i_plu * wrapper = NULL;
-  
-
-  // load multi page
-  FreeImage_Initialise();
-  BOOL bMemoryCache = TRUE;
-  fipMultiPage src(bMemoryCache);
-  // Open src file (read-only, use memory cache)
-  src.open(fname_.c_str(), FALSE, TRUE);
-  unsigned int img_frames = src.getPageCount();
+  unsigned int img_frames = img_src_->get_frame_count();
 
   if(start > img_frames)
     throw runtime_error("Iden: start is larger than the number of frames in image");
@@ -111,23 +105,18 @@ Wrapper_i_plu * Iden::fill_wrapper(unsigned int frames,unsigned int start)
     cout<<"frames "<<frames<<endl;
     cout<<"img_frames"<<img_frames<<endl;
     
-    src.close(0);
     throw runtime_error("Iden: asking for more frames than the stack has");
   }
   
+  img_src_->select_plane(start);
   
-  fipImage image;
+
   
+  WORD scan_step = img_src_->get_scan_step();
+  Tuple<unsigned int,2> dims = img_src_->get_plane_dims();
+  unsigned int cols = dims[0];
+  unsigned int rows = dims[1];
   
-  image = src.lockPage(0);
-  WORD scan_step = image.getScanWidth();
-  int rows = image.getHeight();
-  int cols = image.getWidth();
-  src.unlockPage(image,false);
-  
-  Tuple<float,2> dims;
-  dims[1] = rows;
-  dims[0] = cols;
   
   
   // create a wrapper
@@ -135,7 +124,7 @@ Wrapper_i_plu * Iden::fill_wrapper(unsigned int frames,unsigned int start)
   wrapper->set_Md_store_size(frames);  
 
   // set up parser for meta-morph tiffs
-  Mm_md_parser mm_md_p;
+  
   ptime prev_time,cur_time;
   string time_str;
   
@@ -145,9 +134,10 @@ Wrapper_i_plu * Iden::fill_wrapper(unsigned int frames,unsigned int start)
     
 
     // load frame
-    image = src.lockPage(j);
+    img_src_->select_plane(j);
+    
     // get data about image
-    WORD * data_ptr = (WORD *) image.accessPixels();
+    const WORD * data_ptr = img_src_->get_plane_pixels();
     
     
     // shove data in to image object
@@ -161,7 +151,8 @@ Wrapper_i_plu * Iden::fill_wrapper(unsigned int frames,unsigned int start)
     
     
     // extract meta data
-    Md_store * md_store = mm_md_p.parse_md(image);
+    // this does not need to be cleaned up, that will be handled by the wrapper
+    Md_store * md_store = img_src_->get_plane_md();
     int dtime;
     
     // deal with time
@@ -180,8 +171,7 @@ Wrapper_i_plu * Iden::fill_wrapper(unsigned int frames,unsigned int start)
     md_store->add_element("dtime",dtime);
     
     
-    // clear the input data
-    src.unlockPage(image,false);
+    
 
     
     // object for holding band passed image
@@ -234,15 +224,15 @@ Wrapper_i_plu * Iden::fill_wrapper(unsigned int frames,unsigned int start)
     // set data in wrapper
     wrapper->add_frame_data(particledata,j-start,counter);
     // set metadata in wrapper
+    // the wrapper takes responsibility for the object
     wrapper->set_Md_store(j-start,md_store);
     //    cout<<j<<endl;
+    // clean up wrapper
+    
+    
   }
   
   
-  src.close(0);
-  
-  FreeImage_DeInitialise();
-
   return wrapper;
   
 
@@ -252,25 +242,19 @@ void Iden::set_params(const Params & param_in)
 {
   params_ = Params(param_in);
 }
-
-void Iden::set_fname(const std::string & in)
+void Iden::set_image_src(utilities::Image_base * img_src)
 {
-  fname_ = string(in);
+  img_src_ = img_src;
+  
 
-  // try to open the file
-  // look to see if the file has the meta data for the parameters
 }
 
 Wrapper_i_plu * Iden::fill_wrapper_avg(unsigned int avg_count,unsigned int frames,unsigned int start)
 {
+  
+  Wrapper_i_plu * wrapper = NULL;
+  unsigned int img_frames = img_src_->get_frame_count();
 
-  // load multi page
-  FreeImage_Initialise();
-  BOOL bMemoryCache = TRUE;
-  fipMultiPage src(bMemoryCache);
-  // Open src file (read-only, use memory cache)
-  src.open(fname_.c_str(), FALSE, TRUE);
-  unsigned int img_frames = src.getPageCount();
 
   if(start > img_frames)
     throw runtime_error("Iden: start is larger than the number of frames in image");
@@ -285,7 +269,7 @@ Wrapper_i_plu * Iden::fill_wrapper_avg(unsigned int avg_count,unsigned int frame
     cout<<"frames "<<frames<<endl;
     cout<<"img_frames"<<img_frames<<endl;
     
-    src.close(0);
+    
     throw runtime_error("Iden: asking for more frames than the stack has");
   }
 
@@ -294,36 +278,26 @@ Wrapper_i_plu * Iden::fill_wrapper_avg(unsigned int avg_count,unsigned int frame
     throw runtime_error("Iden: avg_count is greater than the number for frames");
   
 
-  Wrapper_i_plu * wrapper = NULL;
-  
+ 
 
 
   unsigned int wrapper_frames = frames/avg_count;
   
   
+  img_src_->select_plane(start);
   
-  // freeimage object
-  fipImage image;
-  
-  // open the first image and get the size etc, assumes that all of
-  // the planes are the same size etc.
 
-  image = src.lockPage(0);
-  WORD scan_step = image.getScanWidth();
-  unsigned int rows = image.getHeight();
-  unsigned int cols = image.getWidth();
-  src.unlockPage(image,false);
-  
-  Tuple<float,2> dims;
-  dims[1] = rows;
-  dims[0] = cols;
+  WORD scan_step = img_src_->get_scan_step();
+  Tuple<unsigned int,2> dims = img_src_->get_plane_dims();
+  unsigned int cols = dims[0];
+  unsigned int rows = dims[1];
   
   
   // create the wrapper
   wrapper = new Wrapper_i_plu(wrapper_frames,dims);
   wrapper->set_Md_store_size(wrapper_frames);
 
-  Mm_md_parser mm_md_p;
+  
   float scx=0,scy=0;
   string exp_unit,cal_units;
   bool cal_state = false;
@@ -345,15 +319,17 @@ Wrapper_i_plu * Iden::fill_wrapper_avg(unsigned int avg_count,unsigned int frame
     for(unsigned int k = 0; k<avg_count;++k)
     {
       // load frame
-      image = src.lockPage(j*avg_count + k +start);
-      
+      img_src_->select_plane(j*avg_count + k +start);
+            
       // get data about image
-      WORD * data_ptr = (WORD *) image.accessPixels();
+      const WORD * data_ptr = img_src_->get_plane_pixels();
+      
       // shove data in to image object
       image_in.add_data(data_ptr, rows,cols,scan_step);
       
       // extract meta data from tiff
-      Md_store * md_store = mm_md_p.parse_md(image);
+      Md_store * md_store = img_src_->get_plane_md();
+
         
       // deal with time
       if(k ==0)
@@ -380,8 +356,7 @@ Wrapper_i_plu * Iden::fill_wrapper_avg(unsigned int avg_count,unsigned int frame
       // clean up meta data from tiff
       delete md_store;
       
-      // clear the input data
-      src.unlockPage(image,false);
+
     }
     dtime = (cur_time-prev_time).total_milliseconds();
 
@@ -469,11 +444,6 @@ Wrapper_i_plu * Iden::fill_wrapper_avg(unsigned int avg_count,unsigned int frame
     //    cout<<j<<endl;
   }
   
-  
-  src.close(0);
-  
-  FreeImage_DeInitialise();
-
   return wrapper;
   
 
