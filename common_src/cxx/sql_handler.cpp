@@ -55,7 +55,7 @@ void exec_wrapper(sqlite3* db, std::string cmd);
 messages from sqlite and either return  if everything is ok, or throw
 an exception if there is any error.
  */
-void txt_bind(sqlite3_stmt* stmt, int indx,const string &  txt);
+void text_bind(sqlite3_stmt* stmt, int indx,const string &  txt);
 void int_bind(sqlite3_stmt* stmt, int indx,int val);
 void float_bind(sqlite3_stmt* stmt, int indx,float val);
 
@@ -110,7 +110,11 @@ void SQL_handler::open_connection(const string & db_name)
 void SQL_handler::close_connection()
 {
   int rc;
-  
+  // don't need to roll back my hand as this will automatically roll
+  // back all open transaction.  Don't need to check if the connection
+  // is open because passing a NULL in is harmless.
+  // http://www.sqlite.org/c3ref/close.html
+
   rc = sqlite3_close(db_);
   if(rc!=SQLITE_OK)
     throw runtime_error(err_format("failed to properly close db",rc));
@@ -398,24 +402,29 @@ void SQL_handler::tracking_md_fun(const  Md_store & md_store)
 
   // set up statement to be executed
   const char * base_stmt = "insert into tracking "
-    "(comp_key,iden_key,dset_key,search_range,shift_cut,rg_cut,e_cut) "
-    "values (?,?,?, ?,?,?,?)";
+    "(comp_key,iden_key,dset_key,search_range,shift_cut,rg_cut,e_cut,fin,fout,date) "
+    "values (?,?,?, ?,?,?,?, ?,?,?)";
 
   // prepare the sql statement
   rc = sqlite3_prepare_v2(db_,base_stmt,-1,&stmt,NULL);
   if(rc != SQLITE_OK)
     throw runtime_error(err_format("failed to prepare statement",rc));
   
-  
-  // bind in the values
-  int_bind  (stmt,1,md_store.get_value("comp_key"    ,tmp_int));
-  int_bind  (stmt,2,md_store.get_value("iden_key"    ,tmp_int));
-  int_bind  (stmt,3,md_store.get_value("dset_key"    ,tmp_int));
-  float_bind(stmt,4,md_store.get_value("search_range",tmp_float));
-  float_bind(stmt,5,md_store.get_value("shift_cut"   ,tmp_float));
-  float_bind(stmt,6,md_store.get_value("rg_cut"      ,tmp_float));
-  float_bind(stmt,7,md_store.get_value("e_cut"       ,tmp_float));
+  // get date
+  date d(day_clock::local_day());
 
+  // bind in the values
+  int_bind  (stmt,1 ,md_store.get_value("comp_key"    ,tmp_int));
+  int_bind  (stmt,2 ,md_store.get_value("iden_key"    ,tmp_int));
+  int_bind  (stmt,3 ,md_store.get_value("dset_key"    ,tmp_int));
+  float_bind(stmt,4 ,md_store.get_value("search_range",tmp_float));
+  float_bind(stmt,5 ,md_store.get_value("shift_cut"   ,tmp_float));
+  float_bind(stmt,6 ,md_store.get_value("rg_cut"      ,tmp_float));
+  float_bind(stmt,7 ,md_store.get_value("e_cut"       ,tmp_float));
+  text_bind (stmt,8 ,md_store.get_value("fin"         ,tmp_str));
+  text_bind (stmt,9 ,md_store.get_value("fout"        ,tmp_str));
+  text_bind (stmt,10,to_iso_extended_string(d));
+  
   // try running the statement
   rc  =  sqlite3_step(stmt);
   // if not happy, roll back.  finalize will also return an error if 
@@ -495,8 +504,8 @@ void SQL_handler::msd_md_fun(const  Md_store & md_store)
 
   // set up statement to be executed
   const char * base_stmt = "insert into msd "
-    "(comp_key,iden_key,track_key,dset_key,msd_steps,min_track_length,fin,fout) "
-    "values (?,?,?, ? ,?,?,?,?)";
+    "(comp_key,iden_key,track_key,dset_key,msd_steps,min_track_length,fin,fout,date) "
+    "values (?,?,?, ? ,?,?,?,?,?)";
     
 
   // prepare the sql statement
@@ -507,6 +516,9 @@ void SQL_handler::msd_md_fun(const  Md_store & md_store)
     throw runtime_error(err_format("failed to prepare statement",rc));
   }
   
+  // get date
+  date d(day_clock::local_day());
+
   
   // bind in the values
   int_bind  (stmt,1,md_store.get_value("comp_key"    ,tmp_int  ));
@@ -517,9 +529,9 @@ void SQL_handler::msd_md_fun(const  Md_store & md_store)
   int_bind  (stmt,5,md_store.get_value("msd_steps" ,tmp_int  ));
   int_bind  (stmt,6,md_store.get_value("min_track_length",tmp_int  ));
   
-  txt_bind  (stmt,7,md_store.get_value("fin",tmp_str  ));
-  txt_bind  (stmt,8,md_store.get_value("fout",tmp_str  ));
-
+  text_bind  (stmt,7,md_store.get_value("fin",tmp_str  ));
+  text_bind  (stmt,8,md_store.get_value("fout",tmp_str  ));
+  text_bind  (stmt,9,to_iso_extended_string(d));
   // try running the statement
   rc  =  sqlite3_step(stmt);
   // if not happy, roll back.  finalize will also return an error if 
@@ -681,7 +693,7 @@ void SQL_handler::get_comp_mdata(int comp_key,Md_store & md_store, string table_
   bodies of local functions
  */
 
-void txt_bind(sqlite3_stmt* stmt, int indx,const string &  txt)
+void text_bind(sqlite3_stmt* stmt, int indx,const string &  txt)
 {
   int rc = sqlite3_bind_text(stmt,indx,txt.c_str(),-1,SQLITE_STATIC);
   
