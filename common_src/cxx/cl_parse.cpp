@@ -66,7 +66,7 @@ void CL_parse::parse() throw(std::invalid_argument)
     }
   }
 
-  if(!(found_i && found_o && found_c))
+  if(!((found_i && found_o && found_c)||found_c))
   {
     cerr<<"input failed"<<endl;
     cout<<"-i input filename"<<endl;
