@@ -43,6 +43,8 @@
 #include "cl_parse.h"
 #include "md_store.h"
 #include "track_shelf.h"
+#include "sql_handler.h"
+
 
 using std::string;
 using std::vector;
@@ -63,6 +65,7 @@ using std::exception;
 using utilities::Wrapper_o_hdf;
 using utilities::Wrapper_i_hdf;
 using utilities::Md_store;
+using utilities::SQL_handler;
 
 
 using utilities::Filter_basic;
@@ -82,8 +85,7 @@ static string APP_NAME = "tracking :: ";
 
 int main(int argc, char * const argv[])
 {
-  string in_file ;
-  string out_file ;
+  
   string pram_file ;
 
     
@@ -92,8 +94,6 @@ int main(int argc, char * const argv[])
   {
     CL_parse cl(argc,argv);
     cl.parse();
-    cl.get_fin(in_file);
-    cl.get_fout(out_file);
     cl.get_fpram(pram_file);
   }
   catch(std::invalid_argument &e )
@@ -104,13 +104,12 @@ int main(int argc, char * const argv[])
   
 
   // parse out the standard logistic parameters
-  int read_comp_num, write_comp_num,dset;
+  int read_comp_num, write_comp_num,dset_key;
   Read_config comp_prams(pram_file,"comps");
   try
   {
-    comp_prams.get_value("read_comp",read_comp_num);
-    comp_prams.get_value("write_comp",write_comp_num);
-    comp_prams.get_value("dset",dset);
+    comp_prams.get_value("iden_key",read_comp_num);
+    comp_prams.get_value("dset_key",dset_key);
   }
   catch(logic_error & e)
   {
@@ -134,13 +133,25 @@ int main(int argc, char * const argv[])
     return -1;
   }
   
-  cout<<"file to read in: "<<in_file<<endl;
-  cout<<"file that will be written to: "<<out_file<<endl;
-  cout<<"Parameters: "<<endl;
-  cout<<"  search_range: "<<search_range<<endl;
-  cout<<"comps: "<<endl;
-  cout<<"  read_comp_num "<<read_comp_num<<endl;
-  cout<<"  write_comp_num "<<write_comp_num<<endl;
+  // parse out the files
+  string db_path;
+  string in_file ;
+  string out_file ;
+  Read_config files(pram_file,"files");
+  try
+  {
+    files.get_value("db_path",db_path);
+    files.get_value("fin",in_file);
+    files.get_value("fout",out_file);
+  }
+  catch(logic_error & e)
+  {
+    cerr<<"error parsing the file parameters"<<endl;
+    cerr<<e.what()<<endl;
+    return -1;
+  }
+
+
   
 
 
@@ -159,98 +170,127 @@ int main(int argc, char * const argv[])
   set<D_TYPE> data_types = set<D_TYPE>(tmp,tmp+6);
     
     
+
+  
+  // set up sql stuff
+  SQL_handler sql;
+  sql.open_connection(db_path);
+
+
+  // claim the entry in the DB and lock it before doing anything
+
+  sql.start_comp(dset_key,write_comp_num,utilities::F_TRACKING);
+
+
+  
+  // print what will be done
+  cout<<"file to read in: "<<in_file<<endl;
+  cout<<"file that will be written to: "<<out_file<<endl;
+  cout<<"Parameters: "<<endl;
+  cout<<"  search_range: "<<search_range<<endl;
+  cout<<"comps: "<<endl;
+  cout<<"  read_comp_num "<<read_comp_num<<endl;
+  cout<<"  write_comp_num "<<write_comp_num<<endl;
+
+    
+    
+  // set up the input wrapper
+  Wrapper_i_hdf wh(in_file,data_types,read_comp_num);
+    
+    
+  Master_box box;
+  // filter based on the values stored with the initial computation
+  Filter_basic filt(in_file,read_comp_num);
+  // fill the master_box
+  box.init(wh,filt);
+  Md_store filt_md = filt.get_parameters();
+  
+    
+  // fill the hash case
+  hash_case hcase;
+  hcase.init(box,wh.get_dims(),search_range,wh.get_num_frames());
+  cout<<"hash case filled"<<endl;
+
+    
+  Track_shelf tracks;
+  // link tracks together
+  hcase.link(search_range,tracks);
+  cout<<"after searching found "<<tracks.get_track_count()<<" tracks"<<endl;
+  // remove tracks with one element
+  tracks.remove_short_tracks(2);
+  // renumber to get rid of gaps
+  tracks.renumber();
+    
+    
+    
+  set<D_TYPE> d2;
+  d2.insert(utilities::D_NEXT_INDX);
+  d2.insert(utilities::D_PREV_INDX);
+  d2.insert(utilities::D_TRACKID);
+    
+  // set up output wrapper
+  Wrapper_o_hdf particle_data_wrapper(out_file,d2,write_comp_num,
+				      Wrapper_o_hdf::APPEND_FILE,
+				      "frame");
+    
+    
+
+  cout<<"made output wrapper"<<endl;
   try
   {
-    
-    
-    
-    // set up the input wrapper
-    Wrapper_i_hdf wh(in_file,data_types,read_comp_num);
-    
-    
-    Master_box box;
-    // filter based on the values stored with the initial computation
-    Filter_basic filt(in_file,read_comp_num);
-    // fill the master_box
-    box.init(wh,filt);
-    
-    
-    // fill the hash case
-    hash_case hcase;
-    hcase.init(box,wh.get_dims(),search_range,wh.get_num_frames());
-    cout<<"hash case filled"<<endl;
-
-    
-    Track_shelf tracks;
-    // link tracks together
-    hcase.link(search_range,tracks);
-    cout<<"after searching found "<<tracks.get_track_count()<<" tracks"<<endl;
-    // remove tracks with one element
-    tracks.remove_short_tracks(2);
-    // renumber to get rid of gaps
-    tracks.renumber();
-    
-    
-    
-    set<D_TYPE> d2;
-    d2.insert(utilities::D_NEXT_INDX);
-    d2.insert(utilities::D_PREV_INDX);
-    d2.insert(utilities::D_TRACKID);
-    
-    // set up output wrapper
-    Wrapper_o_hdf particle_data_wrapper(out_file,d2,write_comp_num,
-			Wrapper_o_hdf::APPEND_FILE,
-			"frame");
-    
-    
-
-    cout<<"made output wrapper"<<endl;
-    try
-    {
-      particle_data_wrapper.initialize_wrapper();
-      cout<<"inited wrapper"<<endl;
-      hcase.output_to_wrapper(particle_data_wrapper);
-      particle_data_wrapper.add_meta_data_list(app_prams,d2);
-      particle_data_wrapper.finalize_wrapper();
-    }
-    catch(exception & err)
-    {
-      std::cerr<<"caught on error outputting to particle data: "<<err.what()<<endl;
-      return -1;
-      
-    }
-    
-    cout<<"finished outputting to particle data"<<endl;
-    
-    int dtime = hcase.get_avg_dtime();
-
-
-    Md_store md_store;
-    md_store.add_elements(app_prams.get_store());    
-    md_store.add_elements(comp_prams.get_store());    
-    md_store.add_element("dtime",dtime);
-    cout<<"set up md_store"<<endl;
-    
-    try
-    {
-      Generic_wrapper_hdf track_data_wrapper(out_file,true);
-      tracks.output_to_wrapper(track_data_wrapper,&md_store);
-    }
-    catch(exception & err)
-    {
-      std::cerr<<"caught on error outputting track data: "<<err.what()<<endl;
-      return -1;
-      
-    }
-
-
+    particle_data_wrapper.initialize_wrapper();
+    cout<<"inited wrapper"<<endl;
+    hcase.output_to_wrapper(particle_data_wrapper);
+    particle_data_wrapper.add_meta_data_list(app_prams,d2);
+    particle_data_wrapper.finalize_wrapper();
   }
   catch(exception & err)
   {
-    std::cerr<<"caught on error: "<<err.what()<<endl;
+    std::cerr<<"caught on error outputting to particle data: "<<err.what()<<endl;
     return -1;
-    
+      
   }
+    
+  cout<<"finished outputting to particle data"<<endl;
+    
+  int dtime = hcase.get_avg_dtime();
+
+
+  // build the md_store for handing in to the hdf file and the db
+  Md_store md_store;
+  md_store.add_elements(app_prams.get_store());    
+  md_store.add_elements(comp_prams.get_store());    
+  md_store.add_elements(files.get_store());    
+  md_store.add_elements(&filt_md);
+  md_store.add_element("dtime",dtime);
+  md_store.add_element("comp_key",write_comp_num);
+  cout<<"set up md_store"<<endl;
+  md_store.print();
+
+  
+  
+  
+  
+    
+  // shove in to hdf
+  try
+  {
+    Generic_wrapper_hdf track_data_wrapper(out_file,true);
+    tracks.output_to_wrapper(track_data_wrapper,&md_store);
+  }
+  catch(exception & err)
+  {
+    std::cerr<<"caught on error outputting track data: "<<err.what()<<endl;
+    return -1;
+      
+  }
+  // shove in to db
+  sql.add_mdata(md_store);
+  sql.commit();
+  
+  // clean up the data base
+  sql.close_connection();
+  
   
     
     
