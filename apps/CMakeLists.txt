@@ -17,11 +17,13 @@ add_executable(gofr gofr_hdf.cpp
   ${COMMON_HASH_SRC} 
   ${COMMON_WRAPPER_SRC} 
   ${CONFIG_SRC}
+  ${SQL_CODE}
   )
 #message(STATUS "Found HDF: ${HDF5_LIBRARIES}")
 target_link_libraries(gofr 
   ${HDF5_LIBRARIES} 
   ${XERCESC_LIBRARY} 
+  ${SQLITE3_LIBRARY}
   )
 set_target_properties(gofr PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_COUNT=2")
 
