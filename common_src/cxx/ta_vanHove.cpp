@@ -86,9 +86,9 @@ void TA_vanHove::output_to_wrapper(utilities::Generic_wrapper & out,
   // format the base name
 
   // the MD_store MUST contain write_comp
-  int write_comp_num;
-  md_store.get_value("write_comp",write_comp_num);
-  string base_name = format_name("vanHove",write_comp_num);
+  int comp_key;
+  md_store.get_value("comp_key",comp_key);
+  string base_name = format_name("vanHove",comp_key);
 
   // make sure that the wrapper is open
   bool opened_wrapper = false;
