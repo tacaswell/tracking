@@ -223,7 +223,7 @@ int main(int argc, char * const argv[])
 
       
     Generic_wrapper_hdf hdf_out(out_file,true);
-    gofr.out_to_wrapper(hdf_out,grp_name);
+    gofr.out_to_wrapper(hdf_out,grp_name,NULL);
     cout<<"wrote out g(r)"<<endl;
 
     
