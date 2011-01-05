@@ -215,12 +215,18 @@ void SQL_handler::add_mdata(const Md_store & md_store)
     break;
   case F_IDEN_AVG:
   case F_GOFR:
+    gofr_md_fun(md_store);
+    break;
+  case F_VANHOVE:
+    vanHove_md_fun(md_store);
+    break;
+    
   case F_GOFR3D:
   case F_GOFR_BY_PLANE:
   case F_LINK3D:
   case F_PHI6:
   case F_TRACK_STATS:
-  case F_VANHOVE:
+  
     throw logic_error("not implemented yet");
     
   }
@@ -554,6 +560,70 @@ void SQL_handler::msd_md_fun(const  Md_store & md_store)
   return;
 }
 
+void SQL_handler::gofr_md_fun(const  Md_store & md_store)
+{
+  // house keeping
+  int tmp_int;
+  string  tmp_str;
+  float tmp_float;
+  
+  int rc;
+  sqlite3_stmt * stmt;
+
+
+
+  // set up statement to be executed
+  const char * base_stmt = "insert into gofr "
+    "(comp_key,iden_key,dset_key,nbins,max_range,fin,fout,date) "
+    "values (?,?,?, ?,? ,?,?,?)";
+    
+
+  // prepare the sql statement
+  rc = sqlite3_prepare_v2(db_,base_stmt,-1,&stmt,NULL);
+  if(rc != SQLITE_OK)
+  {
+    sqlite3_finalize(stmt);
+    throw runtime_error(err_format("failed to prepare statement",rc));
+  }
+  
+  // get date
+  date d(day_clock::local_day());
+
+  
+  // bind in the values
+  int_bind  (stmt,1,md_store.get_value("comp_key"    ,tmp_int  ));
+  int_bind  (stmt,2,md_store.get_value("iden_key"    ,tmp_int  ));  
+  int_bind  (stmt,3,md_store.get_value("dset_key"    ,tmp_int  ));
+
+  int_bind  (stmt,4,md_store.get_value("nbins"   ,tmp_int  ));
+  int_bind  (stmt,5,md_store.get_value("max_range" ,tmp_float  ));
+  
+  
+  text_bind  (stmt,6,md_store.get_value("fin",tmp_str  ));
+  text_bind  (stmt,7,md_store.get_value("fout",tmp_str  ));
+  text_bind  (stmt,8,to_iso_extended_string(d));
+  // try running the statement
+  rc  =  sqlite3_step(stmt);
+  // if not happy, roll back.  finalize will also return an error if 
+  if(rc  != SQLITE_DONE)
+    cout<<err_format("binding or insertion did not go well error",rc)<<endl;
+  
+  
+  
+  // clean up statement, this needs to be done before throwing so that the db will close
+  rc = sqlite3_finalize(stmt);
+  
+  // if it does not return done, rollback the transaction and throw
+  if(rc  != SQLITE_OK)
+  {
+    rollback();
+    throw runtime_error(err_format("failed to take apart",rc));
+  }
+  
+  
+  return;
+}
+
 void SQL_handler::msd_sweep_md_fun(const  Md_store & md_store)
 {
 
@@ -689,6 +759,75 @@ void SQL_handler::get_comp_mdata(int comp_key,Md_store & md_store, string table_
 }
 
 
+void SQL_handler::vanHove_md_fun(const  Md_store & md_store)
+{
+  // house keeping
+  int tmp_int;
+  string  tmp_str;
+  float tmp_float;
+  
+  int rc;
+  sqlite3_stmt * stmt;
+
+
+
+  // set up statement to be executed
+  const char * base_stmt = "insert into vanHove "
+    "(comp_key,dset_key,track_key,"
+    "min_track_length,max_step,max_range,nbins,"
+    "fin,fout,date) "
+    "values (?,?,?, ?,?,?,? ,?,?,?)";
+    
+  
+  
+  // prepare the sql statement
+  rc = sqlite3_prepare_v2(db_,base_stmt,-1,&stmt,NULL);
+  if(rc != SQLITE_OK)
+  {
+    sqlite3_finalize(stmt);
+    throw runtime_error(err_format("failed to prepare statement",rc));
+  }
+  
+  // get date
+  date d(day_clock::local_day());
+
+  
+  // bind in the values
+  int_bind  (stmt,1,md_store.get_value("comp_key"    ,tmp_int  ));
+  int_bind  (stmt,2,md_store.get_value("dset_key"    ,tmp_int  ));  
+  int_bind  (stmt,3,md_store.get_value("track_key"    ,tmp_int  ));
+
+  int_bind  (stmt,4,md_store.get_value("min_track_length"   ,tmp_int  ));
+  int_bind  (stmt,5,md_store.get_value("max_step"   ,tmp_int  ));
+  int_bind  (stmt,6,md_store.get_value("max_range" ,tmp_float  ));
+  int_bind  (stmt,7,md_store.get_value("nbins"   ,tmp_int  ));
+  
+  text_bind  (stmt,8,md_store.get_value("fin",tmp_str  ));
+  text_bind  (stmt,9,md_store.get_value("fout",tmp_str  ));
+  text_bind  (stmt,10,to_iso_extended_string(d));
+  // try running the statement
+  rc  =  sqlite3_step(stmt);
+  // if not happy, roll back.  finalize will also return an error if 
+  if(rc  != SQLITE_DONE)
+    cout<<err_format("binding or insertion did not go well error",rc)<<endl;
+  
+  
+  
+  // clean up statement, this needs to be done before throwing so that the db will close
+  rc = sqlite3_finalize(stmt);
+  
+  // if it does not return done, rollback the transaction and throw
+  if(rc  != SQLITE_OK)
+  {
+    rollback();
+    throw runtime_error(err_format("failed to take apart",rc));
+  }
+  
+  
+  return;
+}
+
+
 /*
   bodies of local functions
  */
@@ -746,10 +885,12 @@ std::string utilities::ftype_to_str(F_TYPE f)
   case F_MSD_SWEEP:
     return "msd_sweep";
   case F_GOFR:
+    return "gofr";
+  case F_VANHOVE:    
+    return "vanHove";
   case F_GOFR3D:
   case F_GOFR_BY_PLANE:
   case F_LINK3D:  
-  case F_VANHOVE:    
   case F_PHI6:
   case F_TRACK_STATS:
     throw logic_error("not implemented");

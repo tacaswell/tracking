@@ -139,7 +139,12 @@ protected:
   void iden_md_fun( const  Md_store& md_store);
   void tracking_md_fun( const Md_store & md_store);
   void msd_md_fun( const Md_store & md_store);
+  void gofr_md_fun( const Md_store & md_store);
+  void vanHove_md_fun( const Md_store & md_store);
+  
+
   void msd_sweep_md_fun( const Md_store & md_store);
+
   
 private:
   /**
