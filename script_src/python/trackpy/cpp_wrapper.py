@@ -44,7 +44,7 @@ def add_gofr_mdata(comp_pram,i_pram,f_pram,s_pram,conn):
 
     params = (comp_pram['dset'],comp_pram['write_comp'],i_pram['nbins'],
              f_pram['max_range'],comp_pram['read_comp'])
-    conn.execute("insert into gofr_prams" +
+    conn.execute("insert into gofr" +
                  " (dset_key,comp_key,'nbins','max_range',iden_key) " +
                  "values (?,?,?,?,?);",params)
     conn.commit()
@@ -154,12 +154,25 @@ def do_Iden(key,conn,iden_params):
     prog_name = "Iden"
     prog_path = "/home/tcaswell/misc_builds/iden_rel/iden/apps/"
     res = conn.execute("select fout,comp_key from iden where dset_key=?;",(key,)).fetchall()
-    fin = conn.execute("select fname from dsets where dset_key = ?;",(key,)).fetchone()[0]
+    (fin,ftype) = conn.execute("select fname,ftype from dsets where dset_key = ?;",(key,)).fetchone()
+
+    
     if os.path.isfile(fin.replace('.tif','-file002.tif')):
         print "multi-part tiff, can't cope yet"
         return
     
-    fout = '.'.join(fin.replace("data","processed").split('.')[:-1]) + '.h5'
+
+    if ftype == 1:
+        format_string = 'file_name'
+        fout = '.'.join(fin.replace("data","processed").split('.')[:-1]) + '.h5'
+    elif ftype == 2:
+        format_string = 'base_name'
+        fout = fin.replace("data","processed") + '.h5'
+    else:
+        print "unknown format type"
+        return
+    
+    
     if len(res) >0:
         fout = fout.replace(".h5","-" + str(len(res)) + ".h5")
 
@@ -177,7 +190,7 @@ def do_Iden(key,conn,iden_params):
     prams.add_stanza("comp")
     prams.add_pram("number","int",comp_num)
     prams.add_pram("dset_key","int",key)
-    prams.add_pram("file_name","string",fout)
+    prams.add_pram(format_string,"string",fin)
     #prams.merge_File(fpram,"iden")
     prams.add_stanza("iden")
     prams.add_pram("threshold","float",str(iden_params["threshold"]))
@@ -349,7 +362,7 @@ def do_gofr(comp_key,conn,pram_i, pram_f, pram_s = None, rel = True,):
     required_pram_s = ['grp_name']
 
     # see if the file has already been processed
-    res = conn.execute("select fout,dset_key from comps where comp_key=? ;",
+    res = conn.execute("select fout,dset_key from iden where comp_key=? ;",
                        (comp_key,)).fetchone()
     read_comp = comp_key
 
@@ -363,10 +376,7 @@ def do_gofr(comp_key,conn,pram_i, pram_f, pram_s = None, rel = True,):
     fout = os.path.dirname(fin) + '/gofr.h5'
     _make_sure_h5_exists(fout)
     
-    comp_prams = {'read_comp':read_comp,'dset':key}
-    comp_prams['write_comp'] = conn.execute("select max(comp_key) from comps;"
-                                            ).fetchone()[0] + 1
-
+    comp_prams = {'iden_key':read_comp,'dset_key':key}
         
     if pram_s is None:
         pram_s = {'grp_name':prog_name}
@@ -375,8 +385,7 @@ def do_gofr(comp_key,conn,pram_i, pram_f, pram_s = None, rel = True,):
 
     
     try:
-        _call_fun(conn,
-                  prog_name,fin,fout,
+        _call_fun_no_sql(prog_name,fin,fout,
                   comp_prams,
                   required_pram_i,pram_i,
                   required_pram_f,pram_f,
@@ -451,6 +460,43 @@ def do_msd_sweep(track_key,conn,pram_i,pram_f=None,pram_s =None,rel = True):
     
     (fin,iden_key,dset_key) = res
     fout = os.path.dirname(fin) + '/msd_sweep.h5'
+    comp_prams = {'iden_key':iden_key,'dset_key':dset_key,'track_key':track_key}
+    
+    
+    
+    
+    
+    try:
+        _call_fun_no_sql( prog_name,fin,fout,
+                  comp_prams,
+                  required_pram_i,pram_i,
+                  required_pram_f,pram_f,
+                  required_pram_s,pram_s)
+    except KeyError, ke:
+        print "Parameter: " ,ke,' not found'
+
+
+def do_vanHove_sweep(track_key,conn,pram_i,pram_f,pram_s =None,rel = True):
+    """
+    computes msd for a range of minimum track lengths
+    """
+    prog_name = "vanHove_sweep"
+    required_pram_i = ['trk_len_min','trk_len_step','steps','nbins']
+    required_pram_f = ['max_range']
+    required_pram_s = None
+    
+    # see if the file has already been processed
+    res = conn.execute("select fout,iden_key,dset_key from tracking where comp_key=? ;",
+                       (track_key,)).fetchone()
+    
+    
+    print res
+    
+    if res is None:
+        raise utils.dbase_error('no entry found')
+    
+    (fin,iden_key,dset_key) = res
+    fout = os.path.dirname(fin) + '/vanHove.h5'
     comp_prams = {'iden_key':iden_key,'dset_key':dset_key,'track_key':track_key}
     
     
