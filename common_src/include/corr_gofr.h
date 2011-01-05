@@ -42,6 +42,8 @@
 namespace utilities
 {
 class Generic_wrapper;
+class Md_store;
+
 }
 
 
@@ -55,7 +57,7 @@ class Corr_gofr:public Corr
 public:
   // basic inherited stuff
   void compute(const particle *,const std::vector<const particle*> & ) ;
-  void out_to_wrapper(utilities::Generic_wrapper &,const std::string & ) const ;
+  void out_to_wrapper(utilities::Generic_wrapper &,const std::string &,const utilities::Md_store * ) const ;
 
   // special stuff
   /**

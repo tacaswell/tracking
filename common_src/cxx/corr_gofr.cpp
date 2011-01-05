@@ -96,7 +96,9 @@ Corr_gofr::Corr_gofr(int bins,float max,int comp_num,int dset,int read_comp):
   }
 }
 
-void Corr_gofr::out_to_wrapper(Generic_wrapper & in,const std::string & g_name)const
+void Corr_gofr::out_to_wrapper(Generic_wrapper & in,
+			       const std::string & g_name,
+			       const utilities::Md_store * md_store)const
 {
   bool opened_wrapper = false;
   
@@ -119,12 +121,16 @@ void Corr_gofr::out_to_wrapper(Generic_wrapper & in,const std::string & g_name)c
   yar = &bin_edges_.front();
   in.add_dset(1,&n_bins_,utilities::V_FLOAT,yar,"bin_edges");
 
-  in.add_meta_data("comp_num",comp_num_);
+  if(md_store)
+    in.add_meta_data(md_store);
+  in.add_meta_data("rho", rho );
+  
+  in.add_meta_data("comp_key",comp_num_);
   in.add_meta_data("iden_key",read_comp_);
-  in.add_meta_data("dset",dset_);
+  in.add_meta_data("dset_key",dset_);
   in.add_meta_data("max_range",max_range_);
   in.add_meta_data("nbins",n_bins_);
-  in.add_meta_data("rho", rho );
+  
   in.add_meta_data("temperature",temperature_sum_/plane_count_);
   
   in.close_group();
@@ -142,6 +148,7 @@ float Corr_gofr::normalize(vector<float> & out)const
   float count_sum = 0;
   for(unsigned int j = 0; j<n_bins_;++j)
     count_sum += bin_count_[j];
+  count_sum += parts_added_;
   
   // this does not need to be averaged by the number of particles
   // added because in the normalization the average is multiplied by
