@@ -226,3 +226,25 @@ target_link_libraries(msd_sweep
   ${SQLITE3_LIBRARY}
   )
 set_target_properties(msd_sweep PROPERTIES COMPILE_DEFINITIONS  "PTYPE=1;DIM_COUNT=2")
+
+
+add_executable(vanHove_sweep vanHove_sweep ${COMMON_SRC}
+ ${UTIL_SRC}
+ ${HDF_SRC}
+ ${CORR_SRC}
+ ${GNU_PLOT_SRC}
+ ${COMMON_TRACK_SRC}
+ ${COMMON_HASH_SRC} 
+ ${HASH_TRACK_SRC}
+ ${COMMON_WRAPPER_SRC} 
+ ${CONFIG_SRC}
+ ${SQL_CODE}
+ ${COMMON_SRC_PATH}/ta_vanHove
+ ${COMMON_SRC_PATH}/histogram
+)
+target_link_libraries(vanHove_sweep
+  ${HDF5_LIBRARIES} 
+  ${XERCESC_LIBRARY} 
+  ${SQLITE3_LIBRARY}
+  )
+set_target_properties(vanHove_sweep PROPERTIES COMPILE_DEFINITIONS  "PTYPE=1;DIM_COUNT=2")
