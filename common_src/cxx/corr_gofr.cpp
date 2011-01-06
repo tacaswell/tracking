@@ -148,6 +148,10 @@ float Corr_gofr::normalize(vector<float> & out)const
   float count_sum = 0;
   for(unsigned int j = 0; j<n_bins_;++j)
     count_sum += bin_count_[j];
+
+  
+  // not adding this is shifts the average by a few percent, which
+  // i believe is causing the .001 error on large r g(r) values
   count_sum += parts_added_;
   
   // this does not need to be averaged by the number of particles
