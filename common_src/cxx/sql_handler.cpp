@@ -574,8 +574,11 @@ void SQL_handler::gofr_md_fun(const  Md_store & md_store)
 
   // set up statement to be executed
   const char * base_stmt = "insert into gofr "
-    "(comp_key,iden_key,dset_key,nbins,max_range,fin,fout,date) "
-    "values (?,?,?, ?,? ,?,?,?)";
+    "(comp_key,iden_key,dset_key,"
+    "nbins,max_range,"
+    "shift_cut,rg_cut,e_cut,"
+    "fin,fout,date) "
+    "values (?,?,?, ?,?, ?,?,?, ?,?,?)";
     
 
   // prepare the sql statement
@@ -596,12 +599,16 @@ void SQL_handler::gofr_md_fun(const  Md_store & md_store)
   int_bind  (stmt,3,md_store.get_value("dset_key"    ,tmp_int  ));
 
   int_bind  (stmt,4,md_store.get_value("nbins"   ,tmp_int  ));
-  int_bind  (stmt,5,md_store.get_value("max_range" ,tmp_float  ));
+  float_bind  (stmt,5,md_store.get_value("max_range" ,tmp_float  ));
+
+  float_bind  (stmt,6,md_store.get_value("shift_cut" ,tmp_float  ));
+  float_bind  (stmt,7,md_store.get_value("rg_cut" ,tmp_float  ));
+  float_bind  (stmt,8,md_store.get_value("e_cut" ,tmp_float  ));
   
   
-  text_bind  (stmt,6,md_store.get_value("fin",tmp_str  ));
-  text_bind  (stmt,7,md_store.get_value("fout",tmp_str  ));
-  text_bind  (stmt,8,to_iso_extended_string(d));
+  text_bind  (stmt,9,md_store.get_value("fin",tmp_str  ));
+  text_bind  (stmt,10,md_store.get_value("fout",tmp_str  ));
+  text_bind  (stmt,11,to_iso_extended_string(d));
   // try running the statement
   rc  =  sqlite3_step(stmt);
   // if not happy, roll back.  finalize will also return an error if 
