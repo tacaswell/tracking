@@ -162,7 +162,8 @@ int main(int argc, char * argv[])
     
 
     Master_box box;
-    Filter_basic filt(in_file,read_comp_num);
+    Filter_basic filt;
+    filt.init(in_file,read_comp_num);
     //    Filter_trivial filt;
     
 

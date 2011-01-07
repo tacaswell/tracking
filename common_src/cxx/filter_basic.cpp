@@ -41,14 +41,15 @@ using utilities::Attr_list_hdf;
 using std::cerr;
 using std::endl;
 
-Filter_basic::Filter_basic(float ecut,float rg_cut,float shift_cut):
-  e_cut_(ecut),rg_cut_(rg_cut),shift_cut_(shift_cut),wrap_(NULL)
+
+Filter_basic::Filter_basic():
+  e_cut_(0),rg_cut_(0),shift_cut_(0),wrap_(NULL)
 {
 }
 
 
-Filter_basic::Filter_basic(const std::string & fname,int comp_num):
-  e_cut_(1),rg_cut_(30),shift_cut_(5),wrap_(NULL)
+
+void Filter_basic::init(const std::string & fname,int comp_num)
 {
   H5File file = H5File( fname, H5F_ACC_RDONLY );
   Group  group = file.openGroup("/parameters/" + format_dset_name(utilities::D_XPOS,comp_num));
@@ -68,6 +69,16 @@ Filter_basic::Filter_basic(const std::string & fname,int comp_num):
   else
     cerr<<"does not contain c_cut parameter, using default: shift_cut = "<<shift_cut_<<endl;
 }
+
+
+void Filter_basic::init(float ecut,float rg_cut,float shift_cut)
+{
+  e_cut_ = ecut;
+  rg_cut_ = rg_cut;
+  shift_cut_ = shift_cut;
+    
+}
+
 
 
 bool Filter_basic::operator()(int ind, int frame)const

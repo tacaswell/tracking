@@ -86,13 +86,17 @@ class Filter_basic:public Filter
 public:
   bool operator()(int ind,int frame) const;
   /**
-     Constructor to read threshold values from a HDF file.
+     Constructor
    */
-  Filter_basic(const std::string&,int);
+  Filter_basic();
   /**
-     Constructor that just sets the threshold values
+     Initialization function for pulling values from the hdf file
    */
-  Filter_basic(float ecut,float rg_cut,float shift_cut);
+  void init(const std::string&,int);
+  /**
+     Initialization function based on arguements
+   */
+  void init(float ecut,float rg_cut,float shift_cut);
   void set_wrapper(const Wrapper_in * w_i )
   {
     wrap_ = w_i;

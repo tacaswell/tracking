@@ -200,7 +200,8 @@ int main(int argc, char * const argv[])
     
   Master_box box;
   // filter based on the values stored with the initial computation
-  Filter_basic filt(in_file,read_comp_num);
+  Filter_basic filt;
+  filt.init(in_file,read_comp_num);
   // fill the master_box
   box.init(wh,filt);
   Md_store filt_md = filt.get_parameters();

@@ -193,7 +193,8 @@ int main(int argc, char * const argv[])
     
     // fill the master_box
     Master_box box;
-    Filter_basic filt(in_file,read_comp_num);
+    Filter_basic filt;
+    filt.init(in_file,read_comp_num);
     //Filter_trivial filt;
     box.init(wh,filt);
     
