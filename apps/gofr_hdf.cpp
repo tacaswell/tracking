@@ -261,6 +261,23 @@ int main(int argc, char * argv[])
   };
   set<D_TYPE> data_types = set<D_TYPE>(tmp, tmp+7);
 
+  Filter_basic filt;
+  if(app_prams.contains_key("e_cut") &&
+     app_prams.contains_key("rg_cut") &&
+     app_prams.contains_key("shift_cut"))
+  {
+    float e_cut,rg_cut,shift_cut;
+    app_prams.get_value("e_cut",e_cut);
+    app_prams.get_value("rg_cut",rg_cut);
+    app_prams.get_value("shift_cut",shift_cut);
+    filt.init(e_cut,rg_cut,shift_cut);
+    
+    
+  }
+  else
+    filt.init(in_file,read_comp_num);
+  Md_store filt_md = filt.get_parameters();
+  //    Filter_trivial filt;
   
     
   Wrapper_i_hdf wh(in_file,data_types,read_comp_num);
@@ -268,10 +285,6 @@ int main(int argc, char * argv[])
     
 
   Master_box box;
-  Filter_basic filt;
-  filt.init(in_file,read_comp_num);
-  Md_store filt_md = filt.get_parameters();
-  //    Filter_trivial filt;
     
 
   box.init(wh,filt);

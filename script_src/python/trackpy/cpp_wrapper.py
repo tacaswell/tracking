@@ -40,15 +40,6 @@ def add_gofr_plane_mdata(comp_pram,i_pram,f_pram,s_pram,conn):
     conn.commit()
 
 
-def add_gofr_mdata(comp_pram,i_pram,f_pram,s_pram,conn):
-
-    params = (comp_pram['dset'],comp_pram['write_comp'],i_pram['nbins'],
-             f_pram['max_range'],comp_pram['read_comp'])
-    conn.execute("insert into gofr" +
-                 " (dset_key,comp_key,'nbins','max_range',iden_key) " +
-                 "values (?,?,?,?,?);",params)
-    conn.commit()
-
 def add_msd_mdata(comp_pram,i_pram,f_pram,s_pram,conn):
     params = (comp_pram['dset'],
               comp_pram['write_comp'],
@@ -99,7 +90,7 @@ def add_vanHove_mdata(comp_pram,i_pram,f_pram,s_pram,conn):
 
 
     
-_prog_to_fun_lookup = {'gofr_by_plane':add_gofr_plane_mdata,'gofr':add_gofr_mdata, 'msd':add_msd_mdata,'track_stats':add_trk_stat_mdata,'tracking':add_tracking_mdata,'vanHove':add_vanHove_mdata}
+_prog_to_fun_lookup = {'gofr_by_plane':add_gofr_plane_mdata,'msd':add_msd_mdata,'track_stats':add_trk_stat_mdata,'tracking':add_tracking_mdata,'vanHove':add_vanHove_mdata}
 
 
 def _make_sure_h5_exists(fname):
@@ -360,7 +351,8 @@ def do_gofr(comp_key,conn,pram_i, pram_f, pram_s = None, rel = True,):
     required_pram_i = ['nbins']
     required_pram_f = ['max_range']
     required_pram_s = ['grp_name']
-
+    opt_pram_f = ['e_cut','rg_cut','shift_cut']
+    
     # see if the file has already been processed
     res = conn.execute("select fout,dset_key from iden where comp_key=? ;",
                        (comp_key,)).fetchone()
@@ -389,7 +381,8 @@ def do_gofr(comp_key,conn,pram_i, pram_f, pram_s = None, rel = True,):
                   comp_prams,
                   required_pram_i,pram_i,
                   required_pram_f,pram_f,
-                  required_pram_s,pram_s)
+                  required_pram_s,pram_s,
+                         opt_f_pram = opt_pram_f)
     except KeyError, ke:
         print "Parameter: " ,ke,' not found'
 
@@ -736,7 +729,8 @@ def _call_fun_no_sql(prog_name,fin,fout,
                      req_s_pram = None,
                      s_pram = None,
                      db_path = None,
-                     rel = True):
+                     rel = True,
+                     opt_f_pram = None):
     """
     prog_name : the name of the analysis program to be called
     
@@ -775,7 +769,10 @@ def _call_fun_no_sql(prog_name,fin,fout,
     if req_s_pram is not None :
         for p in req_s_pram:
             config.add_pram(p,'string',s_pram[p])
-
+    if opt_f_pram is not None :
+        for p in opt_f_pram:
+            if p in f_pram:
+                config.add_pram(p,'float',f_pram[p])
     
     config.add_stanza("comps")
     
