@@ -17,7 +17,7 @@
 
 #include "sql_handler.h"
 #include "sqlite3.h"
-#include "boost/date_time/gregorian/gregorian.hpp"
+
 #include <iostream>
 #include <stdexcept>
 #include <stdio.h>
@@ -37,7 +37,7 @@ using std::logic_error;
 
 
 
-using namespace boost::gregorian;
+
 
 /*
    Local helper function for formatting error messages from sqlite
@@ -278,7 +278,7 @@ void SQL_handler::make_test_db(string fname)
     fname = ":memory:";
   }
   cout<<fname<<endl;
-  
+   
   open_connection(fname);
   exec_wrapper(db_,
 	       "CREATE TABLE dsets ("
@@ -408,16 +408,16 @@ void SQL_handler::tracking_md_fun(const  Md_store & md_store)
 
   // set up statement to be executed
   const char * base_stmt = "insert into tracking "
-    "(comp_key,iden_key,dset_key,search_range,shift_cut,rg_cut,e_cut,fin,fout,date) "
-    "values (?,?,?, ?,?,?,?, ?,?,?)";
+    "(comp_key,iden_key,dset_key,search_range,shift_cut,rg_cut,e_cut,fin,fout) "
+    "values (?,?,?, ?,?,?,?, ?,?)";
 
   // prepare the sql statement
   rc = sqlite3_prepare_v2(db_,base_stmt,-1,&stmt,NULL);
   if(rc != SQLITE_OK)
     throw runtime_error(err_format("failed to prepare statement",rc));
   
-  // get date
-  date d(day_clock::local_day());
+  
+  
 
   // bind in the values
   int_bind  (stmt,1 ,md_store.get_value("comp_key"    ,tmp_int));
@@ -429,7 +429,7 @@ void SQL_handler::tracking_md_fun(const  Md_store & md_store)
   float_bind(stmt,7 ,md_store.get_value("e_cut"       ,tmp_float));
   text_bind (stmt,8 ,md_store.get_value("fin"         ,tmp_str));
   text_bind (stmt,9 ,md_store.get_value("fout"        ,tmp_str));
-  text_bind (stmt,10,to_iso_extended_string(d));
+  
   
   // try running the statement
   rc  =  sqlite3_step(stmt);
@@ -510,8 +510,8 @@ void SQL_handler::msd_md_fun(const  Md_store & md_store)
 
   // set up statement to be executed
   const char * base_stmt = "insert into msd "
-    "(comp_key,iden_key,track_key,dset_key,msd_steps,min_track_length,fin,fout,date) "
-    "values (?,?,?, ? ,?,?,?,?,?)";
+    "(comp_key,iden_key,track_key,dset_key,msd_steps,min_track_length,fin,fout) "
+    "values (?,?,?, ? ,?,?,?,?)";
     
 
   // prepare the sql statement
@@ -522,8 +522,6 @@ void SQL_handler::msd_md_fun(const  Md_store & md_store)
     throw runtime_error(err_format("failed to prepare statement",rc));
   }
   
-  // get date
-  date d(day_clock::local_day());
 
   
   // bind in the values
@@ -537,7 +535,7 @@ void SQL_handler::msd_md_fun(const  Md_store & md_store)
   
   text_bind  (stmt,7,md_store.get_value("fin",tmp_str  ));
   text_bind  (stmt,8,md_store.get_value("fout",tmp_str  ));
-  text_bind  (stmt,9,to_iso_extended_string(d));
+
   // try running the statement
   rc  =  sqlite3_step(stmt);
   // if not happy, roll back.  finalize will also return an error if 
@@ -577,8 +575,8 @@ void SQL_handler::gofr_md_fun(const  Md_store & md_store)
     "(comp_key,iden_key,dset_key,"
     "nbins,max_range,"
     "shift_cut,rg_cut,e_cut,"
-    "fin,fout,date) "
-    "values (?,?,?, ?,?, ?,?,?, ?,?,?)";
+    "fin,fout) "
+    "values (?,?,?, ?,?, ?,?,?, ?,?)";
     
 
   // prepare the sql statement
@@ -589,8 +587,7 @@ void SQL_handler::gofr_md_fun(const  Md_store & md_store)
     throw runtime_error(err_format("failed to prepare statement",rc));
   }
   
-  // get date
-  date d(day_clock::local_day());
+
 
   
   // bind in the values
@@ -608,7 +605,7 @@ void SQL_handler::gofr_md_fun(const  Md_store & md_store)
   
   text_bind  (stmt,9,md_store.get_value("fin",tmp_str  ));
   text_bind  (stmt,10,md_store.get_value("fout",tmp_str  ));
-  text_bind  (stmt,11,to_iso_extended_string(d));
+
   // try running the statement
   rc  =  sqlite3_step(stmt);
   // if not happy, roll back.  finalize will also return an error if 
@@ -782,7 +779,7 @@ void SQL_handler::vanHove_md_fun(const  Md_store & md_store)
   const char * base_stmt = "insert into vanHove "
     "(comp_key,dset_key,track_key,"
     "min_track_length,max_step,max_range,nbins,"
-    "fin,fout,date) "
+    "fin,fout) "
     "values (?,?,?, ?,?,?,? ,?,?,?)";
     
   
@@ -795,8 +792,7 @@ void SQL_handler::vanHove_md_fun(const  Md_store & md_store)
     throw runtime_error(err_format("failed to prepare statement",rc));
   }
   
-  // get date
-  date d(day_clock::local_day());
+
 
   
   // bind in the values
@@ -811,7 +807,8 @@ void SQL_handler::vanHove_md_fun(const  Md_store & md_store)
   
   text_bind  (stmt,8,md_store.get_value("fin",tmp_str  ));
   text_bind  (stmt,9,md_store.get_value("fout",tmp_str  ));
-  text_bind  (stmt,10,to_iso_extended_string(d));
+
+
   // try running the statement
   rc  =  sqlite3_step(stmt);
   // if not happy, roll back.  finalize will also return an error if 
@@ -908,7 +905,7 @@ std::string utilities::ftype_to_str(F_TYPE f)
 }
 
     
-  
+
 void exec_wrapper(sqlite3* db,std::string cmd)
 {
   int rc;
