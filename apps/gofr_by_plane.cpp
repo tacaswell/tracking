@@ -143,66 +143,52 @@ int main(int argc, char * argv[])
   
 
 
-  try
-  {
-    D_TYPE tmp[] = {utilities::D_XPOS,
-		    utilities::D_YPOS,
-		    utilities::D_DX,
-		    utilities::D_DY,
-		    utilities::D_I,
-		    utilities::D_R2,
-		    utilities::D_E
-		    };
-    set<D_TYPE> data_types = set<D_TYPE>(tmp, tmp+7);
+  
+  D_TYPE tmp[] = {utilities::D_XPOS,
+		  utilities::D_YPOS,
+		  utilities::D_DX,
+		  utilities::D_DY,
+		  utilities::D_I,
+		  utilities::D_R2,
+		  utilities::D_E
+  };
+  set<D_TYPE> data_types = set<D_TYPE>(tmp, tmp+7);
 
   
     
-    Wrapper_i_hdf wh(in_file,data_types,read_comp_num);
+  Wrapper_i_hdf wh(in_file,data_types,read_comp_num);
 
     
 
-    Master_box box;
-    Filter_basic filt;
-    filt.init(in_file,read_comp_num);
-    //    Filter_trivial filt;
+  Master_box box;
+  Filter_basic filt;
+  filt.init(in_file,read_comp_num);
+  //    Filter_trivial filt;
     
 
-    box.init(wh,filt);
+  box.init(wh,filt);
     
 
     
-    cout<<"total number of particles is: "<<box.size()<<endl;;
+  cout<<"total number of particles is: "<<box.size()<<endl;;
     
-    Tuple<float,2> dims = wh.get_dims();
-    hash_case hcase;
-    hcase.init(box,dims,max_range/2,wh.get_num_frames());
+  Tuple<float,2> dims = wh.get_dims();
+  hash_case hcase;
+  hcase.init(box,dims,max_range/2,wh.get_num_frames());
 
-    cout<<"hash case filled"<<endl;
+  cout<<"hash case filled"<<endl;
     
-    Corr_case gofr_c((tracking::Corr_gofr*)NULL,comp_count,max_range,nbins,write_comp_num,dset_num,read_comp_num);
-    hcase.compute_corr(gofr_c);
-    cout<<"computed g(r)"<<endl;
+  Corr_case gofr_c((tracking::Corr_gofr*)NULL,comp_count,max_range,nbins,write_comp_num,dset_num,read_comp_num);
+  hcase.compute_corr(gofr_c);
+  cout<<"computed g(r)"<<endl;
     
-    //    gofr.display();
+  //    gofr.display();
 
       
-    Generic_wrapper_hdf hdf_out(out_file,true);
-    gofr_c.out_to_wrapper(hdf_out,utilities::format_name(grp_name,write_comp_num),comp_prams.get_store());
-    cout<<"wrote out g(r)"<<endl;
+  Generic_wrapper_hdf hdf_out(out_file,true);
+  gofr_c.out_to_wrapper(hdf_out,utilities::format_name(grp_name,write_comp_num),comp_prams.get_store());
+  cout<<"wrote out g(r)"<<endl;
 
-    
-  }
-  catch(const char * err){
-    std::cerr<<"caught on error: ";
-    std::cerr<<err<<endl;
-    return -1;
-  } 
-  catch(std::exception & e)
-  {
-    cerr<<"died on exception"<<endl;
-    cerr<<'\t'<<e.what()<<endl;
-    return -1;
-  }
   
   return 0;
 }
