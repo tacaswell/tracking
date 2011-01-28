@@ -245,6 +245,10 @@ int main(int argc, char * const argv[])
     vanHove_md_store.add_element("fin",in_file.c_str());
     vanHove_md_store.add_element("fout",out_file.c_str());
     
+    // add md to sql db
+    sql.add_mdata(vanHove_md_store);
+    
+
     // make ta_vanHove object
     TA_vanHove vanHove(len-1,nbins,max_range);
     // compute vanHove
@@ -253,8 +257,8 @@ int main(int argc, char * const argv[])
     // output to the file
     vanHove.output_to_wrapper(hdf_out,vanHove_md_store);
 
-    // add md to sql db
-    sql.add_mdata(vanHove_md_store);
+
+    // commit the data to the data base
     sql.commit();
 
 
