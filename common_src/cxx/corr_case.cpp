@@ -104,7 +104,7 @@ void Corr_case::out_to_wrapper(Generic_wrapper & in,
   {
     string g_name = base_name + "/" + utilities::format_name("comp",j);
     
-    corr_vec_[j]->out_to_wrapper(in,g_name,NULL);
+    corr_vec_[j]->out_to_wrapper(in,g_name,md_store);
     
 
   }
