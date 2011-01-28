@@ -141,11 +141,13 @@ add_executable(gofr_by_plane gofr_by_plane.cpp
   ${COMMON_HASH_SRC} 
   ${COMMON_WRAPPER_SRC} 
   ${CONFIG_SRC}
+  ${SQL_CODE}
   )
 #message(STATUS "Found HDF: ${HDF5_LIBRARIES}")
 target_link_libraries(gofr_by_plane
   ${HDF5_LIBRARIES} 
   ${XERCESC_LIBRARY} 
+  ${SQLITE3_LIBRARY}
   )
 set_target_properties(gofr_by_plane PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_COUNT=2")
 

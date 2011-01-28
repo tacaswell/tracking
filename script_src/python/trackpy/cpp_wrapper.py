@@ -353,18 +353,18 @@ def do_gofr(comp_key,conn,pram_i, pram_f, pram_s = None, rel = True,):
     required_pram_s = ['grp_name']
     opt_pram_f = ['e_cut','rg_cut','shift_cut']
     
-    # see if the file has already been processed
+    
     res = conn.execute("select fout,dset_key from iden where comp_key=? ;",
                        (comp_key,)).fetchone()
     read_comp = comp_key
-
+    
     print res
     print comp_key
     if res is None:
         raise utils.dbase_error('no entry found')
     
     (fin,key) = res
-
+    
     fout = os.path.dirname(fin) + '/gofr.h5'
     _make_sure_h5_exists(fout)
     
@@ -378,10 +378,10 @@ def do_gofr(comp_key,conn,pram_i, pram_f, pram_s = None, rel = True,):
     
     try:
         _call_fun_no_sql(prog_name,fin,fout,
-                  comp_prams,
-                  required_pram_i,pram_i,
-                  required_pram_f,pram_f,
-                  required_pram_s,pram_s,
+                         comp_prams,
+                         required_pram_i,pram_i,
+                         required_pram_f,pram_f,
+                         required_pram_s,pram_s,
                          opt_f_pram = opt_pram_f)
     except KeyError, ke:
         print "Parameter: " ,ke,' not found'
@@ -513,35 +513,40 @@ def do_gofr_by_plane(comp_key,conn,pram_i, pram_f, pram_s = None, rel = True,):
     required_pram_i = ['nbins','comp_count']
     required_pram_f = ['max_range']
     required_pram_s = ['grp_name']
+    opt_pram_f = ['e_cut','rg_cut','shift_cut']
     # see if the file has already been processed
     
     
-    res = conn.execute("select fout,dset_key from comps where comp_key=? ;",
+    res = conn.execute("select fout,dset_key from iden where comp_key=? ;",
                        (comp_key,)).fetchone()
-
-    if len(res) ==0:
-        print "no entry"
-        return
+    read_comp = comp_key
+    
+    print res
+    print comp_key
+    if res is None:
+        raise utils.dbase_error('no entry found')
+    
     (fin,key) = res
+    
     fout = os.path.dirname(fin) + '/gofr_by_planes.h5'
     _make_sure_h5_exists(fout)
     
 
-    comp_prams = {'read_comp':comp_key,'dset':key}
-    comp_prams['write_comp'] =conn.execute("select max(comp_key) from comps;"
-                                           ).fetchone()[0] + 1
+    comp_prams = {'iden_key':comp_key,'dset_key':key}
+    
     
     if pram_s is None:
         pram_s = {'grp_name':prog_name}
 
 
     try:
-        _call_fun(conn,
+        _call_fun_no_sql(
                   prog_name,fin,fout,
                   comp_prams,
                   required_pram_i,pram_i,
                   required_pram_f,pram_f,
-                  required_pram_s,pram_s)
+                  required_pram_s,pram_s,
+            opt_f_pram = opt_pram_f)
     except KeyError, ke:
         print "Parameter: " ,ke,' not found'
     
@@ -579,7 +584,7 @@ def do_tracking(comp_key,conn,pram_i, pram_f, pram_s = None, rel = True,):
     required_pram_i = []
     required_pram_f = ['search_range']
     required_pram_s = None
-        
+    opt_pram_f = ['e_cut','rg_cut','shift_cut']
     (fin,dset_key) = conn.execute("select fout,dset_key from iden where comp_key = ?",
                                   (comp_key,)).fetchone()
     
@@ -592,12 +597,13 @@ def do_tracking(comp_key,conn,pram_i, pram_f, pram_s = None, rel = True,):
     
     
     try:
-        _call_fun_no_sql(
-                  prog_name,fin,fout,
-                  comp_prams,
-                  required_pram_i,pram_i,
-                  required_pram_f,pram_f,
-                  required_pram_s,pram_s)
+        _call_fun_no_sql(prog_name,
+                         fin,fout,
+                         comp_prams,
+                         required_pram_i,pram_i,
+                         required_pram_f,pram_f,
+                         required_pram_s,pram_s,
+                         opt_f_pram=opt_pram_f)
     except KeyError, ke:
         print "Parameter: " ,ke,' not found'
 

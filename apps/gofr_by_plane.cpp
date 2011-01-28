@@ -48,6 +48,11 @@
 #include "cl_parse.h"
 
 #include "enum_utils.h"
+
+
+#include "sql_handler.h"
+#include "md_store.h"
+
 //#include "gnuplot_i.hpp" //Gnuplot class handles POSIX-Pipe-communication with Gnuplot
 
 using std::cout;
@@ -69,6 +74,9 @@ using utilities::Generic_wrapper_hdf;
 using utilities::CL_parse;
 using utilities::Read_config;
 
+using utilities::Md_store;
+using utilities::SQL_handler;
+
 
 using tracking::Master_box;
 using tracking::particle;
@@ -82,17 +90,13 @@ int main(int argc, char * argv[])
 {
 
   		   
-  string in_file; 
-  string out_file;
-  string pram_file ;
+  string pram_file;
   
   
   try
   {
     CL_parse cl(argc,argv);
     cl.parse();
-    cl.get_fin(in_file);
-    cl.get_fout(out_file);
     cl.get_fpram(pram_file);
   }
   catch(std::invalid_argument &e )
@@ -102,9 +106,7 @@ int main(int argc, char * argv[])
   }
   
 
-  cout<<"file to read in: "<<in_file<<endl;
-  cout<<"file that will be written to: "<<out_file<<endl;
-
+  
   // parsing of parameters
 
 
@@ -126,13 +128,12 @@ int main(int argc, char * argv[])
     return -1;
   }
   
-  int read_comp_num , write_comp_num, dset_num ;
+  int read_comp_key , write_comp_key, dset_key ;
   Read_config comp_prams(pram_file,"comps");
   try
   {
-    comp_prams.get_value("read_comp",read_comp_num);
-    comp_prams.get_value("write_comp",write_comp_num);
-    comp_prams.get_value("dset",dset_num);
+    comp_prams.get_value("read_comp",read_comp_key);
+    comp_prams.get_value("dset",dset_key);
   }
   catch(logic_error & e)
   {
@@ -141,6 +142,38 @@ int main(int argc, char * argv[])
     return -1;
   }
   
+
+  
+  string db_path;
+  string in_file ;
+  string out_file ;
+  Read_config files(pram_file,"files");
+  try
+  {
+    files.get_value("db_path",db_path);
+    files.get_value("fin",in_file);
+    files.get_value("fout",out_file);
+  }
+  catch(logic_error & e)
+  {
+    cerr<<"error parsing the file parameters"<<endl;
+    cerr<<e.what()<<endl;
+    return -1;
+  }
+
+  cout<<"file to read in: "<<in_file<<endl;
+  cout<<"file that will be written to: "<<out_file<<endl;
+
+
+  
+  // set up sql stuff
+  SQL_handler sql;
+  sql.open_connection(db_path);
+
+
+  // claim the entry in the DB and lock it before doing anything
+
+  sql.start_comp(dset_key,write_comp_key,utilities::F_GOFR_BY_PLANE);
 
 
   
@@ -156,16 +189,41 @@ int main(int argc, char * argv[])
 
   
     
-  Wrapper_i_hdf wh(in_file,data_types,read_comp_num);
+  Wrapper_i_hdf wh(in_file,data_types,read_comp_key);
 
     
 
-  Master_box box;
+
   Filter_basic filt;
-  filt.init(in_file,read_comp_num);
-  //    Filter_trivial filt;
+    if(app_prams.contains_key("e_cut") &&
+     app_prams.contains_key("rg_cut") &&
+     app_prams.contains_key("shift_cut"))
+  {
+    float e_cut,rg_cut,shift_cut;
+    app_prams.get_value("e_cut",e_cut);
+    app_prams.get_value("rg_cut",rg_cut);
+    app_prams.get_value("shift_cut",shift_cut);
+    filt.init(e_cut,rg_cut,shift_cut);
     
+    
+  }
+  else
+    filt.init(in_file,read_comp_key);
+  Md_store filt_md = filt.get_parameters();
+  
+  
+  Md_store md_store;
+  md_store.add_elements(app_prams.get_store());    
+  md_store.add_elements(comp_prams.get_store());    
+  md_store.add_elements(files.get_store());    
+  md_store.add_elements(&filt_md);
+  md_store.add_element("comp_key",write_comp_key);
+  
 
+
+  
+    
+  Master_box box;
   box.init(wh,filt);
     
 
@@ -178,7 +236,11 @@ int main(int argc, char * argv[])
 
   cout<<"hash case filled"<<endl;
     
-  Corr_case gofr_c((tracking::Corr_gofr*)NULL,comp_count,max_range,nbins,write_comp_num,dset_num,read_comp_num);
+  Corr_case gofr_c((tracking::Corr_gofr*)NULL,comp_count,
+		   max_range,nbins,
+		   write_comp_key,
+		   dset_key,
+		   read_comp_key);
   hcase.compute_corr(gofr_c);
   cout<<"computed g(r)"<<endl;
     
@@ -186,8 +248,16 @@ int main(int argc, char * argv[])
 
       
   Generic_wrapper_hdf hdf_out(out_file,true);
-  gofr_c.out_to_wrapper(hdf_out,utilities::format_name(grp_name,write_comp_num),comp_prams.get_store());
+  gofr_c.out_to_wrapper(hdf_out,utilities::format_name(grp_name,write_comp_key),&md_store);
   cout<<"wrote out g(r)"<<endl;
+
+
+  // shove in to db
+  sql.add_mdata(md_store);
+  sql.commit();
+  
+  // clean up the data base
+  sql.close_connection();
 
   
   return 0;
