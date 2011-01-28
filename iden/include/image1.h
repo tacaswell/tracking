@@ -106,7 +106,11 @@ public:
   /**
      Fill the image with data from a pointer to unsigned ints (16bit)
    */
-  void set_data(const WORD *data_in, int rows,int cols,WORD in_step);
+  void set_data_16(const uint16_t *data_in, int rows,int cols,WORD in_step);
+  /**
+     Fill the image with data from a pointer to unsigned char (8bit)
+   */
+  void set_data_8(const uint8_t *data_in, int rows,int cols,WORD in_step);
   
   /**
      accumulates data from a pointer to an unsigned int (16bit)

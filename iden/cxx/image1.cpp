@@ -125,7 +125,7 @@ int Image2D::get1Dindex(const int x, const int y)
 }
 
 
-void Image2D::set_data(const WORD * data_in, int rows, int cols,WORD in_step)
+void Image2D::set_data_16(const WORD * data_in, int rows, int cols,WORD in_step)
 {
   if(!(cols==width_ && rows == height_))
   {
@@ -145,6 +145,30 @@ void Image2D::set_data(const WORD * data_in, int rows, int cols,WORD in_step)
 
   // copy data to this object
   ippiConvert_16u32f_C1R(data_in, in_step,imagedata_,data_step,ROIfull_);
+  
+}
+
+
+void Image2D::set_data_8(const uint8_t * data_in, int rows, int cols,WORD in_step)
+{
+  if(!(cols==width_ && rows == height_))
+  {
+    std::cerr<<"height: "<<height_<<'\t'<<"rows: "<<rows<<std::endl;
+    std::cerr<<"width: "<<width_<<'\t'<<"cols: "<<cols<<std::endl;
+    throw runtime_error("Image2D: data is wrong size");
+  }
+  
+
+  int data_step = cols*sizeof(Ipp32f);
+  
+
+  // this make the assumption that WORD is a short is an unsigned
+  // short and an Ipp16u is also an unsigned short, or atleast that
+  // they are the same thing.  This is true on linux
+
+
+  // copy data to this object
+  ippiConvert_8u32f_C1R(data_in, in_step,imagedata_,data_step,ROIfull_);
   
 }
 

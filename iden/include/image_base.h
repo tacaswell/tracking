@@ -48,7 +48,16 @@ template<class T,int length>
 class Tuple;
 
 class Md_store;
-
+/**
+   Enumeration of pixel sizes
+*/
+typedef enum PIX_SIZE
+  {
+    U16=0,
+    U8,
+    ERROR
+  } PIX_SIZE;
+  
 /**
    This is an ABC for different file layouts, ie to make dealing with
    multi-part files and the spew that comes out of stream to disk easy
@@ -57,6 +66,7 @@ class Md_store;
 class Image_base
 {
 public:
+  
   /**
      Empty constructor
    */
@@ -101,6 +111,11 @@ public:
      Returns the number of planes in the image
    */
   virtual int get_frame_count() const = 0;
+  
+  /**
+     Returns the size of the image pixels
+   */
+  virtual PIX_SIZE get_pixel_size() const = 0;
   
 };
 

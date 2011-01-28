@@ -137,13 +137,19 @@ Wrapper_i_plu * Iden::fill_wrapper(unsigned int frames,unsigned int start)
     img_src_->select_plane(j);
     
     // get data about image
-    const WORD * data_ptr = img_src_->get_plane_pixels();
+    const void * data_ptr = img_src_->get_plane_pixels();
     
+    utilities::PIX_SIZE px_sz = img_src_->get_pixel_size();
     
     // shove data in to image object
     Image2D image_in(rows,cols);
-    image_in.set_data(data_ptr, rows,cols,scan_step);
-
+    if(px_sz == utilities::U16)
+      image_in.set_data_16((uint16_t *) data_ptr, rows,cols,scan_step);
+    else if(px_sz == utilities::U8)
+      image_in.set_data_8((uint8_t *) data_ptr, rows,cols,scan_step);
+    else
+      throw runtime_error("iden: can't find proper pixel size");
+    
     
     // trim off the top .1% of the pixels to deal with outliers
     ///TODO make this a parameter
@@ -156,19 +162,19 @@ Wrapper_i_plu * Iden::fill_wrapper(unsigned int frames,unsigned int start)
     int dtime;
     
     // deal with time
-    if(j == start)
-    {
-      prev_time = time_from_string(md_store->get_value("acquisition-time-local",time_str));
-      dtime = 0;
-    }
+    // if(j == start)
+    // {
+    //   prev_time = time_from_string(md_store->get_value("acquisition-time-local",time_str));
+    //   dtime = 0;
+    // }
     
-    else
-    {
-      cur_time  = time_from_string(md_store->get_value("acquisition-time-local",time_str));
-      dtime = (cur_time-prev_time).total_milliseconds();
-      prev_time = cur_time;
-    }
-    md_store->add_element("dtime",dtime);
+    // else
+    // {
+    //   cur_time  = time_from_string(md_store->get_value("acquisition-time-local",time_str));
+    //   dtime = (cur_time-prev_time).total_milliseconds();
+    //   prev_time = cur_time;
+    // }
+    // md_store->add_element("dtime",dtime);
     
     
     

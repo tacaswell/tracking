@@ -245,3 +245,15 @@ std::string utilities::format_name(const std::string & dirname,
   return  dirname + '/' + basename +  o.str() + ".tif";
   
 }
+
+
+utilities::PIX_SIZE Image_series::get_pixel_size() const
+{
+  unsigned pix_size = image_.getBitsPerPixel();
+  if(pix_size == 16)
+    return utilities::U16;
+  if(pix_size == 8)
+    return utilities::U8;
+  return utilities::ERROR;
+  
+}

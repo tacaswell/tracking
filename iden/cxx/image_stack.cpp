@@ -137,3 +137,14 @@ int Image_stack::get_frame_count() const
 {
   return src_.getPageCount();
 }
+
+utilities::PIX_SIZE Image_stack::get_pixel_size() const
+{
+  unsigned pix_size = image_.getBitsPerPixel();
+  if(pix_size == 16)
+    return utilities::U16;
+  if(pix_size == 8)
+    return utilities::U8;
+  return utilities::ERROR;
+  
+}
