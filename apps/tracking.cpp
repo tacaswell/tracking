@@ -200,16 +200,54 @@ int main(int argc, char * const argv[])
     
   Master_box box;
   // filter based on the values stored with the initial computation
+  
+
   Filter_basic filt;
-  filt.init(in_file,read_comp_num);
+  if(app_prams.contains_key("e_cut") &&
+     app_prams.contains_key("rg_cut") &&
+     app_prams.contains_key("shift_cut"))
+  {
+    float e_cut,rg_cut,shift_cut;
+    app_prams.get_value("e_cut",e_cut);
+    app_prams.get_value("rg_cut",rg_cut);
+    app_prams.get_value("shift_cut",shift_cut);
+    filt.init(e_cut,rg_cut,shift_cut);
+  }
+  else
+    filt.init(in_file,read_comp_num);
+
+  Md_store filt_md = filt.get_parameters();
+  
+      
+  
+
+
+  // build the md_store for handing in to the hdf file and the db
+  Md_store md_store;
+  md_store.add_elements(app_prams.get_store());    
+  md_store.add_elements(comp_prams.get_store());    
+  md_store.add_elements(files.get_store());    
+  md_store.add_elements(&filt_md);
+  md_store.add_element("comp_key",write_comp_num);
+  cout<<"set up md_store"<<endl;
+  md_store.print();
+
+
+
   // fill the master_box
   box.init(wh,filt);
-  Md_store filt_md = filt.get_parameters();
+
+  
   
     
   // fill the hash case
   hash_case hcase;
   hcase.init(box,wh.get_dims(),search_range,wh.get_num_frames());
+  int dtime = hcase.get_avg_dtime();
+  float temperature = hcase.get_avg_temp();
+  md_store.add_element("dtime",dtime);
+  md_store.add_element("temperature",temperature);
+
   cout<<"hash case filled"<<endl;
 
     
@@ -253,21 +291,6 @@ int main(int argc, char * const argv[])
   }
     
   cout<<"finished outputting to particle data"<<endl;
-    
-  int dtime = hcase.get_avg_dtime();
-
-
-  // build the md_store for handing in to the hdf file and the db
-  Md_store md_store;
-  md_store.add_elements(app_prams.get_store());    
-  md_store.add_elements(comp_prams.get_store());    
-  md_store.add_elements(files.get_store());    
-  md_store.add_elements(&filt_md);
-  md_store.add_element("dtime",dtime);
-  md_store.add_element("comp_key",write_comp_num);
-  cout<<"set up md_store"<<endl;
-  md_store.print();
-
   
   
   
