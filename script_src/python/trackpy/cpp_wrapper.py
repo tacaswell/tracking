@@ -99,39 +99,44 @@ def _make_sure_h5_exists(fname):
         f.close()
 
 
-def do_link3D(key,conn,pram_i, pram_f, pram_s = None, rel = True,):
+def do_link3D(comp_key,conn,pram, fout_name):
     prog_name = "link3D"
     req_f_pram = ["box_side_len", "search_range"    ]
     req_i_pram = ["min_trk_len"]
-
-    
-    # figure out name of file to write to
-    res = check_comps_table(key,"Iden",conn)
-    if len(res) ==0:
-        print "no entry"
-        # _do_Iden(key,conn)
-        return
-    if len(res) >1:
-        print "more than one entry, can't cope, quiting"
-        return
-    (fname,read_comp) = res[0]
+    opt_pram_f = ['xy_scale','z_spacing']
 
     
     
-    # see if there is already a linked file
-    res = conn.execute("select fout from comps where dset_key=? and function='link3D';",
-                       (key,)).fetchall()
-    if len(res)>0:
-        print "Already linked"
-        return
+    res = conn.execute("select fout,dset_key from iden where comp_key=? ;",
+                       (comp_key,)).fetchone()
+    read_comp = comp_key
+    
+    
+    print res
+    print comp_key
+    if res is None:
+        raise utils.dbase_error('no entry found')
+    
+    (fin,key) = res
+    
+    fout = os.path.dirname(fin) + fout_name
+    _make_sure_h5_exists(fout)
+    
+    comp_prams = {'iden_key':read_comp,'dset_key':key,'link_key':0}
+        
+    if pram_s is None:
+        pram_s = {'grp_name':prog_name}
 
+
+
+    
     
     try:
-        _call_fun(conn,
-                  prog_name,fin,fout,
-                  comp_prams,
-                  required_pram_i,pram_i,
-                  required_pram_f,pram_f)
+        _call_fun_no_sql( prog_name,fin,fout,
+                          comp_prams,
+                          required_pram_i,pram,
+                          required_pram_f,pram,
+                          opt_f_pram = opt_pram_f))
     except KeyError, ke:
         print "Parameter: " ,ke,' not found'
     
@@ -152,7 +157,7 @@ def do_Iden(key,conn,iden_params):
         print "multi-part tiff, can't cope yet"
         return
     
-
+    
     if ftype == 1:
         format_string = 'file_name'
         fout = '.'.join(fin.replace("data","processed").split('.')[:-1]) + '.h5'
