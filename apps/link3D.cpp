@@ -130,19 +130,35 @@ int main(int argc, char * argv[])
       break;
     }
   }
-
-  if(!(found_i && found_o && found_c))
+  
+  // if(!(found_i && found_o && found_c))
+  // {
+  //   cerr<<"input failed"<<endl;
+  //   cout<<"-i input filename"<<endl;
+  //   cout<<"-o output filename"<<endl;
+  //   cout<<"-c configuration filename"<<endl;
+  //   return -1;
+  // }
+  
+  string db_path;
+  
+  Read_config files(pram_file,"files");
+  try
   {
-    cerr<<"input failed"<<endl;
-    cout<<"-i input filename"<<endl;
-    cout<<"-o output filename"<<endl;
-    cout<<"-c configuration filename"<<endl;
+    files.get_value("db_path",db_path);
+    files.get_value("fin",in_file);
+    files.get_value("fout",out_file);
+  }
+  catch(logic_error & e)
+  {
+    cerr<<"error parsing the file parameters"<<endl;
+    cerr<<e.what()<<endl;
     return -1;
   }
-  
+
   cout<<"file to read in: "<<in_file<<endl;
   cout<<"file that will be written to: "<<out_file<<endl;
-
+  
 
     
   float box_side_len;
