@@ -146,7 +146,7 @@ int main(int argc, char * argv[])
 
     
   float box_side_len;
-  int write_comp_number,read_comp_number;
+  int write_comp_number,read_comp_number,dset_key;
   float search_range ;
   int min_track_length;
   
@@ -171,14 +171,17 @@ int main(int argc, char * argv[])
   
   
   Read_config comp_prams(pram_file,"comps");
-  if(!(comp_prams.contains_key("read_comp")&&
-       comp_prams.contains_key("write_comp")))
+  if(!(comp_prams.contains_key("iden_key")&&
+       comp_prams.contains_key("link_key")&&
+       comp_prams.contains_key("dset_key")
+       ))
     throw logic_error(APP_NAME + 
 		      " parameter file does not contain both read and write comp nums");
   try
   {
-    comp_prams.get_value("read_comp",read_comp_number);
-    comp_prams.get_value("write_comp",write_comp_number);
+    comp_prams.get_value("iden_key",read_comp_number);
+    comp_prams.get_value("link_key",write_comp_number);
+    comp_prams.get_value("dset_key",dset_key);
   }
   catch(logic_error & e)
   {
@@ -187,6 +190,9 @@ int main(int argc, char * argv[])
     return -1;
   }
 
+  
+  
+    
   
   
   try
@@ -252,17 +258,31 @@ int main(int argc, char * argv[])
     Wrapper_o_hdf hdf_w(out_file,data_types2,write_comp_number,Wrapper_o_hdf::NEW_FILE,"frame");
     cout<<"made wrapper"<<endl;
     
+    
+    float xy_scale,z_spacing;
+    if(app_prams.contains_key("xy_scale"))
+      app_prams.get_value("xy_scale",xy_scale);
+    else
+      xy_scale = wh.get_xy_scale();
+   
+  
+    if(app_prams.contains_key("z_spacing"))
+      app_prams.get_value("z_spacing",z_spacing);
+    else
+      z_spacing = .2;
+    
+  
+    
 
+    cout<<"xy_scale: "<<xy_scale<<endl;;
+    cout<<"z_spacing: "<<z_spacing<<endl;;
     
-    float scale_tmp = wh.get_xy_scale();
-    
-    cout<<"scale_tmp: "<<scale_tmp<<endl;;
-    
-
-    Tuple<float,3> scale_t(scale_tmp,scale_tmp,1.0f);
+    // the third component needs to be one because we do not need to
+    // scale the value of the z-planes
+    Tuple<float,3> scale_t(xy_scale,xy_scale,1.0f);
     cout<<"scale triple :"<<scale_t<<endl;
     
-    Tuple<float,3> dim(dims[0]*scale_tmp, dims[1]*scale_tmp,wh.get_num_frames()*.2);
+    Tuple<float,3> dim(dims[0]*xy_scale, dims[1]*xy_scale,wh.get_num_frames()*z_spacing);
     hdf_w.initialize_wrapper();
     final_tracks.output_link_to_wrapper(hdf_w,scale_t,dim);
     hdf_w.add_meta_data_list(app_prams,data_types2);
