@@ -250,6 +250,9 @@ int main(int argc, char * argv[])
   sql.start_comp(dset_key,write_comp_num,utilities::F_GOFR);
 
 
+  
+  // set up md_store
+  
 
   D_TYPE tmp[] = {utilities::D_XPOS,
 		  utilities::D_YPOS,
@@ -260,7 +263,7 @@ int main(int argc, char * argv[])
 		  utilities::D_E
   };
   set<D_TYPE> data_types = set<D_TYPE>(tmp, tmp+7);
-
+  
   Filter_basic filt;
   if(app_prams.contains_key("e_cut") &&
      app_prams.contains_key("rg_cut") &&
@@ -279,7 +282,16 @@ int main(int argc, char * argv[])
   Md_store filt_md = filt.get_parameters();
   //    Filter_trivial filt;
   
-    
+  Md_store md_store;
+  md_store.add_elements(app_prams.get_store());    
+  md_store.add_elements(comp_prams.get_store());    
+  md_store.add_elements(files.get_store());    
+  md_store.add_elements(&filt_md);
+  md_store.add_element("comp_key",write_comp_num);
+  
+
+
+  
   Wrapper_i_hdf wh(in_file,data_types,read_comp_num);
 
     
@@ -306,14 +318,6 @@ int main(int argc, char * argv[])
   //    gofr.display();
   
   
-  // set up md_store
-  Md_store md_store;
-  md_store.add_elements(app_prams.get_store());    
-  md_store.add_elements(comp_prams.get_store());    
-  md_store.add_elements(files.get_store());    
-  md_store.add_elements(&filt_md);
-  md_store.add_element("comp_key",write_comp_num);
-
       
   Generic_wrapper_hdf hdf_out(out_file,true);
   gofr.out_to_wrapper(hdf_out,format_name(grp_name,write_comp_num),&md_store);
