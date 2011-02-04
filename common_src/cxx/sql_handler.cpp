@@ -846,9 +846,9 @@ void SQL_handler::gofr_by_plane_md_fun(const  Md_store & md_store)
 
 
   // set up statement to be executed
-  const char * base_stmt = "insert into gofr "
+  const char * base_stmt = "insert into gofr_by_plane "
     "(comp_key,iden_key,dset_key,"
-    "nbins,max_range,comp_count"
+    "nbins,max_range,comp_count,"
     "shift_cut,rg_cut,e_cut,"
     "fin,fout) "
     "values (?,?,?, ?,?,?, ?,?,?, ?,?)";

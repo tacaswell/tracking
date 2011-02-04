@@ -132,8 +132,8 @@ int main(int argc, char * argv[])
   Read_config comp_prams(pram_file,"comps");
   try
   {
-    comp_prams.get_value("read_comp",read_comp_key);
-    comp_prams.get_value("dset",dset_key);
+    comp_prams.get_value("iden_key",read_comp_key);
+    comp_prams.get_value("dset_key",dset_key);
   }
   catch(logic_error & e)
   {
@@ -220,7 +220,7 @@ int main(int argc, char * argv[])
   md_store.add_element("comp_key",write_comp_key);
   
 
-
+  
   
     
   Master_box box;
@@ -246,14 +246,18 @@ int main(int argc, char * argv[])
     
   //    gofr.display();
 
-      
+
+  // shove in to db, but don't commit
+  sql.add_mdata(md_store);
+
+  // save the data
   Generic_wrapper_hdf hdf_out(out_file,true);
   gofr_c.out_to_wrapper(hdf_out,utilities::format_name(grp_name,write_comp_key),&md_store);
   cout<<"wrote out g(r)"<<endl;
 
 
-  // shove in to db
-  sql.add_mdata(md_store);
+
+  // commit the md to the data base
   sql.commit();
   
   // clean up the data base
