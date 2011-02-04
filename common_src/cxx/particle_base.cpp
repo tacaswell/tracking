@@ -306,27 +306,25 @@ void particle_base::fill_phi_6()
 
 complex<float> particle_base::compute_phi_6()const 
 {
-  if(neighborhood_.size() ==0)
-  {
-    throw runtime_error("no neighborhood");
-  }
-
-  
   complex<float> phi6(0,0);
-  complex<float> i(0,1);
-  
-  vector<const particle*>::const_iterator myend = neighborhood_.end();
-  
-  for(vector<const particle*>::const_iterator cur_nei = neighborhood_.begin();
-      cur_nei!=myend;++cur_nei)
+  if(neighborhood_.size() !=0)
   {
-    Tuplef tmp = (*cur_nei)->get_position()-position_;
-    // angle made with the y-axis (I think, doesn't really matter for this
-    float theta6 = atan2(tmp[0],tmp[1])*6;
-    phi6 += exp(i*theta6);
+    
+    complex<float> i(0,1);
+  
+    vector<const particle*>::const_iterator myend = neighborhood_.end();
+  
+    for(vector<const particle*>::const_iterator cur_nei = neighborhood_.begin();
+	cur_nei!=myend;++cur_nei)
+    {
+      Tuplef tmp = (*cur_nei)->get_position()-position_;
+      // angle made with the y-axis (I think, doesn't really matter for this
+      float theta6 = atan2(tmp[0],tmp[1])*6;
+      phi6 += exp(i*theta6);
+    }
+    phi6/=(float)neighborhood_.size();
   }
-  phi6/=(float)neighborhood_.size();
-
+  
   
   return phi6;
 }
