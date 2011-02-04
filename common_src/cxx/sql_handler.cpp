@@ -159,7 +159,7 @@ int SQL_handler::start_comp(int dset_key,
   rc = sqlite3_prepare_v2(db_,base_stmt,-1,&stmt,NULL);
   
   if(rc != SQLITE_OK)
-    throw runtime_error(err_format("failed to prepare statement",rc));
+    throw runtime_error(err_format("failed to prepare statement, start",rc));
   // bind in the two arguements
   int_bind(stmt,1,dset_key);
   int_bind(stmt,2,(int)f_type);
@@ -224,9 +224,12 @@ void SQL_handler::add_mdata(const Md_store & md_store)
   case F_GOFR_BY_PLANE:
     gofr_by_plane_md_fun(md_store);
     break;
+  case F_PHI6:
+    phi6_md_fun(md_store);
+    break;
   case F_GOFR3D:
   case F_LINK3D:
-  case F_PHI6:
+  
   case F_TRACK_STATS:
     throw logic_error("not implemented yet");
     
@@ -881,6 +884,75 @@ void SQL_handler::gofr_by_plane_md_fun(const  Md_store & md_store)
   
   text_bind  (stmt,10,md_store.get_value("fin",tmp_str  ));
   text_bind  (stmt,11,md_store.get_value("fout",tmp_str  ));
+
+  // try running the statement
+  rc  =  sqlite3_step(stmt);
+  // if not happy, roll back.  finalize will also return an error if 
+  if(rc  != SQLITE_DONE)
+    cout<<err_format("binding or insertion did not go well error",rc)<<endl;
+  
+  
+  
+  // clean up statement, this needs to be done before throwing so that the db will close
+  rc = sqlite3_finalize(stmt);
+  
+  // if it does not return done, rollback the transaction and throw
+  if(rc  != SQLITE_OK)
+  {
+    rollback();
+    throw runtime_error(err_format("failed to take apart",rc));
+  }
+  
+  
+  return;
+}
+
+
+void SQL_handler::phi6_md_fun(const  Md_store & md_store)
+{
+  // house keeping
+  int tmp_int;
+  string  tmp_str;
+  float tmp_float;
+  
+  int rc;
+  sqlite3_stmt * stmt;
+
+
+
+  // set up statement to be executed
+  const char * base_stmt = "insert into phi6 "
+    "(comp_key,iden_key,dset_key,"
+    "neighbor_range,"
+    "shift_cut,rg_cut,e_cut,"
+    "fin,fout) "
+    "values (?,?,?, ?, ?,?,?, ?,?)";
+    
+
+  // prepare the sql statement
+  rc = sqlite3_prepare_v2(db_,base_stmt,-1,&stmt,NULL);
+  if(rc != SQLITE_OK)
+  {
+    sqlite3_finalize(stmt);
+    throw runtime_error(err_format("failed to prepare statement",rc));
+  }
+  
+
+
+  
+  // bind in the values
+  int_bind  (stmt,1,md_store.get_value("comp_key"    ,tmp_int  ));
+  int_bind  (stmt,2,md_store.get_value("iden_key"    ,tmp_int  ));  
+  int_bind  (stmt,3,md_store.get_value("dset_key"    ,tmp_int  ));
+  
+  float_bind  (stmt,4,md_store.get_value("neighbor_range" ,tmp_float  ));
+  
+  float_bind  (stmt,5,md_store.get_value("shift_cut" ,tmp_float  ));
+  float_bind  (stmt,6,md_store.get_value("rg_cut" ,tmp_float  ));
+  float_bind  (stmt,7,md_store.get_value("e_cut" ,tmp_float  ));
+    
+  text_bind  (stmt,8,md_store.get_value("fin",tmp_str  ));
+  text_bind  (stmt,9,md_store.get_value("fout",tmp_str  ));
 
   // try running the statement
   rc  =  sqlite3_step(stmt);

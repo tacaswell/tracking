@@ -102,10 +102,12 @@ add_executable(phi6 phi6.cpp ${COMMON_SRC}
  ${COMMON_HASH_SRC} 
  ${COMMON_WRAPPER_SRC} 
  ${CONFIG_SRC}
+ ${SQL_CODE}
 )
 target_link_libraries(phi6
   ${HDF5_LIBRARIES} 
   ${XERCESC_LIBRARY} 
+  ${SQLITE3_LIBRARY}
 )
 set_target_properties(phi6 PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_COUNT=2")
 

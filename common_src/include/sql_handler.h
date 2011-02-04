@@ -143,6 +143,7 @@ protected:
   void vanHove_md_fun( const Md_store & md_store);
   void gofr_by_plane_md_fun(const  Md_store & md_store);
   void msd_sweep_md_fun( const Md_store & md_store);
+  void phi6_md_fun( const Md_store & md_store);
 
   
 private:

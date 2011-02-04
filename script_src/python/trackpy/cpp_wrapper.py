@@ -386,6 +386,51 @@ def do_gofr(comp_key,conn,pram_i, pram_f, pram_s = None, rel = True,):
     except KeyError, ke:
         print "Parameter: " ,ke,' not found'
 
+
+def do_phi6(comp_key,conn,pram, rel = True,):
+    """
+    Computes gofr 
+
+    """
+    prog_name = "phi6"
+    required_pram_i = []
+    required_pram_f = ['neighbor_range']
+    required_pram_s = ['grp_name']
+    opt_pram_f = ['e_cut','rg_cut','shift_cut']
+    
+    
+    res = conn.execute("select fout,dset_key from iden where comp_key=? ;",
+                       (comp_key,)).fetchone()
+    read_comp = comp_key
+    
+    print res
+    print comp_key
+    if res is None:
+        raise utils.dbase_error('no entry found')
+    
+    (fin,key) = res
+    
+    fout = fin
+    _make_sure_h5_exists(fout)
+    
+    comp_prams = {'iden_key':read_comp,'dset_key':key}
+        
+    
+    pram_s = {'grp_name':prog_name}
+
+
+
+    
+    try:
+        _call_fun_no_sql(prog_name,fin,fout,
+                         comp_prams,
+                         required_pram_i,pram,
+                         required_pram_f,pram,
+                         required_pram_s,pram_s,
+                         opt_f_pram = opt_pram_f)
+    except KeyError, ke:
+        print "Parameter: " ,ke,' not found'
+
     
 def do_msd(comp_key,conn,pram_i, pram_f, pram_s = None, rel = True,):
     """
