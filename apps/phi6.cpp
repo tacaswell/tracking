@@ -19,7 +19,7 @@
 #include <map>
 #include <vector>
 #include <stdexcept>
-#include "master_box_t.h"
+
 
 #include "particle_base.h"
 #include "hash_case.h"
@@ -192,8 +192,8 @@ int main(int argc,  char *  argv[])
   Wrapper_i_hdf wh(in_file,data_types,iden_key);
   
 
-  // fill the master_box
-  Master_box box;
+  
+  
   
     
     
@@ -220,7 +220,7 @@ int main(int argc,  char *  argv[])
   
     
 
-  box.init(wh,filt);
+  
     
 
   
@@ -236,7 +236,7 @@ int main(int argc,  char *  argv[])
   sql.add_mdata(md_store);
   
   hash_case hcase;
-  hcase.init(box,wh.get_dims(),neighbor_range,wh.get_num_frames());
+  hcase.init(wh,filt,neighbor_range);
   cout<<"hash case filled"<<endl;
     
     
