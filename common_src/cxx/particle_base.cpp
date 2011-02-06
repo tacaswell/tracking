@@ -48,7 +48,7 @@ float particle_base::max_neighborhood_range_ = 0;
 
 // static initialization
 const Wrapper_in* particle_base::wrapper_in_ = NULL;
-std::set<utilities::D_TYPE>* particle_base::data_types_ = NULL;
+
 
 
 // constructors 
@@ -75,10 +75,7 @@ void particle_base::priv_init()
 {
   if(wrapper_in_ ==NULL)
     throw runtime_error("wrapper_in_ not initialized");
-
-  if(data_types_ ==NULL)
-    throw runtime_error("data_types_ not initialized");
-  //  unq_id_= running_total_++;
+  
 }
 
 
@@ -195,20 +192,9 @@ void particle_base::intialize_wrapper_in(const Wrapper_in* in){
 }
 
 
-void particle_base::intialize_data_types(std::set<utilities::D_TYPE>*  data_types){
-  if(data_types_ !=NULL)
-    throw runtime_error("data types already initialized");
-  data_types_ = data_types;
-}
-
 void particle_base::clear_wrapper_in()
 {
   wrapper_in_ = NULL;
-}
-
-void particle_base::clear_data_types()
-{
-  data_types_ = NULL;
 }
 
 

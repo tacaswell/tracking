@@ -237,7 +237,7 @@ void hash_case::init(float box_side_len,
   
 
   particle::intialize_wrapper_in(&wrapper);
-  particle::intialize_data_types(&data_types);
+  
 
 
   // hash box init internal stuf
