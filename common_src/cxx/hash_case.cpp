@@ -117,27 +117,14 @@ void hash_case::init(Master_box & mb,const utilities::Tuplef & dims,
   int max_sz = mb.size();
   
 
-  int current_frame =-1;
-  int current_count = 0;
-  
-
 
   for( int j = 0; j<max_sz; ++j){
     p = mb.get_particle(j);
     try{
       int cf;
       (p->get_value(utilities::D_FRAME,cf));
-      if(cf != current_frame)
-      {
-	//	std::cout<<"frame "<<current_frame<<": "<<current_count<<std::endl;
-	current_frame = cf;
-	current_count = 1;
-      }
-      else
-      {
-	++current_count;
-      }
       
+	
       h_case_.at(cf)->push(p);
 #ifdef TRACKING_FLG
       p->set_shelf(h_case_.at(cf));
@@ -162,7 +149,7 @@ void hash_case::init(Master_box & mb,const utilities::Tuplef & dims,
     }
   
   }
-  //  std::cout<<"frame "<<current_frame<<": "<<current_count<<std::endl;
+
 
   inited_ = true;
 }
