@@ -40,6 +40,7 @@ class Array;
 
 class Histogram2D;
 class Wrapper_out;
+class Wrapper_in;
 class Cell;
 class Counted_vector;
 class Accum_case;
@@ -82,11 +83,17 @@ public:
 
     
   /**
-     Initializer that actually does the work
+     Initializer that actually does the work.  DO NOT USE THIS FOR NEW CODE, IT IS GOING AWAY
   */
   void  init(Master_box & mb,const utilities::Tuplef & dims, 
 	     float ppb, int frames);
   
+  /**
+     Initializer that takes in a wrapper rather than a master_box
+  */
+  void init(utilities::Wrapper_in & w_in , utilities::Filter & filt, float ppb)  ;
+  
+
   ///print out a sensible representation of the data
   void print() const;
   

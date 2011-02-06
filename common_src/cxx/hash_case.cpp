@@ -150,6 +150,84 @@ void hash_case::init(Master_box & mb,const utilities::Tuplef & dims,
 }
 
 
+void hash_case::init(Wrapper_in & w_in , utilities::Filter & filt, float ppb)
+{
+
+  if(inited_){
+    std::cout<<"can't re init"<<std::endl;
+    return;
+  }
+    
+
+  // set up the fliter
+  filt.set_wrapper(&w_in);
+  
+
+  
+
+  // tell the particle class what wrapper it is using
+  particle::intialize_wrapper_in(&w_in);
+  
+  
+
+  // get the dimensions 
+  const Tuplei dims = w_in.get_dims();
+  // get the frame count
+  const int frames = w_in.get_num_frames();
+  
+  // resize the hash case
+  h_case_.resize(frames);
+
+
+  
+  // fill hash_case
+  for(unsigned int j = 0; j<h_case_.size(); ++j)
+  {
+    // get maximum number of entries
+    int num_entries = w_in.get_num_entries(j);
+    
+    
+    // create the shelf
+    Hash_shelf * cur_shelf = new Hash_shelf(dims, ppb,j,true,0,num_entries);
+    
+    // add to hash_case
+    h_case_[j] = cur_shelf;
+    
+    // tell the previous shelf about the current shelf
+    // (sets up a one way linked list, needed for tracking and linking)
+    if (j>0)
+      h_case_[j-1]->set_next_shelf(cur_shelf);
+
+    // get the shelf (plane) meta data from the wrapper
+    cur_shelf->md_store_ = w_in.get_Md_store(j);
+    
+    // loop over the particles, filter them and add to the hash shelf
+    
+    for (int k = 0; k<num_entries; ++k)
+    {
+      if((filt)(k,j))
+      {
+	particle * cur_part = new particle(k,j);
+	cur_shelf->push(cur_part);
+#ifdef TRACKING_FLG
+	cur_part->set_shelf(cur_shelf);
+#endif
+      }
+      
+    }
+    
+    
+    
+  }
+
+  
+  
+  
+
+  inited_ = true;
+}
+
+
 
 hash_case::~hash_case(){
   for(unsigned int j = 0; j<h_case_.size(); j++){
