@@ -118,9 +118,11 @@ void hash_case::init(Master_box & mb,const utilities::Tuplef & dims,
   
 
 
-  for( int j = 0; j<max_sz; ++j){
+  for( int j = 0; j<max_sz; ++j)
+  {
     p = mb.get_particle(j);
-    try{
+    try
+    {
       int cf;
       (p->get_value(utilities::D_FRAME,cf));
       
@@ -130,22 +132,15 @@ void hash_case::init(Master_box & mb,const utilities::Tuplef & dims,
       p->set_shelf(h_case_.at(cf));
 #endif
     }
-    catch(const char * e)
-    {
-      std::cout<<e<<std::endl;
-      
-      int yar;
-      (int)p->get_value(utilities::D_FRAME,yar);
-      std::cout<<"trying to put in to shelf: "<<yar<<std::endl;
-      return;
-    }
     
-    catch(...){
-      
+    catch(std::exception & e)
+    {
+      std::cout<<e.what()<<endl;
       int yar ;
       (int)p->get_value(utilities::D_FRAME,yar);
       std::cout<<"trying to put in to shelf: "<<yar<<std::endl;
-      return;
+      throw;
+      
     }
   
   }
