@@ -145,8 +145,10 @@ public:
     
   /**
      Passes a Corr_case down the pyramid
+
+     Returns the number of frames per calculation 
   */
-  void compute_corr(tracking::Corr_case &) const ;
+  unsigned int compute_corr(tracking::Corr_case &) const ;
 
     
   /**

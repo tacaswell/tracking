@@ -195,7 +195,7 @@ int main(int argc, char * argv[])
 
 
   Filter_basic filt;
-    if(app_prams.contains_key("e_cut") &&
+  if(app_prams.contains_key("e_cut") &&
      app_prams.contains_key("rg_cut") &&
      app_prams.contains_key("shift_cut"))
   {
@@ -241,9 +241,10 @@ int main(int argc, char * argv[])
 		   write_comp_key,
 		   dset_key,
 		   read_comp_key);
-  hcase.compute_corr(gofr_c);
+  unsigned int step = hcase.compute_corr(gofr_c);
   cout<<"computed g(r)"<<endl;
-    
+  md_store.add_element("frames_per_comp",step);
+  
   //    gofr.display();
 
 
