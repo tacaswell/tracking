@@ -196,10 +196,10 @@ Wrapper_i_plu * Iden::fill_wrapper(unsigned int frames,unsigned int start)
     status = FindLocalMax_2D(image_bpass,
 			     image_bpass_thresh,
 			     image_localmax,
-			     (int)params_.get_pctle_threshold(),
+			     params_.get_pctle_threshold(),
 			     params_.get_dilation_radius());
     
-
+    
     
     RecenterImage(image_bpass_thresh);
     // image_in.display_image();
