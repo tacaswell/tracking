@@ -152,7 +152,6 @@ Wrapper_i_plu * Iden::fill_wrapper(unsigned int frames,unsigned int start)
     
     
     // trim off the top .1% of the pixels to deal with outliers
-    ///TODO make this a parameter
     image_in.trim_max(params_.get_top_cut());
     
     
@@ -161,6 +160,8 @@ Wrapper_i_plu * Iden::fill_wrapper(unsigned int frames,unsigned int start)
     Md_store * md_store = img_src_->get_plane_md();
     int dtime;
     
+    // this is commented out to deal with the lack of metadata
+
     // deal with time
     // if(j == start)
     // {
@@ -328,10 +329,19 @@ Wrapper_i_plu * Iden::fill_wrapper_avg(unsigned int avg_count,unsigned int frame
       img_src_->select_plane(j*avg_count + k +start);
             
       // get data about image
-      const WORD * data_ptr = img_src_->get_plane_pixels();
+      const void * data_ptr = img_src_->get_plane_pixels();
       
-      // shove data in to image object
-      image_in.add_data(data_ptr, rows,cols,scan_step);
+    utilities::PIX_SIZE px_sz = img_src_->get_pixel_size();
+    
+    // shove data in to image object
+    Image2D image_in(rows,cols);
+    if(px_sz == utilities::U16)
+      image_in.set_data_16((uint16_t *) data_ptr, rows,cols,scan_step);
+    else if(px_sz == utilities::U8)
+      image_in.set_data_8((uint8_t *) data_ptr, rows,cols,scan_step);
+    else
+      throw runtime_error("iden: can't find proper pixel size");
+    
       
       // extract meta data from tiff
       Md_store * md_store = img_src_->get_plane_md();

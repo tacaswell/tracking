@@ -56,7 +56,7 @@ public:
   Image_series();
     ~Image_series();
   void select_plane(unsigned int plane);
-  const WORD * get_plane_pixels() const;
+  const void * get_plane_pixels() const;
   Md_store * get_plane_md() const;
   Tuple<unsigned int,2> get_plane_dims()const;
   WORD get_scan_step()const;

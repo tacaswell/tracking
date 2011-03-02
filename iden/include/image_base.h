@@ -87,7 +87,7 @@ public:
      until the object is closed or until the plane is changed, which
      ever comes first.
    */
-  virtual const WORD * get_plane_pixels() const = 0;
+  virtual const void * get_plane_pixels() const = 0;
 
   
 

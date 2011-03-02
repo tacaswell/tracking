@@ -99,9 +99,9 @@ void Image_stack::select_plane(unsigned int plane)
   
 }
 
-const WORD * Image_stack::get_plane_pixels() const
+const void * Image_stack::get_plane_pixels() const
 {
-  return (WORD *) image_.accessPixels();
+  return (void *) image_.accessPixels();
 }
 
 Md_store * Image_stack::get_plane_md()const 
