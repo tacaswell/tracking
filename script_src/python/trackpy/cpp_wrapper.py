@@ -119,13 +119,13 @@ def do_link3D(comp_key,conn,pram, fout_name):
     
     (fin,key) = res
     
-    fout = os.path.dirname(fin) + fout_name
-    _make_sure_h5_exists(fout)
+    fout = os.path.dirname(fin) +'/'+ fout_name
+    
     
     comp_prams = {'iden_key':read_comp,'dset_key':key,'link_key':0}
         
-    if pram_s is None:
-        pram_s = {'grp_name':prog_name}
+    
+    pram_s = {'grp_name':prog_name}
 
 
 
@@ -134,9 +134,9 @@ def do_link3D(comp_key,conn,pram, fout_name):
     try:
         _call_fun_no_sql( prog_name,fin,fout,
                           comp_prams,
-                          required_pram_i,pram,
-                          required_pram_f,pram,
-                          opt_f_pram = opt_pram_f))
+                          req_i_pram,pram,
+                          req_f_pram,pram,
+                          opt_f_pram = opt_pram_f)
     except KeyError, ke:
         print "Parameter: " ,ke,' not found'
     
@@ -180,8 +180,11 @@ def do_Iden(key,conn,iden_params):
     ##     print fin
     ##     print fpram
     ##     return
-
-    comp_num = conn.execute("select max(comp_key) from comps;").fetchone()[0] + 1
+    
+    comp_num = conn.execute("select max(comp_key) from comps;").fetchone()[0]
+    if comp_num is None:
+        comp_num = 0
+    comp_num+=1
     
     prams = xml_data()
     prams.add_stanza("comp")
