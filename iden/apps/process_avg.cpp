@@ -255,12 +255,28 @@ int main(int argc, char * const argv[])
 
   
   
+  // read file name from the xml file
+  Image_base * img_src;
+  if(comp_prams.contains_key("base_name"))
+  {
+    string base_name;
+    comp_prams.get_value("base_name",base_name);
+    Image_series * tmp = new Image_series();
+    tmp->init(base_name);
+    img_src = tmp;
+  }
+  else if(comp_prams.contains_key("file_name"))
+  {
+    string file_name;
+    comp_prams.get_value("file_name",file_name);
+    img_src = new Image_stack(file_name);
+  }
+  else
+    throw runtime_error("did not provide a file name in the xml file");
+  
     
 
   Iden iden(p);
-
-  Image_base * img_src;
-  img_src = new Image_stack(in_file);
   
   
   iden.set_image_src(img_src);
