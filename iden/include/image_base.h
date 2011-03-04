@@ -51,10 +51,12 @@ class Md_store;
 /**
    Enumeration of pixel sizes
 */
-typedef enum PIX_SIZE
+typedef enum PIX_TYPE
   {
     U16=0,
     U8,
+    S16,
+    F32,
     ERROR
   } PIX_SIZE;
   
@@ -115,7 +117,7 @@ public:
   /**
      Returns the size of the image pixels
    */
-  virtual PIX_SIZE get_pixel_size() const = 0;
+  virtual PIX_TYPE get_pixel_type() const = 0;
   
 };
 

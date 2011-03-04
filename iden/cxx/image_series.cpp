@@ -247,7 +247,7 @@ std::string utilities::format_name(const std::string & dirname,
 }
 
 
-utilities::PIX_SIZE Image_series::get_pixel_size() const
+utilities::PIX_TYPE Image_series::get_pixel_type() const
 {
   unsigned pix_size = image_.getBitsPerPixel();
   if(pix_size == 16)

@@ -56,6 +56,10 @@
 // tac 2010-07-20
 // added exception library
 #include <stdexcept>
+// tac 2011-03-02
+// Adding tuple header
+#include "tuple.h"
+
 // tac 2009-09-15
 // 
 using iden::Image2D;
@@ -65,7 +69,16 @@ using std::endl;
 // tac 2010-07-20
 // added using statements
 using std::runtime_error;
+// tac 2011-03-02
+// added using statement
+using std::logic_error;
 
+// tac 2011-03-02
+// added to update import methods
+
+using utilities::Image_base;
+using utilities::PIX_TYPE;
+using utilities::Tuple;
 
 // tac 2009-09-21
 // added displaying functionality
@@ -123,10 +136,93 @@ int Image2D::get1Dindex(const int x, const int y)
 {
   return y * width_ + x;
 }
-
-
-void Image2D::set_data_16(const WORD * data_in, int rows, int cols,WORD in_step)
+// tac 2011-03-02
+// 
+void Image2D::set_data(const Image_base & image)
 {
+  proc_data(image,false);
+}
+// tac 2011-03-02
+// 
+void Image2D::add_data(const Image_base & image)
+{
+  proc_data(image,true);
+}
+// tac 2011-03-02
+// 
+void Image2D::proc_data(const Image_base & image,bool add)
+{
+  
+  // image dimensions
+  Tuple<unsigned int,2> dims = image.get_plane_dims();
+  unsigned int cols = dims[0];
+  unsigned int rows = dims[1];
+
+  
+  if(!(cols==width_ && rows == height_))
+  {
+    std::cerr<<"height: "<<height_<<'\t'<<"rows: "<<rows<<std::endl;
+    std::cerr<<"width: "<<width_<<'\t'<<"cols: "<<cols<<std::endl;
+    throw runtime_error("Image2D: data is wrong size");
+  }
+  
+
+  
+
+
+
+  // figure out the data type
+  PIX_TYPE img_type = image.get_pixel_type();
+  // figure out step for input
+  WORD in_step = image.get_scan_step();
+  // figure out step for 
+  int data_step = cols*sizeof(Ipp32f);
+
+  // data pointer
+
+  const void * data_ptr = image.get_plane_pixels();
+  switch(img_type)
+  {
+  case utilities::U16:	// array of unsigned short	: unsigned 16-bit
+    // trust the id, assume in really 16u, go on
+    if(!add)
+      ippiConvert_16u32f_C1R((const uint16_t *) data_ptr, in_step,imagedata_,data_step,ROIfull_);
+    else
+      ippiAdd_16u32f_C1IR((const uint16_t *) data_ptr,in_step,imagedata_,data_step,ROIfull_);
+    break;
+ case utilities::U8:	// standard image			: 1-, 4-, 8-, 16-, 24-, 32-bit  
+    if(!add)
+      ippiConvert_8u32f_C1R((const uint8_t *) data_ptr, in_step,imagedata_,data_step,ROIfull_);
+    else
+      ippiAdd_8u32f_C1IR((const uint8_t *) data_ptr,in_step,imagedata_,data_step,ROIfull_);
+    break;
+  case utilities::S16:	// array of short			: signed 16-bit
+    // trust the id, assume in really 16s, go on
+    if(!add)
+      ippiConvert_16s32f_C1R((const int16_t *)data_ptr, in_step,imagedata_,data_step,ROIfull_);
+    // else
+    //   ippiAdd_16s32f_C1IR((const int16_t *) data_ptr,in_step,imagedata_,data_step,ROIfull_);
+    break;
+  case utilities::F32:	// array of float			: 32-bit IEEE floating point
+    // trust the id, assume in really 32f, go on
+    if(!add)
+      ippiCopy_32f_C1R((const float *) data_ptr, in_step,imagedata_,data_step,ROIfull_);
+     else
+       ippiAdd_32f_C1IR((const float *) data_ptr,in_step,imagedata_,data_step,ROIfull_);
+    break;
+  case utilities::ERROR:
+    throw logic_error("An object with the pixeltype error should have never gotten to this function");
+    
+    
+  }
+  
+
+
+}
+
+
+void Image2D::set_data_16(const WORD * data_in, unsigned int rows, unsigned int cols,WORD in_step)
+{ 
   if(!(cols==width_ && rows == height_))
   {
     std::cerr<<"height: "<<height_<<'\t'<<"rows: "<<rows<<std::endl;
@@ -149,7 +245,7 @@ void Image2D::set_data_16(const WORD * data_in, int rows, int cols,WORD in_step)
 }
 
 
-void Image2D::set_data_8(const uint8_t * data_in, int rows, int cols,WORD in_step)
+void Image2D::set_data_8(const uint8_t * data_in, unsigned int rows,unsigned  int cols,WORD in_step)
 {
   if(!(cols==width_ && rows == height_))
   {
@@ -174,7 +270,7 @@ void Image2D::set_data_8(const uint8_t * data_in, int rows, int cols,WORD in_ste
 
 // tac 2010-07-20
 // Added function to add data.  
-void Image2D::add_data(const WORD * data_in, int rows, int cols,WORD in_step)
+void Image2D::add_data(const WORD * data_in,unsigned int rows,unsigned  int cols,WORD in_step)
 {
   
   // this make the assumption that WORD is a short is an unsigned

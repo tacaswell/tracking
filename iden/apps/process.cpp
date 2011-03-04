@@ -213,7 +213,10 @@ int main(int argc, char * const argv[])
   {
     string file_name;
     comp_prams.get_value("file_name",file_name);
-    img_src = new Image_stack(file_name);
+    Image_stack * tmp = new Image_stack(file_name);
+    img_src = (Image_base *) tmp;
+    tmp->initialize();
+    
   }
   else
     throw runtime_error("did not provide a file name in the xml file");
@@ -225,7 +228,7 @@ int main(int argc, char * const argv[])
 
     
     
-  Wrapper_i_plu *  wp = iden.fill_wrapper();
+  Wrapper_i_plu *  wp = iden.fill_wrapper(10,0);
   cout<<"number of entries in wrapper: "<<wp->get_num_entries()<<endl;
 
 
@@ -295,6 +298,9 @@ int main(int argc, char * const argv[])
   // clean up wrapper
   delete wp;
   wp = NULL;
+  
+  ((Image_stack*)img_src)->deinitialize();
+  
   
   delete img_src;
   img_src = NULL;

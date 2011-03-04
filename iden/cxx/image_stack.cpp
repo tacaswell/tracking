@@ -37,6 +37,7 @@
 //this Program grant you additional permission to convey the resulting
 //work.
 #include <iostream>
+#include <stdexcept>
 
 #include "image_stack.h"
 
@@ -48,19 +49,28 @@
 #include "md_store.h"
 
 using utilities::Image_stack;
+using utilities::PIX_TYPE;
+
 using utilities::Md_store;
 using std::endl;
 using std::cout;
 using std::runtime_error;
 
+using std::invalid_argument;
+
 
 
 Image_stack::Image_stack(std::string fname):
-  fname_(fname)
+  fname_(fname),cur_plane_(-1),stack_open_(false),convert_to_grey_(false),
+  pix_type_(ERROR)
+{
+  FreeImage_Initialise();
+}
+void Image_stack::initialize()
 {
   
   // load multi page
-  FreeImage_Initialise();
+  
   BOOL bMemoryCache = TRUE;
   src_ = fipMultiPage(bMemoryCache);
   // Open src file (read-only, use memory cache)
@@ -69,19 +79,88 @@ Image_stack::Image_stack(std::string fname):
     throw runtime_error("image_stack::image_stack could not open file");
   
     
+  cur_plane_ = 0;
   
   image_ = src_.lockPage(0);
   if(!image_.isValid())
     throw runtime_error("Image_stack::Image_stack the plane is not valid");
   
+  FREE_IMAGE_TYPE img_type = image_.getImageType();
+  
+  
+  // check image type
+  switch(img_type)
+  {
+  case FIT_UINT16:	// array of unsigned short	: unsigned 16-bit
+    // trust the id, assume in really 16u, go on
+    pix_type_ = U16;
+    break;
+  case FIT_BITMAP:	// standard image			: 1-, 4-, 8-, 16-, 24-, 32-bit  
+     // if the image is a bitmap and is not a grey scale, set flag to
+    //  convert the image to a grey scale image when loading
+    if(!image_.isGrayscale())
+    {
+      bool suc = true;
+      convert_to_grey_ = true;
+      suc = image_.convertToGrayscale();
+      if(!suc)
+	throw runtime_error("Image_stack::grey conversion failed");
+    }
+    
+    
+    pix_type_ = U8;
+    break;
+  case FIT_INT16:	// array of short			: signed 16-bit
+    // trust the id, assume in really 16s, go on
+    pix_type_ = S16;
+    break;
+  case FIT_FLOAT:	// array of float			: 32-bit IEEE floating point
+    // trust the id, assume in really 32f, go on
+    pix_type_ = F32;
+    break;
+  case FIT_RGB16:	// 48-bit RGB image			: 3 x 16-bit
+  case FIT_RGBF:	// 96-bit RGB float image	: 3 x 32-bit IEEE floating point
+    throw invalid_argument("This program can't deal with colors");
+    break;
+  case FIT_UNKNOWN:	// unknown type
+    throw runtime_error("Free image can not sort out what kind of image this is!");
+    break;
+  case FIT_COMPLEX:	// array of FICOMPLEX		: 2 x 64-bit IEEE floating point
+    throw invalid_argument("This program can't deal with complex images");
+    break;
+  case FIT_RGBA16:	// 64-bit RGBA image		: 4 x 16-bit
+  case FIT_RGBAF:	// 128-bit RGBA float image	: 4 x 32-bit IEEE floating point
+    throw invalid_argument("This program can't deal with an alpha channel or colors");
+    break;
+  case FIT_UINT32:	// array of unsigned long	: unsigned 32-bit
+  case FIT_INT32:	// array of long			: signed 32-bit
+  case FIT_DOUBLE:	// array of double			: 64-bit IEEE floating point
+    throw invalid_argument("This program can't deal with this type of image, excessive bit depth");
+    break;
+  }
+  
+
   
 }
 
+void Image_stack::deinitialize()
+{
+
+  if(src_.isValid())
+  {
+    src_.unlockPage(image_,false);
+    bool closed =  src_.close(0);
+    
+  }
+  
+  
+}
+
+
 Image_stack::~Image_stack()
 {
-  src_.unlockPage(image_,false);
+  deinitialize();
   
-  src_.close(0);
   
   FreeImage_DeInitialise();
 }
@@ -89,11 +168,33 @@ Image_stack::~Image_stack()
 
 void Image_stack::select_plane(unsigned int plane)
 {
+
+  if(plane == cur_plane_)
+    return;
+  
+    
   src_.unlockPage(image_,false);
 
   // add some sanity checks
   cur_plane_ = plane;
+    
   image_ = src_.lockPage(cur_plane_);
+  
+  
+  if(!image_.isValid())
+    throw runtime_error("Image_stack::select_plane the plane is not valid");
+  
+  
+  
+  if(convert_to_grey_)
+  {
+    bool suc = true;   
+    suc = image_.convertToGrayscale();
+  
+    if(!suc)
+      throw runtime_error("Image_stack::grey conversion failed");
+  }
+  
   if(!image_.isValid())
     throw runtime_error("Image_stack::select_plane the plane is not valid");
   
@@ -138,13 +239,8 @@ int Image_stack::get_frame_count() const
   return src_.getPageCount();
 }
 
-utilities::PIX_SIZE Image_stack::get_pixel_size() const
+PIX_TYPE Image_stack::get_pixel_type() const
 {
-  unsigned pix_size = image_.getBitsPerPixel();
-  if(pix_size == 16)
-    return utilities::U16;
-  if(pix_size == 8)
-    return utilities::U8;
-  return utilities::ERROR;
+  return pix_type_;
   
 }

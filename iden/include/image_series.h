@@ -62,7 +62,7 @@ public:
   WORD get_scan_step()const;
   int get_frame_count() const;
   bool init(const std::string & base_name);
-  PIX_SIZE get_pixel_size() const;
+  PIX_TYPE get_pixel_type() const;
   
 private:
   std::string basename_;

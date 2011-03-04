@@ -56,8 +56,20 @@ public:
   Tuple<unsigned int,2> get_plane_dims()const;
   WORD get_scan_step() const;
   int get_frame_count() const;
-  PIX_SIZE get_pixel_size() const;
+  PIX_SIZE get_pixel_type() const;
   
+  /**
+     Initialization function
+
+     Opens up the file and checks the data type
+   */
+  void initialize();
+  /**
+     Cleans up the file, but does not take the FreeImage down
+   */
+  void deinitialize();
+  
+
 private:
   std::string fname_;
   unsigned int cur_plane_;
@@ -68,6 +80,11 @@ private:
   
   fipImage image_;
   mutable Mm_md_parser mm_md_p_;
+
+  bool convert_to_grey_;
+
+  PIX_TYPE pix_type_;
+  
   
 };
 

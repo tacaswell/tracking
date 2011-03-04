@@ -48,11 +48,17 @@
 // include this here so we get to use the typedefs to pretend that we
 // will try for cross compatibility
 
-#include "FreeImage.h"
+//#include "FreeImage.h"
+#include "image_base.h"
 #if MATLAB_MEX_FILE
 #include "mex.h"
 #endif 
 /*#include <string>*/
+/*
+  tac 2011-03-02
+  Major over haul of the import/input functions for this class
+  
+ */
 
 /*  tac 2009-09-17
     working on making this class behave better, ie  not exposing it's private meembers
@@ -65,9 +71,18 @@
  *tcaswell
  */
 
+
+
+
 /*//This file contains definitions for the Image2D, a container class that carries*/
 /*//around 32-bit floating point IPP images and other associated data*/
 /*//functions for importing and exporting data are also included here*/
+namespace utilities
+{
+class Image_base;
+}
+
+
 namespace iden
 {
 
@@ -106,18 +121,26 @@ public:
   /**
      Fill the image with data from a pointer to unsigned ints (16bit)
    */
-  void set_data_16(const uint16_t *data_in, int rows,int cols,WORD in_step);
+  void set_data_16(const uint16_t *data_in, unsigned int rows,unsigned int cols,WORD in_step);
   /**
      Fill the image with data from a pointer to unsigned char (8bit)
    */
-  void set_data_8(const uint8_t *data_in, int rows,int cols,WORD in_step);
+  void set_data_8(const uint8_t *data_in, unsigned int rows,unsigned int cols,WORD in_step);
   
   /**
      accumulates data from a pointer to an unsigned int (16bit)
    */
-  void add_data(const WORD * data_in, int rows, int cols,WORD in_step);
-  
+  void add_data(const WORD * data_in, unsigned int rows, unsigned int cols,WORD in_step);
 
+  /**
+     Fill the image with data from an Image_base object
+  */
+  void set_data(const utilities::Image_base & image);
+  /**
+     Accumulate data from an Image_base object
+   */
+  void add_data(const utilities::Image_base & image);
+  
   /**
         let the outside world see the pointer, 
 	get rid of this eventually? or make it safer.  This will require a bunch of rewriting, sadly
@@ -156,25 +179,29 @@ private:
   /**
      stepsize for use with IPP functions (step size in bytes)
   */
-  int stepsize_;						
+  unsigned int stepsize_;						
   /**
      width of image, in pixels
   */
-  int width_;							
+  unsigned int width_;							
   /**
      length (or height) of image, in pixels
   */
-  int height_;							
+  unsigned int height_;							
   /**
      total number of pixels in image
   */
-  int numberofpixels_;					
+  unsigned int numberofpixels_;					
   /**
      ROI of the full image, used in IPP functions, when including whole image
   */
   IppiSize ROIfull_;					
 
 
+  /**
+     Private helper function to deal with taking in data from Image_base objects
+   */
+  void proc_data(const utilities::Image_base & image,bool add);
   
 };
 
