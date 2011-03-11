@@ -1,4 +1,4 @@
-#Copyright 2010 Thomas A Caswell
+#Copyright 2010-2011 Thomas A Caswell
 #tcaswell@uchicago.edu
 #http://jfi.uchicago.edu/~tcaswell
 #
@@ -175,25 +175,26 @@ def do_Iden(key,conn,iden_params):
     ##     print fpram
     ##     return
 
-    comp_num = conn.execute("select max(comp_key) from comps;").fetchone()[0] + 1
+    comp_key = conn.execute("select max(comp_key) from comps;").fetchone()[0] + 1
     
     prams = xml_data()
     prams.add_stanza("comp")
-    prams.add_pram("number","int",comp_num)
+    prams.add_pram("number","int",comp_key)
     prams.add_pram("dset_key","int",key)
     prams.add_pram(format_string,"string",fin)
     #prams.merge_File(fpram,"iden")
-    prams.add_stanza("iden")
-    prams.add_pram("threshold","float",str(iden_params["threshold"]))
-    prams.add_pram("hwhm","float",str(iden_params["hwhm"]))
-    prams.add_pram("shift_cut","float",str(iden_params["shift_cut"]))
-    prams.add_pram("rg_cut","float",str(iden_params["rg_cut"]))
-    prams.add_pram("e_cut","float",str(iden_params["e_cut"]))
-    prams.add_pram("top_cut","float",str(iden_params["top_cut"]))
-    prams.add_pram("p_rad","int",str(iden_params["p_rad"]))
-    prams.add_pram("d_rad","int",str(iden_params["d_rad"]))
-    prams.add_pram("mask_rad","int",str(iden_params["mask_rad"]))
+    
+    
+    int_params = ["p_rad",'d_rad','mask_rad']
+    float_params = ['threshold','hwhm','shift_cut','rg_cut','e_cut','top_cut']
 
+    prams.add_stanza("iden")
+    for ip in int_params:
+        prams.add_pram(ip,'int',str(iden_params[ip]))
+    for fp in float_params:
+        prams.add_pram(fp,'float',str(iden_params[fp]))
+    
+    
     
     fxml = prams.write_to_tmp()
 
@@ -228,7 +229,7 @@ def do_Iden(key,conn,iden_params):
         conn.execute("insert into comps (dset_key,func_key) values (?,?);",(key,1))
         
         p = (key,
-             comp_num,
+             comp_key,
              iden_params["threshold"],
              iden_params["top_cut"],
              iden_params["p_rad"],
@@ -252,13 +253,27 @@ def do_Iden_avg(key,conn,frames,iden_params):
     # see if the file has already been processed
     prog_name = "Iden_avg"
     prog_path = "/home/tcaswell/misc_builds/iden_rel/iden/apps/"
-    res = conn.execute("select fout,comp_key from comps where dset_key=? and function = 'Iden_avg';",(key,)).fetchall()
-    fin = conn.execute("select fname from dsets where key = ?;",(key,)).fetchone()[0]
+    
+    res = conn.execute("select fout,comp_key from iden where dset_key=?;",(key,)).fetchall()
+    (fin,ftype) = conn.execute("select fname,ftype from dsets where dset_key = ?;",(key,)).fetchone()
+
+    
     if os.path.isfile(fin.replace('.tif','-file002.tif')):
         print "multi-part tiff, can't cope yet"
         return
     
-    fout = '.'.join(fin.replace("data","processed").split('.')[:-1]) + '-avg.h5'
+
+    if ftype == 1:
+        format_string = 'file_name'
+        fout = '.'.join(fin.replace("data","processed").split('.')[:-1]) + '.h5'
+    elif ftype == 2:
+        format_string = 'base_name'
+        fout = fin.replace("data","processed") + '.h5'
+    else:
+        print "unknown format type"
+        return
+    
+    
     if len(res) >0:
         fout = fout.replace(".h5","-" + str(len(res)) + ".h5")
 
@@ -276,20 +291,18 @@ def do_Iden_avg(key,conn,frames,iden_params):
     prams.add_stanza("comp")
     prams.add_pram("number","int",comp_key)
     prams.add_pram("dset_key","int",key)
+    prams.add_pram(format_string,"string",fin)
     #prams.merge_File(fpram,"iden")
+    
+    int_params = ["p_rad",'d_rad','mask_rad']
+    float_params = ['threshold','hwhm','shift_cut','rg_cut','e_cut','top_cut']
 
     prams.add_stanza("iden")
-    prams.add_pram("threshold" ,"float" ,str(iden_params['threshold']))
-    prams.add_pram("hwhm","float",str(iden_params["hwhm"]))
-    prams.add_pram("shift_cut","float",str(iden_params["shift_cut"]))
-    prams.add_pram("rg_cut","float",str(iden_params["rg_cut"]))
-    prams.add_pram("e_cut","float",str(iden_params["e_cut"]))
-    prams.add_pram("top_cut","float",str(iden_params["top_cut"]))
-    prams.add_pram("p_rad","int",str(iden_params["p_rad"]))
-    prams.add_pram("d_rad","int",str(iden_params["d_rad"]))
-    prams.add_pram("mask_rad","int",str(iden_params["mask_rad"]))
-
-    prams.add_stanza("frames")
+    for ip in int_params:
+        prams.add_pram(ip,'int',str(iden_params[ip]))
+    for fp in float_params:
+        prams.add_pram(fp,'float',str(iden_params[fp]))
+           
     prams.add_pram("avg_count","int",str(frames))
     
     fxml = prams.write_to_tmp()
@@ -323,20 +336,25 @@ def do_Iden_avg(key,conn,frames,iden_params):
     if rc == 0:
         
         print "entering into database"
-        conn.execute("insert into comps (dset_key,date,fin,fout,function) values (?,?,?,?,?);",
-                     (key,date.today().isoformat(),fin,fout,prog_name))
-            
-        conn.execute("insert into Iden_avg_prams" + 
-                     " (dset_key,comp_key,threshold,top_cut,p_rad,hwhm,d_rad,"
-                     +"mask_rad,shift_cut,rg_cut,e_cut,avg_count) "
-                     + "values (?,?,?,?,?,?,?,?,?,?,?,?);",
-                     (key,comp_key,iden_params["threshold"],
-                      iden_params["top_cut"],iden_params["p_rad"],
-                      iden_params["hwhm"],iden_params["d_rad"],
-                      iden_params["mask_rad"],iden_params["shift_cut"],
-                      iden_params["rg_cut"],iden_params["e_cut"],frames
-                      )
-                     )
+        conn.execute("insert into comps (dset_key,func_key) values (?,?);",(key,1))
+        
+        p = (key,
+             comp_key,
+             iden_params["threshold"],
+             iden_params["top_cut"],
+             iden_params["p_rad"],
+             iden_params["hwhm"],
+             iden_params["d_rad"],
+             iden_params["mask_rad"],
+             frames,
+             fout,
+             date.today().isoformat()
+             )
+        
+        conn.execute("insert into iden "+
+                     "(dset_key,comp_key,threshold,top_cut,p_rad,hwhm,d_rad,mask_rad,frames_avged,fout,date) "+
+                     "values (?,?,?,?,?,?,?,?,?,?,?);"
+                     ,p)
         conn.commit()
 
     
