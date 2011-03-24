@@ -119,7 +119,6 @@ int main(int argc, char * argv[])
     app_prams.get_value("max_range",max_range);
     app_prams.get_value("nbins",nbins);
     app_prams.get_value("grp_name",grp_name);
-    app_prams.get_value("comp_count",comp_count);
   }
   catch(logic_error & e)
   {
@@ -191,6 +190,10 @@ int main(int argc, char * argv[])
     
   Wrapper_i_hdf wh(in_file,data_types,read_comp_key);
 
+  if(app_prams.contains_key("comp_count"))
+    app_prams.get_value("comp_count",comp_count);
+  else 
+    comp_count = wh.get_num_frames();
     
 
 
@@ -218,6 +221,7 @@ int main(int argc, char * argv[])
   md_store.add_elements(files.get_store());    
   md_store.add_elements(&filt_md);
   md_store.add_element("comp_key",write_comp_key);
+  md_store.add_element("comp_count",comp_count);
   
 
   

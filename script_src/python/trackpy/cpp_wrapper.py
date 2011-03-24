@@ -26,6 +26,7 @@ import sqlite3
 from .utils.xml_data import xml_data
 from datetime import date
 
+
 _rel_path = "/home/tcaswell/misc_builds/basic_rel/apps/"
 _dbg_path = "/home/tcaswell/misc_builds/basic_dbg/apps/"
 
@@ -246,6 +247,7 @@ def do_Iden(key,conn,iden_params):
                      "values (?,?,?,?,?,?,?,?,?,?,?);"
                      ,p)
         conn.commit()
+
 
 
 
@@ -573,10 +575,11 @@ def do_vanHove_sweep(track_key,conn,pram_i,pram_f,pram_s =None,rel = True):
 
 def do_gofr_by_plane(comp_key,conn,pram_i, pram_f, pram_s = None, rel = True,):
     prog_name = "gofr_by_plane"
-    required_pram_i = ['nbins','comp_count']
+    required_pram_i = ['nbins']
     required_pram_f = ['max_range']
     required_pram_s = ['grp_name']
     opt_pram_f = ['e_cut','rg_cut','shift_cut']
+    opt_pram_i = ['comp_count']
     # see if the file has already been processed
     
     
@@ -604,12 +607,12 @@ def do_gofr_by_plane(comp_key,conn,pram_i, pram_f, pram_s = None, rel = True,):
 
     try:
         _call_fun_no_sql(
-                  prog_name,fin,fout,
-                  comp_prams,
-                  required_pram_i,pram_i,
-                  required_pram_f,pram_f,
-                  required_pram_s,pram_s,
-            opt_f_pram = opt_pram_f)
+            prog_name,fin,fout,
+            comp_prams,
+            required_pram_i,pram_i,
+            required_pram_f,pram_f,
+            required_pram_s,pram_s,
+            opt_f_pram = opt_pram_f,opt_i_pram = opt_pram_i)
     except KeyError, ke:
         print "Parameter: " ,ke,' not found'
     
@@ -799,7 +802,9 @@ def _call_fun_no_sql(prog_name,fin,fout,
                      s_pram = None,
                      db_path = None,
                      rel = True,
-                     opt_f_pram = None):
+                     opt_f_pram = None,
+                     opt_i_pram = None
+                     ):
     """
     prog_name : the name of the analysis program to be called
     
@@ -842,6 +847,10 @@ def _call_fun_no_sql(prog_name,fin,fout,
         for p in opt_f_pram:
             if p in f_pram:
                 config.add_pram(p,'float',f_pram[p])
+    if opt_i_pram is not None :
+        for p in opt_i_pram:
+            if p in i_pram:
+                config.add_pram(p,'int',f_pram[p])
     
     config.add_stanza("comps")
     
@@ -873,7 +882,6 @@ def _get_fin(comp_key,conn):
     
     res = conn.execute("select fout,dset_key from comps where comp_key=? ;",
                        (comp_key,)).fetchone()
-    
     print res
     print comp_key
     if res is None:
