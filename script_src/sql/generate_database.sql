@@ -194,3 +194,17 @@ CREATE TABLE phi6 (
        FOREIGN KEY(comp_key) REFERENCES comps(comp_key),
        FOREIGN KEY(iden_key) REFERENCES iden(comp_key)       
 );
+
+CREATE TABLE data_collection (
+       coll_key INTEGER PRIMARY KEY,
+       pub_flag INTEGER,
+       long_desc TEXT,
+       short_desc TEXT NOT NULL
+);
+
+CREATE TABLE data_collection_map (
+       coll_key INTEGER NOT NULL,
+       dset_key INTEGER NOT NULL,
+       FOREIGN KEY(dset_key) REFERENCES dsets(dset_key),
+       FOREIGN KEY(coll_key) REFERENCES data_collection(coll_key)
+);
