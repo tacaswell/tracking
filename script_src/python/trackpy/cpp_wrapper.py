@@ -251,7 +251,7 @@ def do_Iden(key,conn,iden_params,TL):
         tlp.set_plane_temp(comp_key,conn,TL)
 
 
-def do_Iden_avg(key,conn,frames,iden_params):
+def do_Iden_avg(key,conn,frames,iden_params,TL):
     # see if the file has already been processed
     prog_name = "Iden_avg"
     prog_path = "/home/tcaswell/misc_builds/iden_rel/iden/apps/"
@@ -358,7 +358,7 @@ def do_Iden_avg(key,conn,frames,iden_params):
                      "values (?,?,?,?,?,?,?,?,?,?,?);"
                      ,p)
         conn.commit()
-
+        tlp.set_plane_temp(comp_key,conn,TL)
     
     
 
