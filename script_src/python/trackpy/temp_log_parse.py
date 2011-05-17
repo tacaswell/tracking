@@ -20,7 +20,7 @@ from datetime import timedelta
 from datetime import time
 from datetime import date
 
-from lib.SortedCollection import SortedCollection
+from utils.SortedCollection import SortedCollection
 import os
 
 import h5py
