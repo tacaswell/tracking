@@ -82,6 +82,7 @@ using namespace tracking;
 
 
 static string APP_NAME = "tracking :: ";
+static float MAX_HASH_DIM = 500;
 
 int main(int argc, char * const argv[])
 {
@@ -242,7 +243,16 @@ int main(int argc, char * const argv[])
     
   // fill the hash case
   hash_case hcase;
-  hcase.init(box,wh.get_dims(),search_range,wh.get_num_frames());
+  
+  
+  float max_dim = wh.get_dims().max();
+  float hash_size;
+  if(max_dim/search_range > MAX_HASH_DIM)
+    hash_size = max_dim/MAX_HASH_DIM;
+  else
+    hash_size = search_range;
+  
+  hcase.init(box,wh.get_dims(),hash_size,wh.get_num_frames());
   int dtime = hcase.get_avg_dtime();
   float temperature = hcase.get_avg_temp();
   md_store.add_element("dtime",dtime);
@@ -259,8 +269,11 @@ int main(int argc, char * const argv[])
   tracks.remove_short_tracks(2);
   // renumber to get rid of gaps
   tracks.renumber();
-    
-    
+  
+  // tac 2011-07-02
+  // Added because this value is output to MD, but never computed.
+  hcase.compute_mean_disp();
+  
     
   set<D_TYPE> d2;
   d2.insert(utilities::D_NEXT_INDX);
