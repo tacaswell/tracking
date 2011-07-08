@@ -189,11 +189,6 @@ int main(int argc, char * argv[])
   
     
   Wrapper_i_hdf wh(in_file,data_types,read_comp_key);
-
-  if(app_prams.contains_key("comp_count"))
-    app_prams.get_value("comp_count",comp_count);
-  else 
-    comp_count = wh.get_num_frames();
     
 
 
@@ -221,7 +216,7 @@ int main(int argc, char * argv[])
   md_store.add_elements(files.get_store());    
   md_store.add_elements(&filt_md);
   md_store.add_element("comp_key",write_comp_key);
-  md_store.add_element("comp_count",comp_count);
+  
   
 
   
@@ -239,7 +234,24 @@ int main(int argc, char * argv[])
   hcase.init(box,dims,max_range/2,wh.get_num_frames());
 
   cout<<"hash case filled"<<endl;
+
+  
+  if(app_prams.contains_key("comp_count"))
+    app_prams.get_value("comp_count",comp_count);
+  else if(app_prams.contains_key("frames_per_comp"))
+  {
+    int frames_per_comp;
+    app_prams.get_value("frames_per_comp",frames_per_comp);
+    comp_count = hcase.get_num_frames()/frames_per_comp;
     
+  }
+  else
+    comp_count = wh.get_num_frames();
+  
+
+
+
+
   Corr_case gofr_c((tracking::Corr_gofr*)NULL,comp_count,
 		   max_range,nbins,
 		   write_comp_key,
@@ -247,6 +259,7 @@ int main(int argc, char * argv[])
 		   read_comp_key);
   unsigned int step = hcase.compute_corr(gofr_c);
   cout<<"computed g(r)"<<endl;
+  md_store.add_element("comp_count",comp_count);
   md_store.add_element("frames_per_comp",step);
   
   //    gofr.display();

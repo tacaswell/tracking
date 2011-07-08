@@ -579,7 +579,7 @@ def do_gofr_by_plane(comp_key,conn,pram_i, pram_f, pram_s = None, rel = True,):
     required_pram_f = ['max_range']
     required_pram_s = ['grp_name']
     opt_pram_f = ['e_cut','rg_cut','shift_cut']
-    opt_pram_i = ['comp_count']
+    opt_pram_i = ['comp_count','frames_per_comp']
     # see if the file has already been processed
     
     
