@@ -95,6 +95,9 @@ _prog_to_fun_lookup = {'gofr_by_plane':add_gofr_plane_mdata,'msd':add_msd_mdata,
 
 
 def _make_sure_h5_exists(fname):
+    proc_path = '/'.join(fname.split('/')[:-1])
+    if not os.path.exists(proc_path):
+        os.makedirs(proc_path,0751)
     if not os.path.isfile(fname):
         f = h5py.File(fname)
         f.close()
