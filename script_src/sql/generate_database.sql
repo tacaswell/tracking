@@ -68,6 +68,7 @@ CREATE TABLE gofr_by_plane(
        nbins INTEGER NOT NULL,
        max_range FLOAT NOT NULL,
        comp_count INTEGER NOT NULL,
+       frames_per_comp INTEGER NOT NULL,
        shift_cut FLOAT NOT NULL,
        rg_cut FLOAT NOT NULL,
        e_cut FLOAT NOT NULL,

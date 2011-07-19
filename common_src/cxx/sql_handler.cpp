@@ -851,10 +851,10 @@ void SQL_handler::gofr_by_plane_md_fun(const  Md_store & md_store)
   // set up statement to be executed
   const char * base_stmt = "insert into gofr_by_plane "
     "(comp_key,iden_key,dset_key,"
-    "nbins,max_range,comp_count,"
+    "nbins,max_range,comp_count,frames_per_comp,"
     "shift_cut,rg_cut,e_cut,"
     "fin,fout) "
-    "values (?,?,?, ?,?,?, ?,?,?, ?,?)";
+    "values (?,?,?, ?,?,?,?, ?,?,?, ?,?)";
     
 
   // prepare the sql statement
@@ -876,14 +876,15 @@ void SQL_handler::gofr_by_plane_md_fun(const  Md_store & md_store)
   int_bind  (stmt,4,md_store.get_value("nbins"   ,tmp_int  ));
   float_bind  (stmt,5,md_store.get_value("max_range" ,tmp_float  ));
   int_bind  (stmt,6,md_store.get_value("comp_count"   ,tmp_int  ));
+  int_bind  (stmt,7,md_store.get_value("frames_per_comp"   ,tmp_int  ));
 
-  float_bind  (stmt,7,md_store.get_value("shift_cut" ,tmp_float  ));
-  float_bind  (stmt,8,md_store.get_value("rg_cut" ,tmp_float  ));
-  float_bind  (stmt,9,md_store.get_value("e_cut" ,tmp_float  ));
+  float_bind  (stmt,8,md_store.get_value("shift_cut" ,tmp_float  ));
+  float_bind  (stmt,9,md_store.get_value("rg_cut" ,tmp_float  ));
+  float_bind  (stmt,10,md_store.get_value("e_cut" ,tmp_float  ));
   
   
-  text_bind  (stmt,10,md_store.get_value("fin",tmp_str  ));
-  text_bind  (stmt,11,md_store.get_value("fout",tmp_str  ));
+  text_bind  (stmt,11,md_store.get_value("fin",tmp_str  ));
+  text_bind  (stmt,12,md_store.get_value("fout",tmp_str  ));
 
   // try running the statement
   rc  =  sqlite3_step(stmt);
