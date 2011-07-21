@@ -628,3 +628,83 @@ void Track_shelf::compute_corrected_TA(Trk_accumulator & ta)const
   }
 }
 
+
+
+void Track_shelf::compute_corrected_TA_ncuts(Trk_accumulator & ta,int min_neighbors,int max_neighbors)const
+{
+  //this exception needs to get it's own class or something
+
+  unsigned max_time_step = ta.max_step();
+  const particle_track* current = NULL;
+  const particle_track* next = NULL;
+
+  
+
+  bool not_past_end = false;
+  for(tr_list::const_iterator working_track = tracks_.begin();
+      working_track!=tracks_.end(); working_track++)
+  {
+      
+    //      cout<<"Track legnth: "<<(*working_track)->get_length()<<endl;
+    unsigned track_length = ((*working_track)->get_length()-1);
+    
+    for(unsigned j = 0; j< track_length && j < max_time_step;j++)
+    {
+      not_past_end = true ;
+      current = (*working_track)->get_first();
+      next = current;
+      bool neighbor_violation = false;
+      while(not_past_end)
+      {
+	// check first particle
+	int n_count = next->get_neighborhood_size();
+	if(min_neighbors != -1 && n_count<min_neighbors)
+	{
+	  neighbor_violation = true;
+	  break;
+	}
+	if(max_neighbors != -1 && n_count>max_neighbors)
+	{
+	  neighbor_violation = true;
+	  break;
+	}
+	// take steps one at a time
+	for(unsigned k = 0; k<j+1; ++k)
+	{
+	  // take a step forward
+	  not_past_end = next->step_forwards(1,next);
+	  // check that this particle does not fail
+	  int n_count = next->get_neighborhood_size();
+	  if(min_neighbors != -1 && n_count<min_neighbors)
+	  {
+	    // if fails, set violation flag and break from inner most loop
+	    neighbor_violation = true;
+	    break;
+	  }
+	  if(max_neighbors != -1 && n_count>max_neighbors)
+	  {
+	    // if fails, set violation flag and break from inner most loop
+	    neighbor_violation = true;
+	    break;
+	  }
+	}
+	if(neighbor_violation)
+	{
+	  // if there is a violation, take a j+1 steps forward from the
+	  // starting particle
+	  not_past_end = current->step_forwards(j+1,current);
+	}
+	else
+	{
+	  // if there was no violation add the displacement 
+	  ta.add_disp(current->get_corrected_disp(next),j+1);
+	  // set the new start to be end particle of the previous sub-track
+	  current = next;
+	  
+	}
+	
+      }
+    }
+  }
+}
+

@@ -214,6 +214,13 @@ public:
    */
   void compute_corrected_TA(Trk_accumulator & ta)const;
   
+  /**
+     Shove data in to a track accumulator, makes cuts based on the
+     number of neighbors a particles has
+   */
+  
+  void compute_corrected_TA_ncuts(Trk_accumulator & ta,int min_neighbors,int max_neighbors)const;
+  
   
   ///Constructor
   Track_shelf():track_count_(0){};
