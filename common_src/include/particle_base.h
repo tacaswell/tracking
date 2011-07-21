@@ -229,7 +229,7 @@ public:
      returns the number of particles with in max_neighborhood_range_
      of the particle (assuming that these have been initialized
    */
-  int get_neighborhood_size()const
+  unsigned int get_neighborhood_size()const
   {
     return neighborhood_.size();
   }
