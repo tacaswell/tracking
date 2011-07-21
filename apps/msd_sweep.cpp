@@ -107,6 +107,7 @@ int main(int argc, char * const argv[])
 
   // parse out the parameters that this application needs
   unsigned trk_len_min,trk_len_step,steps;
+  int n_min,n_max;
   
   
   Read_config app_prams(pram_file,"msd_sweep");
@@ -126,6 +127,16 @@ int main(int argc, char * const argv[])
       trk_len_step = 0;
     }
     
+    // see if arguments for neighborhood size cuts are passed in
+    if(app_prams.contains_key("n_min"))
+      app_prams.get_value("n_min",n_min);
+    else
+      n_min= -1;
+    
+    if(app_prams.contains_key("n_max"))
+      app_prams.get_value("n_max",n_max);
+    else
+      n_max= -1;    
   }
   catch(logic_error & e)
   {
@@ -253,8 +264,12 @@ int main(int argc, char * const argv[])
     // make ta_msd object
     TA_msd msd(len-1);
     // compute msd
-    tracks.compute_corrected_TA(msd);
-    
+    if(n_min == -1 && n_max == -1)
+      // if the neighborhood cut sizes are default, don't bother checking
+      tracks.compute_corrected_TA(msd);
+    else
+      // if either cut is not nega
+      tracks.compute_corrected_TA_ncuts(msd,n_min,n_max);
     // output to the file
     msd.output_to_wrapper(hdf_out,msd_md_store);
 
