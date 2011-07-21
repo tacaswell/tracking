@@ -113,8 +113,18 @@ int main(int argc, char * const argv[])
   try
   {
     app_prams.get_value("trk_len_min",trk_len_min);
-    app_prams.get_value("trk_len_step",trk_len_step);
-    app_prams.get_value("steps",steps);
+
+    if(app_prams.contains_key("trk_len_step") &&
+       app_prams.contains_key("steps"))
+    {
+      app_prams.get_value("trk_len_step",trk_len_step);
+      app_prams.get_value("steps",steps);
+    }
+    else
+    {
+      steps = 0;
+      trk_len_step = 0;
+    }
     
   }
   catch(logic_error & e)
@@ -123,7 +133,8 @@ int main(int argc, char * const argv[])
     cerr<<e.what()<<endl;
     return -1;
   }
-
+  
+  
   // parse out the file names
   string db_path;
   string in_file ;
