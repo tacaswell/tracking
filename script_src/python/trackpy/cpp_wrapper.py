@@ -508,6 +508,8 @@ def do_msd_sweep(track_key,conn,pram_i,pram_f=None,pram_s =None,rel = True):
     required_pram_i = ['trk_len_min','trk_len_step','steps']
     required_pram_f = None
     required_pram_s = None
+    opt_pram_f = ['n_range']
+    opt_pram_i = ['n_max','n_min']
     
     # see if the file has already been processed
     res = conn.execute("select fout,iden_key,dset_key from tracking where comp_key=? ;",
@@ -529,10 +531,11 @@ def do_msd_sweep(track_key,conn,pram_i,pram_f=None,pram_s =None,rel = True):
     
     try:
         _call_fun_no_sql( prog_name,fin,fout,
-                  comp_prams,
-                  required_pram_i,pram_i,
-                  required_pram_f,pram_f,
-                  required_pram_s,pram_s)
+                          comp_prams,
+                          required_pram_i,pram_i,
+                          required_pram_f,pram_f,
+                          required_pram_s,pram_s,
+                          opt_f_pram = opt_pram_f,opt_i_pram = opt_pram_i)
     except KeyError, ke:
         print "Parameter: " ,ke,' not found'
 
