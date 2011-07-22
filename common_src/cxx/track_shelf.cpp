@@ -632,8 +632,9 @@ void Track_shelf::compute_corrected_TA(Trk_accumulator & ta)const
 
 void Track_shelf::compute_corrected_TA_ncuts(Trk_accumulator & ta,int min_neighbors,int max_neighbors)const
 {
-  //this exception needs to get it's own class or something
-
+  
+  cout<<"usinc cut code"<<endl;
+  
   unsigned max_time_step = ta.max_step();
   const particle_track* current = NULL;
   const particle_track* next = NULL;
@@ -673,6 +674,10 @@ void Track_shelf::compute_corrected_TA_ncuts(Trk_accumulator & ta,int min_neighb
 	{
 	  // take a step forward
 	  not_past_end = next->step_forwards(1,next);
+	  // make sure that this is a valid step
+	  if(! not_past_end)
+	    break;
+	  
 	  // check that this particle does not fail
 	  int n_count = next->get_neighborhood_size();
 	  if(min_neighbors != -1 && n_count<min_neighbors)
@@ -688,11 +693,16 @@ void Track_shelf::compute_corrected_TA_ncuts(Trk_accumulator & ta,int min_neighb
 	    break;
 	  }
 	}
+	if(! not_past_end)
+	  break;
+	
 	if(neighbor_violation)
 	{
 	  // if there is a violation, take a j+1 steps forward from the
 	  // starting particle
 	  not_past_end = current->step_forwards(j+1,current);
+	  
+	  
 	}
 	else
 	{
