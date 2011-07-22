@@ -659,12 +659,12 @@ void Track_shelf::compute_corrected_TA_ncuts(Trk_accumulator & ta,int min_neighb
       {
 	// check first particle
 	int n_count = next->get_neighborhood_size();
-	if(min_neighbors != -1 && n_count<min_neighbors)
+	if(min_neighbors < 0 && n_count<min_neighbors)
 	{
 	  neighbor_violation = true;
 	  break;
 	}
-	if(max_neighbors != -1 && n_count>max_neighbors)
+	if(max_neighbors <0 && n_count>max_neighbors)
 	{
 	  neighbor_violation = true;
 	  break;
@@ -680,13 +680,13 @@ void Track_shelf::compute_corrected_TA_ncuts(Trk_accumulator & ta,int min_neighb
 	  
 	  // check that this particle does not fail
 	  int n_count = next->get_neighborhood_size();
-	  if(min_neighbors != -1 && n_count<min_neighbors)
+	  if(min_neighbors < 0 && n_count<min_neighbors)
 	  {
 	    // if fails, set violation flag and break from inner most loop
 	    neighbor_violation = true;
 	    break;
 	  }
-	  if(max_neighbors != -1 && n_count>max_neighbors)
+	  if(max_neighbors < 0 && n_count>max_neighbors)
 	  {
 	    // if fails, set violation flag and break from inner most loop
 	    neighbor_violation = true;
