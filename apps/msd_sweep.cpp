@@ -286,9 +286,9 @@ int main(int argc, char * const argv[])
     msd_md_store.add_element("fout",out_file.c_str());
     if(! ( n_min < 0 && n_max < 0 ) )
       msd_md_store.add_element("n_range",n_range);
-    if(n_min <= 0)
+    if(n_min >= 0)
       msd_md_store.add_element("n_min",n_min);
-    if(n_max <= 0)
+    if(n_max >= 0)
       msd_md_store.add_element("n_max",n_max);
     
     // make ta_msd object
