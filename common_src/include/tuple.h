@@ -565,7 +565,7 @@ T Tuple<T,length>::dist_sqr(const Tuple<T,length>& y)const
 }
 
 template<class T,int length>
-Tuple<T,length>::~Tuple<T,length>(){
+Tuple<T,length>::~Tuple(){
   //  std::cout<<"died"<< std::endl;
   // delete[] data_;
   //   data_ = NULL;
