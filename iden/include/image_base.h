@@ -87,7 +87,8 @@ public:
      Returns the data of the current plane.  This pointer is managed
      internally and should not be deleted.  This pointer is only good
      until the object is closed or until the plane is changed, which
-     ever comes first.
+     ever comes first.  To determine how to cast this pointer call
+     get_pixel_type.
    */
   virtual const void * get_plane_pixels() const = 0;
 
