@@ -200,7 +200,8 @@ void Image2D::proc_data(const Image_base & image,bool add)
     // trust the id, assume in really 16s, go on
     if(!add)
       ippiConvert_16s32f_C1R((const int16_t *)data_ptr, in_step,imagedata_,data_step,ROIfull_);
-    // else
+    else
+      throw logic_error("Due to a gap in IPP this adding is not supported in this mode");
     //   ippiAdd_16s32f_C1IR((const int16_t *) data_ptr,in_step,imagedata_,data_step,ROIfull_);
     break;
   case utilities::F32:	// array of float			: 32-bit IEEE floating point
