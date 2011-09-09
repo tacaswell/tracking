@@ -56,7 +56,7 @@ public:
   Tuple<unsigned int,2> get_plane_dims()const;
   WORD get_scan_step() const;
   int get_frame_count() const;
-  PIX_SIZE get_pixel_type() const;
+  PIX_TYPE get_pixel_type() const;
   
   /**
      Initialization function

@@ -58,7 +58,7 @@ typedef enum PIX_TYPE
     S16,
     F32,
     ERROR
-  } PIX_SIZE;
+  } PIX_TYPE;
   
 /**
    This is an ABC for different file layouts, ie to make dealing with
