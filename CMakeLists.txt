@@ -106,10 +106,10 @@ SET(TRK_ACCUM_SRC
 SET(ENV{HDF5_ROOT} "/home/tcaswell/local_installs")
 SET(HDF5_USE_STATIC_LIBRARIES FALSE)
 find_package(HDF5 REQUIRED CXX)
-include_directories(${HDF_INCLUDE_DIR})
+
 MESSAGE (STATUS "Found HDF5: ${HDF5_LIBRARIES}")
 MESSAGE (STATUS "Found HDF5: ${HDF5_INCLUDE_DIRS}")
-
+include_directories(${HDF5_INCLUDE_DIRS})
 
 
 find_package(Boost COMPONENTS date_time REQUIRED)

@@ -73,13 +73,30 @@ const char * selector_name = NULL;
 int selector(const struct dirent * d)
 {
   const char* name = (d->d_name);
+  // if is the . or .. entry, barf
   if(name[0] == '.')
     return 0;
-  // add check to make sure that the name matches the base name, at
-  // this point I am going to trust that data was collected in a clan
-  // way
+
+  int test_len = strlen(name);
+  int base_len = strlen(selector_name);
+  // if the test filename is shorter than the base name, barf
+  if(test_len<base_len)
+    return 0;
   
-  return 1;
+  // if the test string does not begin with the base name, barf
+  if(memcmp(name,selector_name,base_len))
+    return 0;
+  
+
+  // make sure that the string contains tif or TIF
+  if(strstr(name,"tif") || strstr(name,"TIF"))
+    return 1;
+  
+  
+  // return zero of not a tiff image
+  return 0;
+  
+  
 }
 
 bool Image_series::init(const string & base_name )

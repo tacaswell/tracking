@@ -69,7 +69,7 @@ using std::endl;
 
 const std::string TEMPERATURE_STRING = "temperature";
 
-void hash_case::compute_corr(Corr_case & in )const
+unsigned int hash_case::compute_corr(Corr_case & in )const
 {
   unsigned int hc_sz = h_case_.size();
   unsigned int cc_sz = in.size();
@@ -83,6 +83,9 @@ void hash_case::compute_corr(Corr_case & in )const
   
   for(unsigned int j = 0; j<max_i;++j)
     h_case_[j]->compute_corr(*in[j/step]);
+
+  return step;
+  
 }
 
 

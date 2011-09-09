@@ -160,8 +160,17 @@ public:
      Ruturns the sum of the elements
   */
   T sum()const;
-  
 
+  /**
+     Returns the maximum element
+   */
+  T max()const;
+  /**
+     Returns the minimum element
+   */
+  T min()const;
+  
+  
   /**
      makes a tuple a unit vector
   */
@@ -478,6 +487,25 @@ T Tuple<T,length>::sum()const
   return tmp;
 } 
 template<class T,int length>
+T Tuple<T,length>::max()const
+{
+  T tmp = data_[0];
+  for(int j = 1;j<length; ++j)
+    if( data_[j] > tmp)
+      tmp = data_[j];
+  return tmp;
+} 
+template<class T,int length>
+T Tuple<T,length>::min()const
+{
+  T tmp = data_[0];
+  for(int j = 1;j<length; ++j)
+    if( data_[j] < tmp)
+      tmp = data_[j];
+  return tmp;
+} 
+
+template<class T,int length>
 void Tuple<T,length>::make_unit(){
   T tmp = magnitude();
   for(int j = 0;j<length; ++j)
@@ -537,7 +565,7 @@ T Tuple<T,length>::dist_sqr(const Tuple<T,length>& y)const
 }
 
 template<class T,int length>
-Tuple<T,length>::~Tuple<T,length>(){
+Tuple<T,length>::~Tuple(){
   //  std::cout<<"died"<< std::endl;
   // delete[] data_;
   //   data_ = NULL;

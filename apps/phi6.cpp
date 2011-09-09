@@ -19,7 +19,7 @@
 #include <map>
 #include <vector>
 #include <stdexcept>
-#include "master_box_t.h"
+
 
 #include "particle_base.h"
 #include "hash_case.h"
@@ -36,6 +36,11 @@
 //#include "gnuplot_i.hpp" //Gnuplot class handles POSIX-Pipe-communication with Gnuplot
 
 #include "cl_parse.h"
+
+
+#include "sql_handler.h"
+#include "md_store.h"
+
 using std::cout;
 using std::endl;
 using std::set;
@@ -48,6 +53,8 @@ using std::logic_error;
 
 using utilities::Wrapper_o_hdf;
 using utilities::Wrapper_i_hdf;
+using utilities::Md_store;
+using utilities::SQL_handler;
 
 
 using utilities::Filter_basic;
@@ -71,8 +78,6 @@ int main(int argc,  char *  argv[])
 {
   
    
-  string in_file; //= "test.h5";	
-  string out_file; //= "test.h5";	
   string pram_file; //= "frame";
   
   float neighbor_range ;
@@ -81,8 +86,6 @@ int main(int argc,  char *  argv[])
   {
     CL_parse cl(argc,argv);
     cl.parse();
-    cl.get_fin(in_file);
-    cl.get_fout(out_file);
     cl.get_fpram(pram_file);
   }
   catch(std::invalid_argument &e )
@@ -91,6 +94,22 @@ int main(int argc,  char *  argv[])
     return -1;
   }
   
+  string db_path;
+  string in_file ;
+  string out_file ;
+  Read_config files(pram_file,"files");
+  try
+  {
+    files.get_value("db_path",db_path);
+    files.get_value("fin",in_file);
+    files.get_value("fout",out_file);
+  }
+  catch(logic_error & e)
+  {
+    cerr<<"error parsing the file parameters"<<endl;
+    cerr<<e.what()<<endl;
+    return -1;
+  }
 
   // add check to make sure the input and output are the same file
     
@@ -102,7 +121,7 @@ int main(int argc,  char *  argv[])
   
   Read_config app_prams(pram_file,"phi6");
   if(!(app_prams.contains_key("neighbor_range")))
-     throw logic_error(APP_NAME + " parameter file does not contain enough parameters");
+    throw logic_error(APP_NAME + " parameter file does not contain enough parameters");
   try
   {
     app_prams.get_value("neighbor_range",neighbor_range);
@@ -114,16 +133,16 @@ int main(int argc,  char *  argv[])
     return -1;
   }
   
-  int read_comp_num, write_comp_num;
+  int iden_key, write_comp_num,dset_key;
   Read_config comp_prams(pram_file,"comps");
-  if(!(comp_prams.contains_key("read_comp")&&
-       comp_prams.contains_key("write_comp")))
+  if(!(comp_prams.contains_key("iden_key")&&
+       comp_prams.contains_key("dset_key")))
     throw logic_error(APP_NAME + 
 		      " parameter file does not contain both read and write comp nums");
   try
   {
-    comp_prams.get_value("read_comp",read_comp_num);
-    comp_prams.get_value("write_comp",write_comp_num);
+    comp_prams.get_value("iden_key",iden_key);
+    comp_prams.get_value("dset_key",dset_key);
    
   }
   catch(logic_error & e)
@@ -135,106 +154,154 @@ int main(int argc,  char *  argv[])
   
      
 
+  // set up sql stuff
+  SQL_handler sql;
+  sql.open_connection(db_path);
+
+
+  // claim the entry in the DB and lock it before doing anything
+
+  sql.start_comp(dset_key,write_comp_num,utilities::F_PHI6);
+
+
   cout<<"neighbor_range: "<<neighbor_range<<endl;
   
   
 
   // make hcase
 
+  
+    
+  
+  //nonsense to get the map set up
+  map<utilities::D_TYPE, int> contents;
+  D_TYPE tmp[] = {utilities::D_XPOS,
+		  utilities::D_YPOS,
+		  utilities::D_DX,
+		  utilities::D_DY,
+		  utilities::D_R2,
+		  utilities::D_E
+  };
+  set<D_TYPE> data_types = set<D_TYPE>(tmp, tmp+6);
+  
+
+  
+    
+      
+  // set up the input wrapper
+  Wrapper_i_hdf wh(in_file,data_types,iden_key);
+  
+
+  
+  
+  
+    
+    
+
+  Filter_basic filt;
+  if(app_prams.contains_key("e_cut") &&
+     app_prams.contains_key("rg_cut") &&
+     app_prams.contains_key("shift_cut"))
+  {
+    float e_cut,rg_cut,shift_cut;
+    app_prams.get_value("e_cut",e_cut);
+    app_prams.get_value("rg_cut",rg_cut);
+    app_prams.get_value("shift_cut",shift_cut);
+    filt.init(e_cut,rg_cut,shift_cut);
+    
+    
+  }
+  else
+    filt.init(in_file,iden_key);
+  Md_store filt_md = filt.get_parameters();
+  
+   
+
+  
+    
+
+  
+    
+
+  
+      
+  Md_store md_store;
+  md_store.add_elements(app_prams.get_store());    
+  md_store.add_elements(comp_prams.get_store());    
+  md_store.add_elements(files.get_store());    
+  md_store.add_elements(&filt_md);
+  md_store.add_element("comp_key",write_comp_num);
+  
+
+  sql.add_mdata(md_store);
+  
+  hash_case hcase;
+  hcase.init(wh,filt,neighbor_range);
+  cout<<"hash case filled"<<endl;
+    
+    
+      
+  particle::set_neighborhood_range(neighbor_range);
+  
+  hcase.pass_fun_to_shelf(&Hash_shelf::fill_in_neighborhood);
+  hcase.pass_fun_to_part(&particle::fill_phi_6);
+
+
+  // output everything back to the hdf file
+
+  cout<<"finished computation"<<endl;
+    
+
+  set<D_TYPE> d2;
+  d2.insert(utilities::D_S_ORDER_PARAMETER);
+  d2.insert(utilities::D_N_SIZE);
+
+    
+  Wrapper_o_hdf hdf_w(out_file,d2,write_comp_num,
+		      Wrapper_o_hdf::APPEND_FILE,
+		      "frame");
+    
+    
+
+  cout<<"made output wrapper"<<endl;
+    
+    
   try
   {
-    
-  
-    //nonsense to get the map set up
-    map<utilities::D_TYPE, int> contents;
-    utilities::D_TYPE tmp[] = {utilities::D_XPOS,
-  			       utilities::D_YPOS};
-    set<D_TYPE> data_types = set<D_TYPE>(tmp,tmp+2);
-    
-      
-    // set up the input wrapper
-    Wrapper_i_hdf wh(in_file,data_types,read_comp_num);
-  
-
-    // fill the master_box
-    Master_box box;
-    //  Filter_basic filt(h5_file);
-    Filter_trivial filt;
-    box.init(wh,filt);
-    cout<<"master_box contains "<<box.size()<<" particles"<<endl;
-  
-    hash_case hcase;
-    hcase.init(box,wh.get_dims(),neighbor_range,wh.get_num_frames());
-    cout<<"hash case filled"<<endl;
-    
-    
-      
-    particle::set_neighborhood_range(neighbor_range);
-  
-    hcase.pass_fun_to_shelf(&Hash_shelf::fill_in_neighborhood);
-    hcase.pass_fun_to_part(&particle::fill_phi_6);
-
-
-    // output everything back to the hdf file
-
-    cout<<"finished computation"<<endl;
-    
-
-    set<D_TYPE> d2;
-    d2.insert(utilities::D_S_ORDER_PARAMETER);
-    d2.insert(utilities::D_N_SIZE);
+    hdf_w.initialize_wrapper();
+    cout<<"inited wrapper"<<endl;
+    hcase.output_to_wrapper(hdf_w);
+    hdf_w.add_meta_data_list(app_prams,d2);
+    hdf_w.finalize_wrapper();
 
     
-    Wrapper_o_hdf hdf_w(out_file,d2,write_comp_num,
-			Wrapper_o_hdf::APPEND_FILE,
-			"frame");
-    
-    
-
-    cout<<"made output wrapper"<<endl;
-    
-    
-    try
-    {
-      hdf_w.initialize_wrapper();
-      cout<<"inited wrapper"<<endl;
-      hcase.output_to_wrapper(hdf_w);
-      hdf_w.add_meta_data_list(app_prams,d2);
-      hdf_w.finalize_wrapper();
-    }
-    catch(const char * err)
-    {
-      std::cerr<<"caught on error: ";
-      std::cerr<<err<<endl;
-      return -1;
-    }
-    catch(std::exception & e)
-    {
-      cout<<"caught std excetp"<<endl;
-      cout<<e.what()<<endl;
-    }
-    
-    catch(...)
-    {
-      std::cerr<<"unknown error type"<<endl;
-      return -1;
-    }
   }
-  catch(const char * err){
+  catch(const char * err)
+  {
     std::cerr<<"caught on error: ";
     std::cerr<<err<<endl;
     return -1;
-  } 
-  catch( char const * err){
-    std::cerr<<"caught on error: ";
-    std::cerr<<err<<endl;
-    return -1;
-  } 
+  }
+  catch(std::exception & e)
+  {
+    cout<<"caught std excetp"<<endl;
+    cout<<e.what()<<endl;
+  }
+    
   catch(...)
   {
-    std::cerr<<"uncaught error"<<endl;
+    std::cerr<<"unknown error type"<<endl;
     return -1;
   }
+
+  
+  // shove in to db
+
+  sql.commit();
+  
+  // clean up the data base
+  sql.close_connection();
+
 
   return 0;
   

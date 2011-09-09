@@ -449,6 +449,8 @@ void Wrapper_o_hdf::add_meta_data_list(const Read_config & config, const std::se
   set<D_TYPE>::const_iterator end= d_types.end();
   int tmpi =0;
   float tmpf=0;
+  string tmps="";
+  
   for(set<D_TYPE>::const_iterator it = d_types.begin();
       it != end; ++it)
   {
@@ -466,6 +468,10 @@ void Wrapper_o_hdf::add_meta_data_list(const Read_config & config, const std::se
       case utilities::V_FLOAT:
 	config.get_value(j,tmpf);
 	add_meta_data(tmp_key,tmpf,*it);
+	break;
+      case utilities::V_STRING:
+	config.get_value(j,tmps);
+	add_meta_data(tmp_key,tmps,*it);
 	break;
       default:
 	cerr<<"not of type supported in meta data: "<<tmp_key<<','<<VT2str_s(type)<<endl;

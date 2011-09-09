@@ -142,7 +142,7 @@ void iden::RecenterImage(Image2D &image)
 // tac 2009-09-15
 // 
 IppStatus iden::FindLocalMax_2D(Image2D &image_bpass, Image2D &image_bpass_thresh, Image2D &image_subtracted,
-				const int intensity_threshold, const int dilation_radius)
+				const float intensity_threshold, const int dilation_radius)
 {
   IppStatus status;
   Image2D image_dilated(image_bpass.get_height(), image_bpass.get_width());

@@ -1,4 +1,4 @@
-#Copyright 2010 Thomas A Caswell
+#Copyright 2010-2011 Thomas A Caswell
 #tcaswell@uchicago.edu
 #http://jfi.uchicago.edu/~tcaswell
 #
@@ -25,6 +25,7 @@ import subprocess
 import sqlite3
 from .utils.xml_data import xml_data
 from datetime import date
+import temp_log_parse as tlp
 
 _rel_path = "/home/tcaswell/misc_builds/demo/general/apps/"
 _dbg_path = "/home/tcaswell/misc_builds/basic_dbg/apps/"
@@ -94,6 +95,9 @@ _prog_to_fun_lookup = {'gofr_by_plane':add_gofr_plane_mdata,'msd':add_msd_mdata,
 
 
 def _make_sure_h5_exists(fname):
+    proc_path = '/'.join(fname.split('/')[:-1])
+    if not os.path.exists(proc_path):
+        os.makedirs(proc_path,0751)
     if not os.path.isfile(fname):
         f = h5py.File(fname)
         f.close()
@@ -145,7 +149,7 @@ def do_link3D(comp_key,conn,pram, fout_name):
     
 
 
-def do_Iden(key,conn,iden_params):
+def do_Iden(key,conn,iden_params,TL):
     # see if the file has already been processed
     prog_name = "Iden"
     #prog_path = "/home/tcaswell/misc_builds/iden_rel/iden/apps/"
@@ -180,6 +184,7 @@ def do_Iden(key,conn,iden_params):
     ##     print fin
     ##     print fpram
     ##     return
+
     
     comp_num = conn.execute("select max(comp_key) from comps;").fetchone()[0]
     if comp_num is None:
@@ -188,21 +193,22 @@ def do_Iden(key,conn,iden_params):
     
     prams = xml_data()
     prams.add_stanza("comp")
-    prams.add_pram("number","int",comp_num)
+    prams.add_pram("number","int",comp_key)
     prams.add_pram("dset_key","int",key)
     prams.add_pram(format_string,"string",fin)
     #prams.merge_File(fpram,"iden")
-    prams.add_stanza("iden")
-    prams.add_pram("threshold","float",str(iden_params["threshold"]))
-    prams.add_pram("hwhm","float",str(iden_params["hwhm"]))
-    prams.add_pram("shift_cut","float",str(iden_params["shift_cut"]))
-    prams.add_pram("rg_cut","float",str(iden_params["rg_cut"]))
-    prams.add_pram("e_cut","float",str(iden_params["e_cut"]))
-    prams.add_pram("top_cut","float",str(iden_params["top_cut"]))
-    prams.add_pram("p_rad","int",str(iden_params["p_rad"]))
-    prams.add_pram("d_rad","int",str(iden_params["d_rad"]))
-    prams.add_pram("mask_rad","int",str(iden_params["mask_rad"]))
+    
+    
+    int_params = ["p_rad",'d_rad','mask_rad']
+    float_params = ['threshold','hwhm','shift_cut','rg_cut','e_cut','top_cut']
 
+    prams.add_stanza("iden")
+    for ip in int_params:
+        prams.add_pram(ip,'int',str(iden_params[ip]))
+    for fp in float_params:
+        prams.add_pram(fp,'float',str(iden_params[fp]))
+    
+    
     
     fxml = prams.write_to_tmp()
 
@@ -237,7 +243,7 @@ def do_Iden(key,conn,iden_params):
         conn.execute("insert into comps (dset_key,func_key) values (?,?);",(key,1))
         
         p = (key,
-             comp_num,
+             comp_key,
              iden_params["threshold"],
              iden_params["top_cut"],
              iden_params["p_rad"],
@@ -255,19 +261,34 @@ def do_Iden(key,conn,iden_params):
                      ,p)
         conn.commit()
 
+        tlp.set_plane_temp(comp_key,conn,TL)
 
 
-def do_Iden_avg(key,conn,frames,iden_params):
+def do_Iden_avg(key,conn,frames,iden_params,TL):
     # see if the file has already been processed
     prog_name = "Iden_avg"
     prog_path = "/home/tcaswell/misc_builds/iden_rel/iden/apps/"
-    res = conn.execute("select fout,comp_key from comps where dset_key=? and function = 'Iden_avg';",(key,)).fetchall()
-    fin = conn.execute("select fname from dsets where key = ?;",(key,)).fetchone()[0]
+    
+    res = conn.execute("select fout,comp_key from iden where dset_key=?;",(key,)).fetchall()
+    (fin,ftype) = conn.execute("select fname,ftype from dsets where dset_key = ?;",(key,)).fetchone()
+
+    
     if os.path.isfile(fin.replace('.tif','-file002.tif')):
         print "multi-part tiff, can't cope yet"
         return
     
-    fout = '.'.join(fin.replace("data","processed").split('.')[:-1]) + '-avg.h5'
+
+    if ftype == 1:
+        format_string = 'file_name'
+        fout = '.'.join(fin.replace("data","processed").split('.')[:-1]) + '.h5'
+    elif ftype == 2:
+        format_string = 'base_name'
+        fout = fin.replace("data","processed") + '.h5'
+    else:
+        print "unknown format type"
+        return
+    
+    
     if len(res) >0:
         fout = fout.replace(".h5","-" + str(len(res)) + ".h5")
 
@@ -285,20 +306,18 @@ def do_Iden_avg(key,conn,frames,iden_params):
     prams.add_stanza("comp")
     prams.add_pram("number","int",comp_key)
     prams.add_pram("dset_key","int",key)
+    prams.add_pram(format_string,"string",fin)
     #prams.merge_File(fpram,"iden")
+    
+    int_params = ["p_rad",'d_rad','mask_rad']
+    float_params = ['threshold','hwhm','shift_cut','rg_cut','e_cut','top_cut']
 
     prams.add_stanza("iden")
-    prams.add_pram("threshold" ,"float" ,str(iden_params['threshold']))
-    prams.add_pram("hwhm","float",str(iden_params["hwhm"]))
-    prams.add_pram("shift_cut","float",str(iden_params["shift_cut"]))
-    prams.add_pram("rg_cut","float",str(iden_params["rg_cut"]))
-    prams.add_pram("e_cut","float",str(iden_params["e_cut"]))
-    prams.add_pram("top_cut","float",str(iden_params["top_cut"]))
-    prams.add_pram("p_rad","int",str(iden_params["p_rad"]))
-    prams.add_pram("d_rad","int",str(iden_params["d_rad"]))
-    prams.add_pram("mask_rad","int",str(iden_params["mask_rad"]))
-
-    prams.add_stanza("frames")
+    for ip in int_params:
+        prams.add_pram(ip,'int',str(iden_params[ip]))
+    for fp in float_params:
+        prams.add_pram(fp,'float',str(iden_params[fp]))
+           
     prams.add_pram("avg_count","int",str(frames))
     
     fxml = prams.write_to_tmp()
@@ -332,22 +351,27 @@ def do_Iden_avg(key,conn,frames,iden_params):
     if rc == 0:
         
         print "entering into database"
-        conn.execute("insert into comps (dset_key,date,fin,fout,function) values (?,?,?,?,?);",
-                     (key,date.today().isoformat(),fin,fout,prog_name))
-            
-        conn.execute("insert into Iden_avg_prams" + 
-                     " (dset_key,comp_key,threshold,top_cut,p_rad,hwhm,d_rad,"
-                     +"mask_rad,shift_cut,rg_cut,e_cut,avg_count) "
-                     + "values (?,?,?,?,?,?,?,?,?,?,?,?);",
-                     (key,comp_key,iden_params["threshold"],
-                      iden_params["top_cut"],iden_params["p_rad"],
-                      iden_params["hwhm"],iden_params["d_rad"],
-                      iden_params["mask_rad"],iden_params["shift_cut"],
-                      iden_params["rg_cut"],iden_params["e_cut"],frames
-                      )
-                     )
+        conn.execute("insert into comps (dset_key,func_key) values (?,?);",(key,1))
+        
+        p = (key,
+             comp_key,
+             iden_params["threshold"],
+             iden_params["top_cut"],
+             iden_params["p_rad"],
+             iden_params["hwhm"],
+             iden_params["d_rad"],
+             iden_params["mask_rad"],
+             frames,
+             fout,
+             date.today().isoformat()
+             )
+        
+        conn.execute("insert into iden "+
+                     "(dset_key,comp_key,threshold,top_cut,p_rad,hwhm,d_rad,mask_rad,frames_avged,fout,date) "+
+                     "values (?,?,?,?,?,?,?,?,?,?,?);"
+                     ,p)
         conn.commit()
-
+        tlp.set_plane_temp(comp_key,conn,TL)
     
     
 
@@ -390,6 +414,51 @@ def do_gofr(comp_key,conn,pram_i, pram_f, pram_s = None, rel = True,):
                          comp_prams,
                          required_pram_i,pram_i,
                          required_pram_f,pram_f,
+                         required_pram_s,pram_s,
+                         opt_f_pram = opt_pram_f)
+    except KeyError, ke:
+        print "Parameter: " ,ke,' not found'
+
+
+def do_phi6(comp_key,conn,pram, rel = True,):
+    """
+    Computes gofr 
+
+    """
+    prog_name = "phi6"
+    required_pram_i = []
+    required_pram_f = ['neighbor_range']
+    required_pram_s = ['grp_name']
+    opt_pram_f = ['e_cut','rg_cut','shift_cut']
+    
+    
+    res = conn.execute("select fout,dset_key from iden where comp_key=? ;",
+                       (comp_key,)).fetchone()
+    read_comp = comp_key
+    
+    print res
+    print comp_key
+    if res is None:
+        raise utils.dbase_error('no entry found')
+    
+    (fin,key) = res
+    
+    fout = fin
+    _make_sure_h5_exists(fout)
+    
+    comp_prams = {'iden_key':read_comp,'dset_key':key}
+        
+    
+    pram_s = {'grp_name':prog_name}
+
+
+
+    
+    try:
+        _call_fun_no_sql(prog_name,fin,fout,
+                         comp_prams,
+                         required_pram_i,pram,
+                         required_pram_f,pram,
                          required_pram_s,pram_s,
                          opt_f_pram = opt_pram_f)
     except KeyError, ke:
@@ -449,6 +518,8 @@ def do_msd_sweep(track_key,conn,pram_i,pram_f=None,pram_s =None,rel = True):
     required_pram_i = ['trk_len_min','trk_len_step','steps']
     required_pram_f = None
     required_pram_s = None
+    opt_pram_f = ['n_range']
+    opt_pram_i = ['n_max','n_min']
     
     # see if the file has already been processed
     res = conn.execute("select fout,iden_key,dset_key from tracking where comp_key=? ;",
@@ -470,10 +541,11 @@ def do_msd_sweep(track_key,conn,pram_i,pram_f=None,pram_s =None,rel = True):
     
     try:
         _call_fun_no_sql( prog_name,fin,fout,
-                  comp_prams,
-                  required_pram_i,pram_i,
-                  required_pram_f,pram_f,
-                  required_pram_s,pram_s)
+                          comp_prams,
+                          required_pram_i,pram_i,
+                          required_pram_f,pram_f,
+                          required_pram_s,pram_s,
+                          opt_f_pram = opt_pram_f,opt_i_pram = opt_pram_i)
     except KeyError, ke:
         print "Parameter: " ,ke,' not found'
 
@@ -519,10 +591,11 @@ def do_vanHove_sweep(track_key,conn,pram_i,pram_f,pram_s =None,rel = True):
 
 def do_gofr_by_plane(comp_key,conn,pram_i, pram_f, pram_s = None, rel = True,):
     prog_name = "gofr_by_plane"
-    required_pram_i = ['nbins','comp_count']
+    required_pram_i = ['nbins']
     required_pram_f = ['max_range']
     required_pram_s = ['grp_name']
     opt_pram_f = ['e_cut','rg_cut','shift_cut']
+    opt_pram_i = ['comp_count','frames_per_comp']
     # see if the file has already been processed
     
     
@@ -550,12 +623,12 @@ def do_gofr_by_plane(comp_key,conn,pram_i, pram_f, pram_s = None, rel = True,):
 
     try:
         _call_fun_no_sql(
-                  prog_name,fin,fout,
-                  comp_prams,
-                  required_pram_i,pram_i,
-                  required_pram_f,pram_f,
-                  required_pram_s,pram_s,
-            opt_f_pram = opt_pram_f)
+            prog_name,fin,fout,
+            comp_prams,
+            required_pram_i,pram_i,
+            required_pram_f,pram_f,
+            required_pram_s,pram_s,
+            opt_f_pram = opt_pram_f,opt_i_pram = opt_pram_i)
     except KeyError, ke:
         print "Parameter: " ,ke,' not found'
     
@@ -745,7 +818,9 @@ def _call_fun_no_sql(prog_name,fin,fout,
                      s_pram = None,
                      db_path = None,
                      rel = True,
-                     opt_f_pram = None):
+                     opt_f_pram = None,
+                     opt_i_pram = None
+                     ):
     """
     prog_name : the name of the analysis program to be called
     
@@ -788,6 +863,10 @@ def _call_fun_no_sql(prog_name,fin,fout,
         for p in opt_f_pram:
             if p in f_pram:
                 config.add_pram(p,'float',f_pram[p])
+    if opt_i_pram is not None :
+        for p in opt_i_pram:
+            if p in i_pram:
+                config.add_pram(p,'int',f_pram[p])
     
     config.add_stanza("comps")
     
@@ -819,7 +898,6 @@ def _get_fin(comp_key,conn):
     
     res = conn.execute("select fout,dset_key from comps where comp_key=? ;",
                        (comp_key,)).fetchone()
-    
     print res
     print comp_key
     if res is None:

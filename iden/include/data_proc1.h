@@ -59,7 +59,7 @@ IppStatus BandPass_2D(Image2D &image_in, Image2D &image_bpass, const int feature
 void RecenterImage(Image2D &image);
 
 IppStatus FindLocalMax_2D(Image2D &image_bpass, Image2D &image_bpass_thresh, Image2D &image_subtracted,
-						  const int threshold, const int dilation_radius);
+						  const float threshold, const int dilation_radius);
 
 /*IppStatus PrintOutputImages(const Image2D &image_in, const Image2D &image_bpass, const Image2D &image_localmax,
   const Params &Parameters, const int framenumber, const int stacknumber);*/

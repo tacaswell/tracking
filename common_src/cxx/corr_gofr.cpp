@@ -130,6 +130,7 @@ void Corr_gofr::out_to_wrapper(Generic_wrapper & in,
   in.add_meta_data("dset_key",dset_);
   in.add_meta_data("max_range",max_range_);
   in.add_meta_data("nbins",n_bins_);
+  in.add_meta_data("total_number",parts_added_);
   
   in.add_meta_data("temperature",temperature_sum_/plane_count_);
   

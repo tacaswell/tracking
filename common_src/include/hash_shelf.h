@@ -86,7 +86,7 @@ public:
   /**
      Constructor 
    */
-  Hash_shelf(utilities::Tuplef imgsz, float upb,int i_frame,bool own_part, float z_offset = 0);
+  Hash_shelf(utilities::Tuplef imgsz, float upb,int i_frame,bool own_part, int max_part_indx_=0, float z_offset = 0);
   
 
 

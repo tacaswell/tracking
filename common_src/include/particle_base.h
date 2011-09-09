@@ -229,7 +229,7 @@ public:
      returns the number of particles with in max_neighborhood_range_
      of the particle (assuming that these have been initialized
    */
-  int get_neighborhood_size()const
+  unsigned int get_neighborhood_size()const
   {
     return neighborhood_.size();
   }
@@ -250,19 +250,9 @@ public:
   static void intialize_wrapper_in(const utilities::Wrapper_in* in);
 
   /**
-     Intialize the static data types for all particles
-   */
-  static void intialize_data_types(std::set<utilities::D_TYPE>*  data_types);
-
-  /**
      Cleans up the set wrapper_in
    */
   static void clear_wrapper_in();
-
-  /**
-     cleans up the set data_types
-   */
-  static void clear_data_types();
 
   /**
      Sets the maximum neighborhood range, there needs to be something to make
@@ -287,9 +277,7 @@ protected:
   //static int running_total_;
   ///object that takes care of all the underling data structures.
   const static utilities::Wrapper_in* wrapper_in_;
-  ///Vector of the types of data that
-  ///remove this
-  static std::set<utilities::D_TYPE>* data_types_;
+  
 
   ///Identifier that comes from the wrapper
   int ind_;

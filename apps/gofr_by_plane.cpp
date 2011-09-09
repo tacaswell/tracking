@@ -119,7 +119,6 @@ int main(int argc, char * argv[])
     app_prams.get_value("max_range",max_range);
     app_prams.get_value("nbins",nbins);
     app_prams.get_value("grp_name",grp_name);
-    app_prams.get_value("comp_count",comp_count);
   }
   catch(logic_error & e)
   {
@@ -132,8 +131,8 @@ int main(int argc, char * argv[])
   Read_config comp_prams(pram_file,"comps");
   try
   {
-    comp_prams.get_value("read_comp",read_comp_key);
-    comp_prams.get_value("dset",dset_key);
+    comp_prams.get_value("iden_key",read_comp_key);
+    comp_prams.get_value("dset_key",dset_key);
   }
   catch(logic_error & e)
   {
@@ -190,12 +189,11 @@ int main(int argc, char * argv[])
   
     
   Wrapper_i_hdf wh(in_file,data_types,read_comp_key);
-
     
 
 
   Filter_basic filt;
-    if(app_prams.contains_key("e_cut") &&
+  if(app_prams.contains_key("e_cut") &&
      app_prams.contains_key("rg_cut") &&
      app_prams.contains_key("shift_cut"))
   {
@@ -219,8 +217,9 @@ int main(int argc, char * argv[])
   md_store.add_elements(&filt_md);
   md_store.add_element("comp_key",write_comp_key);
   
+  
 
-
+  
   
     
   Master_box box;
@@ -235,25 +234,48 @@ int main(int argc, char * argv[])
   hcase.init(box,dims,max_range/2,wh.get_num_frames());
 
   cout<<"hash case filled"<<endl;
+
+  
+  if(app_prams.contains_key("comp_count"))
+    app_prams.get_value("comp_count",comp_count);
+  else if(app_prams.contains_key("frames_per_comp"))
+  {
+    int frames_per_comp;
+    app_prams.get_value("frames_per_comp",frames_per_comp);
+    comp_count = hcase.get_num_frames()/frames_per_comp;
     
+  }
+  else
+    comp_count = wh.get_num_frames();
+  
+
+
+
+
   Corr_case gofr_c((tracking::Corr_gofr*)NULL,comp_count,
 		   max_range,nbins,
 		   write_comp_key,
 		   dset_key,
 		   read_comp_key);
-  hcase.compute_corr(gofr_c);
+  unsigned int step = hcase.compute_corr(gofr_c);
   cout<<"computed g(r)"<<endl;
-    
+  md_store.add_element("comp_count",comp_count);
+  md_store.add_element("frames_per_comp",step);
+  
   //    gofr.display();
 
-      
+
+  // shove in to db, but don't commit
+  sql.add_mdata(md_store);
+
+  // save the data
   Generic_wrapper_hdf hdf_out(out_file,true);
   gofr_c.out_to_wrapper(hdf_out,utilities::format_name(grp_name,write_comp_key),&md_store);
   cout<<"wrote out g(r)"<<endl;
 
 
-  // shove in to db
-  sql.add_mdata(md_store);
+
+  // commit the md to the data base
   sql.commit();
   
   // clean up the data base

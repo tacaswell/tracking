@@ -78,7 +78,7 @@ void Master_box::priv_init()
 
   
   particle::intialize_wrapper_in(in_wrapper_);
-  particle::intialize_data_types(&data_types);
+  
 
   int total_entries= in_wrapper_->get_num_entries();
   cout<<"box: total entries "<<total_entries<<endl;
@@ -126,7 +126,7 @@ Master_box::~Master_box(){
   }
   //deletes the wrapper objects
   particle_base::clear_wrapper_in();
-  particle_base::clear_data_types();
+  
 
   if(own_wrapper_)
   {

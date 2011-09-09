@@ -102,10 +102,12 @@ add_executable(phi6 phi6.cpp ${COMMON_SRC}
  ${COMMON_HASH_SRC} 
  ${COMMON_WRAPPER_SRC} 
  ${CONFIG_SRC}
+ ${SQL_CODE}
 )
 target_link_libraries(phi6
   ${HDF5_LIBRARIES} 
   ${XERCESC_LIBRARY} 
+  ${SQLITE3_LIBRARY}
 )
 set_target_properties(phi6 PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_COUNT=2")
 
@@ -151,23 +153,6 @@ target_link_libraries(gofr_by_plane
   )
 set_target_properties(gofr_by_plane PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_COUNT=2")
 
-
-add_executable(msd msd ${COMMON_SRC}
- ${UTIL_SRC}
- ${HDF_SRC}
- ${CORR_SRC}
- ${GNU_PLOT_SRC}
- ${COMMON_TRACK_SRC}
- ${COMMON_HASH_SRC} 
- ${HASH_TRACK_SRC}
- ${COMMON_WRAPPER_SRC} 
- ${CONFIG_SRC}
-)
-target_link_libraries(msd
-  ${HDF5_LIBRARIES} 
-  ${XERCESC_LIBRARY} 
-  )
-set_target_properties(msd PROPERTIES COMPILE_DEFINITIONS  "PTYPE=1;DIM_COUNT=2")
 
 
 add_executable(track_stats track_stats

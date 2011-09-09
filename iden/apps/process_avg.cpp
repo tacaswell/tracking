@@ -162,7 +162,7 @@ int main(int argc, char * const argv[])
   cout<<"file that will be written to: "<<out_file<<endl;
     
   float hwhm,thresh,top_cut;
-  int feature_rad,dilation_rad, mask_rad;
+  int feature_rad,dilation_rad, mask_rad,avg_count;
   Tuple<float,2> dims;
     
   int comp_num;
@@ -210,6 +210,7 @@ int main(int argc, char * const argv[])
        iden_prams.contains_key("hwhm") &&
        iden_prams.contains_key("d_rad") &&
        iden_prams.contains_key("top_cut") &&
+       iden_prams.contains_key("avg_count") &&
        iden_prams.contains_key("mask_rad")))
     throw logic_error("process:: parameter file does not contain enough parameters");
   try
@@ -220,6 +221,7 @@ int main(int argc, char * const argv[])
     iden_prams.get_value("d_rad",dilation_rad);
     iden_prams.get_value("mask_rad",mask_rad);
     iden_prams.get_value("top_cut",top_cut);
+    iden_prams.get_value("avg_count",avg_count);
   }
   catch(logic_error & e)
   {
@@ -227,11 +229,7 @@ int main(int argc, char * const argv[])
     cerr<<e.what()<<endl;
     return -1;
   }
-
-
-  Read_config frame_prams(pram_file,"frames");
-  int avg_count = 0;
-  frame_prams.get_value("avg_count",avg_count);
+  
   
 
 
@@ -255,12 +253,28 @@ int main(int argc, char * const argv[])
 
   
   
+  // read file name from the xml file
+  Image_base * img_src;
+  if(comp_prams.contains_key("base_name"))
+  {
+    string base_name;
+    comp_prams.get_value("base_name",base_name);
+    Image_series * tmp = new Image_series();
+    tmp->init(base_name);
+    img_src = tmp;
+  }
+  else if(comp_prams.contains_key("file_name"))
+  {
+    string file_name;
+    comp_prams.get_value("file_name",file_name);
+    img_src = new Image_stack(file_name);
+  }
+  else
+    throw runtime_error("did not provide a file name in the xml file");
+  
     
 
   Iden iden(p);
-
-  Image_base * img_src;
-  img_src = new Image_stack(in_file);
   
   
   iden.set_image_src(img_src);
@@ -293,7 +307,7 @@ int main(int argc, char * const argv[])
     
 
 
-
+  
 
     
     
@@ -310,7 +324,7 @@ int main(int argc, char * const argv[])
     hdf_w.initialize_wrapper();
     hcase.output_to_wrapper(hdf_w);
     hdf_w.add_meta_data_list(iden_prams,d_types);
-    hdf_w.add_meta_data("avg_count",avg_count);
+    
     
     hdf_w.finalize_wrapper();
   }

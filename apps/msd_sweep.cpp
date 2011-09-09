@@ -26,6 +26,10 @@
 #include "wrapper_i_hdf.h"
 #include "filter.h"
 
+#include "particle_track.h"
+#include "hash_shelf.h"
+
+
 
 #include "generic_wrapper_hdf.h"
 #include "master_box_t.h"
@@ -63,7 +67,11 @@ using utilities::Generic_wrapper_hdf;
 using utilities::Filter_trivial;
 
 using tracking::Track_shelf;
+using tracking::particle;
 using tracking::hash_case;
+using tracking::Hash_shelf;
+
+
 
 using tracking::Master_box;
 using tracking::TA_msd;
@@ -107,14 +115,42 @@ int main(int argc, char * const argv[])
 
   // parse out the parameters that this application needs
   unsigned trk_len_min,trk_len_step,steps;
+  int n_min,n_max;
+  float n_range;
   
   
   Read_config app_prams(pram_file,"msd_sweep");
   try
   {
     app_prams.get_value("trk_len_min",trk_len_min);
-    app_prams.get_value("trk_len_step",trk_len_step);
-    app_prams.get_value("steps",steps);
+
+    if(app_prams.contains_key("trk_len_step") &&
+       app_prams.contains_key("steps"))
+    {
+      app_prams.get_value("trk_len_step",trk_len_step);
+      app_prams.get_value("steps",steps);
+    }
+    else
+    {
+      steps = 0;
+      trk_len_step = 0;
+    }
+    
+    // see if arguments for neighborhood size cuts are passed in
+    if(app_prams.contains_key("n_min"))
+      app_prams.get_value("n_min",n_min);
+    else
+      n_min= -1;
+    
+    if(app_prams.contains_key("n_max"))
+      app_prams.get_value("n_max",n_max);
+    else
+      n_max= -1;    
+
+    if(!(n_min < 0 && n_max < 0))
+      app_prams.get_value("n_range",n_range);
+    else
+      n_range = 0;
     
   }
   catch(logic_error & e)
@@ -123,7 +159,8 @@ int main(int argc, char * const argv[])
     cerr<<e.what()<<endl;
     return -1;
   }
-
+  
+  
   // parse out the file names
   string db_path;
   string in_file ;
@@ -187,7 +224,16 @@ int main(int argc, char * const argv[])
   // make sure that all tracks 
   tracks.remove_short_tracks(2);
   cout<<"removed short tracks"<<endl;
+
+  // if we are going to make cuts based on 
+  if(!(n_min < 0 && n_max < 0))
+  {
+    particle::set_neighborhood_range(n_range);
+    hcase.pass_fun_to_shelf(&Hash_shelf::fill_in_neighborhood);
+  }
   
+    
+    
   // find the mean displacement per frame.  I am going to assume that
   // this should not change drastically based on the cutting to
   // tracks, but that may not be a good assumption.
@@ -238,12 +284,22 @@ int main(int argc, char * const argv[])
     msd_md_store.add_element("temperature",temperature);
     msd_md_store.add_element("fin",in_file.c_str());
     msd_md_store.add_element("fout",out_file.c_str());
+    if(! ( n_min < 0 && n_max < 0 ) )
+      msd_md_store.add_element("n_range",n_range);
+    if(n_min >= 0)
+      msd_md_store.add_element("n_min",n_min);
+    if(n_max >= 0)
+      msd_md_store.add_element("n_max",n_max);
     
     // make ta_msd object
     TA_msd msd(len-1);
     // compute msd
-    tracks.compute_corrected_TA(msd);
-    
+    if(n_min < 0 && n_max < 0)
+      // if the neighborhood cut sizes are default, don't bother checking
+      tracks.compute_corrected_TA(msd);
+    else
+      // if either cut is not negative
+      tracks.compute_corrected_TA_ncuts(msd,n_min,n_max);
     // output to the file
     msd.output_to_wrapper(hdf_out,msd_md_store);
 
