@@ -85,6 +85,11 @@ private:
 
   PIX_TYPE pix_type_;
   
+  /**
+     Converts the image to 8 bit grey scale
+   */
+  void to_grey();
+  
   
 };
 

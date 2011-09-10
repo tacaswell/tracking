@@ -138,12 +138,15 @@ void Image_stack::initialize()
   // return the frame to the multipage
   src_.unlockPage(tmp_img,false);
   if(convert_to_grey_)
-  {
-    FIBITMAP* tmp = FreeImage_ConvertToGreyscale(image_);
-    FreeImage_Unload(image_);
-    image_ = tmp;
-  }
+    to_grey();
+
   
+}
+void Image_stack::to_grey()
+{
+  FIBITMAP* tmp = FreeImage_ConvertToGreyscale(image_);
+  FreeImage_Unload(image_);
+  image_ = tmp;
   
 }
 
@@ -203,11 +206,7 @@ void Image_stack::select_plane(unsigned int plane)
   src_.unlockPage(tmp_img,false);
   
   if(convert_to_grey_)
-  {
-    FIBITMAP* tmp = FreeImage_ConvertToGreyscale(image_);
-    FreeImage_Unload(image_);
-    image_ = tmp;
-  }
+    to_grey();
   
 }
 
