@@ -87,7 +87,9 @@ Wrapper_i_plu * Iden::fill_wrapper(unsigned int frames,unsigned int start)
   
   if(!img_src_)
     throw runtime_error("Iden: did not provide a image source");
-  
+  if(!parser_)
+    throw runtime_error("Iden: did not provide a meta data parser");
+
   
   Wrapper_i_plu * wrapper = NULL;
   unsigned int img_frames = img_src_->get_frame_count();
@@ -152,8 +154,8 @@ Wrapper_i_plu * Iden::fill_wrapper(unsigned int frames,unsigned int start)
     
     // extract meta data
     // this does not need to be cleaned up, that will be handled by the wrapper
-    Mm_md_parser mm_parser;
-    Md_store * md_store = img_src_->get_plane_md(mm_parser);
+    
+    Md_store * md_store = img_src_->get_plane_md(*parser_);
     int dtime;
     
     // this is commented out to deal with the lack of metadata in 
@@ -250,6 +252,9 @@ void Iden::set_image_src(utilities::Image_base * img_src)
   img_src_ = img_src;
 }
 
+void Iden::set_md_parser(utilities::MD_parser * parser)
+{
+  parser_ = parser;
 }
 
 Wrapper_i_plu * Iden::fill_wrapper_avg(unsigned int avg_count,unsigned int frames,unsigned int start)
@@ -257,6 +262,8 @@ Wrapper_i_plu * Iden::fill_wrapper_avg(unsigned int avg_count,unsigned int frame
   
   if(!img_src_)
     throw runtime_error("Iden: did not provide a image source");
+  if(!parser_)
+    throw runtime_error("Iden: did not provide a meta data parser");
 
   Wrapper_i_plu * wrapper = NULL;
   unsigned int img_frames = img_src_->get_frame_count();
@@ -333,10 +340,9 @@ Wrapper_i_plu * Iden::fill_wrapper_avg(unsigned int avg_count,unsigned int frame
 	image_in.add_data(*img_src_);
       
       
-      // assume we are using the metamorph parser for now
-      Mm_md_parser mm_parser;
+      
       // extract meta data from tiff
-      Md_store * md_store = img_src_->get_plane_md(mm_parser);
+      Md_store * md_store = img_src_->get_plane_md(*parser_);
       
       
 

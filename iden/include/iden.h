@@ -54,6 +54,7 @@ namespace utilities
 {
 class Wrapper_i_plu;
 class Image_base;
+class MD_parser;
 
 }
 
@@ -73,6 +74,7 @@ public:
   ~Iden(){};
   
   void set_image_src(utilities::Image_base * image);
+  void set_md_parser(utilities::MD_parser * parser);
   void set_params(const Params& param_in);
   
   utilities::Wrapper_i_plu * fill_wrapper(unsigned int frames=0,unsigned int start=0);
@@ -83,6 +85,12 @@ private:
      The source of the images to process
    */
   utilities::Image_base * img_src_;
+  
+
+  /**
+     Parser for metadata
+   */
+  utilities::MD_parser * parser_;
   
   /**
      Parameter object, holds the parameters for the image processing
