@@ -251,13 +251,12 @@ def do_Iden(key,conn,iden_params,TL):
              iden_params["d_rad"],
              iden_params["mask_rad"],
              1,
-             fout,
-             date.today().isoformat()
+             fout
              )
         
         conn.execute("insert into iden "+
-                     "(dset_key,comp_key,threshold,top_cut,p_rad,hwhm,d_rad,mask_rad,frames_avged,fout,date) "+
-                     "values (?,?,?,?,?,?,?,?,?,?,?);"
+                     "(dset_key,comp_key,threshold,top_cut,p_rad,hwhm,d_rad,mask_rad,frames_avged,fout) "+
+                     "values (?,?,?,?,?,?,?,?,?,?);"
                      ,p)
         conn.commit()
 
