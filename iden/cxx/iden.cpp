@@ -85,6 +85,9 @@ using namespace boost::gregorian;
 Wrapper_i_plu * Iden::fill_wrapper(unsigned int frames,unsigned int start)
 {
   
+  if(!img_src_)
+    throw runtime_error("Iden: did not provide a image source");
+  
   
   Wrapper_i_plu * wrapper = NULL;
   unsigned int img_frames = img_src_->get_frame_count();
@@ -245,13 +248,16 @@ void Iden::set_params(const Params & param_in)
 void Iden::set_image_src(utilities::Image_base * img_src)
 {
   img_src_ = img_src;
-  
+}
 
 }
 
 Wrapper_i_plu * Iden::fill_wrapper_avg(unsigned int avg_count,unsigned int frames,unsigned int start)
 {
   
+  if(!img_src_)
+    throw runtime_error("Iden: did not provide a image source");
+
   Wrapper_i_plu * wrapper = NULL;
   unsigned int img_frames = img_src_->get_frame_count();
 
