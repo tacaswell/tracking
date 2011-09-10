@@ -78,7 +78,7 @@ private:
   
   fipMultiPage src_;
   
-  FIBITMAP* image_;
+  fipImage image_;
   mutable Mm_md_parser mm_md_p_;
 
   bool convert_to_grey_;
@@ -88,7 +88,7 @@ private:
   /**
      Converts the image to 8 bit grey scale
    */
-  void to_grey();
+  bool to_grey();
   
   
 };

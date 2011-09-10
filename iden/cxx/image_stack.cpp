@@ -134,7 +134,7 @@ void Image_stack::initialize()
     break;
   }
   
-  image_ = FreeImage_Clone( tmp_img );
+  image_ = tmp_img;
   // return the frame to the multipage
   src_.unlockPage(tmp_img,false);
   if(convert_to_grey_)
@@ -142,12 +142,9 @@ void Image_stack::initialize()
 
   
 }
-void Image_stack::to_grey()
+bool Image_stack::to_grey()
 {
-  FIBITMAP* tmp = FreeImage_ConvertToGreyscale(image_);
-  FreeImage_Unload(image_);
-  image_ = tmp;
-  
+  return image_.convertToGrayscale();
 }
 
 void Image_stack::deinitialize()
@@ -155,17 +152,8 @@ void Image_stack::deinitialize()
 
   if(src_.isValid())
   {
-    if(image_)
-      FreeImage_Unload(image_);
-    
-      
-    
-    
-    int count = 0;
-    src_.getLockedPageNumbers(NULL,&count);
     
     bool closed;
-    
     if(    src_.isValid())
       closed =  src_.close(0);
   
@@ -194,14 +182,12 @@ void Image_stack::select_plane(unsigned int plane)
   // if we are on our current plane, don't bother to change anything
   if(plane == cur_plane_)
     return;
-  if(image_)
-    FreeImage_Unload(image_);
   
   // extract the plane we want
   fipImage tmp_img;
   tmp_img = src_.lockPage(cur_plane_);
   // make a clone of the plane
-  image_ = FreeImage_Clone(tmp_img);
+  image_ = tmp_img;
   // return the frame to the multipage
   src_.unlockPage(tmp_img,false);
   
@@ -213,7 +199,7 @@ void Image_stack::select_plane(unsigned int plane)
 const void * Image_stack::get_plane_pixels() const
 {
   
-  return (void *) FreeImage_GetBits(image_);
+  return (void *) image_.accessPixels();
   
 }
 
@@ -233,8 +219,8 @@ Md_store * Image_stack::get_plane_md()const
 utilities::Tuple<unsigned int,2> Image_stack::get_plane_dims()const
 {
   Tuple<unsigned int,2> tmp;
-  int rows = FreeImage_GetHeight(image_);
-  int cols = FreeImage_GetWidth(image_);;
+  int rows = image_.getHeight();
+  int cols = image_.getWidth();
   tmp[1] = rows;
   tmp[0] = cols;
   return tmp;
@@ -243,7 +229,7 @@ utilities::Tuple<unsigned int,2> Image_stack::get_plane_dims()const
 WORD Image_stack::get_scan_step() const
 {
   
-  return FreeImage_GetPitch(image_);
+  return image_.getScanWidth();
 }
 
 
