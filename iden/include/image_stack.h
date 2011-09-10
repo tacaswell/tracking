@@ -78,7 +78,7 @@ private:
   
   fipMultiPage src_;
   
-  fipImage image_;
+  FIBITMAP* image_;
   mutable Mm_md_parser mm_md_p_;
 
   bool convert_to_grey_;

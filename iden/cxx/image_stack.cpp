@@ -80,12 +80,15 @@ void Image_stack::initialize()
   
     
   cur_plane_ = 0;
+  // extract the plane we want
+  fipImage tmp_img;
+  tmp_img = src_.lockPage(cur_plane_);
   
-  image_ = src_.lockPage(0);
-  if(!image_.isValid())
+  
+  if(!tmp_img.isValid())
     throw runtime_error("Image_stack::Image_stack the plane is not valid");
   
-  FREE_IMAGE_TYPE img_type = image_.getImageType();
+  FREE_IMAGE_TYPE img_type = tmp_img.getImageType();
   
   
   // check image type
@@ -96,18 +99,10 @@ void Image_stack::initialize()
     pix_type_ = U16;
     break;
   case FIT_BITMAP:	// standard image			: 1-, 4-, 8-, 16-, 24-, 32-bit  
-     // if the image is a bitmap and is not a grey scale, set flag to
+    // if the image is a bitmap and is not a grey scale, set flag to
     //  convert the image to a grey scale image when loading
-    if(!image_.isGrayscale())
-    {
-      bool suc = true;
+    if(!tmp_img.isGrayscale())
       convert_to_grey_ = true;
-      suc = image_.convertToGrayscale();
-      if(!suc)
-	throw runtime_error("Image_stack::grey conversion failed");
-    }
-    
-    
     pix_type_ = U8;
     break;
   case FIT_INT16:	// array of short			: signed 16-bit
@@ -139,7 +134,16 @@ void Image_stack::initialize()
     break;
   }
   
-
+  image_ = FreeImage_Clone( tmp_img );
+  // return the frame to the multipage
+  src_.unlockPage(tmp_img,false);
+  if(convert_to_grey_)
+  {
+    FIBITMAP* tmp = FreeImage_ConvertToGreyscale(image_);
+    FreeImage_Unload(image_);
+    image_ = tmp;
+  }
+  
   
 }
 
@@ -148,8 +152,22 @@ void Image_stack::deinitialize()
 
   if(src_.isValid())
   {
-    src_.unlockPage(image_,false);
-    bool closed =  src_.close(0);
+    if(image_)
+      FreeImage_Unload(image_);
+    
+      
+    
+    
+    int count = 0;
+    src_.getLockedPageNumbers(NULL,&count);
+    
+    bool closed;
+    
+    if(    src_.isValid())
+      closed =  src_.close(0);
+  
+    if(!closed)
+      cout<<"failed to properly close"<<endl;
     
   }
   
@@ -162,47 +180,42 @@ Image_stack::~Image_stack()
   deinitialize();
   
   
-  FreeImage_DeInitialise();
+  
+  //FreeImage_DeInitialise();
 }
 
 
 void Image_stack::select_plane(unsigned int plane)
 {
-
+  
+  // if we are on our current plane, don't bother to change anything
   if(plane == cur_plane_)
     return;
+  if(image_)
+    FreeImage_Unload(image_);
   
-    
-  src_.unlockPage(image_,false);
-
-  // add some sanity checks
-  cur_plane_ = plane;
-    
-  image_ = src_.lockPage(cur_plane_);
-  
-  
-  if(!image_.isValid())
-    throw runtime_error("Image_stack::select_plane the plane is not valid");
-  
-  
+  // extract the plane we want
+  fipImage tmp_img;
+  tmp_img = src_.lockPage(cur_plane_);
+  // make a clone of the plane
+  image_ = FreeImage_Clone(tmp_img);
+  // return the frame to the multipage
+  src_.unlockPage(tmp_img,false);
   
   if(convert_to_grey_)
   {
-    bool suc = true;   
-    suc = image_.convertToGrayscale();
-  
-    if(!suc)
-      throw runtime_error("Image_stack::grey conversion failed");
+    FIBITMAP* tmp = FreeImage_ConvertToGreyscale(image_);
+    FreeImage_Unload(image_);
+    image_ = tmp;
   }
-  
-  if(!image_.isValid())
-    throw runtime_error("Image_stack::select_plane the plane is not valid");
   
 }
 
 const void * Image_stack::get_plane_pixels() const
 {
-  return (void *) image_.accessPixels();
+  
+  return (void *) FreeImage_GetBits(image_);
+  
 }
 
 Md_store * Image_stack::get_plane_md()const 
@@ -221,8 +234,8 @@ Md_store * Image_stack::get_plane_md()const
 utilities::Tuple<unsigned int,2> Image_stack::get_plane_dims()const
 {
   Tuple<unsigned int,2> tmp;
-  int rows = image_.getHeight();
-  int cols = image_.getWidth();
+  int rows = FreeImage_GetHeight(image_);
+  int cols = FreeImage_GetWidth(image_);;
   tmp[1] = rows;
   tmp[0] = cols;
   return tmp;
@@ -230,7 +243,8 @@ utilities::Tuple<unsigned int,2> Image_stack::get_plane_dims()const
 
 WORD Image_stack::get_scan_step() const
 {
-  return image_.getScanWidth();
+  
+  return FreeImage_GetPitch(image_);
 }
 
 
