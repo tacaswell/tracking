@@ -182,6 +182,8 @@ void Image_stack::select_plane(unsigned int plane)
   // if we are on our current plane, don't bother to change anything
   if(plane == cur_plane_)
     return;
+  image_.clear();
+  cur_plane_ = plane;
   
   // extract the plane we want
   fipImage tmp_img;
