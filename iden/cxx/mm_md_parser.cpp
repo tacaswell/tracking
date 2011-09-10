@@ -121,7 +121,7 @@ std::string de_mangle_mmdate(const std::string & in)
 
 Mm_md_parser::Mm_md_parser()
 {
-    try
+  try
   {
     XMLPlatformUtils::Initialize();  // Initialize Xerces infrastructure
   }

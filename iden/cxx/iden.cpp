@@ -56,7 +56,7 @@
 
 #include "image_base.h"
 
-
+#include "mm_md_parser.h"
 #include "md_store.h"
 using std::string;
 
@@ -77,6 +77,7 @@ using utilities::Tuple;
 using std::runtime_error;
 
 using utilities::Md_store;
+using utilities::Mm_md_parser;
 
 using namespace boost::posix_time;
 using namespace boost::gregorian;
@@ -148,7 +149,8 @@ Wrapper_i_plu * Iden::fill_wrapper(unsigned int frames,unsigned int start)
     
     // extract meta data
     // this does not need to be cleaned up, that will be handled by the wrapper
-    Md_store * md_store = img_src_->get_plane_md();
+    Mm_md_parser mm_parser;
+    Md_store * md_store = img_src_->get_plane_md(mm_parser);
     int dtime;
     
     // this is commented out to deal with the lack of metadata in 
@@ -324,8 +326,13 @@ Wrapper_i_plu * Iden::fill_wrapper_avg(unsigned int avg_count,unsigned int frame
       else
 	image_in.add_data(*img_src_);
       
+      
+      // assume we are using the metamorph parser for now
+      Mm_md_parser mm_parser;
       // extract meta data from tiff
-      Md_store * md_store = img_src_->get_plane_md();
+      Md_store * md_store = img_src_->get_plane_md(mm_parser);
+      
+      
 
         
       // deal with time

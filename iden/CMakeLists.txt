@@ -14,6 +14,7 @@ SET(COMMON_IDEN_SRC
 
 SET(MD_PARSE_SRC
   ${IDEN_SRC_PATH}/mm_md_parser
+  ${IDEN_SRC_PATH}/md_parser_dummy
   ${COMMON_SRC_PATH}/md_store
   ${COMMON_SRC_PATH}/enum_utils
   )

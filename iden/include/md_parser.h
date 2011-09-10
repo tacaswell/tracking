@@ -1,4 +1,4 @@
-//Copyright 2010 Thomas A Caswell
+//Copyright 2011 Thomas A Caswell
 //tcaswell@uchicago.edu
 //http://jfi.uchicago.edu/~tcaswell
 //
@@ -36,93 +36,38 @@
 //for FreeImage Public License, the licensors of
 //this Program grant you additional permission to convey the resulting
 //work.
-#ifndef IMAGE_BASE
-#define IMAGE_BASE
 
-#include <string>
-#include "FreeImagePlus.h"
+
+
+#ifndef MD_PARSER
+#define MD_PARSER
+class fipImage;
+
+
+
+
 
 namespace utilities
 {
-template<class T,int length>
-class Tuple;
-class MD_parser;
-
 class Md_store;
+
+
 /**
-   Enumeration of pixel sizes
-*/
-typedef enum PIX_TYPE
-  {
-    U16=0,
-    U8,
-    S16,
-    F32,
-    ERROR
-  } PIX_TYPE;
-  
-/**
-   This is an ABC for different file layouts, ie to make dealing with
-   multi-part files and the spew that comes out of stream to disk easy
-   to change between.  Th
+   A base class for parsers that extract meta data from image files
  */
-class Image_base
+class  MD_parser
 {
 public:
-  
-  /**
-     Empty constructor
-   */
-  Image_base()  {  };
-  /**
-     empty destructor
-   */
-  virtual ~ Image_base(){};
-  
-  /**
-     Set the plane w
-   */
-  virtual void  select_plane(unsigned int plane) = 0;
-  
-  /**
-     Returns the data of the current plane.  This pointer is managed
-     internally and should not be deleted.  This pointer is only good
-     until the object is closed or until the plane is changed, which
-     ever comes first.  To determine how to cast this pointer call
-     get_pixel_type.
-   */
-  virtual const void * get_plane_pixels() const = 0;
-
-  
-
-  /**
-     Returns the current plane's meta data.  Returns a pointer that
-    needs to be cleaned up.  
-   */
-  virtual Md_store * get_plane_md(const MD_parser & parser) const = 0;
-  
-  /**
-     Returns the plane dimensions
-   */
-  virtual Tuple<unsigned int,2> get_plane_dims() const = 0;
-  
-  /**
-     returns the plane scan_step
-   */
-  virtual WORD get_scan_step() const = 0;
-  
-  /**
-     Returns the number of planes in the image
-   */
-  virtual int get_frame_count() const = 0;
-  
-  /**
-     Returns the size of the image pixels
-   */
-  virtual PIX_TYPE get_pixel_type() const = 0;
+  MD_parser(){};
+  virtual  ~MD_parser(){};
+  virtual Md_store * parse_md(const fipImage & img_in) const=0 ;
+    
   
 };
 
-  
+
+
 }
+
+
 #endif

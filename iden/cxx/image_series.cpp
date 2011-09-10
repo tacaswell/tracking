@@ -50,7 +50,7 @@
 
 #include "tuple.h"
 
-#include "mm_md_parser.h"
+#include "md_parser.h"
 #include "md_store.h"
 
 
@@ -210,9 +210,9 @@ const void * Image_series::get_plane_pixels() const
   return (void *) image_.accessPixels();
 }
 
-Md_store * Image_series::get_plane_md() const
+Md_store * Image_series::get_plane_md(const MD_parser & parser) const
 {
-  return mm_md_p_.parse_md(image_);
+  return parser.parse_md(image_);
 }
 
 utilities::Tuple<unsigned int,2> Image_series::get_plane_dims() const

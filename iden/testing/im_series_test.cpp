@@ -18,13 +18,17 @@
 #include<string>
 #include<iostream>
 #include "image_series.h"
+#include "mm_md_parser.h"
+#include "md_parser_dummy.h"
+
 #include "md_store.h"
 #include "image_stack.h"
 
 using std::string;
 using utilities::Image_stack;
 using utilities::Image_series;
-
+using utilities::Mm_md_parser;
+using utilities::MD_parser_dummy;
 using utilities::Md_store;
 using std::endl;
 using std::cout;
@@ -36,7 +40,7 @@ int main()
 {
  
   cout<<"trying series code"<<endl;
-  
+  Mm_md_parser mm_parser;
   Image_series im_sr;
   im_sr.init(base_name);
   cout<<"plane count: "<<im_sr.get_frame_count()<<endl;
@@ -44,7 +48,7 @@ int main()
   for( int j = 0; j<2;++j)
   {
     im_sr.select_plane(1+j*100);
-    Md_store * tmp_store = im_sr.get_plane_md();
+    Md_store * tmp_store = im_sr.get_plane_md(mm_parser);
     tmp_store->print();
     delete tmp_store;
   }
@@ -61,7 +65,7 @@ int main()
 
     im_sk.select_plane(j);
     cout<<"selected frame "<<j<<endl;
-    Md_store * tmp_store = im_sk.get_plane_md();
+    Md_store * tmp_store = im_sk.get_plane_md(mm_parser);
     tmp_store->print();
     delete tmp_store;
   }
@@ -72,7 +76,7 @@ int main()
   
 
   {
-    
+    MD_parser_dummy dummy_parser;
   cout<<"trying stack code"<<endl;
   Image_stack im_sk(fname2);
   im_sk.initialize();
@@ -84,7 +88,7 @@ int main()
 
     im_sk.select_plane(j);
     cout<<"selected frame "<<j<<endl;
-    Md_store * tmp_store = im_sk.get_plane_md();
+    Md_store * tmp_store = im_sk.get_plane_md(dummy_parser);
     tmp_store->print();
     delete tmp_store;
   }

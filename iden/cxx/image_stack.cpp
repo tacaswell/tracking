@@ -45,7 +45,7 @@
 
 #include "tuple.h"
 
-#include "mm_md_parser.h"
+#include "md_parser.h"
 #include "md_store.h"
 
 using utilities::Image_stack;
@@ -203,15 +203,15 @@ const void * Image_stack::get_plane_pixels() const
   
 }
 
-Md_store * Image_stack::get_plane_md()const 
+Md_store * Image_stack::get_plane_md(const MD_parser & parser)const 
 {
   // returns an empty md_store with out calling to parser at all
   
   // the right way to deal with this is to have a pointer to a parser
   // passed in at construction
 
-  //return mm_md_p_.parse_md(image_);
-  return new Md_store();
+  return parser.parse_md(image_);
+  
   
 
 }
