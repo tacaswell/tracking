@@ -186,10 +186,10 @@ def do_Iden(key,conn,iden_params,TL):
     ##     return
 
     
-    comp_num = conn.execute("select max(comp_key) from comps;").fetchone()[0]
-    if comp_num is None:
-        comp_num = 0
-    comp_num+=1
+    comp_key = conn.execute("select max(comp_key) from comps;").fetchone()[0]
+    if comp_key is None:
+        comp_key = 0
+    comp_key+=1
     
     prams = xml_data()
     prams.add_stanza("comp")
@@ -259,8 +259,8 @@ def do_Iden(key,conn,iden_params,TL):
                      "values (?,?,?,?,?,?,?,?,?,?);"
                      ,p)
         conn.commit()
-
-        tlp.set_plane_temp(comp_key,conn,TL)
+        if(TL is not None):
+            tlp.set_plane_temp(comp_key,conn,TL)
 
 
 def do_Iden_avg(key,conn,frames,iden_params,TL):
