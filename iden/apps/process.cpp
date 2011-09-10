@@ -275,7 +275,7 @@ int main(int argc, char * const argv[])
 
     
     
-  Wrapper_i_plu *  wp = iden.fill_wrapper(10,0);
+  Wrapper_i_plu *  wp = iden.fill_wrapper(0,0);
   cout<<"number of entries in wrapper: "<<wp->get_num_entries()<<endl;
 
 
@@ -334,7 +334,7 @@ int main(int argc, char * const argv[])
     std::cerr<<"caught on std error: "<<endl
 	     <<e.what()<<endl;
     
-
+    error_flg = true;
   }
   catch(...)
   {
