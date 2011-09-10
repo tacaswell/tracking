@@ -30,6 +30,7 @@ using std::endl;
 using std::cout;
 
 static string fname = "/home/tcaswell/colloids/2010/data/polyNIPAM_batch_12/20100524/4/exp2/28-8_warming_slow.tif";
+static string fname2 = "/home/tcaswell/william_colloids/data/2010_05_24_coni1_2_cono1_4pass.tif";
 static string base_name = "/home/tcaswell/colloids/2010/data/polyNIPAM_batch_12/2010-10-03/ssd_test/t3/test3_";
 int main()
 {
@@ -47,9 +48,12 @@ int main()
     tmp_store->print();
     delete tmp_store;
   }
-  
+  {
+    
   cout<<"trying stack code"<<endl;
   Image_stack im_sk(fname);
+  im_sk.initialize();
+  
   cout<<"object built"<<endl;
   cout<<"plane count: "<<im_sk.get_frame_count()<<endl;
   for( int j = 1; j<2;++j)
@@ -63,8 +67,33 @@ int main()
   }
   
   
+  }
+  cout<<"============="<<endl;
+  
 
+  {
+    
+  cout<<"trying stack code"<<endl;
+  Image_stack im_sk(fname2);
+  im_sk.initialize();
+  
+  cout<<"object built"<<endl;
+  cout<<"plane count: "<<im_sk.get_frame_count()<<endl;
+  for( int j = 1; j<7;++j)
+  {
 
+    im_sk.select_plane(j);
+    cout<<"selected frame "<<j<<endl;
+    Md_store * tmp_store = im_sk.get_plane_md();
+    tmp_store->print();
+    delete tmp_store;
+  }
+  
+  
+  }
+  
+  cout<<"all Done"<<endl;
+  
   
 
     
