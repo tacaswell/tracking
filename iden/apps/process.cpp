@@ -57,6 +57,8 @@
 #include "image_stack.h"
 #include "image_series.h"
 
+#include "mm_md_parser.h"
+#include "md_parser_dummy.h"
 #include "H5Cpp.h"
 //#include "gnuplot_i.hpp" //Gnuplot class handles POSIX-Pipe-communikation with Gnuplot
 
@@ -89,6 +91,13 @@ using utilities::V_TYPE;
 using utilities::Image_stack;
 using utilities::Image_series;
 using utilities::Image_base;
+
+using utilities::MD_parser;
+using utilities::MD_parser_dummy;
+using utilities::Mm_md_parser;
+using utilities::MD_TYPE;
+using utilities::MM;
+using utilities::NONE;
 
 using tracking::Master_box;
 using tracking::particle;
@@ -221,9 +230,47 @@ int main(int argc, char * const argv[])
   else
     throw runtime_error("did not provide a file name in the xml file");
   
+  
+  // extract which parser to use
+  MD_TYPE md_type;
+  if(comp_prams.contains_key("md_format"))
+  {
+    unsigned int val;
+    comp_prams.get_value("md_format",val);
+    switch(val)
+    {
+    case 0:
+      md_type = NONE;
+      break;
+    case 1:
+      md_type = MM;
+      break;
+    default:
+      throw runtime_error("did not provide a valid md format");
+      break;
+    }
+  }
+  else
+  {
+    md_type = MM;
+  }
+  
+  // make the parser object
+  MD_parser * md_parser = NULL;
+  switch(md_type)
+  {
+  case MM:
+    md_parser = new Mm_md_parser();
+    break;
+  case NONE:
+    md_parser = new MD_parser_dummy();
+    break;
+  }
+  
   Iden iden(p);
   iden.set_image_src(img_src);
-
+  iden.set_md_parser(md_parser);
+  
   
 
     
@@ -304,6 +351,9 @@ int main(int argc, char * const argv[])
   
   delete img_src;
   img_src = NULL;
+  
+  delete md_parser;
+  md_parser = NULL;
   
 
   if(error_flg)

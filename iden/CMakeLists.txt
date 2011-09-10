@@ -8,9 +8,7 @@ SET(COMMON_IDEN_SRC
   ${IDEN_SRC_PATH}/params1.cpp
   ${IDEN_SRC_PATH}/iden.cpp
   ${IDEN_SRC_PATH}/wrapper_i_plu.cpp
-  ${IDEN_SRC_PATH}/mm_md_parser
-  ${COMMON_SRC_PATH}/md_store
-)
+  )
 
 SET(MD_PARSE_SRC
   ${IDEN_SRC_PATH}/mm_md_parser

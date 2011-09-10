@@ -50,6 +50,14 @@ class fipImage;
 namespace utilities
 {
 class Md_store;
+/**
+   Enumeration of Meta data format types
+ */
+typedef enum MD_TYPE
+  {
+    NONE=0,
+    MM
+  } MD_TYPE;
 
 
 /**
