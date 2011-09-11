@@ -172,6 +172,7 @@ def do_Iden(key,conn,iden_params,TL):
     else:
         print "unknown format type"
         return
+
     
     
     if len(res) >0:
@@ -661,7 +662,7 @@ def do_track_stat(comp_key,conn,pram_i, pram_f, pram_s = None, rel = True,):
 
 
 
-def do_tracking(comp_key,conn,pram_i, pram_f, pram_s = None, rel = True,):
+def do_tracking(comp_key,conn,pram_i, pram_f, pram_s = None, rel = True,db_path = None):
     prog_name = "tracking"
     required_pram_i = []
     required_pram_f = ['search_range']
@@ -685,7 +686,8 @@ def do_tracking(comp_key,conn,pram_i, pram_f, pram_s = None, rel = True,):
                          required_pram_i,pram_i,
                          required_pram_f,pram_f,
                          required_pram_s,pram_s,
-                         opt_f_pram=opt_pram_f)
+                         opt_f_pram=opt_pram_f
+                         db_path = db_path)
     except KeyError, ke:
         print "Parameter: " ,ke,' not found'
 
