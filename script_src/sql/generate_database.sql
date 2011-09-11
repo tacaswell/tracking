@@ -5,7 +5,9 @@ CREATE TABLE dsets (
         ddate TEXT NOT NULL DEFAULT CURRENT_DATE,
         sname TEXT NOT NULL,
 	ftype INTEGER NOT NULL,
-	FOREIGN KEY(ftype) REFERENCES format_types(ftype_key)
+	mtype INTEGER NOT NULL,
+	FOREIGN KEY(ftype) REFERENCES format_types(ftype_key),
+	FOREIGN KEY(mtype) REFERENCES md_types(mtype_key)
 );
 
 CREATE TABLE func_names(
@@ -25,6 +27,11 @@ CREATE TABLE comps(
 CREATE TABLE format_types(
        ftype_key  INTEGER PRIMARY KEY,
        ftype_name TEXT NOT NULL UNIQUE
+);
+
+CREATE TABLE md_types(
+       mtype_key  INTEGER PRIMARY KEY,
+       mtype_name TEXT NOT NULL UNIQUE
 );
 
 
@@ -95,6 +102,7 @@ CREATE TABLE tracking (
        FOREIGN KEY(comp_key) REFERENCES comps(comp_key),
        FOREIGN KEY(iden_key) REFERENCES iden(comp_key)
 );
+
 
 CREATE TABLE msd_old (
        comp_key INTEGER PRIMARY KEY,
@@ -209,3 +217,25 @@ CREATE TABLE data_collection_map (
        FOREIGN KEY(dset_key) REFERENCES dsets(dset_key),
        FOREIGN KEY(coll_key) REFERENCES data_collection(coll_key)
 );
+
+-- fill in fixed table values
+
+-- format names
+insert into format_types (ftype_key,ftype_name) values (1,'stack');
+insert into format_types (ftype_key,ftype_name) values (2,'series');
+-- md formates
+insert into md_types (mtype_key,mtype_name) values (0,'None');
+insert into md_types (mtype_key,mtype_name) values (1,'Meta Morph');
+
+-- function names
+insert into func_names (func_key,func_name) values  (1, 'Iden');
+insert into func_names (func_key,func_name) values  (2, 'Iden_avg');
+insert into func_names (func_key,func_name) values  (3, 'gofr');
+insert into func_names (func_key,func_name) values  (4, 'gofr3D');
+insert into func_names (func_key,func_name) values  (5, 'gofr_by_plane');
+insert into func_names (func_key,func_name) values  (6, 'link3D');
+insert into func_names (func_key,func_name) values  (7, 'msd');
+insert into func_names (func_key,func_name) values  (8, 'phi6');
+insert into func_names (func_key,func_name) values  (9, 'track_stats');
+insert into func_names (func_key,func_name) values  (10, 'tracking');
+insert into func_names (func_key,func_name) values  (11, 'vanHove');
