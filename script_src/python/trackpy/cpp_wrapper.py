@@ -155,7 +155,7 @@ def do_Iden(key,conn,iden_params,TL):
     #prog_path = "/home/tcaswell/misc_builds/iden_rel/iden/apps/"
     prog_path = "/home/tcaswell/misc_builds/demo/iden/iden/apps/"
     res = conn.execute("select fout,comp_key from iden where dset_key=?;",(key,)).fetchall()
-    (fin,ftype) = conn.execute("select fname,ftype from dsets where dset_key = ?;",(key,)).fetchone()
+    (fin,ftype,mtype) = conn.execute("select fname,ftype,mtype from dsets where dset_key = ?;",(key,)).fetchone()
 
     
     if os.path.isfile(fin.replace('.tif','-file002.tif')):
@@ -195,6 +195,7 @@ def do_Iden(key,conn,iden_params,TL):
     prams.add_stanza("comp")
     prams.add_pram("number","int",comp_key)
     prams.add_pram("dset_key","int",key)
+    prams.add_pram("md_format","int",mtype)
     prams.add_pram(format_string,"string",fin)
     #prams.merge_File(fpram,"iden")
     
