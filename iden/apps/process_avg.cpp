@@ -397,6 +397,13 @@ int main(int argc, char * const argv[])
   // clean up wrapper
   delete wp;
   wp = NULL;
+
+  
+  delete img_src;
+  img_src = NULL;
+  
+  delete md_parser;
+  md_parser = NULL;
   
 
   if(error_flg)
