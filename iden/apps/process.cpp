@@ -346,7 +346,7 @@ int main(int argc, char * const argv[])
   delete wp;
   wp = NULL;
   
-  ((Image_stack*)img_src)->deinitialize();
+  
   
   
   delete img_src;
