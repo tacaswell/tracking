@@ -27,7 +27,7 @@ from .utils.xml_data import xml_data
 from datetime import date
 import temp_log_parse as tlp
 
-_rel_path = "/home/tcaswell/misc_builds/demo/general/apps/"
+_rel_path = "/home/tcaswell/misc_builds/basic_rel/apps/"
 _dbg_path = "/home/tcaswell/misc_builds/basic_dbg/apps/"
 
 
@@ -152,8 +152,7 @@ def do_link3D(comp_key,conn,pram, fout_name):
 def do_Iden(key,conn,iden_params,TL):
     # see if the file has already been processed
     prog_name = "Iden"
-    #prog_path = "/home/tcaswell/misc_builds/iden_rel/iden/apps/"
-    prog_path = "/home/tcaswell/misc_builds/demo/iden/iden/apps/"
+    prog_path = "/home/tcaswell/misc_builds/iden_rel/iden/apps/"
     res = conn.execute("select fout,comp_key from iden where dset_key=?;",(key,)).fetchall()
     (fin,ftype,mtype) = conn.execute("select fname,ftype,mtype from dsets where dset_key = ?;",(key,)).fetchone()
 
