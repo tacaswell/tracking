@@ -22,8 +22,8 @@ FIND_PATH(SQLITE3_ROOT_DIR include/sqlite3.h
 
 # try to find the header
 FIND_PATH(SQLITE3_INCLUDE_DIR sqlite3.h
-  ${SQLITE3_ROOT_DIR}/include
   HINTS ENV  SQLITE3_ROOT
+  ${SQLITE3_ROOT_DIR}/include
   /usr/include 
   /usr/local/include
 )
@@ -38,6 +38,8 @@ FIND_LIBRARY(SQLITE3_LIBRARY
      /usr/local/lib
    DOC "The name of the sqlite library"
 )
+
+
 IF (SQLITE3_ROOT_DIR)
   IF (SQLITE3_INCLUDE_DIR AND SQLITE3_LIBRARY)
     SET (SQLITE3_FOUND TRUE)
@@ -55,7 +57,7 @@ IF (SQLITE3_FOUND)
   ENDIF (NOT SQLITE3_FIND_QUIETLY)
 ELSE (SQLITE3_FOUND)
   IF (SQLITE3_FIND_REQUIRED)
-    MESSAGE(FATAL_ERROR "Could not find Sqlite")
+    MESSAGE(FATAL_ERROR "Could not find sqlite")
   ENDIF (SQLITE3_FIND_REQUIRED)
 ENDIF (SQLITE3_FOUND)
 
