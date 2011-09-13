@@ -71,7 +71,6 @@ private:
   
   bool image_open_;
   
-  fipMultiPage src_;
   fipImage image_;
   
  
@@ -79,6 +78,15 @@ private:
   
   unsigned int planecount_;
 
+  
+  PIX_TYPE pix_type_;
+  
+  
+  /**
+     Converts the image to 8 bit grey scale
+   */
+  bool to_grey();
+  
 
   
 };

@@ -59,13 +59,22 @@ using utilities::Image_series;
 using utilities::Md_store;
 using utilities::format_name;
 
+using utilities::PIX_TYPE;
+using std::invalid_argument;
+
 using std::endl;
 using std::cout;
 using std::runtime_error;
 using std::string;
 
 
-Image_series::Image_series():padding_(0)
+Image_series::Image_series():
+  cur_plane_(-1),
+  image_open_(false),
+  padding_(0),
+  planecount_(0),
+  pix_type_(ERROR)
+  
 {}
 
 const char * selector_name = NULL;
@@ -143,20 +152,8 @@ bool Image_series::init(const string & base_name )
   
   
   
+  select_plane(0);
   
-  // make sure that they are there
-  // eventually 
-  
-  // load multi page
-  FreeImage_Initialise();
-  BOOL bMemoryCache = TRUE;
-  src_ = fipMultiPage(bMemoryCache);
-  // Open src file (read-only, use memory cache)
-  src_.open(format_name(dirname_,basename_,padding_,1).c_str(), FALSE, TRUE);
-
-  image_ = src_.lockPage(0);
-
-
 
   return true;
   
@@ -165,11 +162,6 @@ bool Image_series::init(const string & base_name )
 void Image_series::select_plane(unsigned int plane)
 {
 
-
-
-  // clean up old file
-  src_.unlockPage(image_,false);
-  src_.close(0);
   
   // add some sanity checks
   if(!(plane < planecount_))
@@ -177,32 +169,68 @@ void Image_series::select_plane(unsigned int plane)
   
   cur_plane_ = plane;
 
+  // nuke the old data
+  image_.clear();
+  
   // to deal with the fact that the naming from mm starts at 1, not 0
-  plane = cur_plane_ + 1;
-  
-  // open the next file
-  BOOL bMemoryCache = TRUE;
-  src_ = fipMultiPage(bMemoryCache);
-  // Open src file (read-only, use memory cache)
-  
-  bool opened = src_.open(format_name(dirname_,basename_,padding_,plane).c_str(), FALSE, TRUE); 
-  if(!opened)
-    throw(runtime_error("failed to open file: " + format_name(dirname_,basename_,padding_,plane)));
+  int read_plane = cur_plane_ + 1;
+ 
+  // open new file
+  bool suc = false;
+  suc = image_.load(format_name(dirname_,basename_,padding_,read_plane).c_str());
+  if(!suc)
+    throw(runtime_error("failed to open file: " + format_name(dirname_,basename_,padding_,read_plane)));
   
   
+  FREE_IMAGE_TYPE img_type = image_.getImageType();
   
   
-  image_ = src_.lockPage(0);
-  bool isvalid = image_.isValid();
-  if(!isvalid)
+  // check image type
+  switch(img_type)
   {
-    throw(runtime_error("could not open the image plane of " 
-			+ format_name(dirname_,basename_,padding_,plane)));
+  case FIT_UINT16:	// array of unsigned short	: unsigned 16-bit
+    // trust the id, assume in really 16u, go on
+    pix_type_ = U16;
+    break;
+  case FIT_BITMAP:	// standard image			: 1-, 4-, 8-, 16-, 24-, 32-bit  
+    // if the image is a bitmap and is not a grey scale, set flag to
+    //  convert the image to a grey scale image when loading
+    if(!image_.isGrayscale())
+      to_grey();
     
-			
+    pix_type_ = U8;
+    break;
+  case FIT_INT16:	// array of short			: signed 16-bit
+    // trust the id, assume in really 16s, go on
+    pix_type_ = S16;
+    break;
+  case FIT_FLOAT:	// array of float			: 32-bit IEEE floating point
+    // trust the id, assume in really 32f, go on
+    pix_type_ = F32;
+    break;
+  case FIT_RGB16:	// 48-bit RGB image			: 3 x 16-bit
+  case FIT_RGBF:	// 96-bit RGB float image	: 3 x 32-bit IEEE floating point
+    throw invalid_argument("This program can't deal with colors");
+    break;
+  case FIT_UNKNOWN:	// unknown type
+    throw runtime_error("Free image can not sort out what kind of image this is!");
+    break;
+  case FIT_COMPLEX:	// array of FICOMPLEX		: 2 x 64-bit IEEE floating point
+    throw invalid_argument("This program can't deal with complex images");
+    break;
+  case FIT_RGBA16:	// 64-bit RGBA image		: 4 x 16-bit
+  case FIT_RGBAF:	// 128-bit RGBA float image	: 4 x 32-bit IEEE floating point
+    throw invalid_argument("This program can't deal with an alpha channel or colors");
+    break;
+  case FIT_UINT32:	// array of unsigned long	: unsigned 32-bit
+  case FIT_INT32:	// array of long			: signed 32-bit
+  case FIT_DOUBLE:	// array of double			: 64-bit IEEE floating point
+    throw invalid_argument("This program can't deal with this type of image, excessive bit depth");
+    break;
   }
   
-
+  
+  
 }
 
 const void * Image_series::get_plane_pixels() const
@@ -239,9 +267,7 @@ int Image_series::get_frame_count() const
 
 Image_series::~Image_series()
 {
-  
-  src_.unlockPage(image_,false);
-  src_.close(0);
+  image_.clear();
   
   FreeImage_DeInitialise();
 
@@ -273,4 +299,9 @@ utilities::PIX_TYPE Image_series::get_pixel_type() const
     return utilities::U8;
   return utilities::ERROR;
   
+}
+
+bool Image_series::to_grey()
+{
+  return image_.convertToGrayscale();
 }
