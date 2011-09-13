@@ -113,7 +113,6 @@ Wrapper_i_plu * Iden::fill_wrapper(unsigned int frames,unsigned int start)
     
     throw runtime_error("Iden: asking for more frames than the stack has");
   }
-  cout<<"start plane"<<start<<endl;
   
   img_src_->select_plane(start);
   
@@ -156,25 +155,29 @@ Wrapper_i_plu * Iden::fill_wrapper(unsigned int frames,unsigned int start)
     // this does not need to be cleaned up, that will be handled by the wrapper
     
     Md_store * md_store = img_src_->get_plane_md(*parser_);
-    int dtime;
+    if(md_store->contains_key("acquisition-time-local"))
+    {
+      
+      int dtime;
     
-    // this is commented out to deal with the lack of metadata in 
-
-    // deal with time
-    // if(j == start)
-    // {
-    //   prev_time = time_from_string(md_store->get_value("acquisition-time-local",time_str));
-    //   dtime = 0;
-    // }
     
-    // else
-    // {
-    //   cur_time  = time_from_string(md_store->get_value("acquisition-time-local",time_str));
-    //   dtime = (cur_time-prev_time).total_milliseconds();
-    //   prev_time = cur_time;
-    // }
-    // md_store->add_element("dtime",dtime);
-    
+	
+      // deal with time
+      if(j == start)
+      {
+	prev_time = time_from_string(md_store->get_value("acquisition-time-local",time_str));
+	dtime = 0;
+      }
+	
+      else
+      {
+	cur_time  = time_from_string(md_store->get_value("acquisition-time-local",time_str));
+	dtime = (cur_time-prev_time).total_milliseconds();
+	prev_time = cur_time;
+      }
+      md_store->add_element("dtime",dtime);
+    }
+      
     
     
 
@@ -315,7 +318,7 @@ Wrapper_i_plu * Iden::fill_wrapper_avg(unsigned int avg_count,unsigned int frame
   string exp_unit,cal_units;
   bool cal_state = false;
   ptime prev_time,cur_time;
-
+  
   // loop over frames
   for(unsigned int j = 0;j<wrapper_frames;++j)
   {
