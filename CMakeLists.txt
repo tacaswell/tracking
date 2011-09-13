@@ -151,6 +151,14 @@ if(COMPILE_BASIC)
   MESSAGE(STATUS "making basic functionality")
   SET(CMAKE_CXX_FLAGS "-ansi -D_GNU_SOURCE -fPIC -fno-omit-frame-pointer -pthread -Wall -Wextra ")
   add_subdirectory(apps)
+  
+  add_library(ctracking SHARED
+    ${COMMON_SRC}
+    ${COMMON_HASH_SRC}
+    ${COMMON_TRACK_SRC}
+    ${HASH_TRACK_SRC}
+    )
+  set_target_properties(ctracking PROPERTIES COMPILE_DEFINITIONS  "PTYPE=1;DIM_COUNT=2")
 endif(COMPILE_BASIC)
 
 
