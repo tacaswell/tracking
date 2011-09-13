@@ -2,7 +2,7 @@
 # The following setings are defined
 # SQLITE3_ROOT_DIR, the root of the include and lib directory
 # SQLITE3_INCLUDE_DIR, the full path of the include dir (ADVANCED)
-# SQLITE3_LIBRARIES, the name of the xerces-c library (ADVANCED)
+# SQLITE3_LIBRARIES, the name of the sqlite library (ADVANCED)
 #####
 # Find SQLITE3
 
@@ -17,7 +17,7 @@ FIND_PATH(SQLITE3_ROOT_DIR include/sqlite3.h
   HINTS ENV  SQLITE3_ROOT
   /usr
   
-  DOC "The root of an installed xerces-c installation"
+  DOC "The root of an installed sqlite installation"
 )
 
 # try to find the header
@@ -36,7 +36,7 @@ FIND_LIBRARY(SQLITE3_LIBRARY
      ${SQLITE3_ROOT_DIR}/lib
      /usr/lib 
      /usr/local/lib
-   DOC "The name of the xerces-c library"
+   DOC "The name of the sqlite library"
 )
 IF (SQLITE3_ROOT_DIR)
   IF (SQLITE3_INCLUDE_DIR AND SQLITE3_LIBRARY)
@@ -55,7 +55,7 @@ IF (SQLITE3_FOUND)
   ENDIF (NOT SQLITE3_FIND_QUIETLY)
 ELSE (SQLITE3_FOUND)
   IF (SQLITE3_FIND_REQUIRED)
-    MESSAGE(FATAL_ERROR "Could not find Xerces-C")
+    MESSAGE(FATAL_ERROR "Could not find Sqlite")
   ENDIF (SQLITE3_FIND_REQUIRED)
 ENDIF (SQLITE3_FOUND)
 
