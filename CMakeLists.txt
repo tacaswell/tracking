@@ -18,6 +18,8 @@ SET(UTIL_SRC
   ${COMMON_SRC_PATH}/cell.cpp
 #  ${COMMON_SRC_PATH}/coarse_grain_array.cpp
   ${COMMON_SRC_PATH}/counted_vector.cpp
+  #${COMMON_SRC_PATH}/histogram2d.cpp
+  ${COMMON_SRC_PATH}/histogram.cpp
 )
 
 
@@ -49,16 +51,14 @@ SET(HASH_TRACK_SRC
     ${COMMON_SRC_PATH}/hash_track_funs.cpp 
 )
 
-SET(UTIL_SRC_GNU
-  ${COMMON_SRC_PATH}/histogram2d.cpp
-  ${COMMON_SRC_PATH}/histogram.cpp
-)
+
 SET(CORR_SRC
   ${COMMON_SRC_PATH}/corr
   ${COMMON_SRC_PATH}/corr_gofr
   ${COMMON_SRC_PATH}/corr_case
   ${COMMON_SRC_PATH}/corr_goftheta
 )
+
 
 SET(ACCUM_SCR
   ${COMMON_SRC_PATH}/accum_sofq_ND.cpp
@@ -74,20 +74,21 @@ SET(COMMON_WRAPPER_SRC
 
 
 SET(OTHER_WRAPPER_SRC
-    ${COMMON_SRC_PATH}/wrapper_i_file.cpp
-    ${COMMON_SRC_PATH}/wrapper_i_ning.cpp
-    ${COMMON_SRC_PATH}/wrapper_i_ning_hd.cpp
-    ${COMMON_SRC_PATH}/wrapper_o_file.cpp
+  ${COMMON_WRAPPER_SRC}
+  ${COMMON_SRC_PATH}/wrapper_i_file.cpp
+  ${COMMON_SRC_PATH}/wrapper_i_ning.cpp
+  ${COMMON_SRC_PATH}/wrapper_i_ning_hd.cpp
+  ${COMMON_SRC_PATH}/wrapper_o_file.cpp
   )
 
 
 SET(HDF_SRC
+  ${COMMON_WRAPPER_SRC}
   ${COMMON_SRC_PATH}/wrapper_i_hdf.cpp
   ${COMMON_SRC_PATH}/wrapper_o_hdf.cpp
   ${COMMON_SRC_PATH}/wrapper_o_hdf_group.cpp
   ${COMMON_SRC_PATH}/generic_wrapper_hdf.cpp
   ${COMMON_SRC_PATH}/attr_list_hdf.cpp
-  ${COMMON_WRAPPER_SRC}
   ${COMMON_SRC_PATH}/md_store_attr_list
   )
 
@@ -152,14 +153,46 @@ if(COMPILE_BASIC)
   SET(CMAKE_CXX_FLAGS "-ansi -D_GNU_SOURCE -fPIC -fno-omit-frame-pointer -pthread -Wall -Wextra ")
   add_subdirectory(apps)
   
-  add_library(ctracking SHARED
+  # all the infrastructure that 
+  add_library(ctracking2D SHARED
     ${COMMON_SRC}
     ${COMMON_HASH_SRC}
     ${COMMON_TRACK_SRC}
     ${HASH_TRACK_SRC}
+    ${HDF_SRC}
+    ${CORR_SRC}
+    ${CONFIG_SRC}
+    ${SQL_CODE}
+    ${TRK_ACCUM_SRC}
+    ${UTIL_SRC}
     )
-  set_target_properties(ctracking PROPERTIES COMPILE_DEFINITIONS  "PTYPE=1;DIM_COUNT=2")
+  set_target_properties(ctracking2D PROPERTIES COMPILE_DEFINITIONS  "PTYPE=1;DIM_COUNT=2")
+  target_link_libraries(ctracking2D
+    ${HDF5_LIBRARIES} 
+    ${XERCESC_LIBRARY} 
+    ${SQLITE3_LIBRARY}
+    )
 endif(COMPILE_BASIC)
+
+if(COMPILE_BASIC OR COMPILE_IDEN)
+  add_library(cstatic2D SHARED
+    ${COMMON_SRC} 
+    ${UTIL_SRC} 
+    ${HDF_SRC} 
+    ${CORR_SRC}
+    ${COMMON_HASH_SRC} 
+    ${COMMON_WRAPPER_SRC} 
+    ${CONFIG_SRC}
+    ${SQL_CODE}
+    )
+  set_target_properties(cstatic2D PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_COUNT=2")
+  target_link_libraries(cstatic2D
+    ${HDF5_LIBRARIES} 
+    ${XERCESC_LIBRARY} 
+    ${SQLITE3_LIBRARY}
+    )
+endif(COMPILE_BASIC OR COMPILE_IDEN)
+
 
 
 if(COMPILE_IDEN)
