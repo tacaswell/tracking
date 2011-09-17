@@ -292,7 +292,8 @@ int main(int argc, char * argv[])
   
 
   
-  Wrapper_i_hdf wh(in_file,data_types,read_comp_num);
+  Wrapper_i_hdf wh;
+  bool suc = wh.initialize(in_file,data_types,read_comp_num);
 
     
 
