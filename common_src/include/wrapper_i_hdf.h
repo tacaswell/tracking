@@ -104,26 +104,6 @@ private:
   unsigned int total_part_count_;
   
   /**
-     Deletes all allocated data
-   */
-  void clean_data();
-  
-  /**
-     Private initialization function
-   */
-  void priv_init(int f_count =0);
-  /**
-     Turns a set of data types in to a set of pairs assuming they
-     all have the same computation number.
-   */
-  void make_dtype_pairs(int comp_nuber);
-  /**
-     Extracts the set of data types from a set of (D_TYPE,comp_num)
-     pairs.
-   */
-  void make_dtype_set();
-  
-  /**
      If we are reading in 2D data
    */
   bool two_d_data_;
@@ -140,11 +120,32 @@ private:
    */
   unsigned int start_;
   
+  /**
+     if the parameters are locked
+   */
+  bool locked_;
   
 
-protected:
-
-  void init();
+  /**
+     Deletes all allocated data
+   */
+  void clean_data();
+  
+  /**
+     Private initialization function
+   */
+  bool priv_init(int f_count =0);
+  /**
+     Turns a set of data types in to a set of pairs assuming they
+     all have the same computation number.
+   */
+  void make_dtype_pairs(int comp_nuber);
+  /**
+     Extracts the set of data types from a set of (D_TYPE,comp_num)
+     pairs.
+   */
+  void make_dtype_set();
+  
 public:
   typedef enum DATA_DIMS
     {
@@ -180,9 +181,17 @@ public:
 
   
   ~Wrapper_i_hdf();
-  
+
   /**
      Constructor
+   */
+  Wrapper_i_hdf();
+  
+  
+  /**
+     Initialize.
+
+     Returns true if successful 
 
      @param fname [in] name of hdf file to read in
      @param dtypes [in] a set of D_TYPES to extract from the hdf file
@@ -190,13 +199,15 @@ public:
      @param start [in] the first frame to read from
      @param frames [in] the number of frames to read
    */
-  Wrapper_i_hdf(std::string fname,
+  bool initialize(const std::string & fname,
 		const std::set<utilities::D_TYPE>& dtypes,
 		int comp_number,
 		unsigned int start=0,
 		int frames =0);
   /**
-     Constructor
+     Initialize.
+
+     Returns true if successful  
 
      @param fname [in] name of hdf file to read in
      @param dtypes [in] a set of D_TYPES to extract from the hdf file
@@ -206,7 +217,7 @@ public:
      @param two_d_data [in] if this is 2D data
    */
 
-  Wrapper_i_hdf(std::string fname,
+  bool initialize(const std::string & fname,
 		const std::set<utilities::D_TYPE> &dtypes,
 		int comp_number,
 		unsigned int start,
@@ -214,7 +225,10 @@ public:
 		bool two_d_data);
   
   /**
-     Constructor
+     Initialize.
+
+     Returns true if successful 
+     
 
      @param fname [in] name of hdf file to read in
      @param dtypes [in] a set of (D_TYPES,comp_number) pairs to extract from the hdf file
@@ -223,13 +237,21 @@ public:
      @param two_d_data [in] if this is 2D data
    */
   
-  Wrapper_i_hdf(std::string fname,
+  bool initialize(const std::string & fname,
 		const std::set<std::pair<utilities::D_TYPE,int > > &dtypes,
 		unsigned int start,
 		int f_count,
 		bool two_d_data);
   
-		
+
+  /**
+     Initialize.
+
+     Assumes fname, and the data type/comp_key mapping is already set.  Returns true if successful..
+   */
+  bool initialize(int f_count);
+  
+  
   /**
      returns the scaling between pixels and microns.  This should be pushed up
      to the next level, but I am lazy.
@@ -243,6 +265,21 @@ public:
   */
   unsigned int get_start_offset() const {return start_;}
   
+  /**
+     Set fname.  Returns true if successful.
+   */
+  bool set_file_name(const std::string & fname);
+  
+  /**
+     Set a data type/comp number pair.  Returns true if successful
+   */
+  bool add_dtype(utilities::D_TYPE dtype,int comp_key);
+  
+
+  /**
+     Set a data type/comp number pair.  Returns true if successful
+   */
+  bool set_twoD(bool twod_data);
   
   
 };
