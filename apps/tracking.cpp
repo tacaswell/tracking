@@ -196,7 +196,8 @@ int main(int argc, char * const argv[])
     
     
   // set up the input wrapper
-  Wrapper_i_hdf wh(in_file,data_types,read_comp_num);
+  Wrapper_i_hdf wh;
+  bool suc = wh.initialize(in_file,data_types,read_comp_num);
     
     
   Master_box box;
