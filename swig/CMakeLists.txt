@@ -1,0 +1,21 @@
+INCLUDE(${SWIG_USE_FILE})
+
+FIND_PACKAGE(PythonLibs)
+INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH})
+
+
+
+SET(CMAKE_SWIG_FLAGS "-c++")
+
+set(SWIG_SOURCES cstatic2D.i)
+set_source_files_properties(${SWIG_SOURCES} PROPERTIES CPLUSPLUS ON)
+
+
+
+SWIG_ADD_MODULE(cstatic2 python
+  ${SWIG_SOURCES})
+
+
+SWIG_LINK_LIBRARIES(cstatic2
+  ${PYTHON_LIBRARIES}
+  cstatic2D)
