@@ -249,7 +249,7 @@ public:
 
      Assumes fname, and the data type/comp_key mapping is already set.  Returns true if successful..
    */
-  bool initialize();
+  bool initialize(int f_count);
   
   
   /**
@@ -273,7 +273,7 @@ public:
   /**
      Set a data type/comp number pair.  Returns true if successful
    */
-  bool add_dtype(utilities::D_TYPE,int);
+  bool add_dtype(utilities::D_TYPE dtype,int comp_key);
   
 
   /**

@@ -136,6 +136,11 @@ bool Wrapper_i_hdf::initialize(const std::string & fname,
   
 }
 
+bool Wrapper_i_hdf::initialize(int f_count)
+{
+  return priv_init(f_count);
+}
+
 
 void Wrapper_i_hdf::make_dtype_pairs(int comp_nuber)
 {
@@ -408,6 +413,8 @@ void Wrapper_i_hdf::clean_data()
       *inner = NULL;
     }
   }
+  locked_= false;
+
 }
 
 
@@ -569,4 +576,36 @@ float Wrapper_i_hdf::get_xy_scale() const
   // }
   // return(scale);
   
+}
+
+bool Wrapper_i_hdf::set_file_name(const std::string & fname)
+{
+  if( locked_)
+    return false;
+  
+  file_name_ = fname;
+  return true;
+}
+
+bool Wrapper_i_hdf::add_dtype(utilities::D_TYPE dtype,int comp_key)
+{
+  if( locked_)
+    return false;
+
+  pair<set<utilities::D_TYPE>::iterator,bool> res =    data_types_set_.insert(dtype);
+  if (!res.second)
+    throw runtime_error("Trying to add a data type that the object already knows about");
+  
+  data_types_.insert(pair<D_TYPE,int>(dtype,comp_key));
+  return true;
+}
+
+      
+  
+bool Wrapper_i_hdf::set_twoD(bool in)
+{
+  if( locked_)
+    return false;
+  two_d_data_ = in;
+  return true;
 }
