@@ -685,7 +685,7 @@ def do_tracking(comp_key,conn,pram_i, pram_f, pram_s = None, rel = True,db_path 
                          required_pram_i,pram_i,
                          required_pram_f,pram_f,
                          required_pram_s,pram_s,
-                         opt_f_pram=opt_pram_f
+                         opt_f_pram=opt_pram_f,
                          db_path = db_path)
     except KeyError, ke:
         print "Parameter: " ,ke,' not found'
