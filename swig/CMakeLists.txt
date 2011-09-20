@@ -9,7 +9,7 @@ SET(CMAKE_SWIG_FLAGS "-c++")
 
 set(SWIG_SOURCES cstatic2D.i)
 set_source_files_properties(${SWIG_SOURCES} PROPERTIES CPLUSPLUS ON)
-
+set_source_files_properties(${SWIG_SOURCES} PROPERTIES SWIG_FLAGS '-includeall')
 
 
 SWIG_ADD_MODULE(cstatic2 python

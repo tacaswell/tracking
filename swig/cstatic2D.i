@@ -17,26 +17,84 @@
 
 
 
-%include <std_common.i>
-%include std_except.i 
+%include "std_string.i"
+%include "std_vector.i"
 %module cstatic2
 %{
 #define DIM_COUNT 2
 #define PTYPE 0
-#include "part_def.h"
-#include "particle_base.h"
+#include "enum_utils.h"
+#include "wrapper_i.h"
+#include "wrapper_i_hdf.h"
 %}
-namespace tracking
+namespace std
 {
-  
-  class particle
+  %template(IntVector) vector<int>;
+  %template(DoubleVector) vector<double>;
+}
+
+    
+
+namespace utilities
+{
+  enum D_TYPE
   {
-  public:
-    void print();
-    particle(int i,int f);
-    ~particle();
+  D_INDEX               =0,	// index of particle in case,
+				// (frame,indx) is unique and should
+				// be persistent in wrappers (wrapper)
+  D_XPOS  		=1,	// x-position (plu)
+  D_YPOS  		=2,	// y-position (plu)
+  D_FRAME  		=3,	// frame (wrapper)
+  D_I  			=4,	// integrated intensity (plu)
+  D_R2  		=5,	// radius of gyration (plu)
+  D_E 			=6,	// eccentricity (plu)
+  D_NEXT_INDX 		=7,	// index of the next particle in the
+				// track (track)
+  D_PREV_INDX  		=8,	// index of the previous particle in
+				// the track (track)
+  D_DX  		=9,	// x-shift (plu)
+  D_DY  		=10,	// y-shift (plu)
+  D_ORGX  		=11,	// original x-position (computed)
+  D_ORGY  		=12,	// original y-position (computed)
+  D_ZPOS 		=13,	// z-position (link or meta-data)
+  D_TRACKID 		=14,	// track id (track)
+  D_S_ORDER_PARAMETER 	=15,	// scalar order parameter (computed)
+  D_MULT 		=16,	// multiplicity (plu)
+  D_N_SIZE  		=17,	// neighborhood size (computed)
+  D_SENTRY			// this entry must remain last, and I
+				// am making assumptions about how the
+				// numbering will work in the compiler
   
-  };
+    };
+  
+  
+
+class Wrapper_in
+{
+public:
+  virtual int get_num_entries(int frame) =0;
+  virtual int get_num_entries() =0;
+  virtual int get_num_frames()  =0;
+};
+ 
+ class Wrapper_i_hdf: public Wrapper_in
+{
+public:
+  int get_num_entries(int frame);
+  int get_num_entries();
+  int get_num_frames();
+
+  Wrapper_i_hdf();
+  ~Wrapper_i_hdf();
+  
+  bool set_file_name(const std::string & fname);
+  bool add_dtype(utilities::D_TYPE dtype,int comp_key);
+  bool set_twoD(bool twod_data);
+  bool initialize(int f_count);
+
+};
+  
+
 }
  
  
