@@ -74,6 +74,58 @@ public:
   ~Filter_trivial(){};
 };
 
+
+
+/**
+   A basic filter, does rg, shift and eccentricity cuts
+ */
+class Filter_ers:public Filter
+{
+public:
+  bool operator()(int ind,int frame) const;
+  /**
+     Constructor
+   */
+  Filter_ers();
+  /**
+     Initialization from an Md_store
+   */
+  void init(const Md_store & md_store);
+  void set_wrapper(const Wrapper_in * w_i )
+  {
+    wrap_ = w_i;
+  }
+  
+  /**
+     Returns the filter parameters in a md_store object
+   */
+  Md_store get_parameters()const;
+  
+  /**
+     Destructor
+   */
+  ~Filter_ers()
+  {
+  }
+private:
+  /**
+     Eccentricity threshold
+   */
+  float e_cut_;
+  /**
+     Radius of gyration threshold
+   */
+  float rg_cut_;
+  /**
+     Centroid shift threshold
+   */
+  float shift_cut_;
+  /**
+     Wrapper to read particle data from
+   */
+  const Wrapper_in * wrap_;
+};
+
   
 
 
