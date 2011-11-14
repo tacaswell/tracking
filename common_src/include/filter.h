@@ -33,8 +33,25 @@ class Wrapper_in;
 class Md_store;
 
 /**
-   ABC for filter objects.  They take in a the index and frame of particle
-   in a returns a bool, true if the particle is good, false if it is bad.
+   Enumeration for keeping track of which filter type a filter is,
+useful for checking to make sure that the factory behaved properly.
+ */
+typedef enum FILT_TYPE{
+  FILT_TRIV = 0,		// trivial, always returns true
+  FILT_ERS, 			// e_cut(top),rg_cut(top),shift_cut(top)
+  FILT_ERSImin,			// e_cut(top),rg_cut(top),shift_cut(top), I_cut(bottom)
+} FILT_TYPE;
+
+
+/**
+   ABC for filter objects.  
+   
+   Filter objects act as a (partial) layer on top of the wrapper
+   objects to allow only particles that meet criteria to even be
+   created.  There are probably better ways to factor this code.
+   
+   They take in a the index and frame of particle in a returns a bool,
+   true if the particle is good, false if it is bad.
  */
 class Filter
 {
@@ -48,6 +65,12 @@ public:
      Sets pointer to Wrapper_in to read data from
    */
   virtual void set_wrapper(const Wrapper_in * )=0;
+
+  /**
+     Returns filter type
+   */
+  virtual  FILT_TYPE get_type()const = 0;
+  
   /**
      Destructor
    */
@@ -69,7 +92,8 @@ public:
   {
     return true;
   }
-  virtual void set_wrapper(const Wrapper_in * ){};
+  void set_wrapper(const Wrapper_in * ){};
+  FILT_TYPE get_type()const{return FILT_TRIV;};
   Filter_trivial(){};
   ~Filter_trivial(){};
 };
@@ -95,7 +119,7 @@ public:
   {
     wrap_ = w_i;
   }
-  
+  FILT_TYPE get_type()const{return FILT_ERS;};
   /**
      Returns the filter parameters in a md_store object
    */
@@ -149,6 +173,7 @@ public:
      Initialization function based on arguements
    */
   void init(float ecut,float rg_cut,float shift_cut);
+  FILT_TYPE get_type()const{return FILT_ERS;};
   void set_wrapper(const Wrapper_in * w_i )
   {
     wrap_ = w_i;
