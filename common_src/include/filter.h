@@ -1,4 +1,4 @@
-//Copyright 2009 Thomas A Caswell
+//Copyright 2009-2011 Thomas A Caswell
 //tcaswell@uchicago.edu
 //http://jfi.uchicago.edu/~tcaswell
 //
@@ -101,7 +101,7 @@ public:
 
 
 /**
-   A basic filter, does rg, shift and eccentricity cuts
+   A basic filter, does rg (top), shift (top) and eccentricity (top) cuts
  */
 class Filter_ers:public Filter
 {
