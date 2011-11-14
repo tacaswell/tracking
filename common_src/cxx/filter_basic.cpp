@@ -37,6 +37,7 @@ using H5::H5File;
 using H5::Group;
 
 using utilities::Attr_list_hdf;
+using utilities::Md_store;
 
 using std::cerr;
 using std::endl;
@@ -104,3 +105,20 @@ Md_store Filter_basic::get_parameters()const
   return Md_store(tmp);
 }
 
+Filter * filter_factory(const Md_store & filter_prams)
+{
+  bool has_e = filter_prams.contains_key("e_cut");
+  bool has_rg = filter_prams.contains_key("rg_cut");
+  bool has_s = filter_prams.contains_key("shift_cut");
+  bool has_I_min = filter_prams.contains_key("I_min_cut");
+  if(has_I_min && has_e && has_rg && has_s )
+  {
+    Filter_ers* F = new utilities::Filter_ers();
+    F->init(filter_prams);
+    return (Filter *) F;
+    
+  }
+
+  return (Filter *) new Filter_trivial();
+  
+}

@@ -185,6 +185,9 @@ private:
 };
 
 
+Filter * filter_factory(const Md_store & filter_prams);
+
+
 
 }
 #endif
