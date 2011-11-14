@@ -152,6 +152,64 @@ private:
 
   
 
+/**
+   A basic filter, does rg (top), shift (top), eccentricity (top), and
+   I (bottom) cuts
+ */
+class Filter_ersI:public Filter
+{
+public:
+  bool operator()(int ind,int frame) const;
+  /**
+     Constructor
+   */
+  Filter_ersI();
+  /**
+     Initialization from an Md_store
+   */
+  void init(const Md_store & md_store);
+  void set_wrapper(const Wrapper_in * w_i )
+  {
+    wrap_ = w_i;
+  }
+  FILT_TYPE get_type()const{return FILT_ERSImin;};
+  /**
+     Returns the filter parameters in a md_store object
+   */
+  Md_store get_parameters()const;
+  
+  /**
+     Destructor
+   */
+  ~Filter_ersI()
+  {
+  }
+private:
+  /**
+     Eccentricity threshold
+   */
+  float e_cut_;
+  /**
+     Radius of gyration threshold
+   */
+  float rg_cut_;
+  /**
+     Centroid shift threshold
+   */
+  float shift_cut_;
+  /**
+     Minimum total intensity
+   */
+  float I_min_cut_;
+  
+  /**
+     Wrapper to read particle data from
+   */
+  const Wrapper_in * wrap_;
+};
+
+  
+
 
 
 /**

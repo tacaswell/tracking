@@ -42,6 +42,7 @@ using std::cerr;
 using std::endl;
 
 
+// ers filter
 Filter_ers::Filter_ers():
   e_cut_(0),rg_cut_(0),shift_cut_(0),wrap_(NULL)
 {
@@ -81,3 +82,46 @@ Md_store Filter_ers::get_parameters()const
   return Md_store(tmp);
 }
 
+// ersi filter
+Filter_ersI::Filter_ersI():
+  e_cut_(0),rg_cut_(0),shift_cut_(0),I_min_cut_(0),wrap_(NULL)
+{
+}
+
+
+
+void Filter_ersI::init(const Md_store & md_store)
+{
+  md_store.get_value("ecut",e_cut_);
+  md_store.get_value("rg_cut",rg_cut_ );
+  md_store.get_value("shift_cut",shift_cut_);
+  md_store.get_value("I_min_cut",I_min_cut_);
+}
+
+
+
+bool Filter_ersI::operator()(int ind, int frame)const
+{
+  
+  if(wrap_->get_value(x,ind,D_E,frame)  > e_cut_ ||
+     wrap_->get_value(y,ind,D_R2,frame) > rg_cut_ ||
+     wrap_->get_value(y,ind,D_I,frame)  < I_min_cut_)
+    return false;
+  float x,y;
+  wrap_->get_value(x,ind,D_DX,frame);
+  wrap_->get_value(y,ind,D_DY,frame);
+
+  if((x*x +y*y) >shift_cut_*shift_cut_)
+    return false;
+  return true;
+}
+
+Md_store Filter_ersI::get_parameters()const
+{
+  Md_store tmp;
+  tmp.add_element("e_cut",e_cut_);
+  tmp.add_element("rg_cut",rg_cut_);
+  tmp.add_element("shift_cut",shift_cut_);
+  
+  return Md_store(tmp);
+}

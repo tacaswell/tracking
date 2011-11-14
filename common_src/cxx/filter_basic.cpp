@@ -113,9 +113,18 @@ Filter * filter_factory(const Md_store & filter_prams)
   bool has_I_min = filter_prams.contains_key("I_min_cut");
   if(has_I_min && has_e && has_rg && has_s )
   {
-    Filter_ers* F = new utilities::Filter_ers();
-    F->init(filter_prams);
-    return (Filter *) F;
+    if(has_I_min)
+    {
+      Filter_ersI* F = new utilities::Filter_ersI();
+      F->init(filter_prams);
+      return (Filter *) F;
+    }
+    else
+    {
+      Filter_ers* F = new utilities::Filter_ers();
+      F->init(filter_prams);
+      return (Filter *) F;
+    }
     
   }
 
