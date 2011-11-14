@@ -210,6 +210,12 @@ private:
 };
 
 
+/**
+   Guesses which filter to generate from the parameters it is given in
+   the Md_store object.
+
+   The returned object needs to be cleaned up.
+ */
 Filter * filter_factory(const Md_store & filter_prams);
 
 
