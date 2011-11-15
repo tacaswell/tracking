@@ -112,7 +112,7 @@ Md_store Filter_basic::get_parameters()const
 
 
 // helper functions
-Filter * filter_factory(const Md_store & filter_prams)
+Filter * utilities::filter_factory(const Md_store & filter_prams)
 {
   bool has_e = filter_prams.contains_key("e_cut");
   bool has_rg = filter_prams.contains_key("rg_cut");
@@ -139,7 +139,7 @@ Filter * filter_factory(const Md_store & filter_prams)
   
 }
 
-Md_store extract_prams(const std::string & fname,int comp_num,const vector<string> &pram_list)
+Md_store utilities::extract_prams(const std::string & fname,int comp_num,const vector<string> &pram_list)
 {
   // hdf stuff
   H5File file = H5File( fname, H5F_ACC_RDONLY );
