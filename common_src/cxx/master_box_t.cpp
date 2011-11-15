@@ -1,4 +1,4 @@
-//Copyright 2009 Thomas A Caswell
+//Copyright 2009-2011 Thomas A Caswell
 //tcaswell@uchicago.edu
 //http://jfi.uchicago.edu/~tcaswell
 //
@@ -40,6 +40,7 @@ using tracking::Accumulator;
 using std::vector;
 
 using utilities::Md_store;
+using utilities::Filter;
 
 
 
@@ -60,16 +61,16 @@ void Master_box::init(const utilities::Wrapper_in & w_in, utilities::Filter & fi
   own_wrapper_ = false;
   
   in_wrapper_ = &w_in;
-  filt_ = &filt;
-  filt_->set_wrapper(in_wrapper_);
   
-  priv_init();
+  filt.set_wrapper(in_wrapper_);
+  
+  priv_init(&filt);
   std::cout<<"finished init of box"<<std::endl;
   
 }
 
 
-void Master_box::priv_init()
+void Master_box::priv_init(utilities::Filter const * const filt)
 {
   
   
@@ -99,7 +100,7 @@ void Master_box::priv_init()
     
     for(int j = 0; j<num_entries; ++j)
     {
-      if((*filt_)(j,k))
+      if((*filt)(j,k))
       {
 	particle_vec_.push_back( new particle(j,k));
 	//	++count;
