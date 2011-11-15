@@ -118,7 +118,7 @@ Filter * utilities::filter_factory(const Md_store & filter_prams)
   bool has_rg = filter_prams.contains_key("rg_cut");
   bool has_s = filter_prams.contains_key("shift_cut");
   bool has_I_min = filter_prams.contains_key("I_min_cut");
-  if(has_I_min && has_e && has_rg && has_s )
+  if(has_e && has_rg && has_s )
   {
     if(has_I_min)
     {
