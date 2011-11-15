@@ -102,10 +102,10 @@ void Filter_ersI::init(const Md_store & md_store)
 
 bool Filter_ersI::operator()(int ind, int frame)const
 {
-  
-  if(wrap_->get_value(x,ind,D_E,frame)  > e_cut_ ||
-     wrap_->get_value(y,ind,D_R2,frame) > rg_cut_ ||
-     wrap_->get_value(y,ind,D_I,frame)  < I_min_cut_)
+  float tmpf;
+  if(wrap_->get_value(tmpf,ind,D_E,frame)  > e_cut_ ||
+     wrap_->get_value(tmpf,ind,D_R2,frame) > rg_cut_ ||
+     wrap_->get_value(tmpf,ind,D_I,frame)  < I_min_cut_)
     return false;
   float x,y;
   wrap_->get_value(x,ind,D_DX,frame);
