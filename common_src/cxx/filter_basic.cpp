@@ -139,7 +139,7 @@ Filter * filter_factory(const Md_store & filter_prams)
   
 }
 
-Md_store extract_pram(const std::string & fname,int comp_num,const vector<string> &pram_list)
+Md_store extract_prams(const std::string & fname,int comp_num,const vector<string> &pram_list)
 {
   // hdf stuff
   H5File file = H5File( fname, H5F_ACC_RDONLY );

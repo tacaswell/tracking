@@ -282,7 +282,7 @@ Filter * filter_factory(const Md_store & filter_prams);
    parameters asked for.  This functionality should be folded into the
    wrapper class.
  */
-Md_store extract_pram(const std::string & fname,int comp_num, const std::vector<std::string> & pram_list);
+Md_store extract_prams(const std::string & fname,int comp_num, const std::vector<std::string> & pram_list);
 
 
 }
