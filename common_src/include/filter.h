@@ -26,6 +26,7 @@
 #ifndef FILTER
 #define FILTER
 #include <string>
+#include <vector>
 
 namespace utilities
 {
@@ -276,6 +277,12 @@ private:
  */
 Filter * filter_factory(const Md_store & filter_prams);
 
+/**
+   Extracts filter parameters from a data file.  Extracts the
+   parameters asked for.  This functionality should be folded into the
+   wrapper class.
+ */
+Md_store extract_pram(const std::string & fname,int comp_num, const std::vector<std::string> & pram_list);
 
 
 }
