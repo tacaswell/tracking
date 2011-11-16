@@ -666,7 +666,7 @@ def do_tracking(comp_key,conn,pram_i, pram_f, pram_s = None, rel = True,db_path 
     required_pram_i = []
     required_pram_f = ['search_range']
     required_pram_s = None
-    opt_pram_f = ['e_cut','rg_cut','shift_cut']
+    opt_pram_f = ['e_cut','rg_cut','shift_cut','I_min_cut']
     (fin,dset_key) = conn.execute("select fout,dset_key from iden where comp_key = ?",
                                   (comp_key,)).fetchone()
     
