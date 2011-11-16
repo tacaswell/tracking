@@ -701,25 +701,33 @@ def do_vanHove(track_key,conn,pram_i, pram_f, pram_s = None, rel = True,):
         raise Exception("The max step must be less than the minimum track"+
                     " length due to population selection issues")
     
-       
-    (fin,dset_key) = _get_fin(track_key,conn)
-    (iden_key,) = conn.execute("select iden_key from tracking_prams where comp_key = ?",
-                               (track_key,)).fetchone()
+    
+    # see if the file has already been processed
+    res = conn.execute("select fout,iden_key,dset_key from tracking where comp_key=? ;",
+                       (track_key,)).fetchone()
+    
+    
+    print res
+    
+    if res is None:
+        raise utils.dbase_error('no entry found')
+
+    (fin,iden_key,dset_key) = res
+    
     fout = os.path.dirname(fin) + '/vanHove.h5'
+    comp_prams = {'iden_key':iden_key,'dset_key':dset_key,'track_key':track_key}    
     
     
-    
-    comp_prams = {'track_read_comp':track_key,'iden_read_comp':iden_key,'dset':dset_key}
-    comp_prams['write_comp'] =conn.execute("select max(comp_key) from comps;"
-                                           ).fetchone()[0] + 1
 
     try:
-        _call_fun(conn,
-                  prog_name,fin,fout,
-                  comp_prams,
-                  required_pram_i,pram_i,
-                  required_pram_f,pram_f,
-                  required_pram_s,pram_s)
+        _call_fun_no_sql(prog_name,
+                         fin,fout,
+                         comp_prams,
+                         required_pram_i,pram_i,
+                         required_pram_f,pram_f,
+                         required_pram_s,pram_s,
+                         opt_f_pram=opt_pram_f,
+                         db_path = db_path)
     except KeyError, ke:
         print "Parameter: " ,ke,' not found'
 
