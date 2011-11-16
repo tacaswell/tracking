@@ -165,8 +165,9 @@ int main(int argc, char * const argv[])
 			     utilities::D_DX,
 			     utilities::D_DY,
 			     utilities::D_R2,
-			     utilities::D_E};
-  set<D_TYPE> data_types = set<D_TYPE>(tmp,tmp+6);
+			     utilities::D_E,
+			     utilities::D_I};
+  set<D_TYPE> data_types = set<D_TYPE>(tmp,tmp+7);
   
   
   // build the md_store for handing in to the hdf file and the db
