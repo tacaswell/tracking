@@ -52,7 +52,7 @@ Filter_ers::Filter_ers():
 
 void Filter_ers::init(const Md_store & md_store)
 {
-  md_store.get_value("ecut",e_cut_);
+  md_store.get_value("e_cut",e_cut_);
   md_store.get_value("rg_cut",rg_cut_ );
   md_store.get_value("shift_cut",shift_cut_);
 }
@@ -92,7 +92,7 @@ Filter_ersI::Filter_ersI():
 
 void Filter_ersI::init(const Md_store & md_store)
 {
-  md_store.get_value("ecut",e_cut_);
+  md_store.get_value("e_cut",e_cut_);
   md_store.get_value("rg_cut",rg_cut_ );
   md_store.get_value("shift_cut",shift_cut_);
   md_store.get_value("I_min_cut",I_min_cut_);
