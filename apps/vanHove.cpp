@@ -223,6 +223,9 @@ int main(int argc, char * const argv[])
   TA_vanHove vanHove(max_step,nbins,max_range);
   tracks.compute_corrected_TA(vanHove);
   
+  // add md to sql db
+  sql.add_mdata(md_store);
+    
   // make output wrapper and shove data in to it
   Generic_wrapper_hdf hdf_out(out_file,true);  
   hdf_out.open_wrapper();
