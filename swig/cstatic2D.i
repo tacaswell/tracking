@@ -26,6 +26,8 @@
 #include "enum_utils.h"
 #include "wrapper_i.h"
 #include "wrapper_i_hdf.h"
+#include "filter.h"
+#include "master_box_t.h"
 %}
 namespace std
 {
@@ -66,8 +68,7 @@ namespace utilities
 				// numbering will work in the compiler
   
     };
-  
-  
+
 
 class Wrapper_in
 {
@@ -75,9 +76,10 @@ public:
   virtual int get_num_entries(int frame) =0;
   virtual int get_num_entries() =0;
   virtual int get_num_frames()  =0;
+  virtual ~Wrapper_in();
 };
  
- class Wrapper_i_hdf: public Wrapper_in
+class Wrapper_i_hdf: public Wrapper_in
 {
 public:
   int get_num_entries(int frame);
@@ -95,7 +97,58 @@ public:
 };
   
 
+class Filter
+{
+public:
+  virtual bool operator()(int index,int frame) const = 0;
+  virtual void set_wrapper(const Wrapper_in * w_in)= 0;
+  virtual ~Filter();
+  
+};
+
+
+class Filter_trivial : public Filter
+{
+public:
+  bool operator()(int index,int frame) const;
+  void set_wrapper(const  Wrapper_in* w_in);
+  Filter_trivial();
+  ~Filter_trivial();
+
+  
+};
+
+
+class Filter_basic : public Filter
+{
+public:
+  bool operator()(int index,int frame) const;
+  void set_wrapper(const Wrapper_in * w_i );
+  Filter_basic();
+  ~Filter_basic();
+
+  void init(const std::string&,int);
+  void init(float ecut,float rg_cut,float shift_cut);
+  
+    
+  
+ };
+   
 }
  
- 
+namespace tracking
+{
+
+class Master_box
+{
+public:
+  void init(const utilities::Wrapper_in & w_in,utilities::Filter & filt);
+  unsigned int size();
   
+  Master_box();
+  ~Master_box();
+  
+  
+};
+
+}
