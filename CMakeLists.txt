@@ -69,6 +69,7 @@ SET(ACCUM_SCR
 SET(COMMON_WRAPPER_SRC
   ${COMMON_SRC_PATH}/data_map.cpp
   ${COMMON_SRC_PATH}/filter_basic.cpp
+  ${COMMON_SRC_PATH}/filter_classes.cpp
 )
 
 

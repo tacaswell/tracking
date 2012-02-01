@@ -68,8 +68,8 @@ using utilities::Md_store;
 using utilities::SQL_handler;
 
 
-using utilities::Filter_basic;
-using utilities::Filter_trivial;
+using utilities::Filter;
+
 using utilities::D_TYPE;
 using utilities::Generic_wrapper_hdf;
 
@@ -152,9 +152,7 @@ int main(int argc, char * const argv[])
     return -1;
   }
 
-
   
-
 
 
     
@@ -167,9 +165,17 @@ int main(int argc, char * const argv[])
 			     utilities::D_DX,
 			     utilities::D_DY,
 			     utilities::D_R2,
-			     utilities::D_E};
-  set<D_TYPE> data_types = set<D_TYPE>(tmp,tmp+6);
-    
+			     utilities::D_E,
+			     utilities::D_I};
+  set<D_TYPE> data_types = set<D_TYPE>(tmp,tmp+7);
+  
+  
+  // build the md_store for handing in to the hdf file and the db
+  Md_store md_store;
+  md_store.add_elements(app_prams.get_store());    
+  md_store.add_elements(comp_prams.get_store());    
+  md_store.add_elements(files.get_store());    
+  
     
 
   
@@ -181,7 +187,8 @@ int main(int argc, char * const argv[])
   // claim the entry in the DB and lock it before doing anything
 
   sql.start_comp(dset_key,write_comp_num,utilities::F_TRACKING);
-
+  // add new comp_key to md store
+  md_store.add_element("comp_key",write_comp_num);
 
   
   // print what will be done
@@ -194,6 +201,9 @@ int main(int argc, char * const argv[])
   cout<<"  write_comp_num "<<write_comp_num<<endl;
 
     
+  
+  
+
     
   // set up the input wrapper
   Wrapper_i_hdf wh;
@@ -204,41 +214,40 @@ int main(int argc, char * const argv[])
   // filter based on the values stored with the initial computation
   
 
-  Filter_basic filt;
+  Filter *  filt;
   if(app_prams.contains_key("e_cut") &&
      app_prams.contains_key("rg_cut") &&
      app_prams.contains_key("shift_cut"))
   {
-    float e_cut,rg_cut,shift_cut;
-    app_prams.get_value("e_cut",e_cut);
-    app_prams.get_value("rg_cut",rg_cut);
-    app_prams.get_value("shift_cut",shift_cut);
-    filt.init(e_cut,rg_cut,shift_cut);
+    // generate filter object
+    filt = utilities::filter_factory(*(app_prams.get_store()));
   }
   else
-    filt.init(in_file,read_comp_num);
-
-  Md_store filt_md = filt.get_parameters();
+  {
+    float tmpf;
+    vector<string> pram_strs;
+    pram_strs.push_back("e_cut");
+    pram_strs.push_back("rg_cut");
+    pram_strs.push_back("shift_cut");
+    
+    Md_store filt_prams = utilities::extract_prams(in_file,read_comp_num,pram_strs);
+    if(app_prams.contains_key("I_min_cut"))
+      filt_prams.add_element("I_min_cut",app_prams.get_value("I_min_cut",tmpf));
+    // generate filter object
+    filt = utilities::filter_factory(filt_prams);
+    // shove the MD stuff in to md_store
+    md_store.add_elements(&filt_prams);
+        
+  }
   
-      
-  
-
-
-  // build the md_store for handing in to the hdf file and the db
-  Md_store md_store;
-  md_store.add_elements(app_prams.get_store());    
-  md_store.add_elements(comp_prams.get_store());    
-  md_store.add_elements(files.get_store());    
-  md_store.add_elements(&filt_md);
-  md_store.add_element("comp_key",write_comp_num);
-  cout<<"set up md_store"<<endl;
-  md_store.print();
-
 
 
   // fill the master_box
-  box.init(wh,filt);
-
+  box.init(wh,*filt);
+  // clean up the filter object
+  delete filt;
+  filt = NULL;
+  
   
   
     
@@ -260,7 +269,8 @@ int main(int argc, char * const argv[])
   md_store.add_element("temperature",temperature);
 
   cout<<"hash case filled"<<endl;
-
+  cout<<"md_store filled"<<endl;
+  md_store.print();
     
   Track_shelf tracks;
   // link tracks together

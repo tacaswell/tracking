@@ -1,4 +1,4 @@
-//Copyright 2008,2009 Thomas A Caswell
+//Copyright 2008-2011 Thomas A Caswell
 //tcaswell@uchicago.edu
 //http://jfi.uchicago.edu/~tcaswell
 //
@@ -151,12 +151,7 @@ protected:
      private initialization function
    */
   
-  void priv_init();
-
-  /**
-     Filter object
-   */
-  utilities::Filter* filt_;
+  void priv_init(utilities::Filter const*  const filt);
   
 };
 }

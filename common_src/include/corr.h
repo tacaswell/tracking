@@ -110,7 +110,10 @@ public:
   
   
   virtual float get_max_range() const{return size_;};
-
+  void out_to_wrapper(utilities::Generic_wrapper &,const std::string &,const utilities::Md_store * ) const {};
+  
+  
+  
   ~Dummy_corr(){};
   Dummy_corr(float in):size_(in){};
   

@@ -34,6 +34,7 @@
 #include "md_store.h"
 
 #include "ta_vanHove.h"
+#include "sql_handler.h"
 
 using std::endl;
 using std::cout;
@@ -45,12 +46,14 @@ using std::set;
 
 using std::logic_error;
 using std::exception;
+using std::invalid_argument;
 
 
 using utilities::Read_config;
 using utilities::CL_parse;
 using utilities::Md_store;
 using utilities::D_TYPE;
+using utilities::SQL_handler;
 
 using utilities::Wrapper_o_hdf;
 using utilities::Wrapper_i_hdf;
@@ -69,9 +72,7 @@ static string APP_NAME = "vanHove :: ";
 int main(int argc, char * const argv[])
 {
 
-  		   
-  string in_file ;
-  string out_file ;
+  
   string pram_file ;
 
     
@@ -80,8 +81,6 @@ int main(int argc, char * const argv[])
   {
     CL_parse cl(argc,argv);
     cl.parse();
-    cl.get_fin(in_file);
-    cl.get_fout(out_file);
     cl.get_fpram(pram_file);
   }
   catch(std::invalid_argument &e )
@@ -89,17 +88,15 @@ int main(int argc, char * const argv[])
     cout<<e.what()<<endl;
     return -1;
   }
-
   
   // parse out the standard logistic parameters
-  int read_comp_num, write_comp_num,dset,read_track_comp_num;
+  int iden_key,track_key,dset_key;
   Read_config comp_prams(pram_file,"comps");
   try
   {
-    comp_prams.get_value("iden_read_comp",read_comp_num);
-    comp_prams.get_value("track_read_comp",read_track_comp_num);
-    comp_prams.get_value("write_comp",write_comp_num);
-    comp_prams.get_value("dset",dset);
+    comp_prams.get_value("iden_key",iden_key);
+    comp_prams.get_value("track_key",track_key);
+    comp_prams.get_value("dset_key",dset_key);
   }
   catch(logic_error & e)
   {
@@ -107,6 +104,7 @@ int main(int argc, char * const argv[])
     cerr<<e.what()<<endl;
     return -1;
   }
+
 
   // parse out the parameters that this application needs
   unsigned min_track_length,max_step,nbins;
@@ -126,16 +124,47 @@ int main(int argc, char * const argv[])
     cerr<<e.what()<<endl;
     return -1;
   }
+
+  // parse out the file names
+  string db_path;
+  string in_file ;
+  string out_file ;
+
+  Read_config files(pram_file,"files");
+  try
+  {
+    files.get_value("db_path",db_path);
+    files.get_value("fin",in_file);
+    files.get_value("fout",out_file);
+
+  }
+  catch(logic_error & e)
+  {
+    cerr<<"error parsing the file parameters"<<endl;
+    cerr<<e.what()<<endl;
+    return -1;
+  }
+
   
+  if( min_track_length <2)
+    throw invalid_argument("the minimum track length must be at least 2 ");
+  
+  		  
+		    
   //nonsense to get the map set up
   set<pair<utilities::D_TYPE,int> > contents;
-  contents.insert(pair<D_TYPE, int> (utilities::D_XPOS,read_comp_num));
-  contents.insert(pair<D_TYPE, int> (utilities::D_YPOS,read_comp_num));
-  contents.insert(pair<D_TYPE, int> (utilities::D_NEXT_INDX,read_track_comp_num));
-  contents.insert(pair<D_TYPE, int> (utilities::D_PREV_INDX,read_track_comp_num));
-  contents.insert(pair<D_TYPE, int> (utilities::D_TRACKID,read_track_comp_num));
+  contents.insert(pair<D_TYPE, int> (utilities::D_XPOS,iden_key));
+  contents.insert(pair<D_TYPE, int> (utilities::D_YPOS,iden_key));
+  contents.insert(pair<D_TYPE, int> (utilities::D_NEXT_INDX,track_key));
+  contents.insert(pair<D_TYPE, int> (utilities::D_PREV_INDX,track_key));
+  contents.insert(pair<D_TYPE, int> (utilities::D_TRACKID,track_key));
+
+
   
-  
+  // set up sql stuff
+  SQL_handler sql;
+  sql.open_connection(db_path);
+
   
   // set up the input wrapper
   Wrapper_i_hdf wh;
@@ -160,44 +189,55 @@ int main(int argc, char * const argv[])
     cerr<<e.what()<<endl;
     return -1;
   }
-    
-  cout<<"track case filled in "<<( ( std::clock() - start ) / (double)CLOCKS_PER_SEC ) <<"s"<<endl;
   
-  // trim tracks and compute mean displacement
-  tracks.remove_short_tracks(min_track_length);
-  hcase.compute_mean_disp();
-
-  // compute the van Hove distributions
-  TA_vanHove vanHove(max_step,nbins,max_range);
-  tracks.compute_corrected_TA(vanHove);
-
   
+  // md stuff
   int dtime = hcase.get_avg_dtime();
   float temperature = hcase.get_avg_temp();
-  
-  
-  
+
   // set up md store to pass to output 
   Md_store md_store;
   md_store.add_elements(app_prams.get_store());
   md_store.add_elements(comp_prams.get_store());    
   md_store.add_element("dtime",dtime);
   md_store.add_element("temperature",temperature);
-
-  // make output wrapper and shove data in to it
-  try
-  {
-    Generic_wrapper_hdf hdf_out(out_file,true);  
-    vanHove.output_to_wrapper(hdf_out,md_store);
-  }
-  catch(exception & e)
-  {
-    cerr<<"error outputting the histograms"<<endl;
-    cerr<<e.what()<<endl;
-    return -1;
-  }
+  md_store.add_element("fin",in_file.c_str());
+  md_store.add_element("fout",out_file.c_str());
+    
+  
+  cout<<"track case filled in "<<( ( std::clock() - start ) / (double)CLOCKS_PER_SEC ) <<"s"<<endl;
+  
+  // trim tracks and compute mean displacement
+  tracks.remove_short_tracks(min_track_length);
+  hcase.compute_mean_disp();
+  
 
   
+     
+  // data base stuff
+  int comp_key;
+  sql.start_comp(dset_key,comp_key,utilities::F_VANHOVE);
+
+  md_store.add_element("comp_key",comp_key);
+  
+  // compute the van Hove distributions
+  TA_vanHove vanHove(max_step,nbins,max_range);
+  tracks.compute_corrected_TA(vanHove);
+  
+  // add md to sql db
+  sql.add_mdata(md_store);
+    
+  // make output wrapper and shove data in to it
+  Generic_wrapper_hdf hdf_out(out_file,true);  
+  hdf_out.open_wrapper();
+  vanHove.output_to_wrapper(hdf_out,md_store);
+  hdf_out.close_wrapper();
+  sql.commit();
+  
+
+  // close the db connection cleanly
+  sql.close_connection();
+
 
   
   return 0;

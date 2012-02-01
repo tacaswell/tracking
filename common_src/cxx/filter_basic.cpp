@@ -1,4 +1,4 @@
-//Copyright 2009 Thomas A Caswell
+//Copyright 2009-2011 Thomas A Caswell
 //tcaswell@uchicago.edu
 //http://jfi.uchicago.edu/~tcaswell
 //
@@ -37,9 +37,15 @@ using H5::H5File;
 using H5::Group;
 
 using utilities::Attr_list_hdf;
+using utilities::Md_store;
 
 using std::cerr;
 using std::endl;
+
+using std::string;
+using std::vector;
+
+using std::runtime_error;
 
 
 Filter_basic::Filter_basic():
@@ -104,3 +110,80 @@ Md_store Filter_basic::get_parameters()const
   return Md_store(tmp);
 }
 
+
+// helper functions
+Filter * utilities::filter_factory(const Md_store & filter_prams)
+{
+  bool has_e = filter_prams.contains_key("e_cut");
+  bool has_rg = filter_prams.contains_key("rg_cut");
+  bool has_s = filter_prams.contains_key("shift_cut");
+  bool has_I_min = filter_prams.contains_key("I_min_cut");
+  if(has_e && has_rg && has_s )
+  {
+    if(has_I_min)
+    {
+      Filter_ersI* F = new utilities::Filter_ersI();
+      F->init(filter_prams);
+      return (Filter *) F;
+    }
+    else
+    {
+      Filter_ers* F = new utilities::Filter_ers();
+      F->init(filter_prams);
+      return (Filter *) F;
+    }
+    
+  }
+
+  return (Filter *) new Filter_trivial();
+  
+}
+
+Md_store utilities::extract_prams(const std::string & fname,int comp_num,const vector<string> &pram_list)
+{
+  // hdf stuff
+  H5File file = H5File( fname, H5F_ACC_RDONLY );
+  Group  group = file.openGroup("/parameters/" + format_dset_name(utilities::D_XPOS,comp_num));
+  Attr_list_hdf attr_list(&group);
+
+  
+  
+  Md_store filter_prams;    
+  
+  
+  for(vector<string>::const_iterator it = pram_list.begin();
+      it <pram_list.end(); ++it)
+  {
+    string pram = *it;
+    if(!attr_list.contains_attr(pram))
+      throw runtime_error("the field " + pram + " is not in the file");
+    utilities::V_TYPE vtype = attr_list.get_type(pram);
+    int tmpi;
+    unsigned int tmpui;
+    float tmpf;
+    switch(vtype)
+    {
+    case V_UINT:
+      filter_prams.add_element(pram.c_str(),attr_list.get_value(pram,tmpui));
+      break;
+    case V_INT:
+      filter_prams.add_element(pram.c_str(),attr_list.get_value(pram,tmpi));
+      break;
+    case V_FLOAT:
+      filter_prams.add_element(pram.c_str(),attr_list.get_value(pram,tmpf));
+      break;
+    case V_ERROR:
+    case V_COMPLEX:
+    case V_STRING:
+    case V_BOOL:
+    case V_TIME:
+    case V_GUID:
+      throw runtime_error("the field " + pram + " is of type " + VT2str_s(vtype) + " which is not implemented yet.");
+    }
+    
+  }
+  
+  // return a copy of the assembled parameters 
+  return Md_store(filter_prams);
+  
+}
