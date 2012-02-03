@@ -74,7 +74,8 @@ public:
      constructor.  
      The bins are spaced linearly.  
    */
-  Corr_gofr(int bins,float max,int comp_num,int dset,int read_comp);
+  Corr_gofr(int bins,float max);
+  
   /**
      Display on screen using gnuplot
    */
@@ -112,19 +113,6 @@ private:
    */
   unsigned int parts_added_;
   
-  
-  /**
-     Data set number
-   */
-  int dset_;
-  /**
-     Computation number
-   */
-  int comp_num_;
-  /**
-     Iden comp number
-   */
-  int read_comp_;
   
 };
 

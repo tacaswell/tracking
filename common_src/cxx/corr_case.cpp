@@ -58,7 +58,7 @@ Corr_case::Corr_case(const tracking::Corr_gofr*,
 {
   
   for(int j = 0; j<comp_count;j++)
-    corr_vec_[j] = new Corr_gofr(n_bins,max_range,comp_num,dset_num,read_comp_num);
+    corr_vec_[j] = new Corr_gofr(n_bins,max_range);
   
   prams_float_.insert(pair<string,float>("max_range",max_range));
   prams_int_.insert(pair<string,int>("nbins",n_bins));
