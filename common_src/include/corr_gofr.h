@@ -71,7 +71,7 @@ public:
   void get_bin_edges(std::vector<float> & out) const;
   
   /**
-     constructor.  The maximum range is taken from particle::max_neighborhood_range_.
+     constructor.  
      The bins are spaced linearly.  
    */
   Corr_gofr(int bins,float max,int comp_num,int dset,int read_comp);
