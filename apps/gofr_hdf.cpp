@@ -289,7 +289,7 @@ int main(int argc, char * argv[])
   md_store.add_elements(&filt_md);
   md_store.add_element("comp_key",write_comp_num);
   
-
+  
 
   
   Wrapper_i_hdf wh(in_file,data_types,read_comp_num);
@@ -311,7 +311,7 @@ int main(int argc, char * argv[])
 
   cout<<"hash case filled"<<endl;
     
-  Corr_gofr gofr(nbins,max_range,write_comp_num,dset_key,read_comp_num);
+  Corr_gofr gofr(nbins,max_range);
   hcase.compute_corr(gofr);
   cout<<"computed g(r)"<<endl;
     
