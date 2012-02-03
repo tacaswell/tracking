@@ -167,7 +167,9 @@ class Corr_gofr :public Corr
  public:
   float get_max_range() const;
   float normalize(std::vector<float> & gofr) const;
+  void get_bin_edges(std::vector<float> & out) const;
   Corr_gofr(int bins,float max);
+  
 };
  
 
