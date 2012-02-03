@@ -147,7 +147,10 @@ void Hash_shelf::compute_corr(Corr & in)const
     cout<<"corr box: "<<tmp<<endl;
 #endif
     int tmp_indx = tuple_to_indx(tmp);
-    (hash_.at(tmp_indx))->compute_corr(in);;
+    if(hash_.at(tmp_indx))
+    {
+      (hash_.at(tmp_indx))->compute_corr(in);;
+    }
     
     
   }
