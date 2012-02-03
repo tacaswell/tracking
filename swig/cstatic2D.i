@@ -19,6 +19,8 @@
 
 %include "std_string.i"
 %include "std_vector.i"
+
+%include "exception.i"
 %module cstatic2
 %{
 #define DIM_COUNT 2
@@ -27,15 +29,28 @@
 #include "wrapper_i.h"
 #include "wrapper_i_hdf.h"
 #include "filter.h"
-#include "master_box_t.h"
+#include "hash_case.h"
+#include "corr.h"
+#include "corr_gofr.h"
+#include <stdexcept>
 %}
 namespace std
 {
   %template(IntVector) vector<int>;
   %template(DoubleVector) vector<double>;
+  %template(FloatVector) vector<float>;
 }
 
-    
+%exception{
+  try  {
+    $action
+  }
+  catch(const std::exception&  e)
+  {
+    SWIG_exception(SWIG_RuntimeError,e.what());
+  }
+
+}
 
 namespace utilities
 {
@@ -139,16 +154,37 @@ public:
 namespace tracking
 {
 
-class Master_box
+class Corr
+{
+ public:
+  virtual float get_max_range() const = 0;
+  Corr();
+  virtual ~Corr();
+};
+ 
+class Corr_gofr :public Corr
+{
+ public:
+  float get_max_range() const;
+  float normalize(std::vector<float> & gofr) const;
+  Corr_gofr(int bins,float max,int comp_num,int dset,int read_comp);
+};
+ 
+
+class hash_case
 {
 public:
-  void init(const utilities::Wrapper_in & w_in,utilities::Filter & filt);
-  unsigned int size();
+  void init(utilities::Wrapper_in & w_in , utilities::Filter & filt, float ppb)  ;
+  void compute_corr(tracking::Corr &) const ;
   
-  Master_box();
-  ~Master_box();
-  
+  int get_num_frames() const;
+  void print() const; 
+  hash_case();
+  ~hash_case();
   
 };
+ 
+  
+ 
 
 }
