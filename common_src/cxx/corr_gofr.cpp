@@ -81,9 +81,9 @@ void Corr_gofr::compute(const particle * p_in,const vector<const particle*> & nh
 
 
 
-Corr_gofr::Corr_gofr(int bins,float max,int comp_num,int dset,int read_comp):
+Corr_gofr::Corr_gofr(int bins,float max):
   bin_count_(bins),bin_edges_(bins),n_bins_(bins),
-  max_range_(max),parts_added_(0),dset_(dset),comp_num_(comp_num),read_comp_(read_comp)
+  max_range_(max),parts_added_(0)
 {
   if(bins <1)
     throw runtime_error("number of bins must be greater than 0");
@@ -120,14 +120,12 @@ void Corr_gofr::out_to_wrapper(Generic_wrapper & in,
   in.add_dset(1,&n_bins_,utilities::V_FLOAT,yar,"bin_count");
   yar = &bin_edges_.front();
   in.add_dset(1,&n_bins_,utilities::V_FLOAT,yar,"bin_edges");
+  
 
   if(md_store)
     in.add_meta_data(md_store);
   in.add_meta_data("rho", rho );
   
-  in.add_meta_data("comp_key",comp_num_);
-  in.add_meta_data("iden_key",read_comp_);
-  in.add_meta_data("dset_key",dset_);
   in.add_meta_data("max_range",max_range_);
   in.add_meta_data("nbins",n_bins_);
   in.add_meta_data("total_number",parts_added_);
