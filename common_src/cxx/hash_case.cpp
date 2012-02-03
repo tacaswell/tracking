@@ -79,7 +79,7 @@ void hash_case::print() const{
 
 
 hash_case::hash_case()
-  :inited_(false){
+  :inited_(false),own_particles_(false){
 
 }
   
@@ -167,6 +167,7 @@ void hash_case::init(Wrapper_in & w_in , utilities::Filter & filt, float ppb)
 
   // tell the particle class what wrapper it is using
   particle::intialize_wrapper_in(&w_in);
+  own_particles_ = true;
   
   
 
@@ -233,6 +234,11 @@ hash_case::~hash_case(){
   for(unsigned int j = 0; j<h_case_.size(); j++){
     delete h_case_.at(j);
   }
+  if(own_particles_)
+  {
+      particle::clear_wrapper_in();
+  }
+  
   std::cout<<"hc dead"<<std::endl;
 }
 

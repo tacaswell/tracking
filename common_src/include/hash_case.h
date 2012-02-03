@@ -240,8 +240,13 @@ protected:
    */
   bool inited_;
 	    
-	    
-
+  /**
+     Bool if the child hash shelves owns the particles.  If so, we
+     need to clean up the wrapper static variable in the particle
+     classes
+   */
+  bool own_particles_;
+  
 };
 
 
