@@ -112,8 +112,8 @@ void Hash_shelf::compute_corr(Corr & in)const
   
 
   float range = in.get_max_range();
-  // add an extra +1 to avoid the boxes at the edges with partial populations
-  int buffer = (unsigned int)ceil(range/upb_)+1;
+
+  int buffer = (unsigned int)ceil(range/upb_);
 
 #ifdef TESTING
   cout<<"corr buffer: "<<buffer<<endl;
@@ -130,7 +130,8 @@ void Hash_shelf::compute_corr(Corr & in)const
     
 
     bottom_corner[j] = buffer;
-    top_corner[j] = hash_dims_[j] - buffer;
+    // add an extra +1 to avoid the boxes at the edges with partial populations
+    top_corner[j] = hash_dims_[j] - buffer - 1;
     
   }
   
