@@ -218,7 +218,7 @@ protected:
 
 
   
-   
+#ifdef TRACKING_FLG   
   /**
      Given a list of particles fills in the n_pos_link lists and appends
      the appropriate values to the p_pos_link lists when those particles are
@@ -233,7 +233,7 @@ protected:
   void fill_pos_link_next(std::list<particle_track*>* tlist, 
 			  std::vector<Hash_shelf*>::iterator in_it, float max_disp);
 
-  
+#endif
   
   /**
      Bool if the Hash_case has been initialized.
