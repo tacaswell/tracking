@@ -159,8 +159,9 @@ void Hash_shelf::compute_corr(Corr & in)const
 }
 void hash_box::compute_corr(Corr & in )const
 {
-
-  if(in.get_max_range()<=particle::get_neighborhood_range())
+  int max_range = in.get_max_range();
+  
+  if(max_range<=particle::get_neighborhood_range())
   {
     vector<particle*>::const_iterator myend = contents_.end();
     for(vector<particle*>::const_iterator it = contents_.begin();
@@ -175,7 +176,7 @@ void hash_box::compute_corr(Corr & in )const
       throw logic_error("hash_box: box not part of a shelf");
 
     vector <const particle *> nhood;
-    shelf_->get_region_px(hash_indx_,nhood,in.get_max_range());
+    shelf_->get_region_px(hash_indx_,nhood,max_range);
     
     int max_j = contents_.size();
     for(int j = 0; j<max_j;++j)
