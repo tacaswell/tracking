@@ -92,7 +92,7 @@ protected:
    */
   float temperature_sum_;
   /**
-     Count of the number of temperatures added
+     Count of the number of planes added
    */
   unsigned int plane_count_;
   
