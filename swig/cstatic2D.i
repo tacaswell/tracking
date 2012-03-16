@@ -15,7 +15,17 @@
 //You should have received a copy of the GNU General Public License
 //along with this program; if not, see <http://www.gnu.org/licenses>.
 
+%{
+#define SWIG_FILE_WITH_INIT
+%}
 
+%include "numpy.i"
+
+%init %{
+import_array();
+%}
+
+  
 
 %include "std_string.i"
 %include "std_vector.i"
@@ -28,12 +38,14 @@
 #include "enum_utils.h"
 #include "wrapper_i.h"
 #include "wrapper_i_hdf.h"
+#include "wrapper_i_generic.h"
 #include "filter.h"
 #include "hash_case.h"
 #include "corr.h"
 #include "corr_gofr.h"
 #include <stdexcept>
 %}
+
 namespace std
 {
   %template(IntVector) vector<int>;
@@ -111,6 +123,37 @@ public:
 
 };
   
+
+
+class Wrapper_i_generic:public Wrapper_in{
+
+  Wrapper_i_generic();  
+  ~Wrapper_i_generic();
+  bool set_frames();
+
+  bool set_data_types(std::set<D_TYPE>);
+  bool finish_setup();
+  bool open_frame(unsigned int frame,int N);
+  bool set_data_type(D_TYPE dtype);
+%apply (int* IN_ARRAY1, int DIM1) {(float* vector, int length)}  
+  bool add_int_data(int * data,int N);
+%clear (int* vector, int length);
+%apply (float* IN_ARRAY1, int DIM1) {(float* vector, int length)}
+  bool add_float_data(float * data,int N);
+%clear (float* vector, int length);
+  bool set_meta_data(const Md_store & md_store);
+  bool close_frame();
+  bool finalize_wrapper();
+  
+
+};
+ 
+
+
+
+
+ 
+
 
 class Filter
 {

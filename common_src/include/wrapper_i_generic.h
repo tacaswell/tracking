@@ -179,23 +179,72 @@ public:
   bool finish_setup();
   /**
      Opens a frame to add data to it
+
+     @param frame the index of the frame
+     @param N the number of particles in the frame
+
+     @return if it works
    */
-  bool open_frame(unsigned int frame);
+  bool open_frame(unsigned int frame,int N);
+
+  /**
+     Configures the object to take data of the given type
+
+     @return if it works
+   */
+  bool set_data_type(D_TYPE dtype);
+  
+
+  /**
+     adds data, must have an active data type set
+
+     Copies the data to it's own internal data structures so that it
+     does not care what the source does.  This is a major memory
+     waste, but RAM is cheap.
+
+     This will clear the set data type.
+
+     will throw errors if there is not a set data type
+
+     @param data the data, pointer to 1D array
+     @param N length
+
+     @return if it works
+   */
+  bool add_int_data(int * data,int N);
+  /**
+     adds data, must have an active data type set
+
+     Copies the data to it's own internal data structures so that it
+     does not care what the source does.  This is a major memory
+     waste, but RAM is cheap.
+
+     This will clear the set data type.
+
+     will throw errors if there is not a set data type
+
+     @param data the data, pointer to 1D array
+     @param N length
+
+     @return if it works
+   */
+  bool add_float_data(float * data,int N);
+
+  /**
+     Sets frame meta-data for the frame
+   */
+  bool set_meta_data(const Md_store & md_store);
   
   /**
-     adds data, internal logic will cast it right (we hope!)
-   */
-  template<class T>
-  bool add_data(D_TYPE dtype,T * data);
-  
-  /**
-     Closes frame.  Throws error 
+     Closes frame.  Throws error if not enough data was added
    */
   bool close_frame();
   
   /**
      Closes wrapper from taking any new data
    */
+  bool finalize_wrapper();
+  
 };
 
 }
