@@ -129,11 +129,11 @@ class Wrapper_i_generic:public Wrapper_in{
 
   Wrapper_i_generic();  
   ~Wrapper_i_generic();
-  bool set_frames();
 
-  bool set_data_types(std::set<D_TYPE>);
-  bool finish_setup();
-  bool open_frame(unsigned int frame,int N);
+
+  bool setup(std::set<D_TYPE>,int n);
+
+  bool open_frame(unsigned int frame,int N,float z);
   bool set_data_type(D_TYPE dtype);
 %apply (int* IN_ARRAY1, int DIM1) {(float* vector, int length)}  
   bool add_int_data(int * data,int N);

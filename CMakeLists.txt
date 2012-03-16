@@ -86,6 +86,7 @@ SET(OTHER_WRAPPER_SRC
 SET(HDF_SRC
   ${COMMON_WRAPPER_SRC}
   ${COMMON_SRC_PATH}/wrapper_i_hdf.cpp
+  ${COMMON_SRC_PATH}/wrapper_i_generic.cpp
   ${COMMON_SRC_PATH}/wrapper_o_hdf.cpp
   ${COMMON_SRC_PATH}/wrapper_o_hdf_group.cpp
   ${COMMON_SRC_PATH}/generic_wrapper_hdf.cpp
