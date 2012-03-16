@@ -27,7 +27,7 @@
 #define DATA_MAP
 
 #include <map>
-
+#include <stdexcept>
 #include "enum_utils.h"
 
 namespace utilities
@@ -60,6 +60,9 @@ public:
    */
   int operator()(utilities::D_TYPE in)const
   {
+    if( in == D_SENTRY)
+      throw std::runtime_error("D_SENTRY is not a valid data type");
+    
     return data_layout_[in];
   }
     
