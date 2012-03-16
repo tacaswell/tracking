@@ -85,7 +85,8 @@ int main(int argc, const char * argv[])
     set<D_TYPE> data_types = set<D_TYPE>(tmp, tmp+2);
     string fname = "test.hdf";    
     
-    Wrapper_i_hdf wrapper_in = Wrapper_i_hdf(fname,data_types,0,5,true);
+    Wrapper_i_hdf wrapper_in = Wrapper_i_hdf();
+    wrapper_in.initialize(fname,data_types,0,5,true);
     
     
     Filter_trivial filt;

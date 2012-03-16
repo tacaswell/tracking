@@ -109,8 +109,8 @@ int main()
     set<D_TYPE> data_types = set<D_TYPE>(tmp, tmp+2);
 
     
-    Wrapper_i_hdf wrapper_in = Wrapper_i_hdf(fake_data_file,data_types,0);
-    
+    Wrapper_i_hdf wrapper_in = Wrapper_i_hdf();
+    wrapper_in.initialize(fake_data_file,data_types,0);
     
     Filter_trivial filt;
     Master_box box;
@@ -173,7 +173,8 @@ int main()
     
       
     // set up the input wrapper
-    Wrapper_i_hdf wh(out_file,data_types,1);
+    Wrapper_i_hdf wh = Wrapper_i_hdf();
+    wh.initialize(out_file,data_types,1);
   
 
     // fill the master_box
