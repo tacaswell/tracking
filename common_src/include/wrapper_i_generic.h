@@ -51,11 +51,6 @@ class Wrapper_i_generic:public Wrapper_in{
 private:
   
   /**
-     Set of pairs of data types and the computation number to be
-     used for that data type.
-   */
-  std::set<std::pair<utilities::D_TYPE,int> > data_types_;
-  /**
      Set of data types in the wrapper.  This is mostly redundant, but
      useful.
    */
@@ -118,11 +113,38 @@ private:
   
 
   /**
+     set of added data types
+   */
+  std::set<utilities::D_TYPE>* frame_added_datatypes_;
+  /**
+     if there is a frame open to add data too
+   */
+  bool frame_open_;
+  /**
+     Current data_type
+   */
+  D_TYPE cur_dtype_;
+
+  /**
+     2D data flag
+   */
+  bool two_d_data_;
+
+  /**
+     current frame size
+   */
+  int cur_frame_size_;
+  /**
+     current frame number
+   */
+  int cur_frame_number_;
+  
+  /**
      Deletes all allocated data
    */
   void clean_data();
   
-
+  
 public:
     
   
@@ -147,7 +169,7 @@ public:
 
   
 
-  Tuplef get_dims() const;
+
 
 
   
@@ -167,16 +189,8 @@ public:
 
      if this is not set will grow dynamically.
    */
-  bool set_frames();
+  bool setup(std::set<D_TYPE>,int N);
 
-  /**
-     Sets the data to expect for each frame
-   */
-  bool set_data_types(std::set<D_TYPE>);
-  /**
-     set to accept data
-   */
-  bool finish_setup();
   /**
      Opens a frame to add data to it
 
@@ -185,7 +199,7 @@ public:
 
      @return if it works
    */
-  bool open_frame(unsigned int frame,int N);
+  bool open_frame(unsigned int frame,int N,float z);
 
   /**
      Configures the object to take data of the given type
