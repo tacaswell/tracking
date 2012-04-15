@@ -47,6 +47,21 @@ namespace utilities{
 /**
    Wrapper class for eating data from arbitrary sources.  Primarily
    written for the interface with python.
+
+   life cycle:
+
+   open_wrapper()
+   setup(data_type,num_frames)
+   {
+   open_frame
+   {
+   set_data_type
+   set_data
+   }
+   close_frame
+   }
+   finalize_wrapper
+
 */
 class Wrapper_i_generic:public Wrapper_in{
 private:
@@ -156,7 +171,7 @@ public:
   std::complex<float> get_value(std::complex<float>& out,
 				int ind,D_TYPE type, int frame) const ;
 
-
+  Tuplef get_dims() const;
   std::set<D_TYPE>    get_data_types() const ;
 
 
@@ -180,7 +195,11 @@ public:
      Constructor
    */
   Wrapper_i_generic();
-  
+
+  /** @defgroup lifecycle Life cycle of wrapper object
+   * Order of operations on Wrapper_i_generic objects.
+   * @{ 
+   */
   /**
      open wrapper to accept data, nukes everything currently in the wrapper
    */
@@ -259,6 +278,9 @@ public:
      Closes wrapper from taking any new data
    */
   bool finalize_wrapper();
+
+  /* @} 
+   */
   
 };
 

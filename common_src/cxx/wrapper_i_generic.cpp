@@ -345,3 +345,10 @@ void Wrapper_i_generic::clean_data()
   locked_= false;
 
 }
+
+Tuplef Wrapper_i_generic::get_dims() const
+{
+  throw std::exception();
+  return Tuplef(-1.0);
+  
+}
