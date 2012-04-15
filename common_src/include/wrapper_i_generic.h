@@ -33,7 +33,7 @@
 #ifndef WRAPPER_I_PYTHON
 #define WRAPPER_I_PYTHON
 
-#include "H5Cpp.h"
+
 
 #include <string>
 #include <vector>
@@ -45,7 +45,8 @@
 
 namespace utilities{
 /**
-   Wrapper class for eating data from hdf files, take 2
+   Wrapper class for eating data from arbitrary sources.  Primarily
+   written for the interface with python.
 */
 class Wrapper_i_generic:public Wrapper_in{
 private:
