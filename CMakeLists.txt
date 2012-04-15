@@ -22,13 +22,20 @@ SET(UTIL_SRC
   ${COMMON_SRC_PATH}/histogram.cpp
 )
 
+SET(COMMON_WRAPPER_SRC
+  ${COMMON_SRC_PATH}/enum_utils.cpp
+  ${COMMON_SRC_PATH}/data_map.cpp
+  ${COMMON_SRC_PATH}/wrapper_i.cpp
+  ${COMMON_SRC_PATH}/wrapper_i_generic.cpp
+  ${COMMON_SRC_PATH}/md_store.cpp
+  )
+
+
 
 SET(COMMON_SRC
   ${COMMON_SRC_PATH}/particle_base.cpp
   ${COMMON_SRC_PATH}/master_box_t.cpp
-  ${COMMON_SRC_PATH}/wrapper_i.cpp
-  ${COMMON_SRC_PATH}/md_store.cpp
-  ${COMMON_SRC_PATH}/enum_utils.cpp
+  ${COMMON_WRAPPER_SRC}
   )
 
 SET(COMMON_HASH_SRC
@@ -66,12 +73,6 @@ SET(ACCUM_SCR
   ${COMMON_SRC_PATH}/accum_case.cpp
 )
 
-SET(COMMON_WRAPPER_SRC
-  ${COMMON_SRC_PATH}/data_map.cpp
-  ${COMMON_SRC_PATH}/filter_basic.cpp
-)
-
-
 
 SET(OTHER_WRAPPER_SRC
   ${COMMON_WRAPPER_SRC}
@@ -85,12 +86,12 @@ SET(OTHER_WRAPPER_SRC
 SET(HDF_SRC
   ${COMMON_WRAPPER_SRC}
   ${COMMON_SRC_PATH}/wrapper_i_hdf.cpp
-  ${COMMON_SRC_PATH}/wrapper_i_generic.cpp
   ${COMMON_SRC_PATH}/wrapper_o_hdf.cpp
   ${COMMON_SRC_PATH}/wrapper_o_hdf_group.cpp
   ${COMMON_SRC_PATH}/generic_wrapper_hdf.cpp
   ${COMMON_SRC_PATH}/attr_list_hdf.cpp
   ${COMMON_SRC_PATH}/md_store_attr_list
+  ${COMMON_SRC_PATH}/filter_basic.cpp
   )
 
 set(SQL_CODE
