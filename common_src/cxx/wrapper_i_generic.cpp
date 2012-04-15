@@ -31,17 +31,6 @@
 #include "attr_list_hdf.h"
 #include "md_store.h"
 
-using H5::H5File;
-using H5::Exception;
-using H5::DataSpaceIException;
-using H5::DataSetIException ;
-using H5::FileIException;
-using H5::Group;
-using H5::DataSet;
-using H5::DataSpace;
-using H5::PredType;
-using H5::Attribute;
-using H5::Group;
 
 using utilities::Tuplef;
 using utilities::Wrapper_i_generic;
