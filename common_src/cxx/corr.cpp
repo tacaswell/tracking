@@ -159,7 +159,7 @@ void Hash_shelf::compute_corr(Corr & in)const
 }
 void hash_box::compute_corr(Corr & in )const
 {
-  int max_range = in.get_max_range();
+  float max_range = in.get_max_range();
   
   if(max_range<=particle::get_neighborhood_range())
   {
