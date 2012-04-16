@@ -104,7 +104,7 @@ void Hash_shelf::compute_corr(Corr & in)const
 {
 
   // deal with temperature
-  if(md_store_->contains_key(TEMPERATURE_STRING))
+  if(md_store_ && md_store_->contains_key(TEMPERATURE_STRING))
   {
     float temp;
     in.add_plane_temperature(md_store_->get_value(TEMPERATURE_STRING,temp));
