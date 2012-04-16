@@ -154,13 +154,19 @@ private:
      current frame number
    */
   int cur_frame_number_;
+  /**
+     dimensions of data
+   */
+  Tuplef dims_;
   
   /**
      Deletes all allocated data
    */
   void clean_data();
-  
-  
+  /**
+     Sets the dimensions
+   */
+  bool set_dims(const Tuplef & dim) ;  
 public:
     
   
@@ -172,6 +178,7 @@ public:
 				int ind,D_TYPE type, int frame) const ;
 
   Tuplef get_dims() const;
+
   std::set<D_TYPE>    get_data_types() const ;
 
 
@@ -209,7 +216,7 @@ public:
 
      if this is not set will grow dynamically.
    */
-  bool setup(std::set<D_TYPE>,int N);
+  bool setup(const std::set<D_TYPE> &,int N,const Tuplef & );
 
   /**
      Opens a frame to add data to it

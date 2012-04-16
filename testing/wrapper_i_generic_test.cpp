@@ -32,9 +32,13 @@ using std::cerr;
 
 using utilities::Wrapper_i_generic;
 using utilities::D_TYPE;
+using utilities::Tuplef;
 
 int main(int argc, const char * argv[])
 {
+
+  cout<<"hello world"<<endl;
+  
   // make fake data
   int N = 25;
   float X[N];
@@ -46,8 +50,7 @@ int main(int argc, const char * argv[])
   }
   
 
-  try
-  {
+
     D_TYPE tmp[] = {utilities::D_XPOS,
         	    utilities::D_YPOS,
     };
@@ -56,10 +59,11 @@ int main(int argc, const char * argv[])
 
     Wrapper_i_generic wrapper_in = Wrapper_i_generic();
 
-
+  try
+  {
     
     wrapper_in.open_wrapper();
-    wrapper_in.setup(data_types,1);
+    wrapper_in.setup(data_types,1,Tuplef(0.0));
     wrapper_in.open_frame(0,N,0);
 
     wrapper_in.set_data_type(utilities::D_XPOS);
@@ -81,7 +85,18 @@ int main(int argc, const char * argv[])
     std::cerr<<"caught on error: ";
     std::cerr<<err<<endl;
   } 
-
+  float tempf;
+  cout<<N<<endl;
+  
+  for(int j = 0; j <N; ++j)
+  {
+    cout<<j<<'\t';
+    
+    cout<<wrapper_in.get_value(tempf,j,utilities::D_XPOS,0)<<","
+    	<<wrapper_in.get_value(tempf,j,utilities::D_YPOS,0)<<endl;
+  }
+  
+  
   return 0;
   
 
