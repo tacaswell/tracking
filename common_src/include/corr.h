@@ -107,6 +107,7 @@ public:
   void compute(const particle *,const std::vector<const particle*> & ) {};
 
   void out_to_wrapper(utilities::Generic_wrapper &,const std::string & ) const{}
+
   
   
   virtual float get_max_range() const{return size_;};

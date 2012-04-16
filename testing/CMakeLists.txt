@@ -171,6 +171,7 @@ target_link_libraries(rtt_ts
 set_target_properties(rtt_ts PROPERTIES COMPILE_DEFINITIONS  "PTYPE=1;DIM_COUNT=2")
 
 
+
 function    (cm_export_file FILE DEST)
   if    (NOT TARGET export-files)
     add_custom_target(export-files ALL COMMENT "Exporting files into build tree")
@@ -183,3 +184,14 @@ endfunction (cm_export_file)
 # http://stackoverflow.com/questions/697560/how-to-copy-directory-from-source-tree-to-binary-tree/3888898#3888898
 
 add_subdirectory(filt_fac_test)
+
+
+
+
+add_executable(wrapper_i_generic_test wrapper_i_generic_test.cpp
+  ${COMMON_WRAPPER_SRC}
+  ${UTIL_SRC} 
+  )
+set_target_properties(wrapper_i_generic_test PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_COUNT=2;TESTING")
+
+

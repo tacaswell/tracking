@@ -47,6 +47,21 @@ namespace utilities{
 /**
    Wrapper class for eating data from arbitrary sources.  Primarily
    written for the interface with python.
+
+   life cycle:
+
+   open_wrapper()
+   setup(data_type,num_frames)
+   {
+   open_frame
+   {
+   set_data_type
+   set_data
+   }
+   close_frame
+   }
+   finalize_wrapper
+
 */
 class Wrapper_i_generic:public Wrapper_in{
 private:
@@ -139,13 +154,19 @@ private:
      current frame number
    */
   int cur_frame_number_;
+  /**
+     dimensions of data
+   */
+  Tuplef dims_;
   
   /**
      Deletes all allocated data
    */
   void clean_data();
-  
-  
+  /**
+     Sets the dimensions
+   */
+  bool set_dims(const Tuplef & dim) ;  
 public:
     
   
@@ -156,6 +177,7 @@ public:
   std::complex<float> get_value(std::complex<float>& out,
 				int ind,D_TYPE type, int frame) const ;
 
+  Tuplef get_dims() const;
 
   std::set<D_TYPE>    get_data_types() const ;
 
@@ -180,7 +202,11 @@ public:
      Constructor
    */
   Wrapper_i_generic();
-  
+
+  /** @defgroup lifecycle Life cycle of wrapper object
+   * Order of operations on Wrapper_i_generic objects.
+   * @{ 
+   */
   /**
      open wrapper to accept data, nukes everything currently in the wrapper
    */
@@ -190,7 +216,7 @@ public:
 
      if this is not set will grow dynamically.
    */
-  bool setup(std::set<D_TYPE>,int N);
+  bool setup(const std::set<D_TYPE> &,int N,const Tuplef & );
 
   /**
      Opens a frame to add data to it
@@ -209,7 +235,10 @@ public:
    */
   bool set_data_type(D_TYPE dtype);
   
-
+  /**
+     Clears the current data type, no questions asked
+   */
+  bool clear_data_type();
   /**
      adds data, must have an active data type set
 
@@ -226,6 +255,9 @@ public:
 
      @return if it works
    */
+
+  
+  
   bool add_int_data(int * data,int N);
   /**
      adds data, must have an active data type set
@@ -259,6 +291,9 @@ public:
      Closes wrapper from taking any new data
    */
   bool finalize_wrapper();
+
+  /* @} 
+   */
   
 };
 

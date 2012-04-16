@@ -23,7 +23,7 @@
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
 #include <stdexcept>
-
+#include <cstring>
 #include "wrapper_i_generic.h"
 #include "master_box_t.h"
 #include "particle_base.h"
@@ -31,17 +31,6 @@
 #include "attr_list_hdf.h"
 #include "md_store.h"
 
-using H5::H5File;
-using H5::Exception;
-using H5::DataSpaceIException;
-using H5::DataSetIException ;
-using H5::FileIException;
-using H5::Group;
-using H5::DataSet;
-using H5::DataSpace;
-using H5::PredType;
-using H5::Attribute;
-using H5::Group;
 
 using utilities::Tuplef;
 using utilities::Wrapper_i_generic;
@@ -59,6 +48,7 @@ using std::invalid_argument;
 using std::logic_error;
 using std::runtime_error;
 using std::pair;
+using std::memcpy;
 
 
 using tracking::particle;
@@ -67,21 +57,24 @@ using tracking::particle;
 
 Wrapper_i_generic::Wrapper_i_generic():
     data_types_set_(), 
-  d_mapi_(),
-  d_mapf_(),
-  d_mapc_(),
-  data_i_(0),
-  data_f_(0),
-  data_c_(0),
-  frame_c_(0),
-  frame_count_(0),
-  total_part_count_(0),
-  frame_zdata_(0),
-  locked_(false),
-  frame_added_datatypes_(NULL),
-  frame_open_(false),
-  cur_dtype_(D_SENTRY),
-  two_d_data_(true)
+    d_mapi_(),
+    d_mapf_(),
+    d_mapc_(),
+    data_i_(0),
+    data_f_(0),
+    data_c_(0),
+    frame_c_(0),
+    frame_count_(0),
+    total_part_count_(0),
+    frame_zdata_(0),
+    locked_(false),
+    frame_added_datatypes_(NULL),
+    frame_open_(false),
+    cur_dtype_(D_SENTRY),
+    two_d_data_(true),
+    cur_frame_size_(0),
+    cur_frame_number_(0),
+    dims_(0.0)
 {
 }
 
@@ -97,21 +90,29 @@ Wrapper_i_generic::~Wrapper_i_generic()
 bool Wrapper_i_generic::open_wrapper()
 {
   clean_data();
+
+  
   return true;
   
 }
 
 
-bool Wrapper_i_generic::setup(std::set<D_TYPE> dtypes, int N)
+bool Wrapper_i_generic::setup(const std::set<D_TYPE>& dtypes, int N,const Tuplef & dim)
 {
 
   if (locked_)
     throw runtime_error("trying to set the data types of a locked wrapper");
   
   frame_count_ = N;
-  frame_c_.reserve(frame_count_);  
-  frame_zdata_.resize(frame_count_);
+
+  frame_c_.resize(frame_count_);  
+  for(unsigned int j = 0; j<frame_count_; ++j)
+    frame_c_[j] = 0;
   
+  frame_zdata_.resize(frame_count_);
+  for(unsigned int j = 0; j<frame_count_; ++j)
+    frame_zdata_[j] = 0;
+
   data_types_set_ = dtypes;
     
     
@@ -149,7 +150,8 @@ bool Wrapper_i_generic::setup(std::set<D_TYPE> dtypes, int N)
       throw logic_error("wrapper_i_generic: The data type should not have been " + VT2str_s(v_type(cur)));
     }
   }
-
+  set_dims(dim);
+  
   locked_ = true;
   return true;
   
@@ -209,18 +211,125 @@ bool Wrapper_i_generic::open_frame(unsigned int frame,int N,float z)
   
 }
 
+bool Wrapper_i_generic::set_data_type(utilities::D_TYPE d_type)
+{
+  if(! frame_open_)
+  {
+    throw runtime_error("frame is not open");
+    return false;
+    
+  }
+  if(cur_dtype_ != utilities::D_SENTRY)
+  {
+    throw runtime_error("Another type is currently set");
+    return false;
+  }
+  set<utilities::D_TYPE>::const_iterator end = frame_added_datatypes_->end();
+  
+  if(frame_added_datatypes_->find(d_type) != end)
+  {
+    throw runtime_error("all ready added this data type");
+    return false;
+  }
+  frame_added_datatypes_->insert(d_type);
+  
+  cur_dtype_ = d_type;
+  return true;
+  
+}
+
+bool Wrapper_i_generic::clear_data_type()
+{
+  cur_dtype_ = utilities::D_SENTRY;
+  return true;
+}
+
+
+bool Wrapper_i_generic::add_float_data(float * data_in, int N)
+{
+  if(v_type(cur_dtype_) != V_FLOAT)
+  {
+    throw  runtime_error("the assumed value type of the dtype is not float");
+  }
+  if( N != cur_frame_size_)
+  {
+    throw  runtime_error("expected dimensions and data dimensions do not match");
+  }
+  float * tmp = NULL;
+  
+  try
+  {
+    
+    tmp = new float[N];
+    memcpy(tmp,data_in,sizeof(float)* N);
+  
+    data_f_.at(d_mapf_(cur_dtype_)).at(cur_frame_number_) = tmp;
+  }
+  catch(...)
+  {
+    if(tmp)
+      delete [] tmp;
+    data_f_.at(d_mapf_(cur_dtype_)).at(cur_frame_number_) = NULL;
+  }
+  clear_data_type();
+  return true;
+  
+}
+
+
+
+bool Wrapper_i_generic::add_int_data(int * data_in, int N)
+{
+  if(v_type(cur_dtype_) != V_INT)
+  {
+    throw  runtime_error("the assumed value type of the dtype is not int");
+  }
+  if( N != cur_frame_size_)
+  {
+    throw  runtime_error("expected dimensions and data dimensions do not match");
+  }
+  int * tmp = NULL;
+  
+  try
+  {
+    
+    tmp = new int[N];
+    memcpy(tmp,data_in,sizeof(float)* N);
+    data_i_.at(d_mapi_(cur_dtype_)).at(cur_frame_number_) = tmp;
+  }
+  catch(...)
+  {
+    if( tmp)
+      delete [] tmp;
+    data_i_.at(d_mapi_(cur_dtype_)).at(cur_frame_number_) = NULL;
+  }
+
+  clear_data_type();
+
+  return true;
+  
+}
 
 
 bool Wrapper_i_generic::close_frame()
 {
   // add checks to make sure all of the data was filled in
-
+  
   delete frame_added_datatypes_;
   cur_frame_size_ = 0;
-  cur_dtype_ = D_SENTRY;
+  frame_open_=false;
+  clear_data_type();
+  
   
   return false;
 }
+
+
+bool Wrapper_i_generic::finalize_wrapper()
+{
+  return true;
+}
+
 
 // access functions lifted from _hdf
 int Wrapper_i_generic::get_value(int& out,
@@ -355,4 +464,21 @@ void Wrapper_i_generic::clean_data()
   }
   locked_= false;
 
+}
+
+Tuplef Wrapper_i_generic::get_dims() const
+{
+
+  return dims_;
+  
+  
+}
+
+bool Wrapper_i_generic::set_dims(const Tuplef & dim)
+{
+  // add some sort of check to protect its self
+
+  dims_ = dim;
+  return true;
+  
 }
