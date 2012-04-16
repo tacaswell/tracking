@@ -55,6 +55,9 @@ const Md_store* Wrapper_in::get_Md_store(unsigned int j)const
 }
 Md_store* Wrapper_in::get_Md_store(unsigned int j)
 {
+  if(j>=md_stores_.size())
+    return NULL;
+
   return md_stores_.at(j);
 }
 
