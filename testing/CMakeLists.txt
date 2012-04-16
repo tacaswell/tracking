@@ -169,3 +169,12 @@ target_link_libraries(rtt_ts
   ${XERCESC_LIBRARY} 
   )
 set_target_properties(rtt_ts PROPERTIES COMPILE_DEFINITIONS  "PTYPE=1;DIM_COUNT=2")
+
+
+
+add_executable(wrapper_i_generic_test wrapper_i_generic_test.cpp
+  ${COMMON_WRAPPER_SRC}
+  ${UTIL_SRC} 
+  )
+set_target_properties(wrapper_i_generic_test PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_COUNT=2;TESTING")
+
