@@ -80,6 +80,7 @@ SET(OTHER_WRAPPER_SRC
   ${COMMON_SRC_PATH}/wrapper_i_ning.cpp
   ${COMMON_SRC_PATH}/wrapper_i_ning_hd.cpp
   ${COMMON_SRC_PATH}/wrapper_o_file.cpp
+  ${COMMON_SRC_PATH}/wrapper_i_jb_binary.cpp
   )
 
 

@@ -39,7 +39,7 @@
 #include <iostream>
 #include <map>
 
-#include "wrapper_i.h"
+#include "wrapper_i_generic.h"
 
 #ifndef WRAPPER_JB_BINARY
 #define WRAPPER_JB_BINARY
@@ -56,24 +56,19 @@ using std::string;
    Only one 3D packing per file, but this can be split up into any
    number of planes for faking 3D data.
 */
-class Wrapper_i_file:public Wrapper_in{
+class Wrapper_i_jb_binary:public Wrapper_in{
 private:
-  ///Pointer to the first data point of the 
-  string 
-  double get_value(int ind,  utilities::D_TYPE type)const;
+  ///path to file to read
+  std::string fname_;
+  /**
+     pointer to Wrapper_i_generic object that deals with actual data wrangling.
+   */
+  utilities::Wrapper_i_generic * wrapper_int_;
   
-protected:
-  ///number of rows(particles) that the 
-  int rows;
-
-  int cols;
-  map<utilities::D_TYPE, int> contents;
-  void fill_data(std:string file_name, int row, int col);
-  vector<int> frame_edges_;
   
 public:
 
-  
+  // inherited from ABC
   int                 get_value(int& out,
 				int ind,D_TYPE type, int frame) const ;
   float               get_value(float& out,
@@ -86,21 +81,29 @@ public:
 
 
 
-  int get_num_entries(int frame) const ;
+  int get_num_entries(unsigned int frame) const ;
+  int get_num_entries() const ;
 
   int get_num_frames() const ;
 
   bool contains_type(D_TYPE type) const ;
 
-  Tuple get_dims() const;
+  Tuplef get_dims() const;
   
-  ~Wrapper_i_file();
-  Wrapper_i_file(const std::string & fname,
-		 const std::set<utilities::D_TYPE>& dtypes,
-		 int rows,
-		 const std::vector<int>& frame_edges);
+  ~Wrapper_i_jb_binary();
+  Wrapper_i_jb_binary();
   
-
+  // local
+  /**
+     Sets the file name
+   */
+  bool set_file_name(const std::string & fname);
+  /**
+     reads in the binary file.  There should be lots of parameters on
+     this, but for now what I need in hard coded in.
+   */
+  bool proc_file(unsigned int N);
+  
 
 
 };
