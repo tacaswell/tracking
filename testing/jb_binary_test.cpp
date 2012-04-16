@@ -48,7 +48,7 @@ int main(int argc, const char * argv[])
   
   wrap.set_file_name(fname);
   
-  wrap.proc_file(3);
+  wrap.proc_file(3000000);
   
 }
 

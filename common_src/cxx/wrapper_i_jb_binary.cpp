@@ -37,9 +37,14 @@
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
 #include <fstream>
+
+
 #include "wrapper_i_jb_binary.h"
 using std::runtime_error;
+using std::logic_error;
 using std::ifstream;
+using std::vector;
+using std::set;
 
 using utilities::Wrapper_i_jb_binary;
 using utilities::D_TYPE;
@@ -126,17 +131,91 @@ bool Wrapper_i_jb_binary::set_file_name(const std::string & fname)
 
 bool Wrapper_i_jb_binary::proc_file(unsigned int N)
 {
+
+  int z_slice_count = 150;
+  float z_shift = 0.5;
+  float x_shift = 0.5;
+  float y_shift = 0.5;
+
+  vector< vector <float> > tmp_data_x(z_slice_count);
+  vector< vector <float> > tmp_data_y(z_slice_count);
+  
+
+  
+  
+  float plane_thickness = 0.007 * 0.8;
+  float plane_spacing = ((float) 1)/z_slice_count;
+  
+
+  
+  
+  
   ifstream ifs ( fname_.c_str() , ifstream::in | ifstream::binary);
-  for(int j = 0; j<5; ++j)
+  for(unsigned int j = 0; j<N; ++j)
   {
+    // variables for reading data
     double x,y,z;
+    // variables to cast them to floats (internal data type)
+    float xf,yf,zf;
+    // read triple of data
     ifs.read((char *) & x,8);
     ifs.read((char *) & y,8);
     ifs.read((char *) & z,8);
-
-    std::cout<<x<<'\t'<<y<<'\t'<<z<<std::endl;
+    
+    xf = (float) x + x_shift; 
+    yf = (float) y + y_shift;
+    zf = (float) z + z_shift;
+    
+    // figure out which plane the particle is in
+    int plane = (int) (zf/plane_spacing);
+    // see if it is close enough to the plane, pulling slab a
+    // plane_thickness above the plane (just because the
+    // math/variables are a bit simpler)
+    if (plane < z_slice_count && zf - plane*plane_spacing < plane_thickness )
+    {
+      tmp_data_x.at(plane).push_back(xf);
+      tmp_data_y.at(plane).push_back(yf);
+    }
+    
     
   }
+  
+  wrapper_int_ = new Wrapper_i_generic();
+  
+  D_TYPE tmp[] = {utilities::D_XPOS,
+		  utilities::D_YPOS,
+  };
+  set<D_TYPE> data_types = set<D_TYPE>(tmp, tmp+2);
+    
+  wrapper_int_->open_wrapper();
+  wrapper_int_->setup(data_types,z_slice_count,Tuplef(1,1));
+  
+
+  for(int j = 0; j<z_slice_count; ++j)
+  {
+    vector<float> * tmpx = & tmp_data_x.at(j);
+    vector<float> * tmpy = & tmp_data_y.at(j);
+    unsigned int num_parts = tmpx->size();
+    if (num_parts != tmpy->size())
+      throw logic_error("x and y sizes don't match");
+    
+    wrapper_int_->open_frame(j,num_parts,j*plane_spacing + plane_thickness/2);
+    
+    wrapper_int_->set_data_type(utilities::D_XPOS);
+    wrapper_int_->add_float_data(tmpx->data(),num_parts);
+
+    wrapper_int_->set_data_type(utilities::D_YPOS);
+    wrapper_int_->add_float_data(tmpy->data(),num_parts);
+
+    wrapper_int_->close_frame();
+
+
+  }
+     
+  wrapper_int_->finalize_wrapper();
+    
+
+  ifs.close();
   
   return true;
   
