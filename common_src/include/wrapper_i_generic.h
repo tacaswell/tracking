@@ -228,7 +228,10 @@ public:
    */
   bool set_data_type(D_TYPE dtype);
   
-
+  /**
+     Clears the current data type, no questions asked
+   */
+  bool clear_data_type();
   /**
      adds data, must have an active data type set
 
@@ -245,6 +248,9 @@ public:
 
      @return if it works
    */
+
+  
+  
   bool add_int_data(int * data,int N);
   /**
      adds data, must have an active data type set

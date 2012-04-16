@@ -23,7 +23,7 @@
 //licensors of this Program grant you additional permission to convey
 //the resulting work.
 #include <stdexcept>
-
+#include <string.h>
 #include "wrapper_i_generic.h"
 #include "master_box_t.h"
 #include "particle_base.h"
@@ -198,6 +198,96 @@ bool Wrapper_i_generic::open_frame(unsigned int frame,int N,float z)
   
 }
 
+bool Wrapper_i_generic::set_data_type(utilities::D_TYPE d_type)
+{
+  if(! frame_open_)
+  {
+    throw std::runtime_error("frame is not open");
+    return false;
+    
+  }
+  if(cur_dtype_ != utilities::D_SENTRY)
+  {
+    throw std::runtime_error("Another type is currently set");
+    return false;
+  }
+  
+  cur_dtype_ = d_type;
+  return true;
+  
+}
+
+bool Wrapper_i_generic::clear_data_type()
+{
+  cur_dtype_ = utilities::D_SENTRY;
+  return true;
+}
+
+
+bool Wrapper_i_generic::add_float_data(float * data_in, int N)
+{
+  if(v_type(cur_dtype_) != V_FLOAT)
+  {
+    throw  std::runtime_error("the assumed value type of the dtype is not float");
+  }
+  if( N != cur_frame_size_)
+  {
+    throw  std::runtime_error("expected dimensions and data dimensions do not match");
+  }
+  float * tmp = NULL;
+  
+  try
+  {
+    
+    tmp = new float[N];
+    memcpy(tmp,data_in,sizeof(float)* N);
+  
+    data_f_.at(d_mapf_(cur_dtype_)).at(cur_frame_number_) = tmp;
+  }
+  catch(...)
+  {
+    if(tmp)
+      delete [] tmp;
+    data_f_.at(d_mapf_(cur_dtype_)).at(cur_frame_number_) = NULL;
+  }
+  clear_data_type();
+  return true;
+  
+}
+
+
+
+bool Wrapper_i_generic::add_int_data(int * data_in, int N)
+{
+  if(v_type(cur_dtype_) != V_INT)
+  {
+    throw  std::runtime_error("the assumed value type of the dtype is not int");
+  }
+  if( N != cur_frame_size_)
+  {
+    throw  std::runtime_error("expected dimensions and data dimensions do not match");
+  }
+  int * tmp = NULL;
+  
+  try
+  {
+    
+    tmp = new int[N];
+    memcpy(tmp,data_in,sizeof(float)* N);
+    data_i_.at(d_mapi_(cur_dtype_)).at(cur_frame_number_) = tmp;
+  }
+  catch(...)
+  {
+    if( tmp)
+      delete [] tmp;
+    data_i_.at(d_mapi_(cur_dtype_)).at(cur_frame_number_) = NULL;
+  }
+
+  clear_data_type();
+
+  return true;
+  
+}
 
 
 bool Wrapper_i_generic::close_frame()
