@@ -198,7 +198,7 @@ if(COMPILE_BASIC OR COMPILE_IDEN)
 
   FIND_PACKAGE(SWIG)
   IF(SWIG_FOUND)
-    add_subdirectory(swig)
+    add_subdirectory(script_src/swig)
     MESSAGE(STATUS "${SWIG_EXECUTABLE}")
   ELSE(SWIG_FOUND)
     MESSAGE(STATUS "swig not found")
