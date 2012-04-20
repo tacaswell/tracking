@@ -172,17 +172,6 @@ set_target_properties(rtt_ts PROPERTIES COMPILE_DEFINITIONS  "PTYPE=1;DIM_COUNT=
 
 
 
-function    (cm_export_file FILE DEST)
-  if    (NOT TARGET export-files)
-    add_custom_target(export-files ALL COMMENT "Exporting files into build tree")
-  endif (NOT TARGET export-files)
-  get_filename_component(FILENAME "${FILE}" NAME)
-  add_custom_command(TARGET export-files COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_SOURCE_DIR}/${FILE}" "${CMAKE_CURRENT_BINARY_DIR}/${DEST}/${FILENAME}")
-  install(FILES "${FILE}" DESTINATION "${DEST}")
-endfunction (cm_export_file)
-# taken from 
-# http://stackoverflow.com/questions/697560/how-to-copy-directory-from-source-tree-to-binary-tree/3888898#3888898
-
 add_subdirectory(filt_fac_test)
 
 

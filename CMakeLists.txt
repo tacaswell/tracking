@@ -1,6 +1,19 @@
 cmake_minimum_required (VERSION 2.8) 
 project(TRACKING)
 
+function    (cm_export_file FILE DEST)
+  if    (NOT TARGET export-files)
+    add_custom_target(export-files ALL COMMENT "Exporting files into build tree")
+  endif (NOT TARGET export-files)
+  get_filename_component(FILENAME "${FILE}" NAME)
+  add_custom_command(TARGET export-files COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_SOURCE_DIR}/${FILE}" "${CMAKE_CURRENT_BINARY_DIR}/${DEST}/${FILENAME}")
+  install(FILES "${FILE}" DESTINATION "${DEST}")
+endfunction (cm_export_file)
+# taken from 
+# http://stackoverflow.com/questions/697560/how-to-copy-directory-from-source-tree-to-binary-tree/3888898#3888898
+
+
+
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
 set(COMMON_SRC_PATH ${PROJECT_SOURCE_DIR}/common_src/cxx)

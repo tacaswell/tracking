@@ -19,3 +19,7 @@ SWIG_ADD_MODULE(cstatic2 python
 SWIG_LINK_LIBRARIES(cstatic2
   ${PYTHON_LIBRARIES}
   cstatic2D)
+
+set(SWIG_WRAPPERS "static2D.py")
+
+cm_export_file(${SWIG_WRAPPERS} "./")
