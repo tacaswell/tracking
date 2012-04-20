@@ -14,20 +14,73 @@
 #
 #You should have received a copy of the GNU General Public License
 #along with this program; if not, see <http://www.gnu.org/licenses>.
-import cstatic2D as cs
+import cstatic2 as cs
+import numpy as np
 
-class hash_case:
-	'''Public facing thing that wraps hash_case'''
-	def add_data(self, data):
-		'''Takes in a data and fills the hash_case '''
-		pass
-	def do_corr(self,corr):
-		'''Computes a correlation function, requires a c++ class that is wrapped'''
-	pass
+def compute_gofr(x,y,max_range,nbins):
+    '''
+    edges,val = compute_gofr(x,y,max_range,bins)
+    
+    Computes g(r) for a single plane of 2D data.  Casts data to
+    float32
+     x - particle x position 
+     y - particle y position
+     max_range - maximum r to compute to
+     bins - number of bins
+
+     edges - left edge of bins
+     val - normalized g(r)
+       
+    '''
+
+    # reset data to start at (0,0)
+    x = x-np.min(x)
+    y = y-np.min(y)
+    # get dimensions
+    Dx = float(np.ceil(np.max(x) ))
+    Dy = float(np.ceil(np.max(y) ))
+
+    # set up dimension object
+    dim = cs.Tuplef(float(Dx),float(Dy))
 
 
-class wrapper_i_python:
-	'''public facing wrapper for numpy -> internal structures'''
-	pass
+    dset = cs.Dset()
+    dset.insert(cs.D_XPOS)
+    dset.insert(cs.D_YPOS)
 
+    # cast down to 32bit float, it won't do this automatically as it isn't safe
+    x = x.astype('float32')
+    y = y.astype('float32')
 
+    # set up wrapper
+    w = cs.Wrapper_i_generic()
+    w.setup(dset,1,dim)
+    w.open_frame(0,int(len(x)),0)
+    w.set_data_type(cs.D_XPOS)
+    w.add_float_data(x)
+    w.set_data_type(cs.D_YPOS)
+    w.add_float_data(y)
+    w.close_frame()
+    w.finalize_wrapper()
+
+    # set up filter
+    filt = cs.Filter_trivial()
+
+    # set up hash case
+    hc = cs.hash_case()
+    hc.init(w,filt,max_range)
+
+    # set up g(r) object 
+    cgofr = cs.Corr_gofr(nbins,max_range)
+
+    # do computation
+    hc.compute_corr(cgofr)
+
+    # get bin values out 
+    v = cs.FloatVector()
+    cgofr.normalize(v)
+    # get edges out
+    e = cs.FloatVector()
+    cgofr.get_bin_edges(e)
+        
+    return np.array(e),np.array(v)
