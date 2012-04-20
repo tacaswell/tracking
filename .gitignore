@@ -1,2 +1,5 @@
 *.png
 TAGS
+html/
+testing/*.h5
+
