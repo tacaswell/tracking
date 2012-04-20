@@ -29,12 +29,23 @@ import_array();
 
 %include "std_string.i"
 %include "std_vector.i"
+%include "std_set.i"
 
 %include "exception.i"
+
+
 %module cstatic2
 %{
+#include <stdexcept>
+#include <iostream>
+#include <sstream>
+#include <stdexcept>
+#include <cmath>
+
 #define DIM_COUNT 2
 #define PTYPE 0
+
+
 #include "enum_utils.h"
 #include "wrapper_i.h"
 #include "wrapper_i_hdf.h"
@@ -43,7 +54,9 @@ import_array();
 #include "hash_case.h"
 #include "corr.h"
 #include "corr_gofr.h"
-#include <stdexcept>
+#include "part_def.h"
+#include "tuple.h"
+
 %}
 
 namespace std
@@ -51,6 +64,8 @@ namespace std
   %template(IntVector) vector<int>;
   %template(DoubleVector) vector<double>;
   %template(FloatVector) vector<float>;
+  %template(Dset) set<utilities::D_TYPE>;
+  
 }
 
 %exception{
@@ -95,6 +110,11 @@ namespace utilities
 				// numbering will work in the compiler
   
     };
+%include "tuple.i"
+typedef Tuple<float,DIM_COUNT> Tuplef;
+%template (Tuplef) Tuple<float,DIM_COUNT>;
+   
+ 
 
 
 class Wrapper_in
@@ -126,22 +146,26 @@ public:
 
 
 class Wrapper_i_generic:public Wrapper_in{
-
+ public:
   Wrapper_i_generic();  
   ~Wrapper_i_generic();
 
+  int get_num_entries(int frame);
+  int get_num_entries();
+  int get_num_frames();
 
-  bool setup(std::set<D_TYPE>,int n);
+
+  bool setup(std::set<D_TYPE>,int n,const Tuplef & d);
 
   bool open_frame(unsigned int frame,int N,float z);
   bool set_data_type(D_TYPE dtype);
-%apply (int* IN_ARRAY1, int DIM1) {(float* vector, int length)}  
+%apply (int* IN_ARRAY1, int DIM1) {(int* data, int N)}  
   bool add_int_data(int * data,int N);
 %clear (int* vector, int length);
-%apply (float* IN_ARRAY1, int DIM1) {(float* vector, int length)}
+%apply (float* IN_ARRAY1, int DIM1) {(float* data, int N)}
   bool add_float_data(float * data,int N);
 %clear (float* vector, int length);
-  bool set_meta_data(const Md_store & md_store);
+  //  bool set_meta_data(const Md_store & md_store);
   bool close_frame();
   bool finalize_wrapper();
   
