@@ -64,41 +64,75 @@ using std::pair;
 using tracking::particle;
 
 
+Wrapper_i_hdf::Wrapper_i_hdf():
+  file_name_(),
+  data_types_(),
+  data_types_set_(), 
+  d_mapi_(),
+  d_mapf_(),
+  d_mapc_(),
+  data_i_(0),
+  data_f_(0),
+  data_c_(0),
+  frame_c_(0),
+  frame_count_(0),
+  total_part_count_(0),
+  two_d_data_(true),
+  frame_zdata_(0),
+  start_(0),
+  locked_(false)
+{
+}
 
-Wrapper_i_hdf::Wrapper_i_hdf(std::string fname,
+
+bool Wrapper_i_hdf::initialize(const std::string & fname,
 			     const std::set<utilities::D_TYPE> &dtypes,
 			     int comp_number,
 			     unsigned int start,
 			     int f_count)
-  :  file_name_(fname),data_types_set_(dtypes), total_part_count_(0),two_d_data_(true),start_(start)
 {
-  make_dtype_pairs(comp_number);
-  priv_init(f_count);
+  bool tmp = true;
   
+  return initialize(fname,
+		   dtypes,
+		   comp_number,
+		   start,
+		   f_count,
+		   tmp);
 }
-Wrapper_i_hdf::Wrapper_i_hdf(std::string fname,
+bool Wrapper_i_hdf::initialize(const std::string & fname,
 			     const std::set<utilities::D_TYPE> &dtypes,
 			     int comp_number,
 			     unsigned int start,
 			     int f_count,
 			     bool two_d_data)
-  :  file_name_(fname),data_types_set_(dtypes),total_part_count_(0),two_d_data_(two_d_data),start_(start)
 {
+  file_name_ = fname;
+  data_types_set_ = dtypes;
+  start_ = start;
   make_dtype_pairs(comp_number);
-  priv_init(f_count);
+  two_d_data_ = two_d_data;
+  
+  return priv_init(f_count);
   
 }
 
 
-Wrapper_i_hdf::Wrapper_i_hdf(std::string fname,
+bool Wrapper_i_hdf::initialize(const std::string & fname,
 	      const std::set<std::pair<utilities::D_TYPE,int > > &dtypes,
 	      unsigned int start,
 	      int f_count,
 	      bool two_d_data)
-   :  file_name_(fname),data_types_(dtypes),total_part_count_(0),two_d_data_(two_d_data),start_(start)
+  
 {
+  file_name_ = fname;
+  start_ = start;
+  
+  two_d_data_ = two_d_data;
+  data_types_ = dtypes;
+  
   make_dtype_set();
-  priv_init(f_count);
+  return priv_init(f_count);
   
 }
 
@@ -122,8 +156,10 @@ void Wrapper_i_hdf::make_dtype_set()
 
 
 
-void Wrapper_i_hdf::priv_init(int fr_count)
+bool Wrapper_i_hdf::priv_init(int fr_count)
 { 
+  if(locked_)
+    return false;
   
   try
   {
@@ -320,6 +356,9 @@ void Wrapper_i_hdf::priv_init(int fr_count)
   
   for(unsigned int j= 0; j<frame_count_;++j)
     total_part_count_ += frame_c_.at(j);
+
+  return true;
+  
 }
 
 

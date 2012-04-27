@@ -198,7 +198,8 @@ int main(int argc, char * const argv[])
   
   
   // set up the input wrapper
-  Wrapper_i_hdf wh(in_file,contents,0,0,true);
+  Wrapper_i_hdf wh;
+  bool suc = wh.initialize(in_file,contents,0,0,true);
 
   std::clock_t start = std::clock();
   // set up all of the needed objects

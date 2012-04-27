@@ -169,3 +169,20 @@ target_link_libraries(rtt_ts
   ${XERCESC_LIBRARY} 
   )
 set_target_properties(rtt_ts PROPERTIES COMPILE_DEFINITIONS  "PTYPE=1;DIM_COUNT=2")
+
+
+
+add_executable(wrapper_i_generic_test wrapper_i_generic_test.cpp
+  ${COMMON_WRAPPER_SRC}
+  ${UTIL_SRC} 
+  )
+set_target_properties(wrapper_i_generic_test PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_COUNT=2;TESTING")
+
+
+add_executable(jb_binary_test jb_binary_test.cpp
+  ${COMMON_WRAPPER_SRC}
+  ${COMMON_SRC_PATH}/wrapper_i_jb_binary.cpp
+  ${UTIL_SRC} 
+  )
+set_target_properties(jb_binary_test PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_COUNT=2;TESTING")
+
