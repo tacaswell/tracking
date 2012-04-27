@@ -103,11 +103,13 @@ class Corr_gofr :public Corr
 };
  
 
+
 class hash_case
 {
 public:
   void init(utilities::Wrapper_in & w_in , utilities::Filter & filt, float ppb)  ;
   void compute_corr(tracking::Corr &) const ;
+  void link(float max_range,Track_shelf & tracks);
   
   int get_num_frames() const;
   void print() const; 
@@ -116,7 +118,26 @@ public:
   
 };
  
+class Track_shelf
+{
+ public:
+  void remove_short_tracks(int min_length);
+  void renumber();
+  unsigned int get_track_count() const;
+  void compute_corrected_TA(Trk_accumulator & ta)const;
   
+  Track_shelf();
+  ~Track_shelf();
+  
+};
+ 
+class Trk_accumulator
+{
+public:
+  virtual void add_disp(utilities::Tuplef displacement,unsigned steps) = 0;
+  virtual unsigned max_step()const = 0;
+  
+};
  
 
 }
