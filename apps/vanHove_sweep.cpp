@@ -215,7 +215,7 @@ int main(int argc, char * const argv[])
   
 
   // open output file
-  Generic_wrapper_hdf hdf_out(out_file,true);  
+  Generic_wrapper_hdf hdf_out(out_file,Generic_wrapper_hdf::F_DISK_RDWR);  
   hdf_out.open_wrapper();
   
 

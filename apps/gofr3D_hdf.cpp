@@ -66,6 +66,7 @@ using utilities::Filter_basic;
 using utilities::Filter_trivial;
 using utilities::D_TYPE;
 using utilities::Generic_wrapper_hdf;
+
 using utilities::Read_config;
 
 
@@ -73,6 +74,7 @@ using tracking::Master_box;
 using tracking::particle;
 using tracking::hash_case;
 using tracking::Corr_gofr;
+typedef Generic_wrapper_hdf::F_TYPE F_TYPE;
 
 static string APP_NAME = "gofr3D :: ";
 
@@ -222,7 +224,7 @@ int main(int argc, char * const argv[])
     //    gofr.display();
 
       
-    Generic_wrapper_hdf hdf_out(out_file,true);
+    Generic_wrapper_hdf hdf_out(out_file,Generic_wrapper_hdf::F_DISK_RDWR);
     gofr.out_to_wrapper(hdf_out,grp_name,NULL);
     cout<<"wrote out g(r)"<<endl;
 

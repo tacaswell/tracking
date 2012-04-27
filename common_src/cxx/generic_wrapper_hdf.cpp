@@ -1,4 +1,4 @@
-//Copyright 2009-2010 Thomas A Caswell
+//Copyright 2009-2012 Thomas A Caswell
 //tcaswell@uchicago.edu
 //http://jfi.uchicago.edu/~tcaswell
 //
@@ -49,14 +49,16 @@ using H5::DSetCreatPropList;
 using H5::Exception;
 using H5::FileIException;
 using H5::DataType;
+using H5::FileAccPropList;
+using H5::FileCreatPropList;
 
 using std::string;
 using utilities::Md_store;
 
 const static unsigned int CSIZE = 500;
   
-Generic_wrapper_hdf::Generic_wrapper_hdf(std::string fname, bool add_to_file):
-  file_name_(fname),wrapper_open_(false),group_open_(false),dset_open_(false),add_to_file_(add_to_file),
+Generic_wrapper_hdf::Generic_wrapper_hdf(std::string fname, F_TYPE f_type):
+  file_name_(fname),wrapper_open_(false),group_open_(false),dset_open_(false),f_type_(f_type),
   file_(NULL),group_(NULL),group_attrs_(NULL)
 {
 }
@@ -71,12 +73,13 @@ Generic_wrapper_hdf::~Generic_wrapper_hdf()
 void Generic_wrapper_hdf::open_wrapper()
 {
   Exception::dontPrint();
-  
   if(!wrapper_open_)
   {
-    // if there is a file to add to open it read/write
-    if(add_to_file_)
+  
+    switch(f_type_)
     {
+    case F_DISK_RDWR:
+      // if there is a file to add to open it read/write
       try
       {
 	file_ = new H5File(file_name_,H5F_ACC_RDWR);
@@ -85,14 +88,23 @@ void Generic_wrapper_hdf::open_wrapper()
       {
 	file_ = new H5File(file_name_,H5F_ACC_EXCL);
       }
-    }
-    
-    else
-    {
+      break;
+    case F_DISK_EXCL:
       // if there is not a file to add to try to make a new one
       // and die if there is already a file
       file_ = new H5File(file_name_,H5F_ACC_EXCL);
-      //file_ = new H5File(file_name_,H5F_ACC_TRUNC);
+      break;
+    case F_DISK_TRUNC:
+      // walk on what ever is there
+      file_ = new H5File(file_name_,H5F_ACC_TRUNC);
+      break;
+    case F_MEM:
+      // set up the access list 
+      FileAccPropList p_acl = FileAccPropList();
+      // set the driver to be core with out a backing, ie memory only
+      p_acl.setCore(5000*sizeof(float),false);
+      // open the memory based file
+      file_ = new H5File(file_name_,H5F_ACC_RDWR,FileCreatPropList::DEFAULT,p_acl);
     }
     wrapper_open_ = true;
   }

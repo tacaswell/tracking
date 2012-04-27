@@ -1,4 +1,4 @@
-//Copyright 2009 Thomas A Caswell
+//Copyright 2009-2012 Thomas A Caswell
 //tcaswell@uchicago.edu
 //http://jfi.uchicago.edu/~tcaswell
 //
@@ -46,8 +46,16 @@ class Attr_list_hdf;
 class Generic_wrapper_hdf:public Generic_wrapper{
 public:
 
+  typedef enum F_TYPE{
+    F_DISK_RDWR = 0,                                                                 
+    F_DISK_EXCL,
+    F_DISK_TRUNC,
+    F_MEM,                                                                  
+  } F_TYPE;                                                                        
+
   
   void open_wrapper();
+  
   void close_wrapper();
   bool is_open()const
   {
@@ -67,7 +75,7 @@ public:
 
      @todo replace bool with enum
    */
-  Generic_wrapper_hdf(std::string fname, bool add_to_file = true);
+  Generic_wrapper_hdf(std::string fname, F_TYPE f_type = F_DISK_RDWR);
   
   
   void add_meta_data(const std::string & key, float val);
@@ -103,7 +111,7 @@ private:
   bool group_open_;
   bool dset_open_;
 
-  bool add_to_file_;
+  F_TYPE f_type_;
   
   
   H5::H5File *file_;

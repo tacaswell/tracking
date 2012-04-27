@@ -186,7 +186,7 @@ int main(int argc, char * const argv[])
   // make output wrapper and shove data in to it
   try
   {
-    Generic_wrapper_hdf hdf_out(out_file,true);  
+    Generic_wrapper_hdf hdf_out(out_file,Generic_wrapper_hdf::F_DISK_RDWR);  
     vanHove.output_to_wrapper(hdf_out,md_store);
   }
   catch(exception & e)

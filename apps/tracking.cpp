@@ -312,7 +312,7 @@ int main(int argc, char * const argv[])
   // shove in to hdf
   try
   {
-    Generic_wrapper_hdf track_data_wrapper(out_file,true);
+    Generic_wrapper_hdf track_data_wrapper(out_file,Generic_wrapper_hdf::F_DISK_RDWR);
     tracks.output_to_wrapper(track_data_wrapper,&md_store);
   }
   catch(exception & err)
