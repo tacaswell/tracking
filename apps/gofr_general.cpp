@@ -136,7 +136,7 @@ int main(int argc, char * argv[])
   int write_comp_num = 0;
   
       
-  Generic_wrapper_hdf hdf_out(out_file,true);
+  Generic_wrapper_hdf hdf_out(out_file);
   gofr.out_to_wrapper(hdf_out,format_name(grp_name,write_comp_num),&md_store);
   cout<<"wrote out g(r)"<<endl;
 
