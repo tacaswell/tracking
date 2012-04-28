@@ -99,7 +99,7 @@ public:
      @param[in] data pointer to data to be set
      @param[in] dset_name name of data set
    */
-  virtual void add_dset(int rank,const unsigned int * dims, V_TYPE vt , const void * data,const std::string & dset_name ="none" )=0;
+  virtual void add_dset(int rank,const unsigned int * dims, V_TYPE vt , const void * data,const std::string & dset_name)=0;
 
   /**
      Gets data from the wrapper.
