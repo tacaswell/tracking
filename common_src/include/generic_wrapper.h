@@ -42,7 +42,12 @@ class Md_store;
 */
 class Generic_wrapper{
 public:
-
+  /**
+     @name Wrapper state
+     
+     Change and query the top level wrapper state
+   */
+  //@{
   /**
      Initializes the wrapper
    */
@@ -57,8 +62,14 @@ public:
      Returns if the wrapper is open or not
    */
   virtual bool is_open() const = 0;
+  //@}
   
-
+  /**
+     @name Wrapper state
+     
+     Change and query the wrapper current group state
+   */
+  //@{
   /**
      Opens a group in the wrapper, ie a group in hdf or a cell in matlab
    */
@@ -67,15 +78,44 @@ public:
      closes the current group
    */
   virtual void close_group()=0;
+
+  //@}
+
+  /**
+     @name Data
+     
+     get and set data
+   */
+  //@{
+
   /**
      Adds data to the wrapper, must be the right size and type specified.
      data will be written safely with in the wrapper during this call so it
      can be safely freed outside if needed
-   */
-  virtual void add_dset(int rank,const unsigned int * dims, V_TYPE , const void *,const std::string & name ="none" )=0;
 
-  
-  
+     @param[in] rank rank of data set
+     @param[in] dimensions of data set
+     @param[in] vt data type
+     @param[in] data pointer to data to be set
+     @param[in] dset_name name of data set
+   */
+  virtual void add_dset(int rank,const unsigned int * dims, V_TYPE vt , const void * data,const std::string & dset_name ="none" )=0;
+
+  /**
+     Gets data from the wrapper.
+   */
+  virtual void get_dset(int rank,const unsigned int * dims, V_TYPE vt , const void * data,const std::string & dset_name ="none" )=0;
+
+
+  ///@}
+  /**
+     @name Group Level Metadata
+
+     getter and setter functions for metadata for the currently open
+     group.
+
+   */
+  //@{
   /**
      Adds a float meta-data
    */
@@ -100,7 +140,48 @@ public:
      Adds an unsigned integer meta-data
    */
   virtual void add_meta_data(const std::string & key, unsigned int val)=0;
-  
+  /**
+     Adds all the meta data in a Md_store at the group level
+   */
+  virtual void add_meta_data(const Md_store * md_store)=0;
+
+  /**
+     Gets a float meta-data
+   */
+  virtual float get_meta_data(const std::string & key, float & val)=0;
+  /**
+     Gets a Triple meta-data
+   */
+  virtual Tuple<float,3> get_meta_data(const std::string & key,  Tuple<float,3> & val)=0;
+  /**
+     Gets a Pair meta-data
+   */
+  virtual Tuple<float,2> get_meta_data(const std::string & key,  Tuple<float,2>& val)=0;
+  /**
+     Gets a string meta-data
+   */
+  virtual std::string get_meta_data(const std::string & key,  std::string & val)=0;
+  /**
+     Gets an integer meta-data
+   */
+  virtual int get_meta_data(const std::string & key, int & val)=0;
+  /**
+     Gets an unsigned integer meta-data
+   */
+  virtual unsigned int get_meta_data(const std::string & key, unsigned int& val)=0;
+  //@}
+  /**
+     Gets all the meta data in a Md_store at the group level
+   */
+  virtual Md_store& get_meta_data(Md_store & md_store)=0;
+
+  /**
+     @name Dataset Level Metadata
+
+     getter and setter functions for metadata for the named dataset.
+
+   */
+  //@{
   /**
      Adds a float meta-data for a data set
    */
@@ -121,18 +202,37 @@ public:
      Adds an integer meta-data for a data set
    */
   virtual void add_meta_data(const std::string & key, int val,const std::string & dset_name)=0;
-
-  
-  /**
-     Adds all the meta data in a Md_store at the group level
-   */
-  virtual void add_meta_data(const Md_store * md_store)=0;
-  
   /**
      Adds all the meta data in a Md_store at the dset level
    */
   virtual void add_meta_data(const Md_store * md_store,const std::string & dset_name)=0;
 
+
+  /**
+     Gets a float meta-data for a data set
+   */
+  virtual float get_meta_data(const std::string & key, float& val,const std::string & dset_name)=0;
+  /**
+     Gets a Triple meta-data for a data set
+   */
+  virtual Tuple<float,3>  get_meta_data(const std::string & key, Tuple<float,3> & val,const std::string & dset_name)=0;
+  /**
+     Gets a Pair meta-data for a data set
+   */
+  virtual Tuple<float,2> get_meta_data(const std::string & key, Tuple<float,2>& val,const std::string & dset_name)=0;
+  /**
+     Gets a string meta-data for a data set
+   */
+  virtual std::string get_meta_data(const std::string & key,  std::string & val,const std::string & dset_name)=0;
+  /**
+     Gets an integer meta-data for a data set
+   */
+  virtual int get_meta_data(const std::string & key, int &val,const std::string & dset_name)=0;
+  /**
+     Gets all the meta data in a Md_store at the dset level
+   */
+  virtual Md_store& get_meta_data(Md_store & md_store,const std::string & dset_name)=0;
+  //@}
   /**
      Destructor
    */

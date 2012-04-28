@@ -67,6 +67,7 @@ public:
   
   void add_dset(int rank, const unsigned int * dims, V_TYPE , const void *,const std::string & name );
   
+  
   /**
      Constructor
 
@@ -74,7 +75,7 @@ public:
      @param add_to_file if the file already exists
 
      @todo replace bool with enum
-   */
+  */
   Generic_wrapper_hdf(std::string fname, F_TYPE f_type = F_DISK_RDWR);
   
   
@@ -94,6 +95,22 @@ public:
 
   void add_meta_data(const Md_store * md_store);
   void add_meta_data(const Md_store * md_store,const std::string & dset_name);
+
+  void get_dset(int rank, const unsigned int * dims, V_TYPE , const void *,const std::string & name ){};
+  float get_meta_data(const std::string & key, float & val){};
+  Tuple<float,3> get_meta_data(const std::string & key,  Tuple<float,3> & val){};
+  Tuple<float,2> get_meta_data(const std::string & key,  Tuple<float,2>& val){};
+  std::string get_meta_data(const std::string & key,  std::string & val){};
+  int get_meta_data(const std::string & key, int & val){};
+  unsigned int get_meta_data(const std::string & key, unsigned int& val){};
+  Md_store& get_meta_data(Md_store & md_store){};
+  float get_meta_data(const std::string & key, float& val,const std::string & dset_name){};
+  Tuple<float,3>  get_meta_data(const std::string & key, Tuple<float,3> & val,const std::string & dset_name){};
+  Tuple<float,2> get_meta_data(const std::string & key, Tuple<float,2>& val,const std::string & dset_name){};
+  std::string get_meta_data(const std::string & key,  std::string & val,const std::string & dset_name){};
+  int get_meta_data(const std::string & key, int &val,const std::string & dset_name){};
+  Md_store & get_meta_data(Md_store & md_store,const std::string & dset_name){};
+
   
   ~Generic_wrapper_hdf();
   
