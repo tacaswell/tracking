@@ -47,6 +47,7 @@ using H5::PredType;
 using H5::DataSet;
 using H5::DSetCreatPropList;
 using H5::Exception;
+using H5::GroupIException;
 using H5::FileIException;
 using H5::DataType;
 using H5::FileAccPropList;
@@ -133,23 +134,21 @@ void Generic_wrapper_hdf::open_group(const string & name )
   if(!wrapper_open_)
     throw runtime_error("generic_wrapper_hdf: wrapper not open");
   
-  if(name=="none")
-    throw runtime_error("generic_wrapper_hdf: need to give a name");
-  
   if(group_open_)
     throw runtime_error("generic_wrapper_hdf::open_group: there is already an open group");
   
+  bool exists = false;
 
+    
+
+  // if the group does not exist, create it
   try
   {
     group_ = new Group(file_->createGroup(name));
   }
-  catch(Exception & e)
+  catch(FileIException & e)
   {
-    std::cout<<"The error reported by the library is"<<std::endl;
-    e.printError();
-    std::cout<<"-----"<<std::endl;
-    throw runtime_error("generic_wrapper_hdf: group creation failed");
+    group_ = new Group(file_->openGroup(name));
   }
 
   group_attrs_ = new Attr_list_hdf(group_);

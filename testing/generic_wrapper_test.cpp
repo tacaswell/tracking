@@ -49,6 +49,16 @@ int main(int argc, const char * argv[])
   wrap.add_dset(1,&N,utilities::V_INT,fake_data,"/test2");
   wrap.close_group();
   
+  wrap.open_group("/test");
+  wrap.add_dset(1,&N,utilities::V_INT,fake_data,"test15");
+  wrap.close_group();
+
+  
+  wrap.open_group("/test/testy");
+  wrap.add_dset(1,&N,utilities::V_INT,fake_data,"test15");
+  wrap.close_group();
+  
+
   for (unsigned int j =0;j<25;++j)
     fake_data[j] = j*2;
   wrap.add_dset(1,&N,utilities::V_INT,fake_data,"/test3");
