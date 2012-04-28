@@ -233,9 +233,23 @@ void Generic_wrapper_hdf::add_dset(int rank, const unsigned int * dims, V_TYPE t
     plist.setSzip(H5_SZIP_NN_OPTION_MASK,10);
   }
   
+  DataSet dset;
+  if(!group_open_ || name[0] == '/')
+  {
+    dset = file_ ->createDataSet(name,hdf_type,dspace,plist);  
+  }
+  else if(group_)
+  {
+    dset = group_ ->createDataSet(name,hdf_type,dspace,plist);  
+  }
+  else
+  {
+    throw runtime_error("gave relative path name with no open group");
+  }
   
   // make data set
-  DataSet dset = group_ ->createDataSet(name,hdf_type,dspace,plist);
+  
+  
   // shove in data
   dset.write(data,mem_type,dspace,dspace);
   
