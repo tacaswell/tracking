@@ -228,8 +228,8 @@ void Generic_wrapper_hdf::add_dset(int rank, const unsigned int * dims, V_TYPE t
   // if the list is big enough, us compression
   if(rank ==1 && *hdims > CSIZE*5)
   {
-    hsize_t tmp = CSIZE;
-    plist.setChunk(1,&tmp);
+    hsize_t csize = CSIZE;
+    plist.setChunk(1,&csize);
     plist.setSzip(H5_SZIP_NN_OPTION_MASK,10);
   }
   
