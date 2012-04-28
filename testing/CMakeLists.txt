@@ -186,3 +186,13 @@ add_executable(jb_binary_test jb_binary_test.cpp
   )
 set_target_properties(jb_binary_test PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_COUNT=2;TESTING")
 
+
+add_executable(generic_wrapper_test generic_wrapper_test.cpp
+  ${COMMON_SRC_PATH}/generic_wrapper_hdf.cpp 
+  ${COMMON_SRC_PATH}/attr_list_hdf.cpp
+  ${COMMON_SRC_PATH}/md_store_attr_list
+  ${COMMON_SRC_PATH}/md_store.cpp
+  ${COMMON_SRC_PATH}/enum_utils.cpp
+  )
+set_target_properties(generic_wrapper_test PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_COUNT=2;TESTING")
+target_link_libraries(generic_wrapper_test ${HDF5_LIBRARIES} )
