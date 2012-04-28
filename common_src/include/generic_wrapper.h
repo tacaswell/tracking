@@ -65,7 +65,7 @@ public:
   //@}
   
   /**
-     @name Wrapper state
+     @name Group state
      
      Change and query the wrapper current group state
    */
@@ -169,12 +169,12 @@ public:
      Gets an unsigned integer meta-data
    */
   virtual unsigned int get_meta_data(const std::string & key, unsigned int& val)=0;
-  //@}
+
   /**
      Gets all the meta data in a Md_store at the group level
    */
   virtual Md_store& get_meta_data(Md_store & md_store)=0;
-
+  //@}
   /**
      @name Dataset Level Metadata
 

@@ -45,15 +45,26 @@ class Attr_list_hdf;
 */
 class Generic_wrapper_hdf:public Generic_wrapper{
 public:
-
-  typedef enum F_TYPE{
-    F_DISK_RDWR = 0,                                                                 
+  /**
+     Enum for determining hdf file creation behavior
+   */
+  typedef enum F_TYPE{ 
+    /// open existing file read-write                   
+    F_DISK_RDWR = 0,
+    /// create a new file, must not previously exist             
     F_DISK_EXCL,
+    /// creates new file, nukes existing file                    
     F_DISK_TRUNC,
-    F_MEM,                                                                  
+    /// create file in memory                                    
+    F_MEM,                     
   } F_TYPE;                                                                        
 
-  
+  /**
+     @name Wrapper state
+     
+     Change and query the top level wrapper state
+   */
+  //@{  
   void open_wrapper();
   
   void close_wrapper();
@@ -61,13 +72,76 @@ public:
   {
     return wrapper_open_;
   }
+  //@}
   
+  /**
+     @name Group state
+     
+     Change and query the wrapper current group state
+   */
+  //@{
   void open_group(const std::string & name = "none");
   void close_group();
-  
+  //@}
+  /**
+     @name Data
+     
+     get and set data
+   */
+  //@{
+
   void add_dset(int rank, const unsigned int * dims, V_TYPE , const void *,const std::string & name );
+  void get_dset(int rank, const unsigned int * dims, V_TYPE , const void *,const std::string & name ){};  
+  //@}   
+    /**
+     @name Group Level Metadata
+
+     getter and setter functions for metadata for the currently open
+     group.
+
+   */
+  //@{
+  void add_meta_data(const std::string & key, float val);
+  void add_meta_data(const std::string & key, const Tuple<float,3> & val);
+  void add_meta_data(const std::string & key, const Tuple<float,2>& val);
+  void add_meta_data(const std::string & key, const std::string & val);
+  void add_meta_data(const std::string & key, int val);
+  void add_meta_data(const std::string & key, unsigned int val);
+  void add_meta_data(const Md_store * md_store);
+
+  float get_meta_data(const std::string & key, float & val){};
+  Tuple<float,3> get_meta_data(const std::string & key,  Tuple<float,3> & val){};
+  Tuple<float,2> get_meta_data(const std::string & key,  Tuple<float,2>& val){};
+  std::string get_meta_data(const std::string & key,  std::string & val){};
+  int get_meta_data(const std::string & key, int & val){};
+  unsigned int get_meta_data(const std::string & key, unsigned int& val){};
+  Md_store& get_meta_data(Md_store & md_store){};
+    //@}
+  /**
+     @name Dataset Level Metadata
+
+     getter and setter functions for metadata for the named dataset.
+
+   */
+  //@{
+    
+  void add_meta_data(const std::string & key, float val,const std::string & dset_name);
+  void add_meta_data(const std::string & key, const Tuple<float,3> & val,const std::string & dset_name);
+  void add_meta_data(const std::string & key, const Tuple<float,2>& val,const std::string & dset_name);
+  void add_meta_data(const std::string & key, const std::string & val,const std::string & dset_name);
+  void add_meta_data(const std::string & key, int val,const std::string & dset_name);
+  void add_meta_data(const Md_store * md_store,const std::string & dset_name);
+
+  float get_meta_data(const std::string & key, float& val,const std::string & dset_name){};
+  Tuple<float,3>  get_meta_data(const std::string & key, Tuple<float,3> & val,const std::string & dset_name){};
+  Tuple<float,2> get_meta_data(const std::string & key, Tuple<float,2>& val,const std::string & dset_name){};
+  std::string get_meta_data(const std::string & key,  std::string & val,const std::string & dset_name){};
+  int get_meta_data(const std::string & key, int &val,const std::string & dset_name){};
+  Md_store & get_meta_data(Md_store & md_store,const std::string & dset_name){};
+  //@}
   
-  
+  ~Generic_wrapper_hdf();
+ 
   /**
      Constructor
 
@@ -77,42 +151,6 @@ public:
      @todo replace bool with enum
   */
   Generic_wrapper_hdf(std::string fname, F_TYPE f_type = F_DISK_RDWR);
-  
-  
-  void add_meta_data(const std::string & key, float val);
-  void add_meta_data(const std::string & key, const Tuple<float,3> & val);
-  void add_meta_data(const std::string & key, const Tuple<float,2>& val);
-  void add_meta_data(const std::string & key, const std::string & val);
-  void add_meta_data(const std::string & key, int val);
-  void add_meta_data(const std::string & key, unsigned int val);
-  
-    
-  void add_meta_data(const std::string & key, float val,const std::string & dset_name);
-  void add_meta_data(const std::string & key, const Tuple<float,3> & val,const std::string & dset_name);
-  void add_meta_data(const std::string & key, const Tuple<float,2>& val,const std::string & dset_name);
-  void add_meta_data(const std::string & key, const std::string & val,const std::string & dset_name);
-  void add_meta_data(const std::string & key, int val,const std::string & dset_name);
-
-  void add_meta_data(const Md_store * md_store);
-  void add_meta_data(const Md_store * md_store,const std::string & dset_name);
-
-  void get_dset(int rank, const unsigned int * dims, V_TYPE , const void *,const std::string & name ){};
-  float get_meta_data(const std::string & key, float & val){};
-  Tuple<float,3> get_meta_data(const std::string & key,  Tuple<float,3> & val){};
-  Tuple<float,2> get_meta_data(const std::string & key,  Tuple<float,2>& val){};
-  std::string get_meta_data(const std::string & key,  std::string & val){};
-  int get_meta_data(const std::string & key, int & val){};
-  unsigned int get_meta_data(const std::string & key, unsigned int& val){};
-  Md_store& get_meta_data(Md_store & md_store){};
-  float get_meta_data(const std::string & key, float& val,const std::string & dset_name){};
-  Tuple<float,3>  get_meta_data(const std::string & key, Tuple<float,3> & val,const std::string & dset_name){};
-  Tuple<float,2> get_meta_data(const std::string & key, Tuple<float,2>& val,const std::string & dset_name){};
-  std::string get_meta_data(const std::string & key,  std::string & val,const std::string & dset_name){};
-  int get_meta_data(const std::string & key, int &val,const std::string & dset_name){};
-  Md_store & get_meta_data(Md_store & md_store,const std::string & dset_name){};
-
-  
-  ~Generic_wrapper_hdf();
   
 private:
   template<class T>
