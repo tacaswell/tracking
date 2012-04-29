@@ -167,6 +167,11 @@ public:
    */
   void add_element(const char * key,const char *  val);
   /**
+     Add string entry
+   */
+  void add_element(const char * key,const std::string &val);
+
+  /**
      Add all elements in md_in to this Md_store object
    */
   void add_elements(const Md_store * md_in);
