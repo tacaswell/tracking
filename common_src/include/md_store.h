@@ -129,11 +129,11 @@ public:
     return entries_.at(j).type;
   }
   /**
-     Returns the value as a string
+     Returns the value as a (void *)
   */
-  std::string get_val(int j)const
+  void * get_val(int j)const
   {
-    return std::string(entries_.at(j).value);
+    return entries_.at(j).value;
   }
 
 
@@ -197,21 +197,49 @@ private:
     /**
        Constructor from strings
      */
-    Md_element(std::string key_i,utilities::V_TYPE type_i,std::string value_i)
+    Md_element(std::string key_i,utilities::V_TYPE type_i,void * value_i)
       :key(key_i),type(type_i),value(value_i){}
     /**
        Constructor from const char *
      */
-    Md_element(const char * key_i,utilities::V_TYPE type_i,const char * value_i)
+    Md_element(const char * key_i,utilities::V_TYPE type_i,void * value_i)
       :key(key_i),type(type_i),value(value_i){}
     /**
        Empty constructor
      */
     Md_element();
     /**
-       Destructor
+       Destructor, if more supported dyp
      */
-    ~Md_element(){};
+    ~Md_element()    
+    {
+
+      switch(type)
+      {
+      case V_UINT:
+        delete (unsigned int *) value;
+        break;
+  
+      case V_INT:
+        delete (int *) value;
+        break;
+      case V_FLOAT:
+        delete (float *) value;
+        break;
+      case V_BOOL:
+        delete (bool *) value;    
+      case V_STRING:
+      case V_TIME:
+      case V_GUID:
+        delete (std::string *) value;
+        break;
+      case V_ERROR:
+      case V_COMPLEX:
+
+            break;
+      }
+      
+    }
     /**
        The meta data key
      */
@@ -221,21 +249,27 @@ private:
      */
     utilities::V_TYPE type;
     /**
-       The value.  All values are stored as strings to make life easier.
+       pointer to the value.  The struct owns the pointer and will clean it up
      */
-    std::string value;
+    void * value;
   
 
-  };
+    };
+    
+    
 
   /**
      The
    */
   std::vector<Md_element> entries_;
-};
+  };
+  
+    
+}
+
 
   
 
-}
+
 
 #endif
