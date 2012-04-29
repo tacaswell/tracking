@@ -43,7 +43,7 @@ class Attr_list_hdf;
    generic_wrapper for writing to hdf files
 
 */
-class Generic_wrapper_hdf:public Generic_wrapper{
+class Generic_wrapper_hdf:public Generic_wrapper,Generic_wrapper_read{
 public:
   /**
      Enum for determining hdf file creation behavior
