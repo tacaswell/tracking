@@ -269,7 +269,9 @@ int Md_store::get_value(int j,int & val)const
   // deal with if the signedness matches
   if(type == utilities::V_INT)
   {
-    return * (int * ) entries_[j].value;
+    val = * (int * ) entries_[j].value;
+    return val;
+    
   }
   // deal with if the signs don't match
   else if(type  == utilities::V_UINT)
@@ -290,7 +292,7 @@ int Md_store::get_value(int j,int & val)const
 }
 
 
-int Md_store::get_value(int j,unsigned int & val)const
+unsigned int Md_store::get_value(int j,unsigned int & val)const
 {
   V_TYPE type = entries_[j].type;
   if(type == utilities::V_UINT)
@@ -355,6 +357,7 @@ T Md_store::get_value(const string& key,T & val)const
 }
 
 template int Md_store::get_value(const string& key,int & val)const;
+template unsigned int Md_store::get_value(const string& key,unsigned int & val)const;
 template float Md_store::get_value(const string& key,float & val)const;
 template string Md_store::get_value(const string& key,string & val)const;
 template bool Md_store::get_value(const string& key,bool & val)const;

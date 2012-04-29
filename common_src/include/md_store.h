@@ -79,7 +79,7 @@ public:
      Gets value at index j.   The value is returned
      by reference.  The function either returns the value.
   */
-  int get_value(int j,unsigned int & val)const;
+  unsigned int get_value(int j,unsigned int & val)const;
   
   /**
      Gets value at index j.   The value is
