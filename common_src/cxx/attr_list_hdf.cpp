@@ -503,15 +503,22 @@ utilities::V_TYPE Attr_list_hdf::get_type(const std::string & key)const
   Attribute  tmpa =  Attribute(obj_->openAttribute(key));
   H5T_class_t attr_class = tmpa.getTypeClass();
   H5S_class_t space_type = tmpa.getSpace().getSimpleExtentType();
+  H5T_sign_t sign;
+  
   if( space_type != H5S_SCALAR)
     return V_ERROR;
   switch(attr_class)
   {
   case H5T_INTEGER:  
-    return V_INT;
+    sign  = tmpa.getIntType().getSign();
+    if(sign  == H5T_SGN_2)
+      return V_INT;
+    else if(sign == H5T_SGN_NONE)
+      return V_UINT;
+    else
+      return V_ERROR;
   case H5T_FLOAT:  
     return V_FLOAT;
-  
   case H5T_STRING:  
     return V_STRING;
   case H5T_TIME:  
