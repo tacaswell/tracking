@@ -88,7 +88,7 @@ public:
   
   
   ///default Destructor, made virtual
-  virtual ~particle_base(){}
+  ~particle_base(){}
 
 
   //A program generated global unique id, useful for tracking, comparing
@@ -99,7 +99,7 @@ public:
   //int unq_id_;
 
   ///Pring out a rasonable representation of the partile
-  virtual void print() const;
+  void print() const;
 
   
   /**
@@ -108,21 +108,21 @@ public:
      @param type the value to be extracted
      @param val reference to the variable to be set.  Also sets type of function call
   */
-  virtual float               get_value(utilities::D_TYPE type,float & val        ) const;
+  float               get_value(utilities::D_TYPE type,float & val        ) const;
   /**
      Returns the int value of type given.  The value is passed out by reference and returned
 
      @param type the value to be extracted
      @param val reference to the variable to be set.  Also sets type of function call
   */
-  virtual int                 get_value(utilities::D_TYPE type,int &val    ) const;
+  int                 get_value(utilities::D_TYPE type,int &val    ) const;
   /**
      Returns the complex value of type given.  The value is passed out by reference and returned
 
      @param type the value to be extracted
      @param val reference to the variable to be set.  Also sets type of function call
   */
-  virtual std::complex<float> get_value(utilities::D_TYPE type,std::complex<float>& val) const;
+  std::complex<float> get_value(utilities::D_TYPE type,std::complex<float>& val) const;
 
 
   /**
@@ -157,7 +157,7 @@ public:
   /**
      Retruns the distance from this particle to part_in
    */
-  virtual float distancesq(const particle_base* part_in) const;
+  float distancesq(const particle_base* part_in) const;
 
   
   /**
