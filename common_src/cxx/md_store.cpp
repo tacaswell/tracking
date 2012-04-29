@@ -82,41 +82,41 @@ Md_store::Md_store(){}
 
 void Md_store::add_element(const std::string & key,const std::string & type, const std::string & value)
 {
-  entries_.push_back(Md_element(key,type,value));
+  entries_.push_back(Md_element(key,str2VT_s(type),value));
 }
 
 void Md_store::add_element(const char * key,const char * type, const char * value)
 {
-  entries_.push_back(Md_element(key,type,value));
+  entries_.push_back(Md_element(key,str2VT_s(type),value));
 }
 
 void Md_store::add_element(const char * key,float val)
 {
-  entries_.push_back(Md_element(key,"float",to_string(val).c_str()));
+  entries_.push_back(Md_element(key,utilities::V_FLOAT,to_string(val).c_str()));
 }
 
 void Md_store::add_element(const char * key,int val)
 {
-  entries_.push_back(Md_element(key,"int",to_string(val).c_str()));
+  entries_.push_back(Md_element(key,utilities::V_INT,to_string(val).c_str()));
 }
 
 
 void Md_store::add_element(const char * key,unsigned int val)
 {
-  entries_.push_back(Md_element(key,"uint",to_string(val).c_str()));
+  entries_.push_back(Md_element(key,utilities::V_UINT,to_string(val).c_str()));
 }
 
 
 void Md_store::add_element(const char * key,const char * val)
 {
-  entries_.push_back(Md_element(key,"string",val));
+  entries_.push_back(Md_element(key,utilities::V_STRING,val));
 }
 
 
 void Md_store::print() const
 {
   for(unsigned int j = 0; j<entries_.size();++j)
-    cout<<'('<<entries_[j].key<<','<<entries_[j].type<<','<<entries_[j].value<<')'<<endl;
+    cout<<'('<<entries_[j].key<<','<<VT2str_s(entries_[j].type)<<','<<entries_[j].value<<')'<<endl;
 }
 
   
@@ -146,7 +146,7 @@ bool Md_store::contains_key(const string& key) const
 
 float Md_store::get_value(int j,float & val)const
 {
-  if(str2VT_s(entries_[j].type) == utilities::V_FLOAT)
+  if(entries_[j].type == utilities::V_FLOAT)
   {
     if( from_string<float> (val,entries_[j].value,std::dec))
       return val;
@@ -154,13 +154,13 @@ float Md_store::get_value(int j,float & val)const
       throw logic_error("Md_store:: failure to parse " + entries_[j].key);
   }
   else
-    throw logic_error("Md_store::get_value, expect pram of type: float, found type: " + entries_[j].type + ": " + entries_[j].key );
+    throw logic_error("Md_store::get_value, expect pram of type: float, found type: " + VT2str_s(entries_[j].type) + ": " + entries_[j].key );
 }
 
 
 int Md_store::get_value(int j,int & val)const
 {
-  V_TYPE type = str2VT_s(entries_[j].type);
+  V_TYPE type = entries_[j].type;
   // deal with if the signedness matches
   if(type == utilities::V_INT)
   {
@@ -177,7 +177,7 @@ int Md_store::get_value(int j,int & val)const
       throw logic_error("Md_store:: failure to parse " + entries_[j].key);
     if(tmp_ui>INT_MAX)
       throw runtime_error("Md_store :: trying to cast an unsigned int to an int that is too large: "
-			  + entries_[j].type + ": " + entries_[j].key);
+			  + VT2str_s(entries_[j].type) + ": " + entries_[j].key);
     val = tmp_ui;
     return val;
     
@@ -185,13 +185,13 @@ int Md_store::get_value(int j,int & val)const
   // deal with if the class is wrong
   else
     throw logic_error("Md_store::get_value, expect pram of type: int, found type: " 
-		      + entries_[j].type + ": " + entries_[j].key );
+		      + VT2str_s(entries_[j].type) + ": " + entries_[j].key );
 }
 
 
 int Md_store::get_value(int j,unsigned int & val)const
 {
-  V_TYPE type = str2VT_s(entries_[j].type);
+  V_TYPE type = entries_[j].type;
   if(type == utilities::V_UINT)
   {
     if(from_string<unsigned int> (val,entries_[j].value,std::dec))
@@ -206,21 +206,21 @@ int Md_store::get_value(int j,unsigned int & val)const
     if(!from_string<int> (tmp_ui,entries_[j].value,std::dec))
       throw logic_error("Md_store:: failure to parse " + entries_[j].key);
     if(tmp_ui<0)
-      throw runtime_error("Md_store :: trying to cast a negative int to an unsigned int: "+ entries_[j].type + ": " + entries_[j].key );
+      throw runtime_error("Md_store :: trying to cast a negative int to an unsigned int: "+ VT2str_s(entries_[j].type) + ": " + entries_[j].key );
     val = tmp_ui;
     return val;
     
   }
   
   else
-    throw logic_error("Md_store::get_value, expect pram of type: int, found type: " + entries_[j].type + ": " + entries_[j].key );
+    throw logic_error("Md_store::get_value, expect pram of type: int, found type: " + VT2str_s(entries_[j].type) + ": " + entries_[j].key );
 }
 
 
 
 string Md_store::get_value(int j,string & val)const
 {
-  V_TYPE val_type = str2VT_s(entries_[j].type);
+  V_TYPE val_type = entries_[j].type;
   
 
   if(val_type == utilities::V_STRING ||
@@ -231,13 +231,13 @@ string Md_store::get_value(int j,string & val)const
     return val;
   }
   else
-    throw logic_error("Md_store::get_value, expect pram of type: string, found type: " + entries_[j].type + ": " + entries_[j].key );
+    throw logic_error("Md_store::get_value, expect pram of type: string, found type: " + VT2str_s(entries_[j].type) + ": " + entries_[j].key );
 }
 
 
 bool Md_store::get_value(int j,bool & val)const
 {
-  if(str2VT_s(entries_[j].type) == utilities::V_BOOL)
+  if(entries_[j].type == utilities::V_BOOL)
   {
     val = false;
     string tmp_str = entries_[j].value;
@@ -248,7 +248,7 @@ bool Md_store::get_value(int j,bool & val)const
     
   }
   else
-    throw logic_error("Md_store::get_value, expect pram of type: float, found type: " + entries_[j].type + ": " + entries_[j].key );
+    throw logic_error("Md_store::get_value, expect pram of type: float, found type: " + VT2str_s(entries_[j].type) + ": " + entries_[j].key );
 }
 
 

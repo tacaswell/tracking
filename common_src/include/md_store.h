@@ -126,7 +126,7 @@ public:
   */
   utilities::V_TYPE get_type(int j)const
   {
-    return str2VT_s(entries_.at(j).type);
+    return entries_.at(j).type;
   }
   /**
      Returns the value as a string
@@ -197,12 +197,12 @@ private:
     /**
        Constructor from strings
      */
-    Md_element(std::string key_i,std::string type_i,std::string value_i)
+    Md_element(std::string key_i,utilities::V_TYPE type_i,std::string value_i)
       :key(key_i),type(type_i),value(value_i){}
     /**
        Constructor from const char *
      */
-    Md_element(const char * key_i,const char * type_i,const char * value_i)
+    Md_element(const char * key_i,utilities::V_TYPE type_i,const char * value_i)
       :key(key_i),type(type_i),value(value_i){}
     /**
        Empty constructor
@@ -219,7 +219,7 @@ private:
     /**
        The type of the meta data
      */
-    std::string type;
+    utilities::V_TYPE type;
     /**
        The value.  All values are stored as strings to make life easier.
      */
