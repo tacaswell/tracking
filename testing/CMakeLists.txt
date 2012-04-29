@@ -169,3 +169,12 @@ target_link_libraries(rtt_ts
   ${XERCESC_LIBRARY} 
   )
 set_target_properties(rtt_ts PROPERTIES COMPILE_DEFINITIONS  "PTYPE=1;DIM_COUNT=2")
+
+
+
+add_executable(md_store_test md_store_test
+  ${COMMON_SRC_PATH}/md_store
+  ${COMMON_SRC_PATH}/enum_utils
+  )
+set_target_properties(md_store_test PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_COUNT=2;TESTING")
+
