@@ -308,7 +308,7 @@ void Generic_wrapper_hdf::add_meta_data(const Md_store * md_store)
   
   unsigned int num_entries = md_store->size();
   int tmpi;
-  int tmpui;
+  unsigned int tmpui;
   float tmpf;
   string tmps;
   for(unsigned int j = 0; j<num_entries; ++j)
