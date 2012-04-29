@@ -154,9 +154,14 @@ public:
   */
   void add_element(const char * key,int val);
   /**
-     Add unsigned in entry
+     Add unsigned int entry
   */
   void add_element(const char * key,unsigned int val);
+  /**
+     Add bool entry
+  */
+  void add_element(const char * key,bool val);
+
   /**
      Add string entry
    */

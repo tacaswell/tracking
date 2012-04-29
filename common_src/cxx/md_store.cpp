@@ -172,6 +172,12 @@ void Md_store::add_element(const char * key,unsigned int val)
   entries_.push_back(Md_element(key,utilities::V_UINT,(void * )tmpi_p));
 }
 
+void Md_store::add_element(const char * key,bool val)
+{
+  bool * tmpb_p = new bool(val);
+  entries_.push_back(Md_element(key,utilities::V_BOOL,(void * )tmpb_p));
+}
+
 
 void Md_store::add_element(const char * key,const char * val)
 {
