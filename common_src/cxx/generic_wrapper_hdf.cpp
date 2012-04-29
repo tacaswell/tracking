@@ -105,7 +105,7 @@ void Generic_wrapper_hdf::open_wrapper()
       // set the driver to be core with out a backing, ie memory only
       p_acl.setCore(5000*sizeof(float),false);
       // open the memory based file
-      file_ = new H5File(file_name_,H5F_ACC_RDWR,FileCreatPropList::DEFAULT,p_acl);
+      file_ = new H5File(file_name_,H5F_ACC_TRUNC,FileCreatPropList::DEFAULT,p_acl);
     }
     wrapper_open_ = true;
   }
