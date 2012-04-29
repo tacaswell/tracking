@@ -216,6 +216,7 @@ void Md_store::print() const
         break;
       case V_BOOL:
         cout<<* (bool *) entries_[j].value;    
+        break;
       case V_STRING:
       case V_TIME:
       case V_GUID:
@@ -224,7 +225,7 @@ void Md_store::print() const
       case V_ERROR:
       case V_COMPLEX:
 
-            break;
+        break;
       }
 
 
@@ -399,6 +400,8 @@ Md_store::Md_element::~Md_element()
     break;
   case V_BOOL:
     delete (bool *) value;    
+    break;
+    
   case V_STRING:
   case V_TIME:
   case V_GUID:
@@ -432,6 +435,8 @@ Md_store::Md_element::Md_element(const  Md_element &in)
     break;
   case V_BOOL:
     value =(void *) new bool(* (bool *) in.value);
+    break;
+    
   case V_STRING:
   case V_TIME:
   case V_GUID:
@@ -478,6 +483,8 @@ Md_store::Md_element & Md_store::Md_element::operator =(const Md_element &other)
       tmp =(void *) new bool(* (bool *) other.value);
       delete (bool*)value;
       value = tmp;
+      break;
+      
     case V_STRING:
     case V_TIME:
     case V_GUID:
