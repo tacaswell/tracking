@@ -362,3 +362,120 @@ void Md_store::add_elements(const Md_store * in)
     entries_.push_back(*it);
   
 }
+
+
+Md_store::Md_element::~Md_element()
+{
+
+  switch(type)
+  {
+  case V_UINT:
+    delete (unsigned int *) value;
+    break;
+  
+  case V_INT:
+    delete (int *) value;
+    break;
+  case V_FLOAT:
+    delete (float *) value;
+    break;
+  case V_BOOL:
+    delete (bool *) value;    
+  case V_STRING:
+  case V_TIME:
+  case V_GUID:
+    delete (std::string *) value;
+    break;
+  case V_ERROR:
+  case V_COMPLEX:
+
+    break;
+  }
+      
+}
+Md_store::Md_element::Md_element(const  Md_element &in)
+{
+  type = in.type;
+  key = in.key;
+
+
+  switch(type)
+  {
+  case V_UINT:
+    value =(void *) new unsigned int(* (unsigned int *) in.value);
+    break;
+  
+  case V_INT:
+    value =(void *) new int(* (int *) in.value);
+
+    break;
+  case V_FLOAT:
+    value =(void *) new float(* (float *) in.value);
+    break;
+  case V_BOOL:
+    value =(void *) new bool(* (bool *) in.value);
+  case V_STRING:
+  case V_TIME:
+  case V_GUID:
+    value =(void *) new string(* (string *) in.value);
+    break;
+  case V_ERROR:
+  case V_COMPLEX:
+    break;
+  }
+  
+}
+
+
+Md_store::Md_element & Md_store::Md_element::operator =(const Md_element &other)
+{
+  
+
+  if(this != &other)
+  {
+    type = other.type;
+    key = other.key;
+    void * tmp;
+    
+    switch(type)
+    {
+    case V_UINT:
+      tmp =(void *) new unsigned int(* (unsigned int *) other.value);
+      delete (unsigned int *) value;
+      value = tmp;
+    
+      break;
+  
+    case V_INT:
+      tmp =(void *) new int(* (int *) other.value);
+      delete (int *) value;
+      value = tmp;
+      break;
+    case V_FLOAT:
+      tmp =(void *) new float(* (float *) other.value);
+      delete (float *) value;
+      value = tmp;
+      break;
+    case V_BOOL:
+      tmp =(void *) new bool(* (bool *) other.value);
+      delete (bool*)value;
+      value = tmp;
+    case V_STRING:
+    case V_TIME:
+    case V_GUID:
+      tmp =(void *) new string(* (string *) other.value);
+      delete (string*)value;
+      value = tmp;
+      break;
+    case V_ERROR:
+    case V_COMPLEX:
+      break;
+    }
+      
+
+  }
+  
+
+  return *this;
+  
+}

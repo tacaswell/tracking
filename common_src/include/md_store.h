@@ -204,6 +204,15 @@ private:
      */
     Md_element(const char * key_i,utilities::V_TYPE type_i,void * value_i)
       :key(key_i),type(type_i),value(value_i){}
+
+    /**
+       Copy constructor
+     */
+    Md_element(const Md_element &);
+    /**
+       Assignment operator
+    */
+    Md_element & operator =(const Md_element &);
     /**
        Empty constructor
      */
@@ -211,35 +220,8 @@ private:
     /**
        Destructor, if more supported dyp
      */
-    ~Md_element()    
-    {
-
-      switch(type)
-      {
-      case V_UINT:
-        delete (unsigned int *) value;
-        break;
-  
-      case V_INT:
-        delete (int *) value;
-        break;
-      case V_FLOAT:
-        delete (float *) value;
-        break;
-      case V_BOOL:
-        delete (bool *) value;    
-      case V_STRING:
-      case V_TIME:
-      case V_GUID:
-        delete (std::string *) value;
-        break;
-      case V_ERROR:
-      case V_COMPLEX:
-
-            break;
-      }
-      
-    }
+    ~Md_element();
+    
     /**
        The meta data key
      */
