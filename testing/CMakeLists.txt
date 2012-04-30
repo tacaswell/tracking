@@ -172,6 +172,7 @@ set_target_properties(rtt_ts PROPERTIES COMPILE_DEFINITIONS  "PTYPE=1;DIM_COUNT=
 
 
 
+
 add_executable(wrapper_i_generic_test wrapper_i_generic_test.cpp
   ${COMMON_WRAPPER_SRC}
   ${UTIL_SRC} 
@@ -196,3 +197,14 @@ add_executable(generic_wrapper_test generic_wrapper_test.cpp
   )
 set_target_properties(generic_wrapper_test PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_COUNT=2;TESTING")
 target_link_libraries(generic_wrapper_test ${HDF5_LIBRARIES} )
+
+
+
+
+add_executable(md_store_test md_store_test
+  ${COMMON_SRC_PATH}/md_store
+  ${COMMON_SRC_PATH}/enum_utils
+  )
+set_target_properties(md_store_test PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_COUNT=2;TESTING")
+
+

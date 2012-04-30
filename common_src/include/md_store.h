@@ -1,4 +1,4 @@
-//Copyright 2010 Thomas A Caswell
+//Copyright 2010,2012 Thomas A Caswell
 //tcaswell@uchicago.edu
 //http://jfi.uchicago.edu/~tcaswell
 //
@@ -60,9 +60,20 @@ public:
 
      @param[in] attr_name attribute name
      @param[out] val the value
+     @return the value
   */
   template <class T>
   T get_value(const std::string & attr_name,T & val)const;
+  
+    
+  /**
+     Sets a given (key,val) pair.
+
+     @param[in] attr_name attribute name
+     @param[in] val the value
+  */
+  template <class T>
+  void set_value(const std::string & attr_name,const T & val);
   
 
   /**
@@ -79,7 +90,7 @@ public:
      Gets value at index j.   The value is returned
      by reference.  The function either returns the value.
   */
-  int get_value(int j,unsigned int & val)const;
+  unsigned int get_value(int j,unsigned int & val)const;
   
   /**
      Gets value at index j.   The value is
@@ -126,41 +137,32 @@ public:
   */
   utilities::V_TYPE get_type(int j)const
   {
-    return str2VT_s(entries_.at(j).type);
+    return entries_.at(j).type;
   }
   /**
-     Returns the value as a string
+     Returns the value as a (void *)
   */
-  std::string get_val(int j)const
+  void * get_val(int j)const
   {
-    return std::string(entries_.at(j).value);
+    return entries_.at(j).value;
   }
 
 
+  //@{
   /**
-     Add entry
+     Don't use these, will became private.
+
+     Adds an element with the given (key,val)
   */
   void add_element(const std::string & key,const std::string & type,const  std::string & value);
-  /**
-     Add entry
-  */
   void add_element(const char * key,const char * type, const char * value);
-  /**
-     Add float entry
-  */
   void add_element(const char * key,float val);
-  /**
-     Add int entry
-  */
   void add_element(const char * key,int val);
-  /**
-     Add unsigned in entry
-  */
   void add_element(const char * key,unsigned int val);
-  /**
-     Add string entry
-   */
+  void add_element(const char * key,bool val);
   void add_element(const char * key,const char *  val);
+  void add_element(const char * key,const std::string &val);
+  //@}
   /**
      Add all elements in md_in to this Md_store object
    */
@@ -197,21 +199,31 @@ private:
     /**
        Constructor from strings
      */
-    Md_element(std::string key_i,std::string type_i,std::string value_i)
+    Md_element(std::string key_i,utilities::V_TYPE type_i,void * value_i)
       :key(key_i),type(type_i),value(value_i){}
     /**
        Constructor from const char *
      */
-    Md_element(const char * key_i,const char * type_i,const char * value_i)
+    Md_element(const char * key_i,utilities::V_TYPE type_i,void * value_i)
       :key(key_i),type(type_i),value(value_i){}
+
+    /**
+       Copy constructor
+     */
+    Md_element(const Md_element &);
+    /**
+       Assignment operator
+    */
+    Md_element & operator =(const Md_element &);
     /**
        Empty constructor
      */
     Md_element();
     /**
-       Destructor
+       Destructor, if more supported dyp
      */
-    ~Md_element(){};
+    ~Md_element();
+    
     /**
        The meta data key
      */
@@ -219,23 +231,29 @@ private:
     /**
        The type of the meta data
      */
-    std::string type;
+    utilities::V_TYPE type;
     /**
-       The value.  All values are stored as strings to make life easier.
+       pointer to the value.  The struct owns the pointer and will clean it up
      */
-    std::string value;
+    void * value;
   
 
-  };
+    };
+    
+    
 
   /**
      The
    */
   std::vector<Md_element> entries_;
-};
+  };
+  
+    
+}
+
 
   
 
-}
+
 
 #endif

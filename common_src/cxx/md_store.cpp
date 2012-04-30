@@ -1,4 +1,4 @@
-//Copyright 2010 Thomas A Caswell
+//Copyright 2010,2012 Thomas A Caswell
 //tcaswell@uchicago.edu
 //http://jfi.uchicago.edu/~tcaswell
 //
@@ -82,41 +82,157 @@ Md_store::Md_store(){}
 
 void Md_store::add_element(const std::string & key,const std::string & type, const std::string & value)
 {
-  entries_.push_back(Md_element(key,type,value));
+  int * tmpi_p;
+  int tmpi;
+  unsigned int * tmpui_p;
+  unsigned int tmpui;
+  float * tmpf_p;
+  float tmpf;
+  std::string * tmps_p;
+  
+  bool * tmpb_p;
+  
+
+  
+  V_TYPE itype = str2VT_s(type);
+  
+  
+  switch(itype)
+  {
+  case V_UINT:
+    if(!from_string<unsigned int> (tmpui,value,std::dec))
+      throw runtime_error("failed to parse");
+    tmpui_p = new unsigned int(tmpui);
+    entries_.push_back(Md_element(key,itype,(void*) tmpui_p));    
+  break;
+  
+ case V_INT:
+   if(!from_string<int> (tmpi,value,std::dec))
+     throw runtime_error("failed to parse");
+   tmpi_p = new  int(tmpi);
+
+   entries_.push_back(Md_element(key,itype,(void*) tmpi_p));    
+   break;
+  case V_FLOAT:
+    if(!from_string<float> (tmpf,value,std::dec))
+      throw runtime_error("failed to parse");
+    tmpf_p = new float(tmpf);
+    entries_.push_back(Md_element(key,itype,(void*) tmpf_p));    
+    break;
+    
+  case V_STRING:
+  case V_TIME:
+  case V_GUID:
+    tmps_p = new std::string(value);
+    entries_.push_back(Md_element(key,itype,(void*) tmps_p));    
+    break;
+  case V_BOOL:
+
+    if(value.compare("on" )==0||value.compare("true")==0)
+      tmpb_p = new bool(true);
+    else
+      tmpb_p = new bool(false);
+    entries_.push_back(Md_element(key,itype,(void*) tmpb_p));    
+    break;
+  case V_ERROR:
+  case V_COMPLEX:
+
+    throw logic_error("type " + type + " not supported");
+    
+  }
+  
+
+  
+  
+
 }
 
 void Md_store::add_element(const char * key,const char * type, const char * value)
-{
-  entries_.push_back(Md_element(key,type,value));
+{  
+  add_element(string(key),string(type),string(value));
+  
 }
 
 void Md_store::add_element(const char * key,float val)
 {
-  entries_.push_back(Md_element(key,"float",to_string(val).c_str()));
+  float * tmpf_p = new float(val);
+  entries_.push_back(Md_element(key,utilities::V_FLOAT,(void * ) tmpf_p));
 }
 
 void Md_store::add_element(const char * key,int val)
 {
-  entries_.push_back(Md_element(key,"int",to_string(val).c_str()));
+  int * tmpi_p = new int(val);
+  entries_.push_back(Md_element(key,utilities::V_INT,(void *)tmpi_p));
 }
 
 
 void Md_store::add_element(const char * key,unsigned int val)
 {
-  entries_.push_back(Md_element(key,"uint",to_string(val).c_str()));
+  unsigned  int * tmpi_p = new unsigned int(val);
+  entries_.push_back(Md_element(key,utilities::V_UINT,(void * )tmpi_p));
+}
+
+void Md_store::add_element(const char * key,bool val)
+{
+  bool * tmpb_p = new bool(val);
+  entries_.push_back(Md_element(key,utilities::V_BOOL,(void * )tmpb_p));
 }
 
 
 void Md_store::add_element(const char * key,const char * val)
 {
-  entries_.push_back(Md_element(key,"string",val));
+  std::string * tmps_p = new std::string(val);
+  
+  entries_.push_back(Md_element(key,utilities::V_STRING,(void * ) tmps_p));
+}
+
+
+
+void Md_store::add_element(const char * key,const string & val)
+{
+  std::string * tmps_p = new std::string(val);
+  
+  entries_.push_back(Md_element(key,utilities::V_STRING,(void * ) tmps_p));
 }
 
 
 void Md_store::print() const
 {
   for(unsigned int j = 0; j<entries_.size();++j)
-    cout<<'('<<entries_[j].key<<','<<entries_[j].type<<','<<entries_[j].value<<')'<<endl;
+  {
+    V_TYPE type = entries_[j].type;
+    
+    cout<<'('<<entries_[j].key<<','<<VT2str_s(type)<<',';
+    switch(type)
+    {
+    case V_UINT:
+      cout<<*(unsigned int *) entries_[j].value;
+      break;
+    case V_INT:
+      cout<< *(int *) entries_[j].value;
+        break;
+      case V_FLOAT:
+        cout<<* (float *) entries_[j].value;
+        break;
+      case V_BOOL:
+        cout<<* (bool *) entries_[j].value;    
+        break;
+      case V_STRING:
+      case V_TIME:
+      case V_GUID:
+        cout<<* (std::string *) entries_[j].value;
+        break;
+      case V_ERROR:
+      case V_COMPLEX:
+
+        break;
+      }
+
+
+    cout<<')'<<endl;
+
+  }
+  
 }
 
   
@@ -146,38 +262,35 @@ bool Md_store::contains_key(const string& key) const
 
 float Md_store::get_value(int j,float & val)const
 {
-  if(str2VT_s(entries_[j].type) == utilities::V_FLOAT)
+  if(entries_[j].type == utilities::V_FLOAT)
   {
-    if( from_string<float> (val,entries_[j].value,std::dec))
-      return val;
-    else
-      throw logic_error("Md_store:: failure to parse " + entries_[j].key);
+    val = *(float *) entries_[j].value;
+    return val;
   }
+  
   else
-    throw logic_error("Md_store::get_value, expect pram of type: float, found type: " + entries_[j].type + ": " + entries_[j].key );
+    throw logic_error("Md_store::get_value, expect pram of type: float, found type: " + VT2str_s(entries_[j].type) + ": " + entries_[j].key );
 }
 
 
 int Md_store::get_value(int j,int & val)const
 {
-  V_TYPE type = str2VT_s(entries_[j].type);
+  V_TYPE type = entries_[j].type;
   // deal with if the signedness matches
   if(type == utilities::V_INT)
   {
-    if(from_string<int> (val,entries_[j].value,std::dec))
-      return val;
-    else 
-      throw logic_error("Md_store:: failure to parse " + entries_[j].key);
+    val = * (int * ) entries_[j].value;
+    return val;
+    
   }
   // deal with if the signs don't match
   else if(type  == utilities::V_UINT)
   {
-    unsigned int tmp_ui = UINT_MAX;
-    if(!from_string<unsigned int> (tmp_ui,entries_[j].value,std::dec))
-      throw logic_error("Md_store:: failure to parse " + entries_[j].key);
+    unsigned int tmp_ui = *(unsigned int *)entries_[j].value;
+    
     if(tmp_ui>INT_MAX)
       throw runtime_error("Md_store :: trying to cast an unsigned int to an int that is too large: "
-			  + entries_[j].type + ": " + entries_[j].key);
+			  + VT2str_s(entries_[j].type) + ": " + entries_[j].key);
     val = tmp_ui;
     return val;
     
@@ -185,70 +298,63 @@ int Md_store::get_value(int j,int & val)const
   // deal with if the class is wrong
   else
     throw logic_error("Md_store::get_value, expect pram of type: int, found type: " 
-		      + entries_[j].type + ": " + entries_[j].key );
+		      + VT2str_s(entries_[j].type) + ": " + entries_[j].key );
 }
 
 
-int Md_store::get_value(int j,unsigned int & val)const
+unsigned int Md_store::get_value(int j,unsigned int & val)const
 {
-  V_TYPE type = str2VT_s(entries_[j].type);
+  V_TYPE type = entries_[j].type;
   if(type == utilities::V_UINT)
   {
-    if(from_string<unsigned int> (val,entries_[j].value,std::dec))
-      return val;
-    else 
-      throw logic_error("Md_store:: failure to parse " + entries_[j].key);
+    val =  *(unsigned int *)entries_[j].value;
+    return val;
   }
   // deal with if the signs don't match
   else if(type  == utilities::V_INT)
   {
-    int tmp_ui = INT_MIN;
-    if(!from_string<int> (tmp_ui,entries_[j].value,std::dec))
-      throw logic_error("Md_store:: failure to parse " + entries_[j].key);
-    if(tmp_ui<0)
-      throw runtime_error("Md_store :: trying to cast a negative int to an unsigned int: "+ entries_[j].type + ": " + entries_[j].key );
-    val = tmp_ui;
+    int tmp_i  =  *(int *)entries_[j].value;
+    if(tmp_i<0)
+      throw runtime_error("Md_store :: trying to cast a negative int to an unsigned int: "+ 
+                          VT2str_s(entries_[j].type) + ": " + entries_[j].key );
+    val = tmp_i;
     return val;
     
   }
   
   else
-    throw logic_error("Md_store::get_value, expect pram of type: int, found type: " + entries_[j].type + ": " + entries_[j].key );
+    throw logic_error("Md_store::get_value, expect pram of type: int, found type: " + VT2str_s(entries_[j].type) + ": " + entries_[j].key );
 }
 
 
 
 string Md_store::get_value(int j,string & val)const
 {
-  V_TYPE val_type = str2VT_s(entries_[j].type);
+  V_TYPE val_type = entries_[j].type;
   
 
   if(val_type == utilities::V_STRING ||
      val_type == utilities::V_GUID ||
      val_type == utilities::V_TIME)
   {
-    val = entries_[j].value;
+    val = *(string * ) entries_[j].value;
     return val;
   }
   else
-    throw logic_error("Md_store::get_value, expect pram of type: string, found type: " + entries_[j].type + ": " + entries_[j].key );
+    throw logic_error("Md_store::get_value, expect pram of type: string, found type: " + VT2str_s(entries_[j].type) + ": " + entries_[j].key );
 }
 
 
 bool Md_store::get_value(int j,bool & val)const
 {
-  if(str2VT_s(entries_[j].type) == utilities::V_BOOL)
+  if(entries_[j].type == utilities::V_BOOL)
   {
-    val = false;
-    string tmp_str = entries_[j].value;
-    if(tmp_str.compare("on" )==0||tmp_str.compare("true" )==0)
-      val = true;
-    
+    val = *(bool *)entries_[j].value; ;
     return val;
     
   }
   else
-    throw logic_error("Md_store::get_value, expect pram of type: float, found type: " + entries_[j].type + ": " + entries_[j].key );
+    throw logic_error("Md_store::get_value, expect pram of type: float, found type: " + VT2str_s(entries_[j].type) + ": " + entries_[j].key );
 }
 
 
@@ -261,9 +367,26 @@ T Md_store::get_value(const string& key,T & val)const
 }
 
 template int Md_store::get_value(const string& key,int & val)const;
+template unsigned int Md_store::get_value(const string& key,unsigned int & val)const;
 template float Md_store::get_value(const string& key,float & val)const;
 template string Md_store::get_value(const string& key,string & val)const;
 template bool Md_store::get_value(const string& key,bool & val)const;
+
+
+template <class T>
+void Md_store::set_value(const string& key,const T & val)
+{
+  add_element(key.data(),val);
+}
+
+template void Md_store::set_value(const string& key,const int & val);
+template void Md_store::set_value(const string& key,const unsigned int & val);
+template void Md_store::set_value(const string& key,const float & val);
+template void Md_store::set_value(const string& key,const string & val);
+template void Md_store::set_value(const string& key,const bool & val);
+
+
+
 
 void Md_store::add_elements(const Md_store * in)
 {
@@ -272,5 +395,128 @@ void Md_store::add_elements(const Md_store * in)
   for(vector<Md_element>::const_iterator it = in->entries_.begin();
       it != it_end;++it)
     entries_.push_back(*it);
+  
+}
+
+
+Md_store::Md_element::~Md_element()
+{
+
+  switch(type)
+  {
+  case V_UINT:
+    delete (unsigned int *) value;
+    break;
+  
+  case V_INT:
+    delete (int *) value;
+    break;
+  case V_FLOAT:
+    delete (float *) value;
+    break;
+  case V_BOOL:
+    delete (bool *) value;    
+    break;
+    
+  case V_STRING:
+  case V_TIME:
+  case V_GUID:
+    delete (std::string *) value;
+    break;
+  case V_ERROR:
+  case V_COMPLEX:
+
+    break;
+  }
+      
+}
+Md_store::Md_element::Md_element(const  Md_element &in)
+{
+  type = in.type;
+  key = in.key;
+
+
+  switch(type)
+  {
+  case V_UINT:
+    value =(void *) new unsigned int(* (unsigned int *) in.value);
+    break;
+  
+  case V_INT:
+    value =(void *) new int(* (int *) in.value);
+
+    break;
+  case V_FLOAT:
+    value =(void *) new float(* (float *) in.value);
+    break;
+  case V_BOOL:
+    value =(void *) new bool(* (bool *) in.value);
+    break;
+    
+  case V_STRING:
+  case V_TIME:
+  case V_GUID:
+    value =(void *) new string(* (string *) in.value);
+    break;
+  case V_ERROR:
+  case V_COMPLEX:
+    break;
+  }
+  
+}
+
+
+Md_store::Md_element & Md_store::Md_element::operator =(const Md_element &other)
+{
+  
+
+  if(this != &other)
+  {
+    type = other.type;
+    key = other.key;
+    void * tmp;
+    
+    switch(type)
+    {
+    case V_UINT:
+      tmp =(void *) new unsigned int(* (unsigned int *) other.value);
+      delete (unsigned int *) value;
+      value = tmp;
+    
+      break;
+  
+    case V_INT:
+      tmp =(void *) new int(* (int *) other.value);
+      delete (int *) value;
+      value = tmp;
+      break;
+    case V_FLOAT:
+      tmp =(void *) new float(* (float *) other.value);
+      delete (float *) value;
+      value = tmp;
+      break;
+    case V_BOOL:
+      tmp =(void *) new bool(* (bool *) other.value);
+      delete (bool*)value;
+      value = tmp;
+      break;
+      
+    case V_STRING:
+    case V_TIME:
+    case V_GUID:
+      tmp =(void *) new string(* (string *) other.value);
+      delete (string*)value;
+      value = tmp;
+      break;
+    case V_ERROR:
+    case V_COMPLEX:
+      break;
+    }
+      
+
+  }
+  
+
+  return *this;
   
 }
