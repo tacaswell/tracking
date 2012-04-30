@@ -28,7 +28,7 @@
 #include "attr_list_hdf.h"
 
 #include "md_store.h"
-
+#include "tuple.h"
 #include <iostream>
 #include <stdexcept>
 
@@ -55,6 +55,7 @@ using H5::FileCreatPropList;
 
 using std::string;
 using utilities::Md_store;
+using utilities::Tuple;
 
 const static unsigned int CSIZE = 500;
   
@@ -303,6 +304,54 @@ void Generic_wrapper_hdf::add_meta_data(const std::string & key, int val,const s
   add_meta_data_priv(key,val,dset_name);
 }
 
+  
+float Generic_wrapper_hdf::get_meta_data(const std::string & key, float& val)
+{
+  return get_meta_data_priv(key,val);
+}
+Tuple<float,3> Generic_wrapper_hdf::get_meta_data(const std::string & key, Tuple<float,3> & val)
+{
+  return get_meta_data_priv(key,val);
+}
+Tuple<float,2> Generic_wrapper_hdf::get_meta_data(const std::string & key,  Tuple<float,2>& val)
+{
+  return get_meta_data_priv(key,val);
+}
+std::string Generic_wrapper_hdf::get_meta_data(const std::string & key,   std::string & val)
+{
+  return get_meta_data_priv(key,val);
+}
+int Generic_wrapper_hdf::get_meta_data(const std::string & key, int& val)
+{
+  return get_meta_data_priv(key,val);
+}
+unsigned int Generic_wrapper_hdf::get_meta_data(const std::string & key, unsigned int& val)
+{
+  return get_meta_data_priv(key,val);
+}
+
+float Generic_wrapper_hdf::get_meta_data(const std::string & key, float& val,const std::string & dget_name)
+{
+  return get_meta_data_priv(key,val,dget_name);
+}
+Tuple<float,3> Generic_wrapper_hdf::get_meta_data(const std::string & key, Tuple<float,3> & val,const std::string & dget_name)
+{ 
+  return get_meta_data_priv(key,val,dget_name);
+}
+Tuple<float,2> Generic_wrapper_hdf::get_meta_data(const std::string & key,  Tuple<float,2>& val,const std::string & dget_name)
+{
+  return get_meta_data_priv(key,val,dget_name);
+}
+std::string Generic_wrapper_hdf::get_meta_data(const std::string & key,   std::string & val,const std::string & dget_name)
+{
+  return get_meta_data_priv(key,val,dget_name);
+}
+int  Generic_wrapper_hdf::get_meta_data(const std::string & key, int & val,const std::string & dget_name)
+{
+  return get_meta_data_priv(key,val,dget_name);
+}
+
+
 void Generic_wrapper_hdf::add_meta_data(const Md_store * md_store)
 {
   
@@ -389,11 +438,19 @@ void Generic_wrapper_hdf::add_meta_data(const Md_store * md_store,const string &
 template<class T>
 void Generic_wrapper_hdf::add_meta_data_priv(const std::string & key, const T& val,const std::string & dset_name)
 {
+  DataSet dset;
+  // open data set  
+  if(!group_open_ || dset_name[0] == '/')
+  {
+    dset = file_->openDataSet(dset_name);
+  }
+  else if(group_)
+  {
+    dset = group_->openDataSet(dset_name);
+  }
+  else
+    throw logic_error("generic_wrapper_hdf:: can't add to a closed group");
   
-  if(!group_open_)
-      throw logic_error("generic_wrapper_hdf:: can't add to a closed group");
-  // open data set
-  DataSet dset = group_ ->openDataSet(dset_name);
   // make attr wrapper for group
   Attr_list_hdf dset_attr(&dset);
   // shove in meta data
@@ -408,3 +465,36 @@ void Generic_wrapper_hdf::add_meta_data_priv(const std::string & key, const T& v
   group_attrs_->set_value(key,val);
 }
 
+template<class T>
+T Generic_wrapper_hdf::get_meta_data_priv(const std::string & key,  T& val,const std::string & dset_name)
+{
+  DataSet dset;
+  // open data set  
+  if(!group_open_ || dset_name[0] == '/')
+  {
+    dset = file_->openDataSet(dset_name);
+  }
+  else if(group_)
+  {
+    dset = group_->openDataSet(dset_name);
+  }
+  else
+    throw logic_error("generic_wrapper_hdf:: can't add to a closed group");
+  
+  // make attr wrapper for group
+  Attr_list_hdf dset_attr(&dset);
+  // shove in meta data
+  dset_attr.get_value(key,val);
+  return val;
+  
+}
+
+template<class T>
+T  Generic_wrapper_hdf::get_meta_data_priv(const std::string & key, T& val)
+{
+  if(!group_open_)
+    throw logic_error("generic_wrapper_hdf:: can't add to a closed group");
+  group_attrs_->get_value(key,val);
+  return val;
+  
+}

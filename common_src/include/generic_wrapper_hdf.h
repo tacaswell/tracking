@@ -109,12 +109,12 @@ public:
   void add_meta_data(const std::string & key, unsigned int val);
   void add_meta_data(const Md_store * md_store);
 
-  float get_meta_data(const std::string & key, float & val){};
-  Tuple<float,3> get_meta_data(const std::string & key,  Tuple<float,3> & val){};
-  Tuple<float,2> get_meta_data(const std::string & key,  Tuple<float,2>& val){};
-  std::string get_meta_data(const std::string & key,  std::string & val){};
-  int get_meta_data(const std::string & key, int & val){};
-  unsigned int get_meta_data(const std::string & key, unsigned int& val){};
+  float get_meta_data(const std::string & key, float & val);
+  Tuple<float,3> get_meta_data(const std::string & key,  Tuple<float,3> & val);
+  Tuple<float,2> get_meta_data(const std::string & key,  Tuple<float,2>& val);
+  std::string get_meta_data(const std::string & key,  std::string & val);
+  int get_meta_data(const std::string & key, int & val);
+  unsigned int get_meta_data(const std::string & key, unsigned int& val);
   Md_store& get_meta_data(Md_store & md_store){};
     //@}
   /**
@@ -132,11 +132,11 @@ public:
   void add_meta_data(const std::string & key, int val,const std::string & dset_name);
   void add_meta_data(const Md_store * md_store,const std::string & dset_name);
 
-  float get_meta_data(const std::string & key, float& val,const std::string & dset_name){};
-  Tuple<float,3>  get_meta_data(const std::string & key, Tuple<float,3> & val,const std::string & dset_name){};
-  Tuple<float,2> get_meta_data(const std::string & key, Tuple<float,2>& val,const std::string & dset_name){};
-  std::string get_meta_data(const std::string & key,  std::string & val,const std::string & dset_name){};
-  int get_meta_data(const std::string & key, int &val,const std::string & dset_name){};
+  float get_meta_data(const std::string & key, float& val,const std::string & dset_name);
+  Tuple<float,3>  get_meta_data(const std::string & key, Tuple<float,3> & val,const std::string & dset_name);
+  Tuple<float,2> get_meta_data(const std::string & key, Tuple<float,2>& val,const std::string & dset_name);
+  std::string get_meta_data(const std::string & key,  std::string & val,const std::string & dset_name);
+  int get_meta_data(const std::string & key, int &val,const std::string & dset_name);
   Md_store & get_meta_data(Md_store & md_store,const std::string & dset_name){};
   //@}
   
@@ -157,6 +157,11 @@ private:
   void add_meta_data_priv(const std::string & key, const T & val,const std::string & dset_name);
   template<class T>
   void add_meta_data_priv(const std::string & key, const T& val);
+
+  template<class T>
+  T get_meta_data_priv(const std::string & key,  T & val,const std::string & dset_name);
+  template<class T>
+  T get_meta_data_priv(const std::string & key,  T& val);
   
   std::string file_name_;
 
