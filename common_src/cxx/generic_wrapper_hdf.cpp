@@ -179,6 +179,9 @@ void Generic_wrapper_hdf::close_group()
 void Generic_wrapper_hdf::add_dset(int rank, const unsigned int * dims, V_TYPE type, const void * data,
 				   const std::string & name  )
 {
+  if (!(wrapper_open_))
+    throw runtime_error("wrapper must be open to add a dataset");
+  
 
   hsize_t hdims[rank];
   for(int j = 0;j<rank;++j)
