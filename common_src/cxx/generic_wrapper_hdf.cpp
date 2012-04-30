@@ -31,11 +31,13 @@
 #include "tuple.h"
 #include <iostream>
 #include <stdexcept>
-
+#include <list>
 using utilities::Generic_wrapper_hdf;
 
 using std::logic_error;
 using std::runtime_error;
+using std::list;
+using std::string;
 
 
 using H5::H5File;
@@ -138,7 +140,7 @@ void Generic_wrapper_hdf::open_group(const string & name )
   if(group_open_)
     throw runtime_error("generic_wrapper_hdf::open_group: there is already an open group");
   
-  bool exists = false;
+
 
     
 
@@ -396,6 +398,126 @@ void Generic_wrapper_hdf::add_meta_data(const Md_store * md_store)
   
 
   }
+}
+
+Md_store& Generic_wrapper_hdf::get_meta_data(Md_store & md)
+{
+  list<string> keys = group_attrs_->contents();
+  
+  
+  int tmpi;
+  unsigned int tmpui;
+  float tmpf;
+  string tmps;
+
+  
+  list<string>::const_iterator end = keys.end();
+  for(list<string>::const_iterator it = keys.begin(); it != end;
+      ++it)
+  {
+    
+    string key = *it;
+    V_TYPE type = group_attrs_->get_type(key);
+    
+    switch(type)
+    {
+      // integer data
+    case V_INT:
+      md.set_value(key,group_attrs_->get_value(key,tmpi));
+      break;
+      // float data
+    case V_FLOAT:
+      md.set_value(key,group_attrs_->get_value(key,tmpf));
+      break;
+      // complex data
+    case V_STRING:
+      md.set_value(key,group_attrs_->get_value(key,tmps));
+      break;
+    case V_UINT:
+      md.set_value(key,group_attrs_->get_value(key,tmpui));
+      break;
+
+    case V_COMPLEX:
+    case V_ERROR:
+    case V_BOOL:      
+    case V_TIME:
+    case V_GUID:
+      throw logic_error("type not implemented");
+      
+    }
+  
+
+  }
+  return md;
+}
+
+Md_store& Generic_wrapper_hdf::get_meta_data(Md_store & md,const string & dset_name)
+{
+
+  DataSet dset;
+  // open data set  
+  if(!group_open_ || dset_name[0] == '/')
+  {
+    dset = file_->openDataSet(dset_name);
+  }
+  else if(group_)
+  {
+    dset = group_->openDataSet(dset_name);
+  }
+  else
+    throw logic_error("generic_wrapper_hdf:: can't add to a closed group");
+  
+  // make attr wrapper for group
+  Attr_list_hdf dset_attr(&dset);
+
+  list<string> keys = dset_attr.contents();
+  
+  
+  int tmpi;
+  unsigned int tmpui;
+  float tmpf;
+  string tmps;
+
+  
+  list<string>::const_iterator end = keys.end();
+  for(list<string>::const_iterator it = keys.begin(); it != end;
+      ++it)
+  {
+    
+    string key = *it;
+    V_TYPE type = dset_attr.get_type(key);
+    
+    switch(type)
+    {
+      // integer data
+    case V_INT:
+      md.set_value(key,dset_attr.get_value(key,tmpi));
+      break;
+      // float data
+    case V_FLOAT:
+      md.set_value(key,dset_attr.get_value(key,tmpf));
+      break;
+      // complex data
+    case V_STRING:
+      md.set_value(key,dset_attr.get_value(key,tmps));
+      break;
+    case V_UINT:
+      md.set_value(key,dset_attr.get_value(key,tmpui));
+      break;
+
+    case V_COMPLEX:
+    case V_ERROR:
+    case V_BOOL:      
+    case V_TIME:
+    case V_GUID:
+      throw logic_error("type not implemented");
+      
+    }
+  
+
+  }
+  return md;
+  
 }
 
 void Generic_wrapper_hdf::add_meta_data(const Md_store * md_store,const string & dset)

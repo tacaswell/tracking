@@ -115,7 +115,7 @@ public:
   std::string get_meta_data(const std::string & key,  std::string & val);
   int get_meta_data(const std::string & key, int & val);
   unsigned int get_meta_data(const std::string & key, unsigned int& val);
-  Md_store& get_meta_data(Md_store & md_store){};
+  Md_store& get_meta_data(Md_store & md_store);
     //@}
   /**
      @name Dataset Level Metadata
@@ -137,7 +137,7 @@ public:
   Tuple<float,2> get_meta_data(const std::string & key, Tuple<float,2>& val,const std::string & dset_name);
   std::string get_meta_data(const std::string & key,  std::string & val,const std::string & dset_name);
   int get_meta_data(const std::string & key, int &val,const std::string & dset_name);
-  Md_store & get_meta_data(Md_store & md_store,const std::string & dset_name){};
+  Md_store & get_meta_data(Md_store & md_store,const std::string & dset_name);
   //@}
   
   ~Generic_wrapper_hdf();
