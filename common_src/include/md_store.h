@@ -64,6 +64,17 @@ public:
   template <class T>
   T get_value(const std::string & attr_name,T & val)const;
   
+    
+  /**
+     looks up the value of the given attribute.  The value is
+     returned by reference.  The function returns the value.
+
+     @param[in] attr_name attribute name
+     @param[out] val the value
+  */
+  template <class T>
+  void set_value(const std::string & attr_name,const T & val);
+  
 
   /**
      Returns value at index j.  The value is

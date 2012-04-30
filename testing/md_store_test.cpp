@@ -34,7 +34,7 @@ bool test_fun (string str,T val,Md_store & md)
   T tmp1,tmp2;
   bool suc;
   
-  md.add_element(str.c_str(),val);
+  md.set_value(str,val);
   tmp2 = md.get_value(str,tmp1);
   suc = (val == tmp2) && (val == tmp1);
   
@@ -74,6 +74,23 @@ int main()
 
   Md_store md2;
   md2.add_elements(&md);
+  
+  Md_store md3;
+
+  test_fun("A",A,md3);
+
+  test_fun("Ap",Ap,md3);
+
+  test_fun("B",B,md3);
+
+  test_fun("C",C,md3);
+
+
+  test_fun("D",D,md3);
+
+
+
+  test_fun("E",E,md3);
   
   
   return 0;

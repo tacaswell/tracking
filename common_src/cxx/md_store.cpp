@@ -372,6 +372,22 @@ template float Md_store::get_value(const string& key,float & val)const;
 template string Md_store::get_value(const string& key,string & val)const;
 template bool Md_store::get_value(const string& key,bool & val)const;
 
+
+template <class T>
+void Md_store::set_value(const string& key,const T & val)
+{
+  add_element(key.data(),val);
+}
+
+template void Md_store::set_value(const string& key,const int & val);
+template void Md_store::set_value(const string& key,const unsigned int & val);
+template void Md_store::set_value(const string& key,const float & val);
+template void Md_store::set_value(const string& key,const string & val);
+template void Md_store::set_value(const string& key,const bool & val);
+
+
+
+
 void Md_store::add_elements(const Md_store * in)
 {
   vector<Md_element>::const_iterator it_end = in->entries_.end();
