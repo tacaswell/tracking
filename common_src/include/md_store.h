@@ -60,17 +60,17 @@ public:
 
      @param[in] attr_name attribute name
      @param[out] val the value
+     @return the value
   */
   template <class T>
   T get_value(const std::string & attr_name,T & val)const;
   
     
   /**
-     looks up the value of the given attribute.  The value is
-     returned by reference.  The function returns the value.
+     Sets a given (key,val) pair.
 
      @param[in] attr_name attribute name
-     @param[out] val the value
+     @param[in] val the value
   */
   template <class T>
   void set_value(const std::string & attr_name,const T & val);
@@ -148,40 +148,21 @@ public:
   }
 
 
+  //@{
   /**
-     Add entry
+     Don't use these, will became private.
+
+     Adds an element with the given (key,val)
   */
   void add_element(const std::string & key,const std::string & type,const  std::string & value);
-  /**
-     Add entry
-  */
   void add_element(const char * key,const char * type, const char * value);
-  /**
-     Add float entry
-  */
   void add_element(const char * key,float val);
-  /**
-     Add int entry
-  */
   void add_element(const char * key,int val);
-  /**
-     Add unsigned int entry
-  */
   void add_element(const char * key,unsigned int val);
-  /**
-     Add bool entry
-  */
   void add_element(const char * key,bool val);
-
-  /**
-     Add string entry
-   */
   void add_element(const char * key,const char *  val);
-  /**
-     Add string entry
-   */
   void add_element(const char * key,const std::string &val);
-
+  //@}
   /**
      Add all elements in md_in to this Md_store object
    */
