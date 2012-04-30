@@ -130,6 +130,7 @@ public:
   void add_meta_data(const std::string & key, const Tuple<float,2>& val,const std::string & dset_name);
   void add_meta_data(const std::string & key, const std::string & val,const std::string & dset_name);
   void add_meta_data(const std::string & key, int val,const std::string & dset_name);
+  void add_meta_data(const std::string & key, unsigned int val,const std::string & dset_name);
   void add_meta_data(const Md_store * md_store,const std::string & dset_name);
 
   float get_meta_data(const std::string & key, float& val,const std::string & dset_name);

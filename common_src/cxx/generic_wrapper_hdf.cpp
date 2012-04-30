@@ -305,6 +305,10 @@ void Generic_wrapper_hdf::add_meta_data(const std::string & key, int val,const s
 {
   add_meta_data_priv(key,val,dset_name);
 }
+void Generic_wrapper_hdf::add_meta_data(const std::string & key,unsigned int val,const std::string & dset_name)
+{
+  add_meta_data_priv(key,val,dset_name);
+}
 
   
 float Generic_wrapper_hdf::get_meta_data(const std::string & key, float& val)
@@ -352,6 +356,7 @@ int  Generic_wrapper_hdf::get_meta_data(const std::string & key, int & val,const
 {
   return get_meta_data_priv(key,val,dget_name);
 }
+
 
 
 void Generic_wrapper_hdf::add_meta_data(const Md_store * md_store)

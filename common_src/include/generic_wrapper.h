@@ -170,6 +170,10 @@ public:
    */
   virtual void add_meta_data(const std::string & key, int val,const std::string & dset_name)=0;
   /**
+     Adds an unsigned integer meta-data for a data set
+   */
+  virtual void add_meta_data(const std::string & key, unsigned int val,const std::string & dset_name)=0;
+  /**
      Adds all the meta data in a Md_store at the dset level
    */
   virtual void add_meta_data(const Md_store * md_store,const std::string & dset_name)=0;
