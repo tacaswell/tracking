@@ -48,10 +48,61 @@ namespace utilities
 				// numbering will work in the compiler
   
     };
+
+typedef enum V_TYPE
+  {
+    V_ERROR = -1,		// error type
+    V_UINT = 0,			// unsigned integer
+    V_INT =1,			// integer
+    V_FLOAT =2,			// float
+    V_COMPLEX =3,		// complex
+    V_STRING =4,		// string
+    V_BOOL =5,			// bool
+    V_TIME =6,			// date/time
+    V_GUID =7,			// guid from MM meta-data
+    
+
+  }V_TYPE;
 %include "tuple.i"
 typedef Tuple<float,DIM_COUNT> Tuplef;
 %template (Tuplef) Tuple<float,DIM_COUNT>;
    
+
+
+class Md_store
+{
+public:
+    
+  template <class T>
+  T get_value(const std::string & attr_name,T & val)const;
+  
+    
+  template <class T>
+  void set_value(const std::string & attr_name,const T & val);
+  
+  %template (set_value_i) set_value<int>;
+  %template (set_value_ui) set_value<unsigned int>;
+  %template (set_value_f) set_value<float>;
+
+  %template (get_value_i) set_value<int>;
+  %template (get_value_ui) set_value<unsigned int>;
+  %template (get_value_f) set_value<float>;
+
+  bool contains_key(const std::string& key)const;
+  int get_key_index(const std::string& key)const;
+  unsigned int size() const;
+  std::string get_key(int j) const;
+  
+  utilities::V_TYPE get_type(int j)const;
+  
+  void add_elements(const Md_store * md_in);
+  
+  ~Md_store();
+  
+  Md_store();
+
+ 
+};
  
 
 
@@ -114,6 +165,116 @@ class Wrapper_i_generic:public Wrapper_in{
 
 
 
+class Generic_wrapper{
+public:
+  virtual void open_wrapper() =0;
+  virtual void close_wrapper()=0;
+  virtual bool is_open() const=0;
+  virtual void open_group(const std::string & name)=0;
+  virtual void close_group()=0;
+  virtual void add_dset(int rank,const unsigned int * dims, V_TYPE vt , const void * data,const std::string & dset_name)=0;
+  virtual void add_meta_data(const std::string & key, float val)=0;
+  virtual void add_meta_data(const std::string & key, const Tuple<float,3> & val)=0;
+  virtual void add_meta_data(const std::string & key, const Tuple<float,2>& val)=0;
+  virtual void add_meta_data(const std::string & key,  const std::string & val)=0;
+  virtual void add_meta_data(const std::string & key, int val)=0;
+  virtual void add_meta_data(const std::string & key, unsigned int val)=0;
+  virtual void add_meta_data(const Md_store * md_store)=0;
+  virtual void add_meta_data(const std::string & key, float val,const std::string & dset_name)=0;
+  virtual void add_meta_data(const std::string & key, const Tuple<float,3> & val,const std::string & dset_name)=0;
+  virtual void add_meta_data(const std::string & key, const Tuple<float,2>& val,const std::string & dset_name)=0;
+  virtual void add_meta_data(const std::string & key,  const std::string & val,const std::string & dset_name)=0;
+  virtual void add_meta_data(const std::string & key, int val,const std::string & dset_name)=0;
+  virtual void add_meta_data(const std::string & key, unsigned int val,const std::string & dset_name)=0;
+  virtual void add_meta_data(const Md_store * md_store,const std::string & dset_name)=0;
+  
+  
+ 
+};
+class Generic_wrapper_read
+{
+public:
+  virtual void open_wrapper() =0;
+  virtual void close_wrapper()=0;
+  virtual bool is_open() const=0;
+  virtual void open_group(const std::string & name)=0;
+  virtual void get_dset(std::vector<int> & data,std::vector<unsigned int> & dims, const std::string & dset_name) const=0;
+  virtual void get_dset(std::vector<unsigned int> & data, std::vector<unsigned int> & dims,const std::string & dset_name) const=0;
+  virtual void get_dset(std::vector<float> & data, std::vector<unsigned int> & dims, const std::string & dset_name) const=0;
+  virtual void get_dset_info(std::vector<int> & dims,V_TYPE& vt ,const std::string & dset_name) const=0;
+  virtual float get_meta_data(const std::string & key, float & val)=0;
+  virtual Tuple<float,3> get_meta_data(const std::string & key,  Tuple<float,3> & val)=0;
+  virtual Tuple<float,2> get_meta_data(const std::string & key,  Tuple<float,2>& val)=0;
+  virtual std::string get_meta_data(const std::string & key,  std::string & val)=0;
+  virtual int get_meta_data(const std::string & key, int & val)=0;
+  virtual unsigned int get_meta_data(const std::string & key, unsigned int& val)=0;
+  virtual Md_store& get_meta_data(Md_store & md_store)=0;
+  virtual float get_meta_data(const std::string & key, float& val,const std::string & dset_name)=0;
+  virtual Tuple<float,3>  get_meta_data(const std::string & key, Tuple<float,3> & val,const std::string & dset_name)=0;
+  virtual Tuple<float,2> get_meta_data(const std::string & key, Tuple<float,2>& val,const std::string & dset_name)=0;
+  virtual std::string get_meta_data(const std::string & key,  std::string & val,const std::string & dset_name)=0;
+  virtual int get_meta_data(const std::string & key, int &val,const std::string & dset_name)=0;
+  virtual Md_store& get_meta_data(Md_store & md_store,const std::string & dset_name)=0;
+
+};
+
+class Generic_wrapper_hdf{
+public:
+  typedef enum F_TYPE{ 
+    /// open existing file read-write                   
+    F_DISK_RDWR = 0,
+    /// create a new file, must not previously exist             
+    F_DISK_EXCL,
+    /// creates new file, nukes existing file                    
+    F_DISK_TRUNC,
+    /// create file in memory                                    
+    F_MEM,                     
+  } F_TYPE;                                                                        
+
+  Generic_wrapper_hdf(std::string fname, F_TYPE f_type = F_DISK_RDWR);
+
+  void open_wrapper() ;
+  void close_wrapper();
+  bool is_open() const;
+  void open_group(const std::string & name);
+  void close_group();
+
+  void add_dset(int rank,const unsigned int * dims, V_TYPE vt , const void * data,const std::string & dset_name);
+  void add_meta_data(const std::string & key, float val);
+  void add_meta_data(const std::string & key, const Tuple<float,3> & val);
+  void add_meta_data(const std::string & key, const Tuple<float,2>& val);
+  void add_meta_data(const std::string & key,  const std::string & val);
+  void add_meta_data(const std::string & key, int val);
+  void add_meta_data(const std::string & key, unsigned int val);
+  void add_meta_data(const Md_store * md_store);
+  void add_meta_data(const std::string & key, float val,const std::string & dset_name);
+  void add_meta_data(const std::string & key, const Tuple<float,3> & val,const std::string & dset_name);
+  void add_meta_data(const std::string & key, const Tuple<float,2>& val,const std::string & dset_name);
+  void add_meta_data(const std::string & key,  const std::string & val,const std::string & dset_name);
+  void add_meta_data(const std::string & key, int val,const std::string & dset_name);
+  void add_meta_data(const std::string & key, unsigned int val,const std::string & dset_name);
+  void add_meta_data(const Md_store * md_store,const std::string & dset_name);
+
+  void get_dset(std::vector<int> & data,std::vector<unsigned int> & dims, const std::string & dset_name) const;
+  void get_dset(std::vector<unsigned int> & data, std::vector<unsigned int> & dims,const std::string & dset_name) const;
+  void get_dset(std::vector<float> & data, std::vector<unsigned int> & dims, const std::string & dset_name) const;
+  void get_dset_info(std::vector<int> & dims,V_TYPE& vt ,const std::string & dset_name) const;
+  float get_meta_data(const std::string & key, float & val);
+
+  Tuple<float,3> get_meta_data(const std::string & key,  Tuple<float,3> & val);
+  Tuple<float,2> get_meta_data(const std::string & key,  Tuple<float,2>& val);
+  std::string get_meta_data(const std::string & key,  std::string & val);
+  int get_meta_data(const std::string & key, int & val);
+  unsigned int get_meta_data(const std::string & key, unsigned int& val);
+  Md_store& get_meta_data(Md_store & md_store);
+  float get_meta_data(const std::string & key, float& val,const std::string & dset_name);
+  Tuple<float,3>  get_meta_data(const std::string & key, Tuple<float,3> & val,const std::string & dset_name);
+  Tuple<float,2> get_meta_data(const std::string & key, Tuple<float,2>& val,const std::string & dset_name);
+  std::string get_meta_data(const std::string & key,  std::string & val,const std::string & dset_name);
+  int get_meta_data(const std::string & key, int &val,const std::string & dset_name);
+  Md_store& get_meta_data(Md_store & md_store,const std::string & dset_name);
+
+} ;
  
 
 
@@ -153,5 +314,106 @@ public:
     
   
  };
-   
+
+
+class Generic_wrapper{
+public:
+  void open_wrapper() ;
+  void close_wrapper();
+  bool is_open() const;
+  void open_group(const std::string & name);
+  void close_group();
+  void add_dset(int rank,const unsigned int * dims, V_TYPE vt , const void * data,const std::string & dset_name);
+  void add_meta_data(const std::string & key, float val);
+  void add_meta_data(const std::string & key, const Tuple<float,3> & val);
+  void add_meta_data(const std::string & key, const Tuple<float,2>& val);
+  void add_meta_data(const std::string & key,  const std::string & val);
+  void add_meta_data(const std::string & key, int val);
+  void add_meta_data(const std::string & key, unsigned int val);
+  void add_meta_data(const Md_store * md_store);
+  void add_meta_data(const std::string & key, float val,const std::string & dset_name);
+  void add_meta_data(const std::string & key, const Tuple<float,3> & val,const std::string & dset_name);
+  void add_meta_data(const std::string & key, const Tuple<float,2>& val,const std::string & dset_name);
+  void add_meta_data(const std::string & key,  const std::string & val,const std::string & dset_name);
+  void add_meta_data(const std::string & key, int val,const std::string & dset_name);
+  void add_meta_data(const std::string & key, unsigned int val,const std::string & dset_name);
+  void add_meta_data(const Md_store * md_store,const std::string & dset_name);
+  
+  
+ 
+};
+class Generic_wrapper_read
+{
+public:
+  void open_wrapper() ;
+  void close_wrapper();
+  bool is_open() const;
+  void open_group(const std::string & name);
+  void get_dset(std::vector<int> & data,std::vector<unsigned int> & dims, const std::string & dset_name) const;
+  void get_dset(std::vector<unsigned int> & data, std::vector<unsigned int> & dims,const std::string & dset_name) const;
+  void get_dset(std::vector<float> & data, std::vector<unsigned int> & dims, const std::string & dset_name) const;
+  void get_dset_info(std::vector<int> & dims,V_TYPE& vt ,const std::string & dset_name) const;
+  float get_meta_data(const std::string & key, float & val);
+  Tuple<float,3> get_meta_data(const std::string & key,  Tuple<float,3> & val);
+  Tuple<float,2> get_meta_data(const std::string & key,  Tuple<float,2>& val);
+  std::string get_meta_data(const std::string & key,  std::string & val);
+  int get_meta_data(const std::string & key, int & val);
+  unsigned int get_meta_data(const std::string & key, unsigned int& val);
+  Md_store& get_meta_data(Md_store & md_store);
+  float get_meta_data(const std::string & key, float& val,const std::string & dset_name);
+  Tuple<float,3>  get_meta_data(const std::string & key, Tuple<float,3> & val,const std::string & dset_name);
+  Tuple<float,2> get_meta_data(const std::string & key, Tuple<float,2>& val,const std::string & dset_name);
+  std::string get_meta_data(const std::string & key,  std::string & val,const std::string & dset_name);
+  int get_meta_data(const std::string & key, int &val,const std::string & dset_name);
+  Md_store& get_meta_data(Md_store & md_store,const std::string & dset_name);
+
+} ;
+
+class Generic_wrapper_hdf{
+public:
+  void open_wrapper() ;
+  void close_wrapper();
+  bool is_open() const;
+  void open_group(const std::string & name);
+  void close_group();
+
+  void add_dset(int rank,const unsigned int * dims, V_TYPE vt , const void * data,const std::string & dset_name);
+  void add_meta_data(const std::string & key, float val);
+  void add_meta_data(const std::string & key, const Tuple<float,3> & val);
+  void add_meta_data(const std::string & key, const Tuple<float,2>& val);
+  void add_meta_data(const std::string & key,  const std::string & val);
+  void add_meta_data(const std::string & key, int val);
+  void add_meta_data(const std::string & key, unsigned int val);
+  void add_meta_data(const Md_store * md_store);
+  void add_meta_data(const std::string & key, float val,const std::string & dset_name);
+  void add_meta_data(const std::string & key, const Tuple<float,3> & val,const std::string & dset_name);
+  void add_meta_data(const std::string & key, const Tuple<float,2>& val,const std::string & dset_name);
+  void add_meta_data(const std::string & key,  const std::string & val,const std::string & dset_name);
+  void add_meta_data(const std::string & key, int val,const std::string & dset_name);
+  void add_meta_data(const std::string & key, unsigned int val,const std::string & dset_name);
+  void add_meta_data(const Md_store * md_store,const std::string & dset_name);
+
+  void get_dset(std::vector<int> & data,std::vector<unsigned int> & dims, const std::string & dset_name) const;
+  void get_dset(std::vector<unsigned int> & data, std::vector<unsigned int> & dims,const std::string & dset_name) const;
+  void get_dset(std::vector<float> & data, std::vector<unsigned int> & dims, const std::string & dset_name) const;
+  void get_dset_info(std::vector<int> & dims,V_TYPE& vt ,const std::string & dset_name) const;
+  float get_meta_data(const std::string & key, float & val);
+
+  Tuple<float,3> get_meta_data(const std::string & key,  Tuple<float,3> & val);
+  Tuple<float,2> get_meta_data(const std::string & key,  Tuple<float,2>& val);
+  std::string get_meta_data(const std::string & key,  std::string & val);
+  int get_meta_data(const std::string & key, int & val);
+  unsigned int get_meta_data(const std::string & key, unsigned int& val);
+  Md_store& get_meta_data(Md_store & md_store);
+  float get_meta_data(const std::string & key, float& val,const std::string & dset_name);
+  Tuple<float,3>  get_meta_data(const std::string & key, Tuple<float,3> & val,const std::string & dset_name);
+  Tuple<float,2> get_meta_data(const std::string & key, Tuple<float,2>& val,const std::string & dset_name);
+  std::string get_meta_data(const std::string & key,  std::string & val,const std::string & dset_name);
+  int get_meta_data(const std::string & key, int &val,const std::string & dset_name);
+  Md_store& get_meta_data(Md_store & md_store,const std::string & dset_name);
+
+} ;
+
+
 }
+

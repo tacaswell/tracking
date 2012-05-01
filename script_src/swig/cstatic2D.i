@@ -44,8 +44,11 @@ import_array();
 
 #define DIM_COUNT 2
 #define PTYPE 0
+#include "tuple.h"
 
-
+#include "generic_wrapper.h"
+#include "generic_wrapper_hdf.h"
+#include "md_store.h"
 #include "enum_utils.h"
 #include "wrapper_i.h"
 #include "wrapper_i_hdf.h"
@@ -55,7 +58,9 @@ import_array();
 #include "corr.h"
 #include "corr_gofr.h"
 #include "part_def.h"
-#include "tuple.h"
+
+
+
 
 %}
 
@@ -114,8 +119,6 @@ public:
   ~hash_case();
   
 };
- 
-  
- 
-
 }
+ 
+ 

@@ -46,6 +46,9 @@ import_array();
 #define PTYPE 1
 
 
+#include "generic_wrapper.h"
+#include "generic_wrapper_hdf.h"
+#include "md_store.h"
 #include "enum_utils.h"
 #include "wrapper_i.h"
 #include "wrapper_i_hdf.h"
@@ -55,8 +58,9 @@ import_array();
 #include "corr.h"
 #include "corr_gofr.h"
 #include "part_def.h"
-#include "tuple.h"
 
+#include "track_shelf.h"
+#include "track_accum.h"
 %}
 
 namespace std
@@ -101,6 +105,27 @@ class Corr_gofr :public Corr
   Corr_gofr(int bins,float max);
   
 };
+
+ 
+class Trk_accumulator
+{
+public:
+  virtual void add_disp(utilities::Tuplef displacement,unsigned steps) = 0;
+  virtual unsigned max_step()const = 0;
+  
+};
+
+class Track_shelf{ 
+ public:
+  void remove_short_tracks(int min_length);
+  void renumber();
+  unsigned int get_track_count() const;
+  void compute_corrected_TA(Trk_accumulator & ta)const;
+  
+  Track_shelf();
+  ~Track_shelf();
+  
+};
  
 
 
@@ -118,26 +143,6 @@ public:
   
 };
  
-class Track_shelf
-{
- public:
-  void remove_short_tracks(int min_length);
-  void renumber();
-  unsigned int get_track_count() const;
-  void compute_corrected_TA(Trk_accumulator & ta)const;
-  
-  Track_shelf();
-  ~Track_shelf();
-  
-};
- 
-class Trk_accumulator
-{
-public:
-  virtual void add_disp(utilities::Tuplef displacement,unsigned steps) = 0;
-  virtual unsigned max_step()const = 0;
-  
-};
- 
 
 }
+
