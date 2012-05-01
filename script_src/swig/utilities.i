@@ -16,6 +16,7 @@
 //along with this program; if not, see <http://www.gnu.org/licenses>.
 
 
+%include typemaps.i
 
 namespace utilities
 {
@@ -72,9 +73,47 @@ typedef Tuple<float,DIM_COUNT> Tuplef;
 class Md_store
 {
 public:
-    
+  
+
   template <class T>
   T get_value(const std::string & attr_name,T & val)const;
+  
+
+  %extend
+   {
+     int get_value_i(const std::string & attr_name)
+     {
+    int tmp;
+    return $self->get_value(attr_name,tmp);
+    
+      }
+   }
+  
+
+  %extend
+   {
+     unsigned int get_value_ui(const std::string & attr_name)
+     {
+       unsigned int tmp;
+       return $self->get_value(attr_name,tmp);
+    
+      }
+   }
+
+  %extend
+   {
+     float get_value_f(const std::string & attr_name)
+     {
+       float tmp;
+       return $self->get_value(attr_name,tmp);
+    
+      }
+   }
+  
+  
+  
+  
+
   
     
   template <class T>
@@ -83,10 +122,6 @@ public:
   %template (set_value_i) set_value<int>;
   %template (set_value_ui) set_value<unsigned int>;
   %template (set_value_f) set_value<float>;
-
-  %template (get_value_i) set_value<int>;
-  %template (get_value_ui) set_value<unsigned int>;
-  %template (get_value_f) set_value<float>;
 
   bool contains_key(const std::string& key)const;
   int get_key_index(const std::string& key)const;
