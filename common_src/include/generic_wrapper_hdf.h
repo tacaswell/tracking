@@ -1,4 +1,4 @@
-//Copyright 2009 Thomas A Caswell
+//Copyright 2009-2012 Thomas A Caswell
 //tcaswell@uchicago.edu
 //http://jfi.uchicago.edu/~tcaswell
 //
@@ -43,22 +43,113 @@ class Attr_list_hdf;
    generic_wrapper for writing to hdf files
 
 */
-class Generic_wrapper_hdf:public Generic_wrapper{
+class Generic_wrapper_hdf:public Generic_wrapper,Generic_wrapper_read{
 public:
+  /**
+     Enum for determining hdf file creation behavior
+   */
+  typedef enum F_TYPE{ 
+    /// open existing file read-write                   
+    F_DISK_RDWR = 0,
+    /// create a new file, must not previously exist             
+    F_DISK_EXCL,
+    /// creates new file, nukes existing file                    
+    F_DISK_TRUNC,
+    /// create file in memory                                    
+    F_MEM,                     
+  } F_TYPE;                                                                        
 
-  
+  /**
+     @name Wrapper state
+     
+     Change and query the top level wrapper state
+   */
+  //@{  
   void open_wrapper();
+  
   void close_wrapper();
   bool is_open()const
   {
     return wrapper_open_;
   }
+  //@}
   
+  /**
+     @name Group state
+     
+     Change and query the wrapper current group state
+   */
+  //@{
   void open_group(const std::string & name = "none");
   void close_group();
-  
+  //@}
+  /**
+     @name Data
+     
+     get and set data
+   */
+  //@{
+
   void add_dset(int rank, const unsigned int * dims, V_TYPE , const void *,const std::string & name );
+
+  void get_dset(std::vector<int> & data,std::vector<unsigned int> & dims, const std::string & dset_name) const;
+  void get_dset(std::vector<unsigned int> & data, std::vector<unsigned int> & dims,const std::string & dset_name) const;
+  void get_dset(std::vector<float> & data, std::vector<unsigned int> & dims, const std::string & dset_name) const;
+
+  void get_dset_info(std::vector<int> & dims,V_TYPE& vt ,const std::string & dset_name) const;
+
+
+  //@}   
+    /**
+     @name Group Level Metadata
+
+     getter and setter functions for metadata for the currently open
+     group.
+
+   */
+  //@{
+  void add_meta_data(const std::string & key, float val);
+  void add_meta_data(const std::string & key, const Tuple<float,3> & val);
+  void add_meta_data(const std::string & key, const Tuple<float,2>& val);
+  void add_meta_data(const std::string & key, const std::string & val);
+  void add_meta_data(const std::string & key, int val);
+  void add_meta_data(const std::string & key, unsigned int val);
+  void add_meta_data(const Md_store * md_store);
+
+  float get_meta_data(const std::string & key, float & val);
+  Tuple<float,3> get_meta_data(const std::string & key,  Tuple<float,3> & val);
+  Tuple<float,2> get_meta_data(const std::string & key,  Tuple<float,2>& val);
+  std::string get_meta_data(const std::string & key,  std::string & val);
+  int get_meta_data(const std::string & key, int & val);
+  unsigned int get_meta_data(const std::string & key, unsigned int& val);
+  Md_store& get_meta_data(Md_store & md_store);
+    //@}
+  /**
+     @name Dataset Level Metadata
+
+     getter and setter functions for metadata for the named dataset.
+
+   */
+  //@{
+    
+  void add_meta_data(const std::string & key, float val,const std::string & dset_name);
+  void add_meta_data(const std::string & key, const Tuple<float,3> & val,const std::string & dset_name);
+  void add_meta_data(const std::string & key, const Tuple<float,2>& val,const std::string & dset_name);
+  void add_meta_data(const std::string & key, const std::string & val,const std::string & dset_name);
+  void add_meta_data(const std::string & key, int val,const std::string & dset_name);
+  void add_meta_data(const std::string & key, unsigned int val,const std::string & dset_name);
+  void add_meta_data(const Md_store * md_store,const std::string & dset_name);
+
+  float get_meta_data(const std::string & key, float& val,const std::string & dset_name);
+  Tuple<float,3>  get_meta_data(const std::string & key, Tuple<float,3> & val,const std::string & dset_name);
+  Tuple<float,2> get_meta_data(const std::string & key, Tuple<float,2>& val,const std::string & dset_name);
+  std::string get_meta_data(const std::string & key,  std::string & val,const std::string & dset_name);
+  int get_meta_data(const std::string & key, int &val,const std::string & dset_name);
+  Md_store & get_meta_data(Md_store & md_store,const std::string & dset_name);
+  //@}
   
+  ~Generic_wrapper_hdf();
+ 
   /**
      Constructor
 
@@ -66,34 +157,25 @@ public:
      @param add_to_file if the file already exists
 
      @todo replace bool with enum
-   */
-  Generic_wrapper_hdf(std::string fname, bool add_to_file = true);
-  
-  
-  void add_meta_data(const std::string & key, float val);
-  void add_meta_data(const std::string & key, const Tuple<float,3> & val);
-  void add_meta_data(const std::string & key, const Tuple<float,2>& val);
-  void add_meta_data(const std::string & key, const std::string & val);
-  void add_meta_data(const std::string & key, int val);
-  void add_meta_data(const std::string & key, unsigned int val);
-  
-    
-  void add_meta_data(const std::string & key, float val,const std::string & dset_name);
-  void add_meta_data(const std::string & key, const Tuple<float,3> & val,const std::string & dset_name);
-  void add_meta_data(const std::string & key, const Tuple<float,2>& val,const std::string & dset_name);
-  void add_meta_data(const std::string & key, const std::string & val,const std::string & dset_name);
-  void add_meta_data(const std::string & key, int val,const std::string & dset_name);
-
-  void add_meta_data(const Md_store * md_store);
-  void add_meta_data(const Md_store * md_store,const std::string & dset_name);
-  
-  ~Generic_wrapper_hdf();
+  */
+  Generic_wrapper_hdf(std::string fname, F_TYPE f_type = F_DISK_RDWR);
   
 private:
   template<class T>
   void add_meta_data_priv(const std::string & key, const T & val,const std::string & dset_name);
   template<class T>
   void add_meta_data_priv(const std::string & key, const T& val);
+
+  template<class T>
+  T get_meta_data_priv(const std::string & key,  T & val,const std::string & dset_name);
+  template<class T>
+  T get_meta_data_priv(const std::string & key,  T& val);
+
+
+
+  void get_dset_priv( void * data);
+
+
   
   std::string file_name_;
 
@@ -103,7 +185,7 @@ private:
   bool group_open_;
   bool dset_open_;
 
-  bool add_to_file_;
+  F_TYPE f_type_;
   
   
   H5::H5File *file_;

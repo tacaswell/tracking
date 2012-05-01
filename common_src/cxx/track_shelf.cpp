@@ -33,8 +33,7 @@
 #include "master_box_t.h"
 #include "counted_vector.h"
 #include "generic_wrapper.h"
-#include "array.h"
-#include "cell.h"
+
 #include "exception.h"
 #include "wrapper_o.h"
 #include "md_store.h"
@@ -53,7 +52,7 @@ using utilities::Histogram;
 using utilities::Md_store;
 
 using utilities::Ll_range_error;
-using utilities::Array;
+
 using utilities::Cell;
 
 using utilities::Wrapper_out;
@@ -345,28 +344,28 @@ void Track_shelf::disp_sq_hist(int time_step ,utilities::Histogram & disp_sq_his
 }
 
 
-void Track_shelf::set_raw_disp_to_cell(Cell & output)const{
-  tr_list::const_iterator working_track = tracks_.begin();
-  Array tmp(1);
-  for(int j = 0; j<output.get_length();j++)
-    {
-      (*(working_track++))->extract_raw_disp(tmp);
-      output.add_array(tmp);
-    }
+// void Track_shelf::set_raw_disp_to_cell(Cell & output)const{
+//   tr_list::const_iterator working_track = tracks_.begin();
+//   Array tmp(1);
+//   for(int j = 0; j<output.get_length();j++)
+//     {
+//       (*(working_track++))->extract_raw_disp(tmp);
+//       output.add_array(tmp);
+//     }
 
-}
+// }
 
 
-void Track_shelf::set_corrected_disp_to_cell(Cell & output)const{
-  tr_list::const_iterator working_track = tracks_.begin();
-  Array tmp(1);
-  for(int j = 0; j<output.get_length();j++)
-    {
-      (*(working_track++))->extract_corrected_disp(tmp);
-      output.add_array(tmp);
-    }
+// void Track_shelf::set_corrected_disp_to_cell(Cell & output)const{
+//   tr_list::const_iterator working_track = tracks_.begin();
+//   Array tmp(1);
+//   for(int j = 0; j<output.get_length();j++)
+//     {
+//       (*(working_track++))->extract_corrected_disp(tmp);
+//       output.add_array(tmp);
+//     }
 
-}
+// }
 
 
 

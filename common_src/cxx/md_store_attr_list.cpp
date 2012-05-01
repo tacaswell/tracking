@@ -44,6 +44,7 @@ Md_store::Md_store(const utilities::Attr_list_hdf & atr_lst )
       it != cont.end();++it)
   {
     int tmpi;
+    int tmpui;
     float tmpf;
     string tmps;
     tmps.clear();
@@ -56,6 +57,11 @@ Md_store::Md_store(const utilities::Attr_list_hdf & atr_lst )
     case V_INT:
       atr_lst.get_value(key,tmpi);
       add_element((key).c_str(),tmpi);
+      break;
+
+    case V_UINT:
+      atr_lst.get_value(key,tmpui);
+      add_element((key).c_str(),tmpui);
       break;
     case V_FLOAT:
       atr_lst.get_value(key,tmpf);

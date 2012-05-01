@@ -136,3 +136,14 @@ set_target_properties(vanHove_sweep PROPERTIES COMPILE_DEFINITIONS  "PTYPE=1;DIM
 #   ${XERCESC_LIBRARY} 
 # )
 # set_target_properties(sofq PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_COUNT=2")
+
+
+
+add_executable(gofr_jb gofr_general
+  ${COMMON_SRC_PATH}/wrapper_i_jb_binary.cpp
+  )
+target_link_libraries(gofr_jb
+  cstatic2D
+
+  )
+set_target_properties(gofr_jb PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_COUNT=2")

@@ -270,7 +270,7 @@ int main(int argc, char * argv[])
   sql.add_mdata(md_store);
 
   // save the data
-  Generic_wrapper_hdf hdf_out(out_file,true);
+  Generic_wrapper_hdf hdf_out(out_file,Generic_wrapper_hdf::F_DISK_RDWR);
   gofr_c.out_to_wrapper(hdf_out,utilities::format_name(grp_name,write_comp_key),&md_store);
   cout<<"wrote out g(r)"<<endl;
 

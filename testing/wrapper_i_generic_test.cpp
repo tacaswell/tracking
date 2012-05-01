@@ -50,7 +50,7 @@ int main(int argc, const char * argv[])
   }
   
 
-
+   
     D_TYPE tmp[] = {utilities::D_XPOS,
         	    utilities::D_YPOS,
     };

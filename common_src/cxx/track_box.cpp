@@ -24,7 +24,7 @@
 //the resulting work.
 #include "track_box.h"
 #include "particle_track.h"
-#include "array.h"
+
 
 #include "part_def.h"
 
@@ -40,7 +40,7 @@ using std::logic_error;
 
 
 using namespace tracking;
-using utilities::Array;
+
 using utilities::Tuplei;
 using utilities::Tuplef;
 using utilities::Tuple;
@@ -140,33 +140,33 @@ void Track_box::push_back(particle_track * input_part){
 }
 
 
-void Track_box::extract_raw_disp(Array & output) const{
-  output.clear(length_);
-  const particle_track* working_part = t_first_;
-  const particle_track* next_part = working_part->get_next();;
-  for(int j = 0; j<length_;++j)
-  {
-    output.push((working_part->get_disp(next_part)));
-    working_part = next_part;
-    next_part = working_part->get_next();;
-  }
+// void Track_box::extract_raw_disp(Array & output) const{
+//   output.clear(length_);
+//   const particle_track* working_part = t_first_;
+//   const particle_track* next_part = working_part->get_next();;
+//   for(int j = 0; j<length_;++j)
+//   {
+//     output.push((working_part->get_disp(next_part)));
+//     working_part = next_part;
+//     next_part = working_part->get_next();;
+//   }
   
-}
+// }
 
 
 
-void Track_box::extract_corrected_disp(Array & output) const{
-  output.clear(length_);
-  const particle_track* working_part = t_first_;
-  const particle_track* next_part = working_part->get_next();;
-  for(int j = 0; j<length_;++j)
-  {
-    output.push((working_part->get_corrected_disp(next_part)));
-    working_part = next_part;
-    next_part = working_part->get_next();;
-  }
+// void Track_box::extract_corrected_disp(Array & output) const{
+//   output.clear(length_);
+//   const particle_track* working_part = t_first_;
+//   const particle_track* next_part = working_part->get_next();;
+//   for(int j = 0; j<length_;++j)
+//   {
+//     output.push((working_part->get_corrected_disp(next_part)));
+//     working_part = next_part;
+//     next_part = working_part->get_next();;
+//   }
   
-}
+// }
 
 Track_box::~Track_box(){
   particle_track* cur_part = t_first_;

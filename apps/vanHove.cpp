@@ -224,20 +224,25 @@ int main(int argc, char * const argv[])
   TA_vanHove vanHove(max_step,nbins,max_range);
   tracks.compute_corrected_TA(vanHove);
   
-  // add md to sql db
-  sql.add_mdata(md_store);
-    
+
+
+
+
   // make output wrapper and shove data in to it
-  Generic_wrapper_hdf hdf_out(out_file,true);  
-  hdf_out.open_wrapper();
-  vanHove.output_to_wrapper(hdf_out,md_store);
-  hdf_out.close_wrapper();
-  sql.commit();
-  
+  try
+  {
+    Generic_wrapper_hdf hdf_out(out_file,Generic_wrapper_hdf::F_DISK_RDWR);  
+    vanHove.output_to_wrapper(hdf_out,md_store);
+  }
+  catch(exception & e)
+  {
+    cerr<<"error outputting the histograms"<<endl;
+    cerr<<e.what()<<endl;
+    return -1;
+  }
 
   // close the db connection cleanly
   sql.close_connection();
-
 
   
   return 0;

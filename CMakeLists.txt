@@ -27,9 +27,7 @@ SET(CONFIG_SRC
   )
 
 SET(UTIL_SRC
-  ${COMMON_SRC_PATH}/array.cpp
-  ${COMMON_SRC_PATH}/cell.cpp
-#  ${COMMON_SRC_PATH}/coarse_grain_array.cpp
+  #  ${COMMON_SRC_PATH}/coarse_grain_array.cpp
   ${COMMON_SRC_PATH}/counted_vector.cpp
   #${COMMON_SRC_PATH}/histogram2d.cpp
   ${COMMON_SRC_PATH}/histogram.cpp
@@ -93,6 +91,7 @@ SET(OTHER_WRAPPER_SRC
   ${COMMON_SRC_PATH}/wrapper_i_ning.cpp
   ${COMMON_SRC_PATH}/wrapper_i_ning_hd.cpp
   ${COMMON_SRC_PATH}/wrapper_o_file.cpp
+  ${COMMON_SRC_PATH}/wrapper_i_jb_binary.cpp
   )
 
 

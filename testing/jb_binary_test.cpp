@@ -1,4 +1,4 @@
-//Copyright 2009 Thomas A Caswell
+//Copyright 2012 Thomas A Caswell
 //tcaswell@uchicago.edu
 //http://jfi.uchicago.edu/~tcaswell
 //
@@ -14,33 +14,41 @@
 //
 //You should have received a copy of the GNU General Public License
 //along with this program; if not, see <http://www.gnu.org/licenses>.
-//
-//Additional permission under GNU GPL version 3 section 7
-//
-//If you modify this Program, or any covered work, by linking or
-//combining it with MATLAB (or a modified version of that library),
-//containing parts covered by the terms of MATLAB User License, the
-//licensors of this Program grant you additional permission to convey
-//the resulting work.
 
 
-#ifndef GWRAPPER_FILE
-#define GWRAPPER_FILE
-namespace utilities{
-/**
-   A generic wrapper for outputting to a file.
 
-   This class is not finished
+#include <iostream>
+#include <set>
 
-   @todo delete this class
- */
-class Generic_wrapper_file:public Generic_wrapper_base{
+#include "wrapper_i_jb_binary.h"
 
 
-};
+
+using std::cout;
+using std::endl;
+using std::set;
+using std::string;
+using std::cerr;
+using std::string;
 
 
+using utilities::Wrapper_i_jb_binary;
+using utilities::D_TYPE;
+using utilities::Tuplef;
+
+
+
+int main(int argc, const char * argv[])
+{
+
+  cout<<"hello world"<<endl;
+  string fname = "/home/tcaswell/work/justin_data/large_packings/3000000_particles_phi_eq_0.7/xyz_positions.dat";
+  
+  Wrapper_i_jb_binary wrap = Wrapper_i_jb_binary();
+  
+  wrap.set_file_name(fname);
+  
+  wrap.proc_file(3000000);
+  
 }
 
-
-#endif

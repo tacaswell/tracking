@@ -252,7 +252,7 @@ IDL_PROPERTY_SUPPORT   = NO
 # member in the group (if any) for the other members of the group. By default 
 # all members of a group must be documented explicitly.
 
-DISTRIBUTE_GROUP_DOC   = NO
+DISTRIBUTE_GROUP_DOC   = YES
 
 # Set the SUBGROUPING tag to YES (the default) to allow class member groups of 
 # the same type (for instance a group of public functions) to be put as a 
@@ -403,7 +403,7 @@ SORT_MEMBER_DOCS       = YES
 # by member name. If set to NO (the default) the members will appear in 
 # declaration order.
 
-SORT_BRIEF_DOCS        = YES
+SORT_BRIEF_DOCS        = NO
 
 # If the SORT_GROUP_NAMES tag is set to YES then doxygen will sort the 
 # hierarchy of group names into alphabetical order. If set to NO (the default) 
@@ -592,7 +592,7 @@ RECURSIVE              = YES
 # excluded from the INPUT source files. This way you can easily exclude a 
 # subdirectory from a directory tree whose root is specified with the INPUT tag.
 
-EXCLUDE                = external_src 
+EXCLUDE                = external_src matlab_apps 
 
 # The EXCLUDE_SYMLINKS tag can be used select whether or not files or 
 # directories that are symbolic links (a Unix filesystem feature) are excluded 
