@@ -41,7 +41,16 @@ int main(int argc, const char * argv[])
   unsigned int N = 25;
   int  fake_data[N];
   for (unsigned int j =0;j<25;++j)
-    fake_data[j] = j;
+    fake_data[j] = j*(-1);
+
+  float  fake_dataf[N];
+  for (unsigned int j =0;j<25;++j)
+    fake_dataf[j] = j*3.14;
+
+
+  unsigned int  fake_dataui[N];
+  for (unsigned int j =0;j<25;++j)
+    fake_dataui[j] = j;
   
 
   Generic_wrapper_hdf wrap = Generic_wrapper_hdf("test",Generic_wrapper_hdf::F_DISK_TRUNC);
@@ -62,19 +71,28 @@ int main(int argc, const char * argv[])
   
 
   for (unsigned int j =0;j<25;++j)
-    fake_data[j] = j*2;
-  wrap.add_dset(1,&N,utilities::V_INT,fake_data,"/test3");
+    fake_data[j] = 2*fake_data[j];
+  
+  wrap.add_dset(1,&N,utilities::V_UINT,fake_dataui,"/test3");
   wrap.add_dset(1,&N,utilities::V_INT,fake_data,"test4");
+  wrap.add_dset(1,&N,utilities::V_FLOAT,fake_dataf,"test5");
   
   vector<int> data;
+  vector<float> dataf;
+  vector<unsigned int> dataui;
   vector<unsigned int> dims;
+
+  wrap.get_dset(dataui,dims,"test3");
+  for(unsigned int j =0; j< 25;++j)
+    cout<<j<<'\t'<<dataui[j]<<endl;
+
   wrap.get_dset(data,dims,"test4");
   for(unsigned int j =0; j< 25;++j)
     cout<<j<<'\t'<<data[j]<<endl;
   
-  for(vector<unsigned int>::iterator it = dims.begin(); it != dims.end(); ++it)
-    cout<<*it<<endl;
-  
+  wrap.get_dset(dataf,dims,"test5");
+  for(unsigned int j =0; j< 25;++j)
+    cout<<j<<'\t'<<dataf[j]<<endl;
   
   wrap.close_wrapper();
   
