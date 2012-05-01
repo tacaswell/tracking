@@ -38,6 +38,7 @@ using std::logic_error;
 using std::runtime_error;
 using std::list;
 using std::string;
+using std::vector;
 
 
 using H5::H5File;
@@ -55,9 +56,11 @@ using H5::DataType;
 using H5::FileAccPropList;
 using H5::FileCreatPropList;
 
-using std::string;
+
+
 using utilities::Md_store;
 using utilities::Tuple;
+using utilities::V_TYPE;
 
 const static unsigned int CSIZE = 500;
   
@@ -229,7 +232,7 @@ void Generic_wrapper_hdf::add_dset(int rank, const unsigned int * dims, V_TYPE t
     throw logic_error("generic_wrapper_hdf: un implemented types");
   }
   
-  
+  /// @todo add compression logic for higher sizes
   // if the list is big enough, us compression
   if(rank ==1 && *hdims > CSIZE*5)
   {
@@ -238,6 +241,8 @@ void Generic_wrapper_hdf::add_dset(int rank, const unsigned int * dims, V_TYPE t
     plist.setSzip(H5_SZIP_NN_OPTION_MASK,10);
   }
   
+
+  // make data set
   DataSet dset;
   if(!group_open_ || name[0] == '/')
   {
@@ -252,7 +257,7 @@ void Generic_wrapper_hdf::add_dset(int rank, const unsigned int * dims, V_TYPE t
     throw runtime_error("gave relative path name with no open group");
   }
   
-  // make data set
+  
   
   
   // shove in data
@@ -262,7 +267,263 @@ void Generic_wrapper_hdf::add_dset(int rank, const unsigned int * dims, V_TYPE t
 
 }
 
+
+    
+
+void Generic_wrapper_hdf::get_dset(vector<int> & data,std::vector<unsigned int> & dims, const std::string & dset_name) const
+{
+  if (!(wrapper_open_))
+    throw runtime_error("wrapper must be open to add a dataset");
   
+  dims.clear();
+  data.clear();
+  
+  // get data set
+  DataSet dset;
+  // open data set  
+  if(!group_open_ || dset_name[0] == '/')
+  {
+    dset = file_->openDataSet(dset_name);
+  }
+  else if(group_)
+  {
+    dset = group_->openDataSet(dset_name);
+  }
+  else
+    throw logic_error("generic_wrapper_hdf:: can't add to a closed group");
+
+  // check type
+  H5T_class_t dset_class_t = dset.getTypeClass();
+  if(dset_class_t != H5T_INTEGER)
+    throw runtime_error("asking for a non-integer type as an integer");
+  
+  H5T_sign_t sign = dset.getIntType().getSign();
+
+  if(sign  != H5T_SGN_2)
+    throw runtime_error("Trying to use signed int to read out unsigned data");
+  
+  // get the data space
+  DataSpace dataspace = dset.getSpace();
+  // select everything
+  dataspace.selectAll();
+  // get the rank
+  hsize_t rank = dataspace.getSimpleExtentNdims();
+  // make dims the right size
+  std::cout<<rank<<std::endl;
+  
+  vector <hsize_t> tdims;
+  tdims.resize(rank);
+  std::cout<<tdims.size()<<std::endl;
+  // get the dimensionality 
+  dataspace.getSimpleExtentDims(tdims.data(),NULL);
+  // copy to the return vector
+  dims.resize(rank);
+  std::cout<<dims.size()<<std::endl;
+  for(hsize_t j = 0; j<rank;++j)
+    dims[j] = (unsigned int)tdims[j];
+
+
+  // get the number of entries
+  hsize_t total = dataspace.getSimpleExtentNpoints();
+  // resize the data vector
+  data.resize(total);
+  // read the data out 
+  dset.read( data.data(), PredType::NATIVE_INT, dataspace, dataspace );
+  
+}
+
+void Generic_wrapper_hdf::get_dset(vector<unsigned int> & data,std::vector<unsigned int> & dims, const std::string & dset_name) const
+{
+  if (!(wrapper_open_))
+    throw runtime_error("wrapper must be open to add a dataset");
+  
+  dims.clear();
+  data.clear();
+  
+  // get data set
+  DataSet dset;
+  // open data set  
+  if(!group_open_ || dset_name[0] == '/')
+  {
+    dset = file_->openDataSet(dset_name);
+  }
+  else if(group_)
+  {
+    dset = group_->openDataSet(dset_name);
+  }
+  else
+    throw logic_error("generic_wrapper_hdf:: can't add to a closed group");
+
+  // check type
+  H5T_class_t dset_class_t = dset.getTypeClass();
+  if(dset_class_t != H5T_INTEGER)
+    throw runtime_error("asking for a non-integer type as an integer");
+  
+  H5T_sign_t sign = dset.getIntType().getSign();
+
+  if(sign  != H5T_SGN_NONE)
+    throw runtime_error("Trying to use unsigned int to read out signed data");
+  
+  // get the data space
+  DataSpace dataspace = dset.getSpace();
+  // select everything
+  dataspace.selectAll();
+  // get the rank
+  hsize_t rank = dataspace.getSimpleExtentNdims();
+  // make dims the right size
+  std::cout<<rank<<std::endl;
+  
+  vector <hsize_t> tdims;
+  tdims.resize(rank);
+  std::cout<<tdims.size()<<std::endl;
+  // get the dimensionality 
+  dataspace.getSimpleExtentDims(tdims.data(),NULL);
+  // copy to the return vector
+  dims.resize(rank);
+  std::cout<<dims.size()<<std::endl;
+  for(hsize_t j = 0; j<rank;++j)
+    dims[j] = (unsigned int)tdims[j];
+
+
+  // get the number of entries
+  hsize_t total = dataspace.getSimpleExtentNpoints();
+  // resize the data vector
+  data.resize(total);
+  // read the data out 
+  dset.read( data.data(), PredType::NATIVE_UINT, dataspace, dataspace );
+  
+}
+
+void Generic_wrapper_hdf::get_dset(vector<float> & data,std::vector<unsigned int> & dims, const std::string & dset_name) const
+{
+  if (!(wrapper_open_))
+    throw runtime_error("wrapper must be open to add a dataset");
+  
+  dims.clear();
+  data.clear();
+  
+  // get data set
+  DataSet dset;
+  // open data set  
+  if(!group_open_ || dset_name[0] == '/')
+  {
+    dset = file_->openDataSet(dset_name);
+  }
+  else if(group_)
+  {
+    dset = group_->openDataSet(dset_name);
+  }
+  else
+    throw logic_error("generic_wrapper_hdf:: can't add to a closed group");
+
+  // check type
+  H5T_class_t dset_class_t = dset.getTypeClass();
+  if(dset_class_t != H5T_FLOAT)
+    throw runtime_error("asking for a float type as a non float");
+  
+  // get the data space
+  DataSpace dataspace = dset.getSpace();
+  // select everything
+  dataspace.selectAll();
+  // get the rank
+  hsize_t rank = dataspace.getSimpleExtentNdims();
+  // make dims the right size
+  std::cout<<rank<<std::endl;
+  
+  vector <hsize_t> tdims;
+  tdims.resize(rank);
+  std::cout<<tdims.size()<<std::endl;
+  // get the dimensionality 
+  dataspace.getSimpleExtentDims(tdims.data(),NULL);
+  // copy to the return vector
+  dims.resize(rank);
+  std::cout<<dims.size()<<std::endl;
+  for(hsize_t j = 0; j<rank;++j)
+    dims[j] = (unsigned int)tdims[j];
+
+
+  // get the number of entries
+  hsize_t total = dataspace.getSimpleExtentNpoints();
+  // resize the data vector
+  data.resize(total);
+  // read the data out 
+  dset.read( data.data(), PredType::NATIVE_FLOAT, dataspace, dataspace );
+  
+}
+
+
+void Generic_wrapper_hdf::get_dset_info(std::vector<int> & dims,V_TYPE& vt ,const std::string & dset_name) const
+{
+  if (!(wrapper_open_))
+    throw runtime_error("wrapper must be open to add a dataset");
+  
+  dims.clear();
+  
+  
+  // get data set
+  DataSet dset;
+  // open data set  
+  if(!group_open_ || dset_name[0] == '/')
+  {
+    dset = file_->openDataSet(dset_name);
+  }
+  else if(group_)
+  {
+    dset = group_->openDataSet(dset_name);
+  }
+  else
+    throw logic_error("generic_wrapper_hdf:: can't add to a closed group");
+
+  // identify type
+  H5T_class_t dset_class_t = dset.getTypeClass();
+  H5T_sign_t sign;
+  switch(dset_class_t)
+  {
+  case H5T_INTEGER:  
+    sign  = dset.getIntType().getSign();
+    if(sign  == H5T_SGN_2)
+      vt = V_INT;
+    else if(sign == H5T_SGN_NONE)
+      vt =  V_UINT;
+    else
+      vt =  V_ERROR;
+  case H5T_FLOAT:  
+    vt =  V_FLOAT;
+  case H5T_STRING:  
+  case H5T_TIME:  
+  case H5T_BITFIELD:  
+  case H5T_OPAQUE:  
+  case H5T_COMPOUND:  
+  case H5T_REFERENCE:  
+  case H5T_ENUM:	    
+  case H5T_VLEN:	    
+  case H5T_ARRAY:	    
+  case H5T_NO_CLASS:
+  case H5T_NCLASSES:
+    vt =  V_ERROR;
+  }
+  
+  // get the data space
+  DataSpace dataspace = dset.getSpace();
+  // select everything
+  dataspace.selectAll();
+  // get the rank
+  hsize_t rank = dataspace.getSimpleExtentNdims();
+  // make dims the right size
+  vector <hsize_t> tdims;
+  tdims.resize(rank);
+  // get the dimensionality 
+  dataspace.getSimpleExtentDims(tdims.data(),NULL);
+  // copy to the return vector
+  dims.resize(rank);
+  for(hsize_t j = 0; j<rank;++j)
+    dims[j] = (unsigned int)tdims[j];
+
+  
+
+}
+
+
 void Generic_wrapper_hdf::add_meta_data(const std::string & key, float val)
 {
   add_meta_data_priv(key,val);

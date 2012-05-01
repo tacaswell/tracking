@@ -19,6 +19,7 @@
 
 #include <iostream>
 #include <exception>
+#include <vector>
 #include <string>
 #include "generic_wrapper_hdf.h"
 
@@ -28,6 +29,7 @@
 using std::cout;
 using std::endl;
 using std::string;
+using std::vector;
 using std::cerr;
 
 
@@ -63,6 +65,17 @@ int main(int argc, const char * argv[])
     fake_data[j] = j*2;
   wrap.add_dset(1,&N,utilities::V_INT,fake_data,"/test3");
   wrap.add_dset(1,&N,utilities::V_INT,fake_data,"test4");
+  
+  vector<int> data;
+  vector<unsigned int> dims;
+  wrap.get_dset(data,dims,"test4");
+  for(unsigned int j =0; j< 25;++j)
+    cout<<j<<'\t'<<data[j]<<endl;
+  
+  for(vector<unsigned int>::iterator it = dims.begin(); it != dims.end(); ++it)
+    cout<<*it<<endl;
+  
+  
   wrap.close_wrapper();
   
 }

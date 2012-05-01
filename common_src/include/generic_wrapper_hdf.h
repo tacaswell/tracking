@@ -91,7 +91,14 @@ public:
   //@{
 
   void add_dset(int rank, const unsigned int * dims, V_TYPE , const void *,const std::string & name );
-  void get_dset(int rank, const unsigned int * dims, V_TYPE , const void *,const std::string & name ){};  
+
+  void get_dset(std::vector<int> & data,std::vector<unsigned int> & dims, const std::string & dset_name) const;
+  void get_dset(std::vector<unsigned int> & data, std::vector<unsigned int> & dims,const std::string & dset_name) const;
+  void get_dset(std::vector<float> & data, std::vector<unsigned int> & dims, const std::string & dset_name) const;
+
+  void get_dset_info(std::vector<int> & dims,V_TYPE& vt ,const std::string & dset_name) const;
+
+
   //@}   
     /**
      @name Group Level Metadata
@@ -163,6 +170,12 @@ private:
   T get_meta_data_priv(const std::string & key,  T & val,const std::string & dset_name);
   template<class T>
   T get_meta_data_priv(const std::string & key,  T& val);
+
+
+
+  void get_dset_priv( void * data);
+
+
   
   std::string file_name_;
 

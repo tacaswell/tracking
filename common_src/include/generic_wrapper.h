@@ -25,9 +25,10 @@
 
 #ifndef GWRAPPER_BASE2 
 #define GWRAPPER_BASE2
-
+#include <vector>
 #include "enum_utils.h"
 #include "tuple.h"
+
 namespace utilities{
 
 class Md_store;
@@ -245,7 +246,17 @@ public:
   /**
      Gets data from the wrapper.
    */
-  virtual void get_dset(int rank,const unsigned int * dims, V_TYPE vt , const void * data,const std::string & dset_name ="none" )=0;
+  virtual void get_dset(std::vector<int> & data,std::vector<unsigned int> & dims, const std::string & dset_name) const=0;
+  virtual void get_dset(std::vector<unsigned int> & data, std::vector<unsigned int> & dims,const std::string & dset_name) const=0;
+  virtual void get_dset(std::vector<float> & data, std::vector<unsigned int> & dims, const std::string & dset_name) const=0;
+
+  /**
+     Get dset size
+     @param[out] dims a vector that gets filled with the dimensions
+     @param[out] dims the type of the data set
+     @param[in] dset_name the name of the data set
+   */
+  virtual void get_dset_info(std::vector<int> & dims,V_TYPE& vt ,const std::string & dset_name) const=0;
 
 
   ///@}
