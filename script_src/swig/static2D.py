@@ -100,3 +100,25 @@ def md_store_to_dict(md_obj):
     
 
     return out
+
+
+def md_store_to_dict(md_obj):
+    out = dict()
+    count = md_obj.size()
+    for j in range(count):
+        key = md_obj.get_key(j)
+        dtype = md_obj.get_type(j)
+        if dtype == cs.V_INT:
+            out[key] = md_obj.get_value_i(key)
+        elif dtype == cs.V_UINT:
+            out[key] = md_obj.get_value_ui(key)
+        elif dtype == cs.V_FLOAT:
+            out[key] = md_obj.get_value_f(key)
+        elif dtype == cs.V_BOOL:
+            out[key] = md_obj.get_value_b(key)
+        elif dtype == cs.V_STRING:
+            out[key] = md_obj.get_value_s(key)
+        else:
+            print dtype
+
+    return out

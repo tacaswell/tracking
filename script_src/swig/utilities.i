@@ -110,7 +110,27 @@ public:
       }
    }
   
+
+  %extend
+   {
+     std::string get_value_s(const std::string & attr_name)
+     {
+       std::string tmp;
+       return $self->get_value(attr_name,tmp);
+    
+      }
+   }
   
+
+  %extend
+   {
+     bool get_value_b(const std::string & attr_name)
+     {
+       bool tmp;
+       return $self->get_value(attr_name,tmp);
+    
+      }
+   }  
   
   
 
@@ -122,6 +142,8 @@ public:
   %template (set_value_i) set_value<int>;
   %template (set_value_ui) set_value<unsigned int>;
   %template (set_value_f) set_value<float>;
+  %template (set_value_b) set_value<bool>;
+  %template (set_value_s) set_value<std::string>;
 
   bool contains_key(const std::string& key)const;
   int get_key_index(const std::string& key)const;
