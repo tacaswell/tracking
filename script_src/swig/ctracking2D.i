@@ -61,11 +61,13 @@ import_array();
 
 #include "track_shelf.h"
 #include "track_accum.h"
+#include "ta_vanHove.h"
 %}
 
 namespace std
 {
   %template(IntVector) vector<int>;
+  %template(UIntVector) vector<unsigned int>;
   %template(DoubleVector) vector<double>;
   %template(FloatVector) vector<float>;
   %template(Dset) set<utilities::D_TYPE>;
@@ -115,6 +117,23 @@ public:
   
 };
 
+ 
+class TA_vanHove: public Trk_accumulator
+{
+public:
+  void add_disp(utilities::Tuplef displacement,unsigned steps);
+  unsigned max_step()const ;
+  TA_vanHove(unsigned max_steps,
+	     unsigned nbins,
+	     float max_range);
+  ~TA_vanHove();
+  void output_to_wrapper(utilities::Generic_wrapper & out,
+			 const utilities::Md_store & md_store)const;
+
+
+};
+
+
 class Track_shelf{ 
  public:
   void remove_short_tracks(int min_length);
@@ -135,7 +154,8 @@ public:
   void init(utilities::Wrapper_in & w_in , utilities::Filter & filt, float ppb)  ;
   void compute_corr(tracking::Corr &) const ;
   void link(float max_range,Track_shelf & tracks);
-  
+  void compute_mean_disp();
+
   int get_num_frames() const;
   void print() const; 
   hash_case();

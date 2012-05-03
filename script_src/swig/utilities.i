@@ -274,8 +274,7 @@ public:
   virtual Md_store& get_meta_data(Md_store & md_store,const std::string & dset_name)=0;
 
 };
-
-class Generic_wrapper_hdf{
+class Generic_wrapper_hdf:public Generic_wrapper,Generic_wrapper_read{
 public:
   typedef enum F_TYPE{ 
     /// open existing file read-write                   
@@ -312,10 +311,30 @@ public:
   void add_meta_data(const std::string & key, unsigned int val,const std::string & dset_name);
   void add_meta_data(const Md_store * md_store,const std::string & dset_name);
 
+  %rename(get_dset_i) get_dset(std::vector<int> & data,std::vector<unsigned int> & dims, const std::string & dset_name) const ;
   void get_dset(std::vector<int> & data,std::vector<unsigned int> & dims, const std::string & dset_name) const;
+  
+  %rename(get_deset_ui) get_dset(std::vector<unsigned int> & data, std::vector<unsigned int> & dims,const std::string & dset_name) const;
   void get_dset(std::vector<unsigned int> & data, std::vector<unsigned int> & dims,const std::string & dset_name) const;
+
+  %rename(get_dset_f) get_dset(std::vector<float> & data, std::vector<unsigned int> & dims, const std::string & dset_name) const;
   void get_dset(std::vector<float> & data, std::vector<unsigned int> & dims, const std::string & dset_name) const;
+
+  %rename(get_dset_info_internal) get_dset_info(std::vector<int> & dims,V_TYPE& vt ,const std::string & dset_name) const;
   void get_dset_info(std::vector<int> & dims,V_TYPE& vt ,const std::string & dset_name) const;
+  %extend
+   {
+     utilities::V_TYPE get_dset_info(std::vector<int> & dims,const std::string & dset_name) const
+     {
+       utilities::V_TYPE vt;
+       $self->get_dset_info(dims,vt,dset_name);
+       return vt;
+     }
+     
+   }
+  
+
+
   float get_meta_data(const std::string & key, float & val);
 
   Tuple<float,3> get_meta_data(const std::string & key,  Tuple<float,3> & val);
