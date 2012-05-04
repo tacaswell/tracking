@@ -283,7 +283,11 @@ void Generic_wrapper_hdf::get_dset(vector<int> & data,std::vector<unsigned int> 
   // open data set  
   if(!group_open_ || dset_name[0] == '/')
   {
-    dset = file_->openDataSet(dset_name);
+    if(file_)
+      dset = file_->openDataSet(dset_name);
+    else
+      throw runtime_error("there is no open file");
+    
   }
   else if(group_)
   {
