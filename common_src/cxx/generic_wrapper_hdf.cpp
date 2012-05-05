@@ -281,6 +281,9 @@ void Generic_wrapper_hdf::get_dset(vector<int> & data,std::vector<unsigned int> 
   // get data set
   DataSet dset;
   // open data set  
+  try
+  {
+    
   if(!group_open_ || dset_name[0] == '/')
   {
     if(file_)
@@ -295,7 +298,17 @@ void Generic_wrapper_hdf::get_dset(vector<int> & data,std::vector<unsigned int> 
   }
   else
     throw logic_error("generic_wrapper_hdf:: can't add to a closed group");
-
+  }
+  catch(Exception &e )
+  {
+    std::string er_msg = "error opening hdf \n" + e.getDetailMsg();
+    
+    throw runtime_error(er_msg);
+    
+  
+    
+  }
+  
   // check type
   H5T_class_t dset_class_t = dset.getTypeClass();
   if(dset_class_t != H5T_INTEGER)
