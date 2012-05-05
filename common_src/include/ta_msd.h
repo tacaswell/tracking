@@ -29,7 +29,13 @@
 #define TRK_ACCUM_VANHOVE
 
 #include "track_accum.h"
-#include "histogram.h"
+#include <vector>
+
+namespace utilities{
+//forward declare
+class Generic_wrapper;
+class Md_store;
+}
 
 namespace tracking
 {

@@ -39,7 +39,7 @@ using utilities::format_name;
 using utilities::Tuplef;
 using utilities::Generic_wrapper;
 using utilities::Md_store;
-using utilities::Histogram;
+
 
 using tracking::TA_msd;
 
