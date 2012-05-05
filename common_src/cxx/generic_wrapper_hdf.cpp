@@ -53,6 +53,7 @@ using H5::Exception;
 using H5::GroupIException;
 using H5::FileIException;
 using H5::DataType;
+using H5::IntType;
 using H5::FileAccPropList;
 using H5::FileCreatPropList;
 
@@ -267,10 +268,8 @@ void Generic_wrapper_hdf::add_dset(int rank, const unsigned int * dims, V_TYPE t
 
 }
 
-
-    
-
-void Generic_wrapper_hdf::get_dset(vector<int> & data,std::vector<unsigned int> & dims, const std::string & dset_name) const
+template <class T>
+void Generic_wrapper_hdf::get_dset_priv(vector<T> & data,std::vector<unsigned int> & dims, const std::string & dset_name,const DataType & mtype) const
 {
   if (!(wrapper_open_))
     throw runtime_error("wrapper must be open to add a dataset");
@@ -302,22 +301,28 @@ void Generic_wrapper_hdf::get_dset(vector<int> & data,std::vector<unsigned int> 
   catch(Exception &e )
   {
     std::string er_msg = "error opening hdf \n" + e.getDetailMsg();
-    
     throw runtime_error(er_msg);
-    
-  
-    
   }
   
   // check type
   H5T_class_t dset_class_t = dset.getTypeClass();
-  if(dset_class_t != H5T_INTEGER)
-    throw runtime_error("asking for a non-integer type as an integer");
-  
-  H5T_sign_t sign = dset.getIntType().getSign();
 
-  if(sign  != H5T_SGN_2)
-    throw runtime_error("Trying to use signed int to read out unsigned data");
+  H5T_class_t mem_class_t = mtype.getClass();
+  
+  if(dset_class_t != mem_class_t)
+    throw runtime_error("Data type miss-match");
+  
+  // if(mem_class_t == H5T_INTEGER)
+  // {
+  //   IntType mem_int = IntType(mtype);
+  //   H5T_sign_t dsign = dset.getIntType().getSign();
+  //   H5T_sign_t msign = mem_int.getSign();
+
+  //   if(dsign  != msign)
+  //     throw runtime_error("int signness miss-match ");
+
+  // }
+  
   
   // get the data space
   DataSpace dataspace = dset.getSpace();
@@ -345,127 +350,27 @@ void Generic_wrapper_hdf::get_dset(vector<int> & data,std::vector<unsigned int> 
   // resize the data vector
   data.resize(total);
   // read the data out 
-  dset.read( data.data(), PredType::NATIVE_INT, dataspace, dataspace );
+  dset.read( data.data(), mtype, dataspace, dataspace );
   
+
+}
+
+
+    
+
+void Generic_wrapper_hdf::get_dset(vector<int> & data,std::vector<unsigned int> & dims, const std::string & dset_name) const
+{
+  get_dset_priv(data,dims,dset_name,PredType::NATIVE_INT);
 }
 
 void Generic_wrapper_hdf::get_dset(vector<unsigned int> & data,std::vector<unsigned int> & dims, const std::string & dset_name) const
 {
-  if (!(wrapper_open_))
-    throw runtime_error("wrapper must be open to add a dataset");
-  
-  dims.clear();
-  data.clear();
-  
-  // get data set
-  DataSet dset;
-  // open data set  
-  if(!group_open_ || dset_name[0] == '/')
-  {
-    dset = file_->openDataSet(dset_name);
-  }
-  else if(group_)
-  {
-    dset = group_->openDataSet(dset_name);
-  }
-  else
-    throw logic_error("generic_wrapper_hdf:: can't add to a closed group");
-
-  // check type
-  H5T_class_t dset_class_t = dset.getTypeClass();
-  if(dset_class_t != H5T_INTEGER)
-    throw runtime_error("asking for a non-integer type as an integer");
-  
-  H5T_sign_t sign = dset.getIntType().getSign();
-
-  if(sign  != H5T_SGN_NONE)
-    throw runtime_error("Trying to use unsigned int to read out signed data");
-  
-  // get the data space
-  DataSpace dataspace = dset.getSpace();
-  // select everything
-  dataspace.selectAll();
-  // get the rank
-  hsize_t rank = dataspace.getSimpleExtentNdims();
-  // make dims the right size
-  std::cout<<rank<<std::endl;
-  
-  vector <hsize_t> tdims;
-  tdims.resize(rank);
-  std::cout<<tdims.size()<<std::endl;
-  // get the dimensionality 
-  dataspace.getSimpleExtentDims(tdims.data(),NULL);
-  // copy to the return vector
-  dims.resize(rank);
-  std::cout<<dims.size()<<std::endl;
-  for(hsize_t j = 0; j<rank;++j)
-    dims[j] = (unsigned int)tdims[j];
-
-
-  // get the number of entries
-  hsize_t total = dataspace.getSimpleExtentNpoints();
-  // resize the data vector
-  data.resize(total);
-  // read the data out 
-  dset.read( data.data(), PredType::NATIVE_UINT, dataspace, dataspace );
-  
+  get_dset_priv(data,dims,dset_name,PredType::NATIVE_UINT);
 }
 
 void Generic_wrapper_hdf::get_dset(vector<float> & data,std::vector<unsigned int> & dims, const std::string & dset_name) const
 {
-  if (!(wrapper_open_))
-    throw runtime_error("wrapper must be open to add a dataset");
-  
-  dims.clear();
-  data.clear();
-  
-  // get data set
-  DataSet dset;
-  // open data set  
-  if(!group_open_ || dset_name[0] == '/')
-  {
-    dset = file_->openDataSet(dset_name);
-  }
-  else if(group_)
-  {
-    dset = group_->openDataSet(dset_name);
-  }
-  else
-    throw logic_error("generic_wrapper_hdf:: can't add to a closed group");
-
-  // check type
-  H5T_class_t dset_class_t = dset.getTypeClass();
-  if(dset_class_t != H5T_FLOAT)
-    throw runtime_error("asking for a float type as a non float");
-  
-  // get the data space
-  DataSpace dataspace = dset.getSpace();
-  // select everything
-  dataspace.selectAll();
-  // get the rank
-  hsize_t rank = dataspace.getSimpleExtentNdims();
-  // make dims the right size
-  std::cout<<rank<<std::endl;
-  
-  vector <hsize_t> tdims;
-  tdims.resize(rank);
-  std::cout<<tdims.size()<<std::endl;
-  // get the dimensionality 
-  dataspace.getSimpleExtentDims(tdims.data(),NULL);
-  // copy to the return vector
-  dims.resize(rank);
-  std::cout<<dims.size()<<std::endl;
-  for(hsize_t j = 0; j<rank;++j)
-    dims[j] = (unsigned int)tdims[j];
-
-
-  // get the number of entries
-  hsize_t total = dataspace.getSimpleExtentNpoints();
-  // resize the data vector
-  data.resize(total);
-  // read the data out 
-  dset.read( data.data(), PredType::NATIVE_FLOAT, dataspace, dataspace );
-  
+  get_dset_priv(data,dims,dset_name,PredType::NATIVE_FLOAT);
 }
 
 

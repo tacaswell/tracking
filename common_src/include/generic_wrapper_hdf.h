@@ -32,6 +32,7 @@ namespace H5
 {
 class H5File;
 class Group;
+class DataType;
 }
 
 
@@ -161,20 +162,34 @@ public:
   Generic_wrapper_hdf(std::string fname, F_TYPE f_type = F_DISK_RDWR);
   
 private:
+  /**
+     Private function to add meta-data to datasets
+   */
   template<class T>
   void add_meta_data_priv(const std::string & key, const T & val,const std::string & dset_name);
+  /**
+     Private function to add meta-data to the current group
+   */
   template<class T>
   void add_meta_data_priv(const std::string & key, const T& val);
-
+  /**
+     Private function to get meta data from datasets
+   */
   template<class T>
   T get_meta_data_priv(const std::string & key,  T & val,const std::string & dset_name);
+  /**
+     Private function to get meta data from the current group
+   */
   template<class T>
   T get_meta_data_priv(const std::string & key,  T& val);
 
-
-
-  void get_dset_priv( void * data);
-
+  
+  /**
+     Private function to get dset data out.
+   */
+  template <class T>
+  void get_dset_priv(std::vector<T> & data,std::vector<unsigned int> & dims, const std::string & dset_name,const H5::DataType & mtype) const;
+  
 
   
   std::string file_name_;
