@@ -45,7 +45,8 @@ class Accum_sofq_ND : public Accumulator
 public:
   // basic inherited stuff
   void add_particle(const particle *) ;
-  void out_to_wrapper(utilities::Generic_wrapper & ) const ;
+  void out_to_wrapper(utilities::Generic_wrapper &,
+                      const utilities::Md_store & md_store ) const ;
 
   // special stuff
   

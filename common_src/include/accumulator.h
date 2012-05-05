@@ -68,7 +68,8 @@ public:
   /**
      outputs the result of the computation to the wrapper
    */
-  virtual void out_to_wrapper(utilities::Generic_wrapper & ) const =0;
+  virtual void out_to_wrapper(utilities::Generic_wrapper &,
+			 const utilities::Md_store & md_store ) const =0;
   /**
      Destructor
    */
