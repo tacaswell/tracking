@@ -37,6 +37,7 @@
 //this Program grant you additional permission to convey the resulting
 #include <iostream>
 #include <stdexcept>
+#include <getopt.h>
 #include "master_box_t.h"
 
 #include "particle_base.h"

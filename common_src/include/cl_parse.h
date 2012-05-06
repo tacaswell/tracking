@@ -17,6 +17,7 @@
 
 #include <string>
 #include <stdexcept>
+#include <getopt.h>
 
 namespace utilities
 {
