@@ -1,4 +1,4 @@
-//Copyright 2012 Thomas A Ca swell
+//Copyright 2012 Thomas A Caswell
 //tcaswell@uchicago.edu
 //http://jfi.uchicago.edu/~tcaswell
 //
@@ -30,11 +30,16 @@
 //for FreeImage Public License, the licensors of this Program grant
 //you additional permission to convey the resulting work.
 
+
+#include "part_def.h"
+
 #ifdef TRACKING_FLG
+#include <stdexcept>
 
 #include "accum_chi4_self.h"
-
+#include "particle_track.h"
 using std::vector;
+using std::logic_error;
 
 using utilities::Tuplef;
 
@@ -57,7 +62,7 @@ void Accum_chi4_self::add_particle(const particle * init_pos )
     if(!cur_p)
       return;
     // we have another valid particle at this tau
-    count.at(j) +=1;
+    count_.at(j) +=1;
     // get the forward displacement
     float d = init_pos->distancesq_corrected(cur_p);
     for(uint k =0;k<l_steps_;++k)
