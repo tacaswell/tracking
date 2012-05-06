@@ -40,6 +40,7 @@
 #include "particle_track.h"
 using std::vector;
 using std::logic_error;
+using std::runtime_error;
 
 using utilities::Tuplef;
 
@@ -93,7 +94,25 @@ Accum_chi4_self:: ~Accum_chi4_self()
 {
 }
 
+void  Accum_chi4_self::add_to_chi4(vector<float>& Q_accum,vector<float>& Q2_accum,const int time_steps)const
+{
+  uint qsize = Q_.size();
+  
+  if(Q_accum.size() != qsize ||Q2_accum.size() != qsize)
+    throw runtime_error("vector sizes do not match");
 
+  for(uint j = 0; j<qsize; ++j)
+  {
+    float q = Q_.at(j);
+    int count = count_.at(j/l_steps_);
+    Q_accum.at(j) += q/(time_steps * count);
+    Q_accum.at(j) += (q*q)/(time_steps * count * count);
+  }
+  
+}
+    
+
+  
 
 
 

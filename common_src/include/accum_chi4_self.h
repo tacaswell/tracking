@@ -64,6 +64,11 @@ public:
 
   ~Accum_chi4_self();
   
+  /**
+     Add the results of a single plane to compute average over t
+   */
+  void  add_to_chi4(std::vector<float>& Q_accum,std::vector<float>& Q2_accum,const int time_steps)const;
+  
 
 private:
   /**
