@@ -93,7 +93,7 @@ void Accum_sofq::add_particle(const particle * p_in)
   
 }
 
-void Accum_sofq::out_to_wrapper(utilities::Generic_wrapper & wrap,,
+void Accum_sofq::out_to_wrapper(utilities::Generic_wrapper & wrap,
                                 const utilities::Md_store & md_store) const 
 {
 
