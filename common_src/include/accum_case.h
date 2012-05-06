@@ -17,12 +17,8 @@
 
 #include <vector>
 #include "part_def.h"
+#include "accumulator.h"
 
-namespace tracking
-{
-class Accum_sofq;
-class Accumulator;
-}
 
 
 namespace utilities
@@ -40,10 +36,6 @@ class Generic_wrapper;
 class Accum_case
 {
 public:
-  /**
-     Averages the values in a vector of Accum_sofq and writes 
-   */
-  void out_to_wrapper(utilities::Generic_wrapper & wrap,tracking::Accum_sofq*) const;
 
   template <class T>
   Accum_case(const T & base_obj,unsigned int frame_count):
