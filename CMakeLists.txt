@@ -81,8 +81,7 @@ SET(CORR_SRC
 SET(ACCUM_SCR
   ${COMMON_SRC_PATH}/accum_sofq_ND.cpp
   ${COMMON_SRC_PATH}/accum_sofq.cpp
-  ${COMMON_SRC_PATH}/accum_case.cpp
-)
+ )
 
 
 SET(OTHER_WRAPPER_SRC
@@ -119,6 +118,7 @@ SET(CORR_DISPLAY_SRC
 SET(TRK_ACCUM_SRC
   ${COMMON_SRC_PATH}/ta_vanHove
   ${COMMON_SRC_PATH}/ta_msd
+  ${COMMON_SRC_PATH}/accum_chi4_self
 )
 SET(ENV{HDF5_ROOT} "/home/tcaswell/local_installs")
 SET(HDF5_USE_STATIC_LIBRARIES FALSE)
