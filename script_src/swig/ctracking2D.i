@@ -62,17 +62,12 @@ import_array();
 #include "track_shelf.h"
 #include "track_accum.h"
 #include "ta_vanHove.h"
-%}
 
-namespace std
-{
-  %template(IntVector) vector<int>;
-  %template(UIntVector) vector<unsigned int>;
-  %template(DoubleVector) vector<double>;
-  %template(FloatVector) vector<float>;
-  %template(Dset) set<utilities::D_TYPE>;
-  
-}
+using std::string;
+using std::vector;
+using std::set;
+
+%}
 
 %exception{
   try  {
