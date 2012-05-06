@@ -101,7 +101,7 @@ private:
      260 nature physics VOL 3 APRIL 2007 www.nature.com/naturephysics
 
    */
-  float (*w)(float,float) w_ = NULL;
+  float (*w_)(float,float);
   
   /**
      Data vector
@@ -117,7 +117,7 @@ private:
   /**
      internal hash function to deal with cord -> index 
    */
-  inline  unsigned int to_indx(unsinged int a, unsigned int b)
+  inline  unsigned int to_indx(unsigned int a, unsigned int b)
   {
     return a * l_steps_ + b;
   }
