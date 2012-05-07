@@ -22,6 +22,8 @@
 %include "std_vector.i"
 %include "std_set.i"
 
+typedef std::string string;
+
 %template(IntVector) std::vector<int>;
 %template(DoubleVector) std::vector<double>;
 %template(FloatVector) std::vector<float>;
@@ -265,10 +267,10 @@ class Wrapper_i_generic:public Wrapper_in{
   bool set_data_type(D_TYPE dtype);
 %apply (int* IN_ARRAY1, int DIM1) {(int* data, int N)}  
   bool add_int_data(int * data,int N);
-%clear (int* vector, int length);
+%clear (int* std::vector, int length);
 %apply (float* IN_ARRAY1, int DIM1) {(float* data, int N)}
   bool add_float_data(float * data,int N);
-%clear (float* vector, int length);
+%clear (float* std::vector, int length);
   //  bool set_meta_data(const Md_store & md_store);
   bool close_frame();
   bool finalize_wrapper();
@@ -313,10 +315,10 @@ public:
   virtual void close_wrapper()=0;
   virtual bool is_open() const=0;
   virtual void open_group(const string & name)=0;
-  virtual void get_dset(vector<int> & data,vector<unsigned int> & dims, const string & dset_name) const=0;
-  virtual void get_dset(vector<unsigned int> & data, vector<unsigned int> & dims,const string & dset_name) const=0;
-  virtual void get_dset(vector<float> & data, vector<unsigned int> & dims, const string & dset_name) const=0;
-  virtual void get_dset_info(vector<int> & dims,V_TYPE& vt ,const string & dset_name) const=0;
+  virtual void get_dset(std::vector<int> & data,std::vector<unsigned int> & dims, const string & dset_name) const=0;
+  virtual void get_dset(std::vector<unsigned int> & data, std::vector<unsigned int> & dims,const string & dset_name) const=0;
+  virtual void get_dset(std::vector<float> & data, std::vector<unsigned int> & dims, const string & dset_name) const=0;
+  virtual void get_dset_info(std::vector<int> & dims,V_TYPE& vt ,const string & dset_name) const=0;
   virtual float get_meta_data(const string & key, float & val)=0;
   virtual Tuple<float,3> get_meta_data(const string & key,  Tuple<float,3> & val)=0;
   virtual Tuple<float,2> get_meta_data(const string & key,  Tuple<float,2>& val)=0;
@@ -369,20 +371,20 @@ public:
   void add_meta_data(const string & key, unsigned int val,const string & dset_name);
   void add_meta_data(const Md_store * md_store,const string & dset_name);
 
-  %rename(get_dset_i) get_dset(vector<int> & data,vector<unsigned int> & dims, const string & dset_name) const ;
-  void get_dset(vector<int> & data,vector<unsigned int> & dims, const string & dset_name) const;
+  %rename(get_dset_i) get_dset(std::vector<int> & data,std::vector<unsigned int> & dims, const string & dset_name) const ;
+  void get_dset(std::vector<int> & data,std::vector<unsigned int> & dims, const string & dset_name) const;
   
   %rename(get_dset_ui) get_dset(vector<unsigned int> & data, vector<unsigned int> & dims,const string & dset_name) const;
   void get_dset(vector<unsigned int> & data, vector<unsigned int> & dims,const string & dset_name) const;
 
-  %rename(get_dset_f) get_dset(vector<float> & data, vector<unsigned int> & dims, const string & dset_name) const;
-  void get_dset(vector<float> & data, vector<unsigned int> & dims, const string & dset_name) const;
+  %rename(get_dset_f) get_dset(std::vector<float> & data, std::vector<unsigned int> & dims, const string & dset_name) const;
+  void get_dset(std::vector<float> & data, std::vector<unsigned int> & dims, const string & dset_name) const;
 
-  %rename(get_dset_info_internal) get_dset_info(vector<int> & dims,V_TYPE& vt ,const string & dset_name) const;
-  void get_dset_info(vector<int> & dims,V_TYPE& vt ,const string & dset_name) const;
+  %rename(get_dset_info_internal) get_dset_info(std::vector<int> & dims,V_TYPE& vt ,const string & dset_name) const;
+  void get_dset_info(std::vector<int> & dims,V_TYPE& vt ,const string & dset_name) const;
   %extend
    {
-     utilities::V_TYPE get_dset_info(vector<int> & dims,const string & dset_name) const
+     utilities::V_TYPE get_dset_info(std::vector<int> & dims,const string & dset_name) const
      {
        utilities::V_TYPE vt;
        $self->get_dset_info(dims,vt,dset_name);
