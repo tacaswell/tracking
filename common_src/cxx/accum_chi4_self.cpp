@@ -36,6 +36,7 @@
 #ifdef TRACKING_FLG
 #include <stdexcept>
 #include <string>
+
 #include "accum_chi4_self.h"
 #include "particle_track.h"
 #include "generic_wrapper.h"
@@ -51,7 +52,6 @@ using tracking::Accum_chi4_self;
 using utilities::format_name;
 
 typedef unsigned int uint ;
-
 
 void Accum_chi4_self::add_particle(const particle * init_pos )
 {
@@ -71,11 +71,17 @@ void Accum_chi4_self::add_particle(const particle * init_pos )
     count_.at(j) +=1;
     // get the forward displacement
     float d = init_pos->distancesq_corrected(cur_p);
+
+    
+    
     for(uint k =0;k<l_steps_;++k)
     {
       Q_.at(to_indx(j,k)) += w_(d,l_step_sz_*k + l_min_);
     }
+    
   }
+
+  
 }
 
 void Accum_chi4_self::out_to_wrapper(utilities::Generic_wrapper & out,
@@ -129,7 +135,7 @@ void Accum_chi4_self::out_to_wrapper(utilities::Generic_wrapper & out,
 
   // output data sets
   out.add_dset(2,q_dims.data(),utilities::V_FLOAT,Q_.data(),base_name + format_name("Q",plane));
-  out.add_dset(1,&max_step_,utilities::V_FLOAT,Q_.data(),base_name + format_name("count",plane));
+  out.add_dset(1,&max_step_,utilities::V_UINT,count_.data(),base_name + format_name("count",plane));
   
   //if opened the wrapper, close it
   if(opened_wrapper)
