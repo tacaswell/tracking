@@ -70,6 +70,8 @@ using std::string;
 using std::vector;
 using std::set;
 
+ using tracking::w_step;
+ 
 %}
 
 %exception{
@@ -135,7 +137,7 @@ public:
   void  add_to_chi4(std::vector<float>& Q_accum,std::vector<float>& Q2_accum,const int time_steps)const;
 } ;
 
- %constant float tracking::w_step(float,float);
+ %constant float w_step(float,float);
 }
 
 namespace utilities
