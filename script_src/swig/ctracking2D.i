@@ -62,6 +62,9 @@ import_array();
 #include "track_shelf.h"
 #include "track_accum.h"
 #include "ta_vanHove.h"
+#include "accumulator.h"
+#include "accum_chi4_self.h"
+#include "accum_case.h"
 
 using std::string;
 using std::vector;
@@ -103,7 +106,65 @@ class Corr_gofr :public Corr
   
 };
 
+class Accumulator
+{
+public:
+  virtual void out_to_wrapper(utilities::Generic_wrapper &,
+                              const utilities::Md_store & md_store ) const =0;
+  virtual ~Accumulator(); 
+  Accumulator() ;
+  
+  
+
+};
+
+class Accum_chi4_self : public Accumulator
+{
+public:
+
+
+  void out_to_wrapper(utilities::Generic_wrapper &,
+                      const utilities::Md_store & md_store ) const ;
+
+  // special stuff
+  
+  Accum_chi4_self(unsigned max_t,float min_l,float max_l,unsigned int l_steps,float (*w)(float,float));
+
+  ~Accum_chi4_self();
+  
+  void  add_to_chi4(std::vector<float>& Q_accum,std::vector<float>& Q2_accum,const int time_steps)const;
+} ;
+float w_step(float,float);
+%constant float w_step(float,float);
+}
+
+namespace utilities
+{
+  
+class Accum_case
+{
+public:
+
+  template <class T>
+  Accum_case(const T & base_obj,unsigned int frame_count);
+  
+  %template(AC_chi4) Accum_case<tracking::Accum_chi4_self>;
+
+
+  tracking::Accumulator* at(int j);
+   
+
  
+
+  unsigned int size()const;
+  ~Accum_case();
+
+} ;
+}
+
+namespace  tracking
+{
+
 class Trk_accumulator
 {
 public:
