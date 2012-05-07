@@ -37,12 +37,19 @@ class Accum_case
 {
 public:
 
+  
+  Accum_case():
+    frame_count_(0),accum_vec_(0)
+  {  }  ;
+
   template <class T>
-  Accum_case(const T & base_obj,unsigned int frame_count):
-    frame_count_(frame_count),accum_vec_(frame_count)
+  void  fill(const T & base_obj,const unsigned int frame_count)
   {
+    accum_vec_.resize(frame_count);
     for(unsigned int j = 0; j<frame_count;j++)
       accum_vec_[j] = new T(base_obj);
+    frame_count_ = accum_vec_.size();
+    
   }
   
     
@@ -75,7 +82,8 @@ public:
   ~Accum_case(){
     for(unsigned int j = 0; j<accum_vec_.size();j++)
     {
-      delete accum_vec_[j];
+      if(accum_vec_[j])
+        delete accum_vec_[j];
       accum_vec_[j] = NULL;
     }
   }

@@ -147,16 +147,28 @@ class Accum_case
 {
 public:
 
-  template <class T>
-    Accum_case(const T & base_obj,unsigned int frame_count):
-  frame_count_(frame_count),accum_vec_(frame_count)
+
+  Accum_case();
+  
+  
+  template <class T> void  fill(const T & base_obj,const unsigned int frame_count)
   {
+    accum_vec_.resize(frame_count);
     for(unsigned int j = 0; j<frame_count;j++)
       accum_vec_[j] = new T(base_obj);
-  }
-
+    frame_count_ = accum_vec_.size();
+    
+  };
   
-  %template(AC_chi4) Accum_case<tracking::Accum_chi4_self>;
+  %extend
+   {
+     void fill_chi4(const tracking::Accum_chi4_self &base_obj ,const unsigned int frame_count ){
+         $self->fill(base_obj,frame_count);
+       }
+   }
+  
+       
+
 
 
   tracking::Accumulator* at(int j);
