@@ -259,7 +259,7 @@ class Wrapper_i_generic:public Wrapper_in{
   int get_num_frames();
 
 
-  bool setup(set<D_TYPE>,int n,const utilities::Tuplef & d);
+  bool setup(std::set<D_TYPE>,int n,const utilities::Tuplef & d);
 
   bool open_frame(unsigned int frame,int N,float z);
   bool set_data_type(D_TYPE dtype);
