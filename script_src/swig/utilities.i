@@ -372,7 +372,7 @@ public:
   %rename(get_dset_i) get_dset(vector<int> & data,vector<unsigned int> & dims, const string & dset_name) const ;
   void get_dset(vector<int> & data,vector<unsigned int> & dims, const string & dset_name) const;
   
-  %rename(get_deset_ui) get_dset(vector<unsigned int> & data, vector<unsigned int> & dims,const string & dset_name) const;
+  %rename(get_dset_ui) get_dset(vector<unsigned int> & data, vector<unsigned int> & dims,const string & dset_name) const;
   void get_dset(vector<unsigned int> & data, vector<unsigned int> & dims,const string & dset_name) const;
 
   %rename(get_dset_f) get_dset(vector<float> & data, vector<unsigned int> & dims, const string & dset_name) const;
