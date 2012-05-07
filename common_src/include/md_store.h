@@ -73,9 +73,9 @@ public:
      @param[in] val the value
   */
   template <class T>
-  void set_value(const std::string & attr_name,const T & val);
+  void set_value(const std::string & attr_name,const T & val,bool over_write = true);
   
-
+  
   /**
      Returns value at index j.  The value is
      returned by reference.  The function returns the value.
@@ -106,12 +106,29 @@ public:
 
   
   
-  
+  /**
+     removes a given key
 
+     @return true if found and removed, false if not found
+   */
+  bool remove_key(const std::string & key);
+  
   /**
      Returns true if the stanza contains a pram with the given key
   */
   bool contains_key(const std::string& key)const;
+
+  
+  /**
+     Returns true if the stanza contains a pram with the given key.
+     If it contains the key indx is the location.
+
+     @param[in] key key to look for
+     @param[out] indx location of the key, returns len+1 if key does not exist
+     @return if the key exists
+  */
+  bool contains_key(const std::string& key,unsigned int & indx)const;
+
   /**
      Returns the index of the given key in the internal structure
   */
@@ -139,6 +156,7 @@ public:
   {
     return entries_.at(j).type;
   }
+
   /**
      Returns the value as a (void *)
   */
