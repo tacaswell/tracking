@@ -41,7 +41,7 @@ public:
   Accum_case(const T & base_obj,unsigned int frame_count):
     frame_count_(frame_count),accum_vec_(frame_count)
   {
-    for(int j = 0; j<frame_count;j++)
+    for(unsigned int j = 0; j<frame_count;j++)
       accum_vec_[j] = new T(base_obj);
   }
   
