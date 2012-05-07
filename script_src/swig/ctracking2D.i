@@ -146,7 +146,13 @@ class Accum_case
 public:
 
   template <class T>
-  Accum_case(const T & base_obj,unsigned int frame_count);
+    Accum_case(const T & base_obj,unsigned int frame_count):
+  frame_count_(frame_count),accum_vec_(frame_count)
+  {
+    for(unsigned int j = 0; j<frame_count;j++)
+      accum_vec_[j] = new T(base_obj);
+  }
+
   
   %template(AC_chi4) Accum_case<tracking::Accum_chi4_self>;
 
