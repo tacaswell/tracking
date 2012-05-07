@@ -55,6 +55,11 @@ public:
      Returns the maximum step that the accumulator can deal with.
    */
   virtual unsigned max_step()const = 0;
+
+  /**
+     destructor
+   */
+  virtual ~Trk_accumulator()  {  }  ;
   
 };
 
