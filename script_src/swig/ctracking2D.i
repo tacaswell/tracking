@@ -120,7 +120,7 @@ public:
 
 };
 
-class Accum_chi4_self : public Accumulator
+ class Accum_chi4_self : public Accumulator
 {
 public:
 
@@ -231,7 +231,7 @@ public:
   void compute_corr(tracking::Corr &) const ;
   void link(float max_range,Track_shelf & tracks);
   void compute_mean_disp();
-
+  void compute_accum(utilities::Accum_case & )const;
   int get_num_frames() const;
   void print() const; 
   hash_case();
