@@ -35,16 +35,21 @@
 
 #ifdef TRACKING_FLG
 #include <stdexcept>
-
+#include <string>
 #include "accum_chi4_self.h"
 #include "particle_track.h"
+#include "generic_wrapper.h"
+#include "md_store.h"
 using std::vector;
+using std::string;
 using std::logic_error;
 using std::runtime_error;
 
 using utilities::Tuplef;
 
 using tracking::Accum_chi4_self;
+using utilities::format_name;
+
 typedef unsigned int uint ;
 
 
@@ -73,10 +78,65 @@ void Accum_chi4_self::add_particle(const particle * init_pos )
   }
 }
 
-void Accum_chi4_self::out_to_wrapper(utilities::Generic_wrapper &,
+void Accum_chi4_self::out_to_wrapper(utilities::Generic_wrapper & out,
                     const utilities::Md_store & md_store ) const 
 {
-  throw logic_error("function not written");
+
+  
+
+
+  string base_name;
+    
+  // make sure that the wrapper is open
+  bool opened_wrapper = false;
+
+  // if the wrapper is not open, assume we need to open the
+  // computation group, etc
+  if(!out.is_open())
+  {
+    
+    out.open_wrapper();
+    opened_wrapper = true;
+
+
+    int comp_key;
+    if(md_store.contains_key("comp_key"))
+      md_store.get_value("comp_key",comp_key);
+    else
+      comp_key = 0;
+    
+    base_name = format_name("vanHove",comp_key)+ "/";
+    out.open_group(base_name);
+    
+  }
+  // or if the wrapper is open, assume that the correct group is taken care of
+  else
+  {
+    base_name = "";
+  }
+
+  // get plane number
+  unsigned int plane;
+  if(md_store.contains_key("plane_id"))
+    md_store.get_value("plane_id",plane);
+  else
+    plane = 0;
+  
+  vector<uint> q_dims  = vector<uint>(2);
+  q_dims[0] = max_step_;
+  q_dims[1] = l_steps_;
+  
+
+  // output data sets
+  out.add_dset(2,q_dims.data(),utilities::V_FLOAT,Q_.data(),base_name + format_name("Q",plane));
+  out.add_dset(1,&max_step_,utilities::V_FLOAT,Q_.data(),base_name + format_name("count",plane));
+  
+  //if opened the wrapper, close it
+  if(opened_wrapper)
+    out.close_wrapper();
+    
+
+
 }
 
 Accum_chi4_self::Accum_chi4_self(unsigned max_t,float min_l,float max_l,unsigned int l_steps,float (*w)(float,float)):
