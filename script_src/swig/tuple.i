@@ -9,22 +9,9 @@ public:
   bool operator==(const Tuple& b)const;
   
   /**
-     Over loads for copying
-  */
-  void operator= (const Tuple& y);
-  /**
      Over loads for negation
   */
   Tuple operator- ( );
-
-  /**
-     Overides random access
-  */
-  T& operator[] (int i);	
-  /**
-     Overides random access
-  */
-  const T& operator[] (int i) const;
 
   /**
      Over loads for element-wise addition
