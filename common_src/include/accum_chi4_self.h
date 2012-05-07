@@ -128,6 +128,17 @@ private:
   }
     
 };
+
+inline float w_step(float x, float l)
+{
+  if(x<l)
+  
+    return 1;
+  else
+    return 0;
+}
+
+
 #endif
 }
 
