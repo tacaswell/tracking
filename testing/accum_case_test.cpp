@@ -44,7 +44,8 @@ float w(float x, float l)
 int main(int argc, const char * argv[])
 {
   Accum_chi4_self chi = Accum_chi4_self(5,0,5,5,*w);
-  Accum_case ac = Accum_case(chi,15);
+  Accum_case ac = Accum_case();
+  ac.fill(chi,15);
   
   cout<<"hello world"<<endl;
 }
