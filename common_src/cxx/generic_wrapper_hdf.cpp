@@ -331,16 +331,16 @@ void Generic_wrapper_hdf::get_dset_priv(vector<T> & data,std::vector<unsigned in
   // get the rank
   hsize_t rank = dataspace.getSimpleExtentNdims();
   // make dims the right size
-  std::cout<<rank<<std::endl;
+
   
   vector <hsize_t> tdims;
   tdims.resize(rank);
-  std::cout<<tdims.size()<<std::endl;
+
   // get the dimensionality 
   dataspace.getSimpleExtentDims(tdims.data(),NULL);
   // copy to the return vector
   dims.resize(rank);
-  std::cout<<dims.size()<<std::endl;
+
   for(hsize_t j = 0; j<rank;++j)
     dims[j] = (unsigned int)tdims[j];
 
