@@ -286,9 +286,9 @@ const utilities::Tuplef particle_track::get_corrected_disp(const particle_track*
   
   
   return (
-	  (position_ - shelf_->get_cum_forward_disp()) 
-	  - (
+	  (
 	     (part_in->position_ )  - ((part_in->shelf_)->get_cum_forward_disp()))
+	  - (position_ - shelf_->get_cum_forward_disp()) 
 	  );
 }
 
