@@ -374,8 +374,8 @@ public:
   %rename(get_dset_i) get_dset(std::vector<int> & data,std::vector<unsigned int> & dims, const string & dset_name) const ;
   void get_dset(std::vector<int> & data,std::vector<unsigned int> & dims, const string & dset_name) const;
   
-  %rename(get_dset_ui) get_dset(vector<unsigned int> & data, vector<unsigned int> & dims,const string & dset_name) const;
-  void get_dset(vector<unsigned int> & data, vector<unsigned int> & dims,const string & dset_name) const;
+  %rename(get_dset_ui) get_dset(std::vector<unsigned int> & data, std::vector<unsigned int> & dims,const string & dset_name) const;
+  void get_dset(std::vector<unsigned int> & data, std::vector<unsigned int> & dims,const string & dset_name) const;
 
   %rename(get_dset_f) get_dset(std::vector<float> & data, std::vector<unsigned int> & dims, const string & dset_name) const;
   void get_dset(std::vector<float> & data, std::vector<unsigned int> & dims, const string & dset_name) const;
