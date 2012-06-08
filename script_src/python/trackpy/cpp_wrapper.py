@@ -99,7 +99,7 @@ def _make_sure_h5_exists(fname):
     if not os.path.exists(proc_path):
         os.makedirs(proc_path,0751)
     if not os.path.isfile(fname):
-        f = h5py.File(fname)
+        f = h5py.File(fname,'w')
         f.close()
 
 
@@ -178,6 +178,7 @@ def do_Iden(key,conn,iden_params,TL):
         fout = fout.replace(".h5","-" + str(len(res)) + ".h5")
 
 
+    
     ## fpram = fin.replace(".tif",".xml")
     ## if not os.path.isfile(fpram):
     ##     print "can not find parameter file, exiting"
@@ -185,11 +186,12 @@ def do_Iden(key,conn,iden_params,TL):
     ##     print fpram
     ##     return
 
-    
+    # preliminarily add this computation
+    conn.execute("insert into comps (dset_key,func_key) values (?,?);",(key,1))
     comp_key = conn.execute("select max(comp_key) from comps;").fetchone()[0]
     if comp_key is None:
         comp_key = 0
-    comp_key+=1
+
     
     prams = xml_data()
     prams.add_stanza("comp")
@@ -241,7 +243,7 @@ def do_Iden(key,conn,iden_params,TL):
     if rc == 0:
         
         print "entering into database"
-        conn.execute("insert into comps (dset_key,func_key) values (?,?);",(key,1))
+        
         
         p = (key,
              comp_key,
@@ -263,7 +265,8 @@ def do_Iden(key,conn,iden_params,TL):
         if(TL is not None):
             tlp.set_plane_temp(comp_key,conn,TL)
 
-
+    else:
+        conn.rollback()
 def do_Iden_avg(key,conn,frames,iden_params,TL):
     # see if the file has already been processed
     prog_name = "Iden_avg"
