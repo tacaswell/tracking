@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 #Copyright 2009 Thomas A Caswell
 #tcaswell@uchicago.edu
 #http://jfi.uchicago.edu/~tcaswell
@@ -21,7 +23,7 @@ import subprocess
 import datetime
 import os.path
 import sys
-
+import argparse
 
 def _write(file,name,val):
     if name == "acquisition-time-local" or name == "modification-time-local":
@@ -88,20 +90,17 @@ def _parse_temp(file_obj,fname):
     if(len(ma)==2):
         _write(file_obj,'lens_temp',float('.'.join(ma[0].split('-'))))
 
-def parse_file(fname_in,i_path,o_path):
-    fname = i_path + fname_in + '.tif'
+def parse_file(fname,f):
 
-    out_fname  = o_path + fname_in + '.txt'
+
+
 
     
-    print fname
+
     # make sure the files exist
     if not (os.path.exists(fname) ):
         print "file does not exist"
         exit()
-
-
-    f = open(out_fname,'w')
     
 
 
@@ -167,21 +166,25 @@ def parse_file(fname_in,i_path,o_path):
         _write(f,"dtime",dt.seconds + dt.microseconds/(pow(10.,6)))
         initial_t = current_t
         _end_group(f)
-    f.close()
 
 
-if len(sys.argv) <2:
-    print "provide a file name"
-    exit()
-if len(sys.argv) >= 2:
-    file_name = sys.argv[1]
-if len(sys.argv) >= 3:
-    i_path = sys.argv[2]
-else:
-    i_path = ""
-if len(sys.argv) >= 4:
-    o_path = sys.argv[3]
-else:
-    o_path = ""
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("fname_in",help="The file name of the file to strip MD from")
+    parser.add_argument("--fout",help="Name of file to write results to")
+    args = parser.parse_args()
+    if args.fout is None:
+        f = sys.stdout
+    else:
+        f = open(args.fout,'w')
 
-parse_file(file_name,i_path,o_path)
+
+
+
+    parse_file(args.fname_in,f)
+
+    if args.fout is not None:
+        f.close()
+        
+if __name__ == "__main__":
+    main()
