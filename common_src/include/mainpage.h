@@ -213,14 +213,9 @@ not work on a windows machine (there are lots of couts in the code
 which matlab in linux can cope with, but matlab on windows apparently
 can't (according to matlab documentation)), but I expect that the rest
 of the code (if it will compile) will work fine.  To my knowledge this
-has not been tested in practice.
+has not been tested.
 
 
-
-<em>
-Funded by a Keck Grant to Heinrich Jaeger, Sidney Nagel, Wendy Zhang 
-and Margaret Gardel
-</em>
 
 <h2>License</h2>
 
@@ -230,7 +225,7 @@ Additional Permissions.  Files not copyright Thomas A
 Caswell have their copyright/license at the top.
 
 
-&copy; 2008-2010  <a href="http://jfi.uchicago.edu/~tcaswell"> Thomas A Caswell</a>
+&copy; 2008-2012  <a href="http://jfi.uchicago.edu/~tcaswell"> Thomas A Caswell</a>
 
 
 This program is free software; you can redistribute it and/or modify
