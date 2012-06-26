@@ -39,17 +39,16 @@ I tend to update the installed libraries semi-consistently.
   - used to (in the future) talk to the database of data sets
   - public domain
 
-
 * external code that is in the repository
 ** gnu_wrapper (modified from original) http://code.google.com/p/gnuplot-cpp/
-   - used to make plots in c++
-   - will be removed eventually
-   - GPL2
+   + used to make plots in c++
+   + will be removed eventually
+   + GPL2
 * Required python modules:
  - h5py (svn version) http://code.google.com/p/h5py/
+ - Numpy + Scipy
 
-I think the rest of the python used is either included the repository
-or standard python packages.
+
 
 * Required External Programs
 ** Cmake
@@ -60,17 +59,15 @@ or standard python packages.
    (see Matlab below)
 
 ** GNU compiler
- - this is what I use, no promises anything else is happy
+ - this is what I use, no promises anything else will work
  - if you want to compile mex, the version needs to match what your
    copy of matlab was compiled with
 
 ** git 
- - version tracking
  - http://git-scm.com/
  - http://github.com/tacaswell/tracking
  - git://github.com/tacaswell/tracking.git
- - There is also an svn repository, but it will stop being updated at
-   some point
+
 ** doxygen
  - optional
  - used to generate documentation 
@@ -79,8 +76,8 @@ or standard python packages.
 Assumes that the source is in SOURCE_PATH and is being built in
 BUILD_PATH which is a different folder.  Running the builds out of
 source is crucial because there are several different configurations
-that are useful and if they are build in source will not play nice
-with each other at all.
+that are useful and if they are built in-source will conflict with
+each other.
 
 ** Iden
 This builds two programs, Iden and Iden_avg, for finding features.
@@ -92,7 +89,7 @@ In BUILD_PATH:
    cmake SOURCE_PATH -DCOMPILE_IDEN=1 -DBUILD_TYPE=release 
 </src> 
 
-To get debugging or profiling binaries change the last file to 'Debug'
+To get debugging or profiling binaries change the last argument to 'Debug'
 or 'profile'.  -DBULID_TYPE is optional.
 
 Once that is done calling <src lang='shell'>make</src> in
@@ -100,9 +97,8 @@ BUILD_PATH should compile everything.  If you have the resources to
 throw at it the flag '-j N' will compile in parallel.
 
 ** Matlab
-This will build a collection of matlab mex files.  Be warned that I do
-not use these regularly and they may not compile, and if they do may
-be broken.  The only one that should be trusted is matlab_process.
+This will build a collection of matlab mex files.  I do not use these
+regularly and they may not compile, and if they do may be broken.
 
 In BUILD_DIR:
 
@@ -110,16 +106,15 @@ In BUILD_DIR:
     CC=mex CXX=mex cmake MATLAB_MEX_FILE=1 SOURCE_PATH
 </src>
 
-note that this sets the environment variable before calling cmake.
-This requires a patch to cmake
-(http://public.kitware.com/Bug/view.php?id=9240)
-to work properly.  Also see
-http://www.vtk.org/Wiki/CMake:MatlabMex
+Note that this sets environment variables before calling cmake.  This
+requires a patch to cmake
+(http://public.kitware.com/Bug/view.php?id=9240) to work properly.
+Also see http://www.vtk.org/Wiki/CMake:MatlabMex
 
 ** basic
 This builds a collection of programs for processing feature locations.
 These are what I use the most so they likely work properly, but are
-liable to change with out warning and tend to grow in number.
+liable to change without warning.
 
 In BUILD_DIR:
 
@@ -133,9 +128,10 @@ or may not test anything useful.  This might get cleaned up some day,
 but it is not high on the to-do list.
 
 
-
 * Install
-I don't do anything fancy to install at this point.
+I don't do anything fancy to install at this point.  Either run the
+binaries out of the build directory or manually copy them into your
+path.
 
 For the python wrappers to work properly 
 <src lang = 'python'>
@@ -143,6 +139,3 @@ _rel_path,_dbg_path
 </src>
 in SOURCE_PATH/script_src/python/trackpy/cpp_wrapper.py
 need to point to BUILD_PATH/apps.
-
-If you do not want to run the python out of the source directory,
-just move it somewhere else.
