@@ -87,10 +87,7 @@ public:
   Histogram(int num_bins, float bottom , float top);
 
   /**
-    Out puts the values of the histogram to a (bins +2)x2 array.  the
-    first column is the values of the bins, the second the bottom edge
-    of the bins.  The extra entry at the end are the number of entries
-    outside of the 
+    Output data to the wrapper.
   */
   void output_to_wrapper(Generic_wrapper * wrapper_out,
 			 const std::string & g_name,
