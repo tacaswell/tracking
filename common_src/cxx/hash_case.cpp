@@ -30,12 +30,12 @@
 #include <vector>
 #include <set>
 #include "master_box_t.h"
-
+#include "particle_base.h"
+#ifdef TRACKING_FLG
 #include "track_box.h"
 #include "track_shelf.h"
-
 #include "particle_track.h"
-
+#endif 
 
 #include "enum_utils.h"
 
