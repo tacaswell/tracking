@@ -420,30 +420,36 @@ void hash_case::init(float box_side_len,
 	      // get values from the iterator
 	      cur_part = (*it).first;
 	      cur_frame = (*it).second;
-	      
+              Hash_shelf * cur_shelf = h_case_[cur_frame];
+
 	      particle *p = new particle(cur_part,cur_frame);
 	      // add to shelf
-	      h_case_[cur_frame]->push(p);
+              cur_shelf->push(p);
+              // set the self of the particle 
+              p->set_shelf(cur_shelf);
 	      // add to track
 	      cur_track->push_back(p);
 	    
 	    }
 	    tracks.add_track(cur_track);	   
 	  }
-	}
-	else // if neither link
+        }
+        else // if neither link
 	{
-	  // run through filter
-	  if(filt(j,k))
-	  {
-	    // add to hash shelf
-	    h_case_[k]->push(new particle(j,k));
-	  }
+        // if particle is not linked forwards or backwards, ignore it
+	  // // run through filter
+	  // if(filt(j,k))
+	  // {
+	  //   // add to hash shelf
+	  //   h_case_[k]->push(new particle(j,k));
+	  // }
 	}
       }
     }
   }
   inited_ = true;
+  // actually update the frame displacements
+  compute_mean_disp();
   
 }
 
