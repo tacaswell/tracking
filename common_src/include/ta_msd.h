@@ -49,7 +49,7 @@ class TA_msd: public Trk_accumulator
 
 public:
   // inherited form Trk_accumulator
-  void add_disp(utilities::Tuplef displacement,unsigned steps);
+  void add_disp(const utilities::Tuplef &  displacement,unsigned steps);
   unsigned max_step()const {return max_step_;}
   
   /**

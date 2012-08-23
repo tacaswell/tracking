@@ -45,7 +45,7 @@ using tracking::TA_msd;
 
 
 
-void TA_msd::add_disp(Tuplef displacement,unsigned step)
+void TA_msd::add_disp(const Tuplef  & displacement,unsigned step)
 {
   // check that steps is less than max steps
   if(step > max_step_)

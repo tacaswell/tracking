@@ -49,7 +49,7 @@ public:
      @param[in] displacement The net displacement of the track segment.
      @param[in] steps The number of time steps in the track segment.
    */
-  virtual void add_disp(utilities::Tuplef displacement,unsigned steps) = 0;
+  virtual void add_disp(const utilities::Tuplef & displacement,unsigned steps) = 0;
   
   /**
      Returns the maximum step that the accumulator can deal with.
