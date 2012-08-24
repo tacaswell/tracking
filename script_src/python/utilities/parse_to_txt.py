@@ -141,7 +141,7 @@ def parse_file(fname,f):
     _end_group(f)
     
     
-    frame_count = 5
+
     
 
     for frame in range(1,frame_count):
