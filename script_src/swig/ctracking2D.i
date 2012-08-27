@@ -62,7 +62,7 @@ import_array();
 #include "track_shelf.h"
 #include "track_accum.h"
 #include "ta_vanHove.h"
-#include "ta_sqrd.h"
+#include "ta_disp.h"
 %}
 
 namespace std
@@ -134,17 +134,17 @@ public:
 
 };
 
-class TA_sqrdisp: public Trk_accumulator
+class TA_disp: public Trk_accumulator
 {
 public:
   void add_disp(const utilities::Tuplef & displacement,unsigned steps);
   unsigned max_step()const ;
   
-  TA_sqrdisp(unsigned max_steps,
+  TA_disp(unsigned max_steps,
 	     unsigned r_nbins,
              float max_r,
 	     unsigned t_nbins);
-  ~TA_sqrdisp();
+  ~TA_disp();
   void output_to_wrapper(utilities::Generic_wrapper & out,
 			 const utilities::Md_store & md_store)const;
 

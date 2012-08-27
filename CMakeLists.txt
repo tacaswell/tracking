@@ -119,7 +119,7 @@ SET(CORR_DISPLAY_SRC
 SET(TRK_ACCUM_SRC
   ${COMMON_SRC_PATH}/ta_vanHove
   ${COMMON_SRC_PATH}/ta_msd
-  ${COMMON_SRC_PATH}/ta_sqrd
+  ${COMMON_SRC_PATH}/ta_disp
 )
 SET(ENV{HDF5_ROOT} "/home/tcaswell/local_installs")
 SET(HDF5_USE_STATIC_LIBRARIES FALSE)

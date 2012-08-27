@@ -25,8 +25,8 @@
 //work.
 
 
-#ifndef TRK_ACCUM_SQRDISP
-#define TRK_ACCUM_SQRDISP
+#ifndef TRK_ACCUM_DISP
+#define TRK_ACCUM_DISP
 
 #include "track_accum.h"
 #include "histogram.h"
@@ -38,7 +38,7 @@ namespace tracking
    Track accumulator that implements computation of van Hove
    functions.
  */
-class TA_sqrdisp: public Trk_accumulator
+class TA_disp: public Trk_accumulator
 {
 
 public:
@@ -49,7 +49,7 @@ public:
   /**
      Constructor
    */
-  TA_sqrdisp(unsigned max_steps,
+  TA_disp(unsigned max_steps,
 	     unsigned r_nbins,
              float max_r,
 	     unsigned t_nbins);
@@ -57,7 +57,7 @@ public:
   /**
      Destructor
    */
-  ~TA_sqrdisp();
+  ~TA_disp();
   
   /**
      Output function
