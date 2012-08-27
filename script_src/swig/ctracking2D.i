@@ -209,6 +209,8 @@ public:
 
 };
 
+ class hash_case;
+ 
 
 class Track_shelf{ 
  public:
@@ -216,7 +218,7 @@ class Track_shelf{
   void renumber();
   unsigned int get_track_count() const;
   void compute_corrected_TA(Trk_accumulator & ta)const;
-  
+  void init(hash_case & hc);
   Track_shelf();
   ~Track_shelf();
   
