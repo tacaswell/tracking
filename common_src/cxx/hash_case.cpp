@@ -103,11 +103,11 @@ void hash_case::init(Master_box & mb,const utilities::Tuplef & dims,
   h_case_.resize(frames);
 
   // do frame 0
-  h_case_.at(0) = new Hash_shelf(dims, ppb,0,false);
+  h_case_.at(0) = new Hash_shelf(dims, ppb,0,own_particles_);
   h_case_[0]->md_store_ = mb.get_Md_store(0);
   // do frame 1 to N
   for(unsigned int j = 1; j<h_case_.size(); ++j){
-    h_case_[j] = new Hash_shelf(dims, ppb,j,false);
+    h_case_[j] = new Hash_shelf(dims, ppb,j,own_particles_);
     h_case_[j-1]->set_next_shelf(h_case_[j]);
     h_case_[j]->md_store_ = mb.get_Md_store(j);
     
@@ -189,7 +189,7 @@ void hash_case::init(Wrapper_in & w_in , utilities::Filter & filt, float ppb)
     
     
     // create the shelf
-    Hash_shelf * cur_shelf = new Hash_shelf(dims, ppb,j,true,0,num_entries);
+    Hash_shelf * cur_shelf = new Hash_shelf(dims, ppb,j,own_particles_,0,num_entries);
     
     // add to hash_case
     h_case_[j] = cur_shelf;
@@ -344,11 +344,11 @@ void hash_case::init(float box_side_len,
   Tuplef dims = wrapper.get_dims();
   
   // do frame 0
-  h_case_.at(0) = new Hash_shelf(dims, box_side_len,0,true);
+  h_case_.at(0) = new Hash_shelf(dims, box_side_len,0,own_particles_);
   h_case_[0]->md_store_ = wrapper.get_Md_store(0);
   // do frame 1 to N
   for(unsigned int j = 1; j<h_case_.size(); ++j){
-    h_case_[j] = new Hash_shelf(dims, box_side_len,j,true);
+    h_case_[j] = new Hash_shelf(dims, box_side_len,j,own_particles_);
     h_case_[j-1]->set_next_shelf(h_case_[j]);
     h_case_[j]->md_store_ = wrapper.get_Md_store(j);
   }
