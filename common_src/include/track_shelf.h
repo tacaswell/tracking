@@ -46,6 +46,7 @@ class Track_box;
 class particle_track;
 class Master_box;
 class Trk_accumulator;
+class hash_case;
 
 /**
    Top level class for holding the track boxes. (which are the head of
@@ -205,9 +206,16 @@ public:
   void renumber();
   
   /**
-     Initializes the tracks in the track shelf based read in trakid
+     Initializes the tracks in the track shelf based on read in trakid
    */
   void init(Master_box & mb);
+
+
+
+  /**
+     Initializes the tracks in the track shelf based on read in trakid
+   */
+  void init(hash_case & hc);
 
   /**
      Shove data in to a track accumulator

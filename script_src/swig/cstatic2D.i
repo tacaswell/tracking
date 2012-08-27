@@ -27,10 +27,6 @@ import_array();
 
   
 
-%include "std_string.i"
-%include "std_vector.i"
-%include "std_set.i"
-
 %include "exception.i"
 
 
@@ -58,20 +54,16 @@ import_array();
 #include "corr.h"
 #include "corr_gofr.h"
 #include "part_def.h"
-
-
+using std::string;
+using std::vector;
+using std::set;
 
 
 %}
 
-namespace std
-{
-  %template(IntVector) vector<int>;
-  %template(DoubleVector) vector<double>;
-  %template(FloatVector) vector<float>;
-  %template(Dset) set<utilities::D_TYPE>;
+
   
-}
+
 
 %exception{
   try  {

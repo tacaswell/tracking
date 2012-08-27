@@ -82,6 +82,10 @@ Md_store::Md_store(){}
 
 void Md_store::add_element(const std::string & key,const std::string & type, const std::string & value)
 {
+  if(contains_key(key))
+    throw runtime_error("can't add a second copy of a key");
+  
+
   int * tmpi_p;
   int tmpi;
   unsigned int * tmpui_p;
@@ -252,13 +256,24 @@ int Md_store::get_key_index(const string& key) const
 
 bool Md_store::contains_key(const string& key) const
 {
-  int max = entries_.size();
-  for(int j = 0;j<max;++j)
-    if(entries_[j].key.compare(key) ==0)
+  unsigned int tmp;
+  return contains_key(key,tmp);
+  
+}
+
+
+bool Md_store::contains_key(const string& key,unsigned int & indx) const
+{
+  unsigned int max = entries_.size();
+  for(indx = 0;indx<max;++indx)
+    if(entries_[indx].key.compare(key) ==0)
       return true;
+  
+  ++indx;
   
   return false;
 }
+
 
 float Md_store::get_value(int j,float & val)const
 {
@@ -374,17 +389,36 @@ template bool Md_store::get_value(const string& key,bool & val)const;
 
 
 template <class T>
-void Md_store::set_value(const string& key,const T & val)
+void Md_store::set_value(const string& key,const T & val,bool over_write)
 {
+  if(over_write)
+    remove_key(key);
   add_element(key.data(),val);
 }
 
-template void Md_store::set_value(const string& key,const int & val);
-template void Md_store::set_value(const string& key,const unsigned int & val);
-template void Md_store::set_value(const string& key,const float & val);
-template void Md_store::set_value(const string& key,const string & val);
-template void Md_store::set_value(const string& key,const bool & val);
+template void Md_store::set_value(const string& key,const int & val,bool);
+template void Md_store::set_value(const string& key,const unsigned int & val,bool);
+template void Md_store::set_value(const string& key,const float & val,bool);
+template void Md_store::set_value(const string& key,const string & val,bool);
+template void Md_store::set_value(const string& key,const bool & val,bool);
 
+bool Md_store::remove_key(const std::string & key)
+{
+
+  vector<Md_element>::iterator it_end = entries_.end();
+  for(vector<Md_element>::iterator it = entries_.begin();
+      it != it_end;++it)
+  {
+    if((*it).key.compare(key) ==0)
+    {
+      entries_.erase(it);
+      return true;
+    }
+  }
+  return false;
+  
+
+}
 
 
 

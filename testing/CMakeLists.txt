@@ -212,3 +212,14 @@ add_executable(md_store_test md_store_test
 set_target_properties(md_store_test PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_COUNT=2;TESTING")
 
 
+
+add_executable(accum_case_test accum_case_test
+  ${COMMON_SRC_PATH}/accum_chi4_self
+  ${COMMON_SRC_PATH}/md_store
+  ${COMMON_SRC_PATH}/enum_utils
+  ${COMMON_SRC_PATH}/particle_track.cpp
+  ${COMMON_SRC_PATH}/particle_base.cpp
+  )
+set_target_properties(accum_case_test PROPERTIES COMPILE_DEFINITIONS  "PTYPE=1;DIM_COUNT=2;TESTING")
+
+

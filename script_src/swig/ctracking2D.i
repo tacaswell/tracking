@@ -62,18 +62,20 @@ import_array();
 #include "track_shelf.h"
 #include "track_accum.h"
 #include "ta_vanHove.h"
-#include "ta_disp.h"
-%}
 
-namespace std
-{
-  %template(IntVector) vector<int>;
-  %template(UIntVector) vector<unsigned int>;
-  %template(DoubleVector) vector<double>;
-  %template(FloatVector) vector<float>;
-  %template(Dset) set<utilities::D_TYPE>;
-  
-}
+#include "ta_disp.h"
+
+#include "accumulator.h"
+#include "accum_chi4_self.h"
+#include "accum_case.h"
+
+using std::string;
+using std::vector;
+using std::set;
+
+using tracking::w_step;
+ 
+%}
 
 %exception{
   try  {
@@ -109,7 +111,83 @@ class Corr_gofr :public Corr
   
 };
 
+class Accumulator
+{
+public:
+  virtual void out_to_wrapper(utilities::Generic_wrapper &,
+                              const utilities::Md_store & md_store ) const =0;
+  virtual ~Accumulator(); 
+  Accumulator() ;
+  
+  
+
+};
+
+ class Accum_chi4_self : public Accumulator
+{
+public:
+
+
+  void out_to_wrapper(utilities::Generic_wrapper &,
+                      const utilities::Md_store & md_store ) const ;
+
+  // special stuff
+  
+  Accum_chi4_self(unsigned max_t,float min_l,float max_l,unsigned int l_steps,float (*w)(float,float));
+
+  ~Accum_chi4_self();
+  
+  void  add_to_chi4(std::vector<float>& Q_accum,std::vector<float>& Q2_accum,const int time_steps)const;
+} ;
+
+ %constant float w_step(float,float);
+}
+
+namespace utilities
+{
+  
+class Accum_case
+{
+public:
+
+
+  Accum_case();
+  
+  
+  template <class T> void  fill(const T & base_obj,const unsigned int frame_count)
+  {
+    accum_vec_.resize(frame_count);
+    for(unsigned int j = 0; j<frame_count;j++)
+      accum_vec_[j] = new T(base_obj);
+    frame_count_ = accum_vec_.size();
+    
+  };
+  
+  %extend
+   {
+     void fill_chi4(const tracking::Accum_chi4_self &base_obj ,const unsigned int frame_count ){
+         $self->fill(base_obj,frame_count);
+       }
+   }
+  
+       
+
+
+
+  tracking::Accumulator* at(int j);
+   
+
  
+
+  unsigned int size()const;
+  ~Accum_case();
+
+} ;
+}
+
+namespace  tracking
+{
+
 class Trk_accumulator
 {
 public:
@@ -150,7 +228,9 @@ public:
 
 
 };
-
+ 
+class hash_case;
+ 
 
 class Track_shelf{ 
  public:
@@ -158,7 +238,7 @@ class Track_shelf{
   void renumber();
   unsigned int get_track_count() const;
   void compute_corrected_TA(Trk_accumulator & ta)const;
-  
+  void init(hash_case & hc);
   Track_shelf();
   ~Track_shelf();
   
@@ -178,7 +258,7 @@ public:
   void compute_corr(tracking::Corr &) const ;
   void link(float max_range,Track_shelf & tracks);
   void compute_mean_disp();
-
+  void compute_accum(utilities::Accum_case & )const;
   int get_num_frames() const;
   void print() const; 
   hash_case();

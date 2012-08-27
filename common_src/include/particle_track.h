@@ -107,7 +107,11 @@ public:
    */
   particle_track* get_prev(){return prev_;}
   /**
-     Returns the corrected forward displacement
+     Returns the corrected forward displacement.  The assumption is that this particle is the initial position
+     and part_in is the final position.
+
+     @param[in] part_in the final position of the particle
+     @return the vector from this to part_in
    */
   const utilities::Tuplef get_corrected_disp(const particle_track * part_in)const;
   

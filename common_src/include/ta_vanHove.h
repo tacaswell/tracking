@@ -56,7 +56,7 @@ public:
   /**
      Destructor
    */
-  ~TA_vanHove();
+  virtual ~TA_vanHove();
   
   /**
      Output function

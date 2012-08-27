@@ -34,6 +34,7 @@
 namespace utilities
 {
 class Generic_wrapper;
+class Md_store;
 }
 
 
@@ -71,9 +72,14 @@ public:
   virtual void out_to_wrapper(utilities::Generic_wrapper &,
 			 const utilities::Md_store & md_store ) const =0;
   /**
-     Destructor
+     no-op Destructor
    */
   virtual ~Accumulator(){}; 
+  /**
+     no-op constructor
+   */
+  Accumulator()  {  }  ;
+  
   
 
 };

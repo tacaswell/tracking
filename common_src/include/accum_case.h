@@ -1,4 +1,4 @@
-//Copyright 2010 Thomas A Caswell
+//Copyright 2010,2012 Thomas A Caswell
 //tcaswell@uchicago.edu
 //http://jfi.uchicago.edu/~tcaswell
 //
@@ -17,12 +17,8 @@
 
 #include <vector>
 #include "part_def.h"
+#include "accumulator.h"
 
-namespace tracking
-{
-class Accum_sofq;
-class Accumulator;
-}
 
 
 namespace utilities
@@ -40,32 +36,23 @@ class Generic_wrapper;
 class Accum_case
 {
 public:
-  /**
-     Constructor for filling with Accum_sofq.  The pointer does
-     nothing, but is passed into set the type.
-  */
-  Accum_case(const tracking::Accum_sofq*,
-	     int n, 
-	     const utilities::Tuple<float,2>& q_range, 
-	     utilities::Tuplef q, 
-	     const int n_bins);
-  
-  /**
-     Averages the values in a vector of Accum_sofq and writes 
-   */
-  void out_to_wrapper(utilities::Generic_wrapper & wrap,tracking::Accum_sofq*) const;
 
-  /**
-     Averages the values and returns the results in the vector.  The pointer is there
-     only to determine type.
-   */
-  void average(std::vector<float> & ,tracking::Accum_sofq*) const;
   
-  /**
-     Display the average.  Pointer is only to identify type.
-   */
-  void display(tracking::Accum_sofq*) const;
+  Accum_case():
+    frame_count_(0),accum_vec_(0)
+  {  }  ;
 
+  template <class T>
+  void  fill(const T & base_obj,const unsigned int frame_count)
+  {
+    accum_vec_.resize(frame_count);
+    for(unsigned int j = 0; j<frame_count;j++)
+      accum_vec_[j] = new T(base_obj);
+    frame_count_ = accum_vec_.size();
+    
+  }
+  
+    
   /**
      Returns the nth element of the case.  Will throw out of range errors
    */
@@ -92,7 +79,16 @@ public:
   /**
      Destructor
    */
-  ~Accum_case();
+  ~Accum_case(){
+    for(unsigned int j = 0; j<accum_vec_.size();j++)
+    {
+      if(accum_vec_[j])
+        delete accum_vec_[j];
+      accum_vec_[j] = NULL;
+    }
+  }
+
+
   
 private:
   /**
@@ -103,19 +99,6 @@ private:
      structure to hold the Accumulator ojbects
    */
   std::vector< tracking::Accumulator*> accum_vec_;
-  /**
-     Computation number.
-
-     This will probably be replaced with an Md_store object
-   */
-  int comp_num_;
-  /**
-     dest number
-
-     This will probably be replaced with an Md_store object
-   */
-  int dset_;
-  
 
 
 };
