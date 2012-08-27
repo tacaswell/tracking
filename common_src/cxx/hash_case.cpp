@@ -307,7 +307,8 @@ void hash_case::init(float box_side_len,
 		     )
 {
   // particle init stuff
-
+  own_particles_ = true;
+        
 
   set<D_TYPE> data_types = wrapper.get_data_types();
   
