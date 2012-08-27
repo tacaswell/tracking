@@ -318,8 +318,17 @@ void hash_case::init(float box_side_len,
   if(data_types.find(utilities::D_PREV_INDX) == data_types.end() ||
      data_types.find(utilities::D_NEXT_INDX) == data_types.end() ||
      data_types.find(utilities::D_TRACKID) == data_types.end())
-    throw runtime_error("wrapper does not contain correct data types");
+    throw runtime_error("wrapper does not contain correct tracking data types");
+
+
+  if(data_types.find(utilities::D_XPOS) == data_types.end() ||
+     data_types.find(utilities::D_YPOS) == data_types.end())
+    throw runtime_error("wrapper does not contain correct location data types");
   
+#if DIM_COUNT == 3
+  if(data_types.find(utilities::D_ZPOS) == data_types.end())
+    throw runtime_error("wrapper does not contain correct location data types");
+#endif
 
   particle::intialize_wrapper_in(&wrapper);
   
