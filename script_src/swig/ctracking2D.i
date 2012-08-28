@@ -260,7 +260,8 @@ public:
   void compute_mean_disp();
   void compute_accum(utilities::Accum_case & )const;
   int get_num_frames() const;
-  void print() const; 
+  int get_avg_dtime()const;
+  float get_avg_temp()const;
   hash_case();
   ~hash_case();
   
