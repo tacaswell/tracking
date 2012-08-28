@@ -119,6 +119,7 @@ SET(TRK_ACCUM_SRC
   ${COMMON_SRC_PATH}/ta_vanHove
   ${COMMON_SRC_PATH}/ta_msd
   ${COMMON_SRC_PATH}/ta_disp
+  ${COMMON_SRC_PATH}/ta_theta_rlim
   ${COMMON_SRC_PATH}/accum_chi4_self
 )
 SET(ENV{HDF5_ROOT} "/home/tcaswell/local_installs")

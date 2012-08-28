@@ -64,6 +64,7 @@ import_array();
 #include "ta_vanHove.h"
 
 #include "ta_disp.h"
+#include "ta_theta_rlim.h"
 
 #include "accumulator.h"
 #include "accum_chi4_self.h"
@@ -223,6 +224,24 @@ public:
              float max_r,
 	     unsigned t_nbins);
   ~TA_disp();
+  void output_to_wrapper(utilities::Generic_wrapper & out,
+			 const utilities::Md_store & md_store)const;
+
+
+};
+
+
+class TA_theta_rlim: public Trk_accumulator
+{
+public:
+  void add_disp(const utilities::Tuplef & displacement,unsigned steps);
+  unsigned max_step()const ;
+  
+  TA_theta_rlim(unsigned max_steps,
+                unsigned t_nbins,
+                float min_r,
+                float max_r);
+  ~TA_theta_rlim();
   void output_to_wrapper(utilities::Generic_wrapper & out,
 			 const utilities::Md_store & md_store)const;
 
