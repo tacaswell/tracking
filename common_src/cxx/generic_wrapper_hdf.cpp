@@ -296,7 +296,7 @@ void Generic_wrapper_hdf::get_dset_priv(vector<T> & data,std::vector<unsigned in
     dset = group_->openDataSet(dset_name);
   }
   else
-    throw logic_error("generic_wrapper_hdf:: can't add to a closed group");
+    throw logic_error("generic_wrapper_hdf:: can't read from a closed group");
   }
   catch(Exception &e )
   {
