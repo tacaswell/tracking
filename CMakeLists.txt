@@ -73,6 +73,7 @@ SET(HASH_TRACK_SRC
 SET(CORR_SRC
   ${COMMON_SRC_PATH}/corr
   ${COMMON_SRC_PATH}/corr_gofr
+  ${COMMON_SRC_PATH}/corr_theta_2pt
   ${COMMON_SRC_PATH}/corr_case
   ${COMMON_SRC_PATH}/corr_goftheta
 )

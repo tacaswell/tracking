@@ -57,6 +57,7 @@ import_array();
 #include "hash_case.h"
 #include "corr.h"
 #include "corr_gofr.h"
+#include "corr_theta_2pt.h"
 #include "part_def.h"
 
 #include "track_shelf.h"
@@ -110,6 +111,15 @@ class Corr_gofr :public Corr
   void get_bin_edges(std::vector<float> & out) const;
   Corr_gofr(int bins,float max);
   
+};
+
+
+class Corr_theta_2pt :public Corr
+{
+ public:
+  float get_max_range() const;
+  Corr_theta_2pt(int t_bins,float min_r, float max_r);
+  void out_to_wrapper(utilities::Generic_wrapper & wrapper_out,const std::string & g_name,const utilities::Md_store * md_store) const ;
 };
 
 class Accumulator
