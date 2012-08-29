@@ -286,7 +286,15 @@ void Generic_wrapper_hdf::get_dset_priv(vector<T> & data,std::vector<unsigned in
   if(!group_open_ || dset_name[0] == '/')
   {
     if(file_)
-      dset = file_->openDataSet(dset_name);
+      try
+      {
+        dset = file_->openDataSet(dset_name);
+      }
+      catch(FileIException &e)
+      {
+        throw runtime_error(e.getDetailMsg());
+      }
+    
     else
       throw runtime_error("there is no open file");
     
