@@ -272,7 +272,7 @@ template <class T>
 void Generic_wrapper_hdf::get_dset_priv(vector<T> & data,std::vector<unsigned int> & dims, const std::string & dset_name,const DataType & mtype) const
 {
   if (!(wrapper_open_))
-    throw runtime_error("wrapper must be open to add a dataset");
+    throw runtime_error("wrapper must be open to read a dataset");
   
   dims.clear();
   data.clear();
