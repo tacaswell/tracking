@@ -80,7 +80,7 @@ void Corr_theta_2pt::compute(const particle * p_in,const vector<const particle*>
     
     float tmp_d = displacement.magnitude_sqr();
     
-    if(tmp_d< max_r_range2_ && tmp_d > min_r_range2_)
+    if(tmp_d< max_r_range2_ && tmp_d > min_r_range2_ && displacement[0] >0)
     {
       theta_.add_data_point(atan2(displacement[1],displacement[0]));
       
@@ -95,7 +95,7 @@ void Corr_theta_2pt::compute(const particle * p_in,const vector<const particle*>
 
 
 Corr_theta_2pt::Corr_theta_2pt(int t_nbins,float min_r,float max_r):
-  theta_(t_nbins,-PI,PI),
+  theta_(t_nbins,-PI/2,PI/2),
   min_r_range2_(min_r*min_r),
   max_r_range2_(max_r*max_r)
 
@@ -119,27 +119,30 @@ void Corr_theta_2pt::out_to_wrapper(Generic_wrapper & output_wrapper,
     
   }
   
-  output_wrapper.open_group(g_name);
-    
+
+  output_wrapper.open_group(g_name);  
   if(md_store)
     output_wrapper.add_meta_data(md_store);
-  
-  
+
+
+
   output_wrapper.add_meta_data("max_r_range",(float)sqrt(max_r_range2_));
   output_wrapper.add_meta_data("min_r_range",(float)sqrt(min_r_range2_));
   output_wrapper.add_meta_data("plane_count",plane_count_);
   output_wrapper.add_meta_data("temperature",temperature_sum_/plane_count_);
-  
-  // strings for controlling where the histograms write out to
+
+  output_wrapper.close_group();  
+  //strings for controlling where the histograms write out to
   const string value_str = "count";
   const string edge_str  = "edges";
 
   theta_.output_to_wrapper(&output_wrapper,g_name+"/theta",value_str,edge_str,
      				 (const Md_store*)NULL);  
-  output_wrapper.close_group();
+
   
   if(opened_wrapper)
     output_wrapper.close_wrapper();
 
+  
 }
   
