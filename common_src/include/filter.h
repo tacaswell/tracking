@@ -146,6 +146,11 @@ private:
    */
   float shift_cut_;
   /**
+     Centroid shift threshold
+   */
+  float shift_cut_sqr_;
+
+  /**
      Wrapper to read particle data from
    */
   const Wrapper_in * wrap_;

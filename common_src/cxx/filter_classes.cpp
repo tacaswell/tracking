@@ -62,6 +62,8 @@ void Filter_ers::init(const Md_store & md_store)
   md_store.get_value("e_cut",e_cut_);
   md_store.get_value("rg_cut",rg_cut_ );
   md_store.get_value("shift_cut",shift_cut_);
+  shift_cut_sqr_ = shift_cut_*shift_cut_;
+  
 }
 
 
@@ -74,7 +76,11 @@ bool Filter_ers::operator()(int ind, int frame)const
   wrap_->get_value(x,ind,D_DX,frame);
   wrap_->get_value(y,ind,D_DY,frame);
 
-  if((x*x +y*y) >shift_cut_*shift_cut_)
+  if (x ==0 || y ==0)
+    return false;
+  
+  
+  if((x*x +y*y) >shift_cut_sqr_)
     return false;
   return true;
 }
