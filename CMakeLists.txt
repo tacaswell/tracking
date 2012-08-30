@@ -104,7 +104,6 @@ SET(HDF_SRC
   ${COMMON_SRC_PATH}/generic_wrapper_hdf.cpp
   ${COMMON_SRC_PATH}/attr_list_hdf.cpp
   ${COMMON_SRC_PATH}/md_store_attr_list
-  ${COMMON_SRC_PATH}/filter_basic.cpp
   ${COMMON_SRC_PATH}/filter_classes.cpp
   )
 

@@ -62,7 +62,7 @@ using utilities::Wrapper_o_hdf;
 using utilities::Wrapper_i_hdf;
 
 using utilities::Tuple;
-using utilities::Filter_basic;
+
 using utilities::Filter_trivial;
 using utilities::D_TYPE;
 using utilities::Generic_wrapper_hdf;

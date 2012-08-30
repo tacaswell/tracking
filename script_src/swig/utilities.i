@@ -436,16 +436,15 @@ public:
 };
 
 
-class Filter_basic : public Filter
+class Filter_ers : public Filter
 {
 public:
   bool operator()(int index,int frame) const;
   void set_wrapper(const Wrapper_in * w_i );
-  Filter_basic();
-  ~Filter_basic();
+  Filter_ers();
+  ~Filter_ers();
 
-  void init(const string&,int);
-  void init(float ecut,float rg_cut,float shift_cut);
+  void init(const Md_store & md_store);
   
     
   

@@ -57,7 +57,7 @@ using utilities::Md_store;
 using utilities::SQL_handler;
 
 
-using utilities::Filter_basic;
+using utilities::Filter_ers;
 using utilities::Filter_trivial;
 using utilities::D_TYPE;
 using utilities::Generic_wrapper_hdf;
@@ -70,6 +70,10 @@ using tracking::particle;
 using tracking::hash_case;
 using tracking::Hash_shelf;
 using tracking::Corr_gofr;
+
+
+using std::runtime_error;
+
 
 const static string APP_NAME = "phi6";
 
@@ -199,7 +203,7 @@ int main(int argc,  char *  argv[])
     
     
 
-  Filter_basic filt;
+  Filter_ers filt;
   if(app_prams.contains_key("e_cut") &&
      app_prams.contains_key("rg_cut") &&
      app_prams.contains_key("shift_cut"))
@@ -208,22 +212,22 @@ int main(int argc,  char *  argv[])
     app_prams.get_value("e_cut",e_cut);
     app_prams.get_value("rg_cut",rg_cut);
     app_prams.get_value("shift_cut",shift_cut);
-    filt.init(e_cut,rg_cut,shift_cut);
-    
+    filt.init(*(app_prams.get_store()));
+  }
+
+  else
+  {
+    vector<string> pram_lst(3,"");
+    pram_lst.at(0) = "e_cut";
+    pram_lst.at(1) = "rg_cut";
+    pram_lst.at(2) = "shift_cut";
+    Md_store filt_md = utilities::extract_prams(in_file,iden_key,pram_lst);
+    filt.init(filt_md);
     
   }
-  else
-    filt.init(in_file,iden_key);
+
   Md_store filt_md = filt.get_parameters();
   
-   
-
-  
-    
-
-  
-    
-
   
       
   Md_store md_store;

@@ -75,7 +75,7 @@ using utilities::Wrapper_o_hdf;
 using utilities::Wrapper_i_hdf;
 
 using utilities::Tuple;
-using utilities::Filter_basic;
+using utilities::Filter_ers;
 using utilities::Filter_trivial;
 using utilities::D_TYPE;
 using utilities::Generic_wrapper_hdf;
@@ -89,6 +89,9 @@ using tracking::hash_case;
 using tracking::Corr_gofr;
 using tracking::Track_shelf;
 using tracking::Track_box;
+
+
+using std::runtime_error;
 
 
 const static string APP_NAME = "link3D :: ";
@@ -235,8 +238,33 @@ int main(int argc, char * argv[])
 
     // fill the master_box
     Master_box box;
-    Filter_basic filt;
-    filt.init(in_file,read_comp_number);
+    Filter_ers filt;
+    if(app_prams.contains_key("e_cut") &&
+       app_prams.contains_key("rg_cut") &&
+       app_prams.contains_key("shift_cut"))
+    {
+      float e_cut,rg_cut,shift_cut;
+      app_prams.get_value("e_cut",e_cut);
+      app_prams.get_value("rg_cut",rg_cut);
+      app_prams.get_value("shift_cut",shift_cut);
+      filt.init(*(app_prams.get_store()));
+    }
+    else
+    {
+
+      vector<string> pram_lst(3,"");
+      pram_lst.at(0) = "e_cut";
+      pram_lst.at(1) = "rg_cut";
+      pram_lst.at(2) = "shift_cut";
+      Md_store filt_md = utilities::extract_prams(in_file,iden_key,pram_lst);
+      filt.init(filt_md);
+   
+   
+    }
+
+
+
+
     
     //    Filter_trivial filt;
     box.init(wh,filt);

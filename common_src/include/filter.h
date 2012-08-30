@@ -214,62 +214,6 @@ private:
 
 
 /**
-   A basic filter, does rg, shift and eccentricity cuts
- */
-class Filter_basic:public Filter
-{
-public:
-  bool operator()(int ind,int frame) const;
-  /**
-     Constructor
-   */
-  Filter_basic();
-  /**
-     Initialization function for pulling values from the hdf file
-   */
-  void init(const std::string&,int);
-  /**
-     Initialization function based on arguements
-   */
-  void init(float ecut,float rg_cut,float shift_cut);
-  FILT_TYPE get_type()const{return FILT_ERS;};
-  void set_wrapper(const Wrapper_in * w_i )
-  {
-    wrap_ = w_i;
-  }
-  
-  /**
-     Returns the filter parameters in a md_store object
-   */
-  Md_store get_parameters()const;
-  
-  /**
-     Destructor
-   */
-  ~Filter_basic()
-  {
-  }
-private:
-  /**
-     Eccentricity threshold
-   */
-  float e_cut_;
-  /**
-     Radius of gyration threshold
-   */
-  float rg_cut_;
-  /**
-     Centroid shift threshold
-   */
-  float shift_cut_;
-  /**
-     Wrapper to read particle data from
-   */
-  const Wrapper_in * wrap_;
-};
-
-
-/**
    Guesses which filter to generate from the parameters it is given in
    the Md_store object.
 

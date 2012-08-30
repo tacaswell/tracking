@@ -73,7 +73,7 @@ using utilities::Md_store;
 using utilities::SQL_handler;
 
 using utilities::Tuple;
-using utilities::Filter_basic;
+
 using utilities::Filter_trivial;
 using utilities::D_TYPE;
 using utilities::Generic_wrapper_hdf;
