@@ -59,6 +59,7 @@ using std::cout;
 using std::endl;
 using std::set;
 using std::string;
+using std::vector;
 using std::cerr;
 using std::logic_error;
 
@@ -131,11 +132,11 @@ int main(int argc, char * argv[])
     return -1;
   }
   
-  int read_comp_key , write_comp_key, dset_key ;
+  int iden_key , write_comp_key, dset_key ;
   Read_config comp_prams(pram_file,"comps");
   try
   {
-    comp_prams.get_value("iden_key",read_comp_key);
+    comp_prams.get_value("iden_key",iden_key);
     comp_prams.get_value("dset_key",dset_key);
   }
   catch(logic_error & e)
@@ -193,7 +194,7 @@ int main(int argc, char * argv[])
   
     
   Wrapper_i_hdf wh;
-  bool suc = wh.initialize(in_file,data_types,read_comp_key);
+  bool suc = wh.initialize(in_file,data_types,iden_key);
     
 
 
@@ -271,7 +272,7 @@ int main(int argc, char * argv[])
 		   max_range,nbins,
 		   write_comp_key,
 		   dset_key,
-		   read_comp_key);
+		   iden_key);
   unsigned int step = hcase.compute_corr(gofr_c);
   cout<<"computed g(r)"<<endl;
   md_store.add_element("comp_count",comp_count);

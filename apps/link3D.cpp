@@ -74,6 +74,7 @@ using std::logic_error;
 using utilities::Wrapper_o_hdf;
 using utilities::Wrapper_i_hdf;
 
+using utilities::Md_store;
 using utilities::Tuple;
 using utilities::Filter_ers;
 using utilities::Filter_trivial;
@@ -165,7 +166,7 @@ int main(int argc, char * argv[])
 
     
   float box_side_len;
-  int write_comp_number,read_comp_number,dset_key;
+  int write_comp_number,iden_key,dset_key;
   float search_range ;
   int min_track_length;
   
@@ -198,7 +199,7 @@ int main(int argc, char * argv[])
 		      " parameter file does not contain both read and write comp nums");
   try
   {
-    comp_prams.get_value("iden_key",read_comp_number);
+    comp_prams.get_value("iden_key",iden_key);
     comp_prams.get_value("link_key",write_comp_number);
     comp_prams.get_value("dset_key",dset_key);
   }
@@ -233,7 +234,7 @@ int main(int argc, char * argv[])
   
     // set up the input wrapper
     Wrapper_i_hdf wh;
-    bool suc = wh.initialize(in_file,data_types,read_comp_number);
+    bool suc = wh.initialize(in_file,data_types,iden_key);
 
 
     // fill the master_box

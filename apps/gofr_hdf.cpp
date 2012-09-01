@@ -65,6 +65,7 @@ using std::set;
 using std::string;
 using std::cerr;
 using std::logic_error;
+using std::vector;
 
 
 using utilities::Wrapper_o_hdf;
@@ -206,7 +207,7 @@ int main(int argc, char * argv[])
     return -1;
   }
   
-  int read_comp_num, write_comp_num,dset_key;
+  int iden_key, write_comp_num,dset_key;
   Read_config comp_prams(pram_file,"comps");
   if(!(comp_prams.contains_key("iden_key")&&
        comp_prams.contains_key("dset_key")))
@@ -214,7 +215,7 @@ int main(int argc, char * argv[])
 		      " parameter file does not contain both read and write comp nums");
   try
   {
-    comp_prams.get_value("iden_key",read_comp_num);
+    comp_prams.get_value("iden_key",iden_key);
     comp_prams.get_value("dset_key",dset_key);
   }
   catch(logic_error & e)
@@ -309,7 +310,7 @@ int main(int argc, char * argv[])
 
   
   Wrapper_i_hdf wh;
-  bool suc = wh.initialize(in_file,data_types,read_comp_num);
+  bool suc = wh.initialize(in_file,data_types,iden_key);
 
     
 
