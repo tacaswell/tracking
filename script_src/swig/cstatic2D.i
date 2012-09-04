@@ -113,7 +113,9 @@ class hash_case
 public:
   void init(utilities::Wrapper_in & w_in , utilities::Filter & filt, float ppb)  ;
   void compute_corr(tracking::Corr &) const ;
-  
+  int get_avg_dtime()const;
+  float get_avg_temp()const;
+
   int get_num_frames() const;
   void print() const; 
   hash_case();
