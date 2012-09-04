@@ -264,10 +264,18 @@ int main(int argc, char * const argv[])
   
   hcase.init(box,wh.get_dims(),hash_size,wh.get_num_frames());
   int dtime = hcase.get_avg_dtime();
-  float temperature = hcase.get_avg_temp();
-  md_store.add_element("dtime",dtime);
-  md_store.add_element("temperature",temperature);
 
+  md_store.add_element("dtime",dtime);
+  try
+  {
+      float temperature = hcase.get_avg_temp();
+      md_store.add_element("temperature",temperature);
+  }
+  catch(logic_error & e)
+  {
+    
+  }
+  
   cout<<"hash case filled"<<endl;
   cout<<"md_store filled"<<endl;
   md_store.print();
