@@ -70,17 +70,19 @@ void Filter_ers::init(const Md_store & md_store)
 
 bool Filter_ers::operator()(int ind, int frame)const
 {
-  float x,y;
-  if(wrap_->get_value(x,ind,D_E,frame)>e_cut_ || wrap_->get_value(y,ind,D_R2,frame)>rg_cut_)
+  float dx,dy;
+  if(wrap_->get_value(dx,ind,D_E,frame)>e_cut_ || wrap_->get_value(dy,ind,D_R2,frame)>rg_cut_)
     return false;
-  wrap_->get_value(x,ind,D_DX,frame);
-  wrap_->get_value(y,ind,D_DY,frame);
+  wrap_->get_value(dx,ind,D_DX,frame);
+  wrap_->get_value(dy,ind,D_DY,frame);
 
-  if (x ==0 || y ==0)
+  if (dx ==0 || dy ==0)
+  {
     return false;
+  }
   
   
-  if((x*x +y*y) >shift_cut_sqr_)
+  if((dx*dx +dy*dy) >shift_cut_sqr_)
     return false;
   return true;
 }
