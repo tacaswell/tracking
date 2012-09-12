@@ -17,7 +17,7 @@
 from __future__ import division
 from numpy import *
 
-import matplotlib.pyplot as plt
+
 import random
 import itertools
 import h5py
@@ -51,15 +51,6 @@ def grid_centers(sz,spacing):
 def _add_noise(cords,mag):
     return   [c + np.matrix(np.random.standard_normal(len(c))*mag).T for c in cords]
 
-        
-class hex_plane:
-    def __init__(self,fid,size,angle):
-        self.fid = fid
-        self.part_count = size*7
-        self.x = zeros(self.part_count)
-        self.y = zeros(self.part_count)
-        # 
-
 
 def make_hdf_file(f_count,grd_sz,spc):
 
@@ -74,8 +65,8 @@ def make_hdf_file(f_count,grd_sz,spc):
         clusters = []
         cents = grid_centers(grd_sz,spc)
         for a,c in itertools.izip(range(0,grd_sz*grd_sz),cents):
-            print a
-            print (pi/3) * (a/(grd_sz*grd_sz) + 0*fr/f_count) /pi * 180
+            #            print a
+            #            print (pi/3) * (a/(grd_sz*grd_sz) + 0*fr/f_count) /pi * 180
             clusters.extend(_add_noise(_make_cluster(c,(pi/3) * (a/(grd_sz*grd_sz) + 0*fr/f_count)),.05))
             
             
