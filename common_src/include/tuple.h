@@ -559,7 +559,8 @@ T Tuple<T,length>::dist_sqr(const Tuple<T,length>& y)const
   
   for(int j = 0;j<length;++j)
   {
-    out += (data_[j]-y.data_[j])*(data_[j]-y.data_[j]);
+    T tmp =(data_[j]-y.data_[j]);
+    out += tmp*tmp;
   }
   return out;
 }
