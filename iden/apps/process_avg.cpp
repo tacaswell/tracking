@@ -88,7 +88,7 @@ using utilities::Tuple;
 
 using utilities::Attr_list_hdf;
 
-using utilities::Filter_basic;
+
 using utilities::Filter_trivial;
 using utilities::D_TYPE;
 using utilities::V_TYPE;
