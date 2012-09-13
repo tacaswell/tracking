@@ -363,8 +363,18 @@ void Mm_md_parser::parse_elements(DOMNode* pram_node, Md_store* md_store)const
 	md_store->add_element(key,type,t.c_str());
       }
       else
-	md_store->add_element(key,type,value);
-
+      {
+        try
+        {
+          md_store->add_element(key,type,value);
+        }
+        catch ( std::logic_error &e )
+        {
+          md_store->add_element(key,"string",value);
+        }
+      }
+      
+        
       XMLString::release(&key);
       XMLString::release(&type);
       XMLString::release(&value);
