@@ -256,10 +256,8 @@ Wrapper_i_plu * Iden::fill_wrapper(unsigned int frames,unsigned int start)
 			 image_bpass_thresh, 
 			 mask_rad,
                          feature_rad,
-			 counter,
-                         a,
-                         b);
-    
+			 counter);
+        
     // put it in a wrapper
 
     //     cout<<"---------------"<<endl;
@@ -520,9 +518,7 @@ Wrapper_i_plu * Iden::fill_wrapper_avg(unsigned int frames,unsigned int start)
 			 image_bpass_thresh, 
 			 mask_rad,
                          feature_rad,
-			 counter,
-                         a,
-                         b);
+			 counter);
     
     // put it in a wrapper
 
