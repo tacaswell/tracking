@@ -30,7 +30,7 @@
 #include <vector>
 #include "tuple.h"
 namespace utilities{
-class Array;
+
 class Wrapper_out;
 
 
@@ -72,23 +72,25 @@ public:
   /**
      Extracts the raw posistion along the track
    */
-  void extract_raw_pos(utilities::Array & output) const;
+  void extract_raw_pos(std::vector<float> & output,std::vector<unsigned int> & dims) const;
   /**
      gets the posistion corrected for drift
    */
-  void extract_corrected_pos(utilities::Array & output) const;
+  void extract_corrected_pos(std::vector<float> & output,std::vector<unsigned int> & dims) const;
     
   /**
      Extracts the raw frame to frame displanement along the track
    */
-  void extract_raw_disp(utilities::Array & output) const;
+  void extract_raw_disp(std::vector<float> & output,std::vector<unsigned int> & dims) const;
   /**
      gets the displacement corrected for drift
    */
-  void extract_corrected_disp(utilities::Array & output) const;
+  void extract_corrected_disp(std::vector<float> & output,std::vector<unsigned int> & dims) const;
   
   ///Constructor
   Track_box(particle_track * first);
+  // empty constructor
+  Track_box();
     
   ///Prints outs some representation of the track
   virtual void print();
@@ -181,5 +183,6 @@ protected:
 
 };
 }
+
 
 #endif

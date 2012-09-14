@@ -60,6 +60,7 @@ import_array();
 #include "corr_theta_2pt.h"
 #include "part_def.h"
 
+#include "track_box.h"
 #include "track_shelf.h"
 #include "track_accum.h"
 #include "ta_vanHove.h"
@@ -260,6 +261,20 @@ public:
  
 class hash_case;
  
+class Track_box{
+ public:
+  void extract_raw_pos(std::vector<float> & output,std::vector<unsigned int> & dims) const;
+  void extract_corrected_pos(std::vector<float> & output,std::vector<unsigned int> & dims) const;
+  void extract_raw_disp(std::vector<float> & output,std::vector<unsigned int> & dims) const;
+  void extract_corrected_disp(std::vector<float> & output,std::vector<unsigned int> & dims) const;
+  int get_length();
+  
+  Track_box();
+  ~Track_box();
+};
+ 
+ 
+
 
 class Track_shelf{ 
  public:
@@ -268,6 +283,7 @@ class Track_shelf{
   unsigned int get_track_count() const;
   void compute_corrected_TA(Trk_accumulator & ta)const;
   void init(hash_case & hc);
+  Track_box * get_track(unsigned int track_id);
   Track_shelf();
   ~Track_shelf();
   

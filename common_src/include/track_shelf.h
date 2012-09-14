@@ -229,6 +229,14 @@ public:
   
   void compute_corrected_TA_ncuts(Trk_accumulator & ta,int min_neighbors,int max_neighbors)const;
   
+  /**
+     Returns a pointer to track with id track_id.  raises
+     runtime_error of track not found
+
+     @param [in] track_id the id of the track to return
+   */
+  Track_box * get_track(unsigned int track_id) const ;
+  
   
   ///Constructor
   Track_shelf():track_count_(0){};

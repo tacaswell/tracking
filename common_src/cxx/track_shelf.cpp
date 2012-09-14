@@ -810,3 +810,17 @@ void Track_shelf::compute_corrected_TA_ncuts(Trk_accumulator & ta,int min_neighb
   }
 }
 
+Track_box * Track_shelf::get_track(unsigned int track_id) const 
+{
+  list<Track_box*>::const_iterator it_end = tracks_.end();
+  for(list<Track_box*>::const_iterator it = tracks_.begin();
+      it != it_end;++it)
+  {
+    if ( (*it) ->get_id() == track_id)
+      return *it;
+    
+  }
+  throw runtime_error("Track_shelf::Track with track_id not found");
+  
+
+}
