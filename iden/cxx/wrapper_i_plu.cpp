@@ -30,7 +30,7 @@
 #include "wrapper_i_plu.h"
 #include "part_def.h"
 
-using utilities::Wrapper_i_plu;
+using iden::Wrapper_i_plu;
 
 using utilities::Tuple;
 
@@ -44,7 +44,37 @@ using std::runtime_error;
 
 
 using utilities::Data_map;
+using utilities::D_TYPE;
+using utilities::D_INDEX;
+using utilities::D_XPOS;
+using utilities::D_YPOS;
+using utilities::D_FRAME;
+using utilities::D_I;
+using utilities::D_R2;
+using utilities::D_E;
+using utilities::D_NEXT_INDX;
+using utilities::D_PREV_INDX;
+using utilities::D_DX;
+using utilities::D_DY;
+using utilities::D_ORGX;
+using utilities::D_ORGY;
+using utilities::D_ZPOS;
+using utilities::D_TRACKID;
+using utilities::D_S_ORDER_PARAMETER ;
+using utilities::D_MULT;
+using utilities::D_SENTRY;
+using utilities::V_ERROR;
+using utilities::V_UINT;
+using utilities::V_INT;
+using utilities::V_FLOAT;
+using utilities::V_COMPLEX;
+using utilities::V_STRING;
+using utilities::V_BOOL;
+using utilities::V_TIME;
+using utilities::V_GUID;
+    
 
+  
 void Wrapper_i_plu::add_frame_data(Ipp32f data[][9], int frame,int num)
 {
   if(data_.at(frame) !=NULL)

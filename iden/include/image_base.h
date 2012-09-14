@@ -46,9 +46,14 @@ namespace utilities
 {
 template<class T,int length>
 class Tuple;
-class MD_parser;
+
 
 class Md_store;
+}
+
+namespace iden
+{
+class MD_parser;
 /**
    Enumeration of pixel sizes
 */
@@ -99,12 +104,12 @@ public:
      Returns the current plane's meta data.  Returns a pointer that
     needs to be cleaned up.  
    */
-  virtual Md_store * get_plane_md(const MD_parser & parser) const = 0;
+  virtual utilities::Md_store * get_plane_md(const MD_parser & parser) const = 0;
   
   /**
      Returns the plane dimensions
    */
-  virtual Tuple<unsigned int,2> get_plane_dims() const = 0;
+  virtual utilities::Tuple<unsigned int,2> get_plane_dims() const = 0;
   
   /**
      returns the plane scan_step

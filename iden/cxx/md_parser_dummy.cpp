@@ -40,7 +40,7 @@
 #include "md_store.h"
 #include "md_parser_dummy.h"
 using utilities::Md_store;
-using utilities::MD_parser_dummy;
+using iden::MD_parser_dummy;
 MD_parser_dummy::MD_parser_dummy()
 {
 }
@@ -50,5 +50,5 @@ MD_parser_dummy::~MD_parser_dummy()
 
 Md_store * MD_parser_dummy::parse_md(const fipImage & img_in) const
 {
-  return new Md_store();
+  return new utilities::Md_store();
 }  

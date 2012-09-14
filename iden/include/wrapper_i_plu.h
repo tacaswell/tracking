@@ -37,14 +37,14 @@
 #include "ipp.h"
 #include "tuple.h"
 
-namespace utilities{
+namespace iden{
 
 class params_matlab;
 /**
    Wrapper class for dealing with data from Peter Lu's code
 */
 
-class Wrapper_i_plu:public Wrapper_in{
+class Wrapper_i_plu:public utilities::Wrapper_in{
 
 public:
 
@@ -64,7 +64,7 @@ public:
   void print()const;
 
   
-  int get_value(int& out,int ind,D_TYPE type, int frame) const;
+  int get_value(int& out,int ind,utilities::D_TYPE type, int frame) const;
   float get_value(float &out,int ind, utilities::D_TYPE type,int frame )const;
   std::complex<float> get_value(std::complex<float> &out,int ind, utilities::D_TYPE type,int frame )const
   {throw std::logic_error("wrapper_i_plu:wrapper has no complex support");}
@@ -85,10 +85,10 @@ public:
   
   std::set<utilities::D_TYPE> get_data_types() const
   {
-    return std::set<D_TYPE>(data_types_);
+    return std::set<utilities::D_TYPE>(data_types_);
   }
   
-  Tuple<float,2> get_dims() const;
+  utilities::Tuple<float,2> get_dims() const;
   
 private:
   /**
@@ -113,7 +113,7 @@ protected:
   /**
      object for fast lookup
    */
-  Data_map data_map_;
+  utilities::Data_map data_map_;
 
   /**
      count of particles added

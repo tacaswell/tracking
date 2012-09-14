@@ -78,7 +78,7 @@ using std::exception;
 
 
 
-using utilities::Wrapper_i_plu;
+using iden::Wrapper_i_plu;
 using utilities::Wrapper_o_hdf;
 using utilities::Wrapper_i_hdf;
 
@@ -94,17 +94,17 @@ using utilities::D_TYPE;
 using utilities::V_TYPE;
 
 
-using utilities::Image_stack;
-using utilities::Image_series;
-using utilities::Image_base;
+using iden::Image_stack;
+using iden::Image_series;
+using iden::Image_base;
 
 
-using utilities::MD_parser;
-using utilities::MD_parser_dummy;
-using utilities::Mm_md_parser;
-using utilities::MD_TYPE;
-using utilities::MM;
-using utilities::NONE;
+using iden::MD_parser;
+using iden::MD_parser_dummy;
+using iden::Mm_md_parser;
+using iden::MD_TYPE;
+using iden::MM;
+using iden::NONE;
 
 
 using tracking::Master_box;

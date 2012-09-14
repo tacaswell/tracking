@@ -47,7 +47,10 @@
 namespace utilities
 {
 class Md_store;
+}
 
+namespace iden
+{
 
 /**
    A class that returns an empty Md_store object as a stand in for a proper parser
@@ -57,7 +60,7 @@ class MD_parser_dummy : public MD_parser
 public:
   MD_parser_dummy();
   ~MD_parser_dummy();
-  Md_store * parse_md(const fipImage & img_in) const;
+  utilities::Md_store * parse_md(const fipImage & img_in) const;
   
 };
 

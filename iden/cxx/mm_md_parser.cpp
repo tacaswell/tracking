@@ -82,7 +82,7 @@ using xercesc::MemBufInputSource;
 
 using xercesc::XercesDOMParser;
 
-using utilities::Mm_md_parser;
+using iden::Mm_md_parser;
 using utilities::Md_store;
 
 void parse_description(string& des,Md_store *store);

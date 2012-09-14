@@ -50,6 +50,10 @@ class fipImage;
 namespace utilities
 {
 class Md_store;
+}
+
+namespace iden
+{
 /**
    Enumeration of Meta data format types
  */
@@ -68,7 +72,7 @@ class  MD_parser
 public:
   MD_parser(){};
   virtual  ~MD_parser(){};
-  virtual Md_store * parse_md(const fipImage & img_in) const=0 ;
+  virtual utilities::Md_store * parse_md(const fipImage & img_in) const=0 ;
     
   
 };

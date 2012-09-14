@@ -52,7 +52,7 @@ using std::cerr;
 using std::endl;
 using std::vector;
 using std::logic_error;
-using utilities::Mm_md_parser;
+using iden::Mm_md_parser;
 using utilities::Md_store;
 
 using utilities::VT2str_s;

@@ -77,15 +77,10 @@
 /*//This file contains definitions for the Image2D, a container class that carries*/
 /*//around 32-bit floating point IPP images and other associated data*/
 /*//functions for importing and exporting data are also included here*/
-namespace utilities
-{
-class Image_base;
-}
-
 
 namespace iden
 {
-
+class Image_base;
 class Image2D
 {
 public:
@@ -121,11 +116,11 @@ public:
   /**
      Fill the image with data from an Image_base object
   */
-  void set_data(const utilities::Image_base & image);
+  void set_data(const Image_base & image);
   /**
      Accumulate data from an Image_base object
    */
-  void add_data(const utilities::Image_base & image);
+  void add_data(const Image_base & image);
   
   /**
         let the outside world see the pointer, 
@@ -183,7 +178,7 @@ private:
   /**
      Private helper function to deal with taking in data from Image_base objects
    */
-  void proc_data(const utilities::Image_base & image,bool add);
+  void proc_data(const Image_base & image,bool add);
   
 };
 

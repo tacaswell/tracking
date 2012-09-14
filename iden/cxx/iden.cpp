@@ -71,7 +71,7 @@ using tracking::hash_case;
 using iden::Iden;
 using iden::Image2D;
 
-using utilities::Wrapper_i_plu;
+using iden::Wrapper_i_plu;
 using utilities::Tuple;
 
 
@@ -79,7 +79,7 @@ using std::runtime_error;
 using std::logic_error;
 
 using utilities::Md_store;
-using utilities::Mm_md_parser;
+using iden::Mm_md_parser;
 
 using namespace boost::posix_time;
 using namespace boost::gregorian;
@@ -187,7 +187,7 @@ Wrapper_i_plu * Iden::fill_wrapper(unsigned int frames,unsigned int start)
     // extract meta data
     // this does not need to be cleaned up, that will be handled by the wrapper
     
-    Md_store * md_store = img_src_->get_plane_md(*parser_);
+    utilities::Md_store * md_store = img_src_->get_plane_md(*parser_);
     if(md_store->contains_key("acquisition-time-local"))
     {
       
@@ -287,12 +287,12 @@ void Iden::set_params(const Md_store & param_in)
 {
   params_ = Md_store(param_in);
 }
-void Iden::set_image_src(utilities::Image_base * img_src)
+void Iden::set_image_src(Image_base * img_src)
 {
   img_src_ = img_src;
 }
 
-void Iden::set_md_parser(utilities::MD_parser * parser)
+void Iden::set_md_parser(MD_parser * parser)
 {
   parser_ = parser;
 }

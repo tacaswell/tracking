@@ -48,8 +48,8 @@
 #include "md_parser.h"
 #include "md_store.h"
 
-using utilities::Image_stack;
-using utilities::PIX_TYPE;
+using iden::Image_stack;
+using iden::PIX_TYPE;
 
 using utilities::Md_store;
 using std::endl;
@@ -220,7 +220,7 @@ Md_store * Image_stack::get_plane_md(const MD_parser & parser)const
 
 utilities::Tuple<unsigned int,2> Image_stack::get_plane_dims()const
 {
-  Tuple<unsigned int,2> tmp;
+  utilities::Tuple<unsigned int,2> tmp;
   int rows = image_.getHeight();
   int cols = image_.getWidth();
   tmp[1] = rows;

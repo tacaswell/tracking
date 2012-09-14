@@ -76,8 +76,8 @@ using std::logic_error;
 // tac 2011-03-02
 // added to update import methods
 
-using utilities::Image_base;
-using utilities::PIX_TYPE;
+using iden::Image_base;
+using iden::PIX_TYPE;
 using utilities::Tuple;
 
 // tac 2009-09-21
@@ -183,20 +183,20 @@ void Image2D::proc_data(const Image_base & image,bool add)
   const void * data_ptr = image.get_plane_pixels();
   switch(img_type)
   {
-  case utilities::U16:	// array of unsigned short	: unsigned 16-bit
+  case U16:	// array of unsigned short	: unsigned 16-bit
     // trust the id, assume in really 16u, go on
     if(!add)
       ippiConvert_16u32f_C1R((const uint16_t *) data_ptr, in_step,imagedata_,data_step,ROIfull_);
     else
       ippiAdd_16u32f_C1IR((const uint16_t *) data_ptr,in_step,imagedata_,data_step,ROIfull_);
     break;
- case utilities::U8:	// standard image			: 1-, 4-, 8-, 16-, 24-, 32-bit  
+ case U8:	// standard image			: 1-, 4-, 8-, 16-, 24-, 32-bit  
     if(!add)
       ippiConvert_8u32f_C1R((const uint8_t *) data_ptr, in_step,imagedata_,data_step,ROIfull_);
     else
       ippiAdd_8u32f_C1IR((const uint8_t *) data_ptr,in_step,imagedata_,data_step,ROIfull_);
     break;
-  case utilities::S16:	// array of short			: signed 16-bit
+  case S16:	// array of short			: signed 16-bit
     // trust the id, assume in really 16s, go on
     if(!add)
       ippiConvert_16s32f_C1R((const int16_t *)data_ptr, in_step,imagedata_,data_step,ROIfull_);
@@ -204,14 +204,14 @@ void Image2D::proc_data(const Image_base & image,bool add)
       throw logic_error("Due to a gap in IPP this adding is not supported in this mode");
     //   ippiAdd_16s32f_C1IR((const int16_t *) data_ptr,in_step,imagedata_,data_step,ROIfull_);
     break;
-  case utilities::F32:	// array of float			: 32-bit IEEE floating point
+  case F32:	// array of float			: 32-bit IEEE floating point
     // trust the id, assume in really 32f, go on
     if(!add)
       ippiCopy_32f_C1R((const float *) data_ptr, in_step,imagedata_,data_step,ROIfull_);
      else
        ippiAdd_32f_C1IR((const float *) data_ptr,in_step,imagedata_,data_step,ROIfull_);
     break;
-  case utilities::ERROR:
+  case ERROR:
     throw logic_error("An object with the pixeltype error should have never gotten to this function");
     
     

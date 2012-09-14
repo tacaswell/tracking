@@ -25,10 +25,10 @@
 #include "image_stack.h"
 
 using std::string;
-using utilities::Image_stack;
-using utilities::Image_series;
-using utilities::Mm_md_parser;
-using utilities::MD_parser_dummy;
+using iden::Image_stack;
+using iden::Image_series;
+using iden::Mm_md_parser;
+using iden::MD_parser_dummy;
 using utilities::Md_store;
 using std::endl;
 using std::cout;

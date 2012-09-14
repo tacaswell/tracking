@@ -55,11 +55,11 @@
 
 
 
-using utilities::Image_series;
+using iden::Image_series;
 using utilities::Md_store;
 using utilities::format_name;
 
-using utilities::PIX_TYPE;
+using iden::PIX_TYPE;
 using std::invalid_argument;
 
 using std::endl;
@@ -245,7 +245,7 @@ Md_store * Image_series::get_plane_md(const MD_parser & parser) const
 
 utilities::Tuple<unsigned int,2> Image_series::get_plane_dims() const
 {
-  Tuple<unsigned int,2> tmp;
+  utilities::Tuple<unsigned int,2> tmp;
   int rows = image_.getHeight();
   int cols = image_.getWidth();
   tmp[1] = rows;
@@ -274,7 +274,7 @@ Image_series::~Image_series()
   
 }
 
-std::string utilities::format_name(const std::string & dirname,
+std::string iden::format_name(const std::string & dirname,
 			const std::string & basename,
 			int padding,
 			unsigned int plane)
@@ -290,14 +290,14 @@ std::string utilities::format_name(const std::string & dirname,
 }
 
 
-utilities::PIX_TYPE Image_series::get_pixel_type() const
+iden::PIX_TYPE Image_series::get_pixel_type() const
 {
   unsigned pix_size = image_.getBitsPerPixel();
   if(pix_size == 16)
-    return utilities::U16;
+    return iden::U16;
   if(pix_size == 8)
-    return utilities::U8;
-  return utilities::ERROR;
+    return iden::U8;
+  return iden::ERROR;
   
 }
 
