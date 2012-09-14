@@ -42,7 +42,7 @@
 #define IDEN_OBJ
 #include <string>
 
-#include "params1.h"
+#include "md_store.h"
 
 namespace tracking
 {
@@ -55,6 +55,7 @@ namespace utilities
 class Wrapper_i_plu;
 class Image_base;
 class MD_parser;
+class Md_store;
 
 }
 
@@ -68,17 +69,17 @@ namespace iden
 class Iden
 {
 public:
-  Iden(Params& in):params_(in)
+  Iden(const utilities::Md_store& in):params_(in)
   {
   };			// needs arguements
   ~Iden(){};
   
   void set_image_src(utilities::Image_base * image);
   void set_md_parser(utilities::MD_parser * parser);
-  void set_params(const Params& param_in);
+  void set_params(const utilities::Md_store& param_in);
   
   utilities::Wrapper_i_plu * fill_wrapper(unsigned int frames=0,unsigned int start=0);
-  utilities::Wrapper_i_plu * fill_wrapper_avg(unsigned int avg_count,unsigned int frames=0,unsigned int start=0);
+  utilities::Wrapper_i_plu * fill_wrapper_avg(unsigned int frames=0,unsigned int start=0);
   
 private:
   /**
@@ -95,7 +96,7 @@ private:
   /**
      Parameter object, holds the parameters for the image processing
    */
-  Params params_;
+  utilities::Md_store params_;
   
 };
 

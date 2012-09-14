@@ -41,7 +41,7 @@
 
 #include "wrapper_i_plu.h"
 #include "iden.h"
-#include "params1.h"
+
 
 #include "master_box_t.h"
 #include "particle_base.h"
@@ -104,7 +104,7 @@ using tracking::particle;
 using tracking::hash_case;
 
 using iden::Iden;
-using iden::Params;
+
 
 using H5::H5File;
 using H5::Group;
@@ -159,9 +159,6 @@ int main(int argc, char * const argv[])
   
   cout<<"file to read in: "<<data_file<<endl;
   cout<<"file that will be written to: "<<proc_file<<endl;
-    
-  float hwhm,thresh,top_cut;
-  int feature_rad,dilation_rad, mask_rad;
   
     
   int comp_num;
@@ -178,27 +175,7 @@ int main(int argc, char * const argv[])
        iden_prams.contains_key("top_cut") &&
        iden_prams.contains_key("mask_rad")))
     throw logic_error("process:: parameter file does not contain enough parameters");
-  try
-  {
-    iden_prams.get_value("threshold",thresh);
-    iden_prams.get_value("p_rad",feature_rad);
-    iden_prams.get_value("hwhm",hwhm);
-    iden_prams.get_value("d_rad",dilation_rad);
-    iden_prams.get_value("mask_rad",mask_rad);
-    iden_prams.get_value("top_cut",top_cut);
-  }
-  catch(logic_error & e)
-  {
-    cerr<<"error parsing the parameters"<<endl;
-    cerr<<e.what()<<endl;
-    return -1;
-  }
-
-
-  // build the parameters object for shoving into the iden object
-  Params p(feature_rad,hwhm,dilation_rad,thresh,mask_rad,top_cut);
-  p.PrintOutParameters(std::cout);
-
+  
   
   // read parameters from xml that have do to with logistics
   Read_config comp_prams(pram_file,"comp");
@@ -223,9 +200,8 @@ int main(int argc, char * const argv[])
     string file_name;
     comp_prams.get_value("file_name",file_name);
     Image_stack * tmp = new Image_stack(file_name);
-    img_src = (Image_base *) tmp;
     tmp->initialize();
-    
+    img_src = tmp;    
   }
   else
     throw runtime_error("did not provide a file name in the xml file");
@@ -267,7 +243,7 @@ int main(int argc, char * const argv[])
     break;
   }
   
-  Iden iden(p);
+  Iden iden(*iden_prams.get_store());
   iden.set_image_src(img_src);
   iden.set_md_parser(md_parser);
   

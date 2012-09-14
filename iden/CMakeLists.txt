@@ -5,7 +5,6 @@ SET(COMMON_IDEN_SRC
   ${IDEN_SRC_PATH}/data_proc1.cpp
   ${IDEN_SRC_PATH}/image1.cpp
   ${IDEN_SRC_PATH}/kernel1.cpp
-  ${IDEN_SRC_PATH}/params1.cpp
   ${IDEN_SRC_PATH}/iden.cpp
   ${IDEN_SRC_PATH}/wrapper_i_plu.cpp
   )

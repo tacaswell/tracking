@@ -41,7 +41,7 @@
 
 #include "wrapper_i_plu.h"
 #include "iden.h"
-#include "params1.h"
+
 
 #include "master_box_t.h"
 #include "particle_base.h"
@@ -112,7 +112,7 @@ using tracking::particle;
 using tracking::hash_case;
 
 using iden::Iden;
-using iden::Params;
+
 
 using H5::H5File;
 using H5::Group;
@@ -172,8 +172,6 @@ int main(int argc, char * const argv[])
   cout<<"file to read in: "<<in_file<<endl;
   cout<<"file that will be written to: "<<out_file<<endl;
     
-  float hwhm,thresh,top_cut;
-  int feature_rad,dilation_rad, mask_rad,avg_count;
   Tuple<float,2> dims;
     
   int comp_num;
@@ -224,23 +222,6 @@ int main(int argc, char * const argv[])
        iden_prams.contains_key("avg_count") &&
        iden_prams.contains_key("mask_rad")))
     throw logic_error("process:: parameter file does not contain enough parameters");
-  try
-  {
-    iden_prams.get_value("threshold",thresh);
-    iden_prams.get_value("p_rad",feature_rad);
-    iden_prams.get_value("hwhm",hwhm);
-    iden_prams.get_value("d_rad",dilation_rad);
-    iden_prams.get_value("mask_rad",mask_rad);
-    iden_prams.get_value("top_cut",top_cut);
-    iden_prams.get_value("avg_count",avg_count);
-  }
-  catch(logic_error & e)
-  {
-    cerr<<"error parsing the parameters"<<endl;
-    cerr<<e.what()<<endl;
-    return -1;
-  }
-  
   
 
 
@@ -256,10 +237,7 @@ int main(int argc, char * const argv[])
   //     throw logic_error("process: failure to parse group name");
     
 
-  
-  Params p(feature_rad,hwhm,dilation_rad,thresh,mask_rad,top_cut);
-  p.PrintOutParameters(std::cout);
-  
+    
     
 
   
@@ -321,9 +299,9 @@ int main(int argc, char * const argv[])
   }
   
 
-  Iden iden(p);
+
   
-  
+  Iden iden(*iden_prams.get_store());
   iden.set_image_src(img_src);
   iden.set_md_parser(md_parser);
   
@@ -332,7 +310,7 @@ int main(int argc, char * const argv[])
 
     
     
-  Wrapper_i_plu *  wp = iden.fill_wrapper_avg(avg_count);
+  Wrapper_i_plu *  wp = iden.fill_wrapper_avg();
   cout<<"number of entries in wrapper: "<<wp->get_num_entries()<<endl;
   
   delete img_src;

@@ -62,6 +62,7 @@ using std::string;
 
 
 using std::cout;
+using std::cerr;
 using std::endl;
 
 
@@ -75,6 +76,7 @@ using utilities::Tuple;
 
 
 using std::runtime_error;
+using std::logic_error;
 
 using utilities::Md_store;
 using utilities::Mm_md_parser;
@@ -89,8 +91,39 @@ Wrapper_i_plu * Iden::fill_wrapper(unsigned int frames,unsigned int start)
     throw runtime_error("Iden: did not provide a image source");
   if(!parser_)
     throw runtime_error("Iden: did not provide a meta data parser");
-
   
+  // get parameters out of the md_store object
+  float hwhm,thresh,top_cut,a,b;
+  int feature_rad,dilation_rad, mask_rad;
+
+  try
+  {
+    params_.get_value("threshold",thresh);
+    params_.get_value("p_rad",feature_rad);
+    params_.get_value("hwhm",hwhm);
+    params_.get_value("d_rad",dilation_rad);
+    params_.get_value("mask_rad",mask_rad);
+    params_.get_value("top_cut",top_cut);
+  }
+  catch(logic_error & e)
+  {
+    std::cerr<<"Iden::error parsing the parameters"<<std::endl;
+    std::cerr<<e.what()<<std::endl;
+    throw;
+    
+  }
+  
+  if(params_.contains_key("a"))
+    params_.get_value("a",a);
+  else
+    a = -1;
+  if(params_.contains_key("b"))
+    params_.get_value("b",b);
+  else
+    b = .2;
+
+
+
   Wrapper_i_plu * wrapper = NULL;
   unsigned int img_frames = img_src_->get_frame_count();
 
@@ -148,7 +181,7 @@ Wrapper_i_plu * Iden::fill_wrapper(unsigned int frames,unsigned int start)
 
 
     // trim off the top .1% of the pixels to deal with outliers
-    image_in.trim_max(params_.get_top_cut());
+    image_in.trim_max(top_cut);
     
     
     // extract meta data
@@ -196,16 +229,18 @@ Wrapper_i_plu * Iden::fill_wrapper(unsigned int frames,unsigned int start)
     
     status = BandPass_2D(image_in,
 			 image_bpass,
-			 params_.get_feature_radius(),
-			 params_.get_hwhm_length());
+                         feature_rad,
+                         hwhm);
+    
 
 
     
     status = FindLocalMax_2D(image_bpass,
 			     image_bpass_thresh,
 			     image_localmax,
-			     params_.get_pctle_threshold(),
-			     params_.get_dilation_radius());
+			     thresh,
+                             dilation_rad);
+    
     
     
     
@@ -219,9 +254,11 @@ Wrapper_i_plu * Iden::fill_wrapper(unsigned int frames,unsigned int start)
     Ipp32f (*particledata)[9] =
       ParticleStatistics(image_localmax,
 			 image_bpass_thresh, 
-			 params_.get_mask_radius(),
-			 params_.get_feature_radius(),
-			 counter);
+			 mask_rad,
+                         feature_rad,
+			 counter,
+                         a,
+                         b);
     
     // put it in a wrapper
 
@@ -246,9 +283,9 @@ Wrapper_i_plu * Iden::fill_wrapper(unsigned int frames,unsigned int start)
 
 }
 
-void Iden::set_params(const Params & param_in)
+void Iden::set_params(const Md_store & param_in)
 {
-  params_ = Params(param_in);
+  params_ = Md_store(param_in);
 }
 void Iden::set_image_src(utilities::Image_base * img_src)
 {
@@ -260,7 +297,7 @@ void Iden::set_md_parser(utilities::MD_parser * parser)
   parser_ = parser;
 }
 
-Wrapper_i_plu * Iden::fill_wrapper_avg(unsigned int avg_count,unsigned int frames,unsigned int start)
+Wrapper_i_plu * Iden::fill_wrapper_avg(unsigned int frames,unsigned int start)
 {
   
   if(!img_src_)
@@ -270,6 +307,41 @@ Wrapper_i_plu * Iden::fill_wrapper_avg(unsigned int avg_count,unsigned int frame
 
   Wrapper_i_plu * wrapper = NULL;
   unsigned int img_frames = img_src_->get_frame_count();
+
+  float hwhm,thresh,top_cut,a,b;
+  int feature_rad,dilation_rad, mask_rad;
+  unsigned int avg_count;
+
+  try
+  {
+    params_.get_value("threshold",thresh);
+    params_.get_value("p_rad",feature_rad);
+    params_.get_value("hwhm",hwhm);
+    params_.get_value("d_rad",dilation_rad);
+    params_.get_value("mask_rad",mask_rad);
+    params_.get_value("top_cut",top_cut);
+    params_.get_value("avg_count",avg_count);
+  }
+  catch(logic_error & e)
+  {
+    cerr<<"error parsing the parameters"<<endl;
+    cerr<<e.what()<<endl;
+    throw;
+    
+  }
+  
+
+  if(params_.contains_key("a"))
+    params_.get_value("a",a);
+  else
+    a = -1;
+  if(params_.contains_key("b"))
+    params_.get_value("b",b);
+  else
+    b = .2;
+
+
+
 
 
   if(start > img_frames)
@@ -413,7 +485,7 @@ Wrapper_i_plu * Iden::fill_wrapper_avg(unsigned int avg_count,unsigned int frame
 
     
     // trim off the top fraction of pixels
-    image_in.trim_max(params_.get_top_cut());
+    image_in.trim_max(top_cut);
 
     RecenterImage(image_in);
 
@@ -421,16 +493,18 @@ Wrapper_i_plu * Iden::fill_wrapper_avg(unsigned int avg_count,unsigned int frame
     
     status = BandPass_2D(image_in,
 			 image_bpass,
-			 params_.get_feature_radius(),
-			 params_.get_hwhm_length());
+                         feature_rad,
+                         hwhm);
+    
 
 
     
     status = FindLocalMax_2D(image_bpass,
 			     image_bpass_thresh,
 			     image_localmax,
-			     (int)params_.get_pctle_threshold(),
-			     params_.get_dilation_radius());
+			     thresh,
+                             dilation_rad);
+    
     
 
     
@@ -444,9 +518,11 @@ Wrapper_i_plu * Iden::fill_wrapper_avg(unsigned int avg_count,unsigned int frame
     Ipp32f (*particledata)[9] =
       ParticleStatistics(image_localmax,
 			 image_bpass_thresh, 
-			 params_.get_mask_radius(),
-			 params_.get_feature_radius(),
-			 counter);
+			 mask_rad,
+                         feature_rad,
+			 counter,
+                         a,
+                         b);
     
     // put it in a wrapper
 

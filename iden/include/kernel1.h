@@ -45,7 +45,7 @@
 #define KERNEL1_H
   
 #include "ipp.h"
-#include "params1.h"
+
 
 /*//This file contains the code for creating the different kernels*/
 
