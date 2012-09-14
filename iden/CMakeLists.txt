@@ -36,5 +36,21 @@ include_directories(${IDEN_INC_PATH})
 #set(LIBS ${LIBS} ${IPPC_LIB})
 #
 
+  # all the infrastructure that 
+add_library(ciden2D SHARED
+  ${COMMON_IDEN_SRC}
+  ${MD_PARSE_SRC}
+  ${IMG_WRAPPER_SRC}
+  )
+set_target_properties(ciden2D PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_COUNT=2")
+target_link_libraries(ciden2D
+  ${IPP_LIBRARIES} 
+  ${HDF5_LIBRARIES}
+  ${FreeImage_LIBRARIES}
+  ${XERCESC_LIBRARY}
+  ${Boost_LIBRARIES}
+  )
+
+
 add_subdirectory(apps)
 add_subdirectory(testing)
