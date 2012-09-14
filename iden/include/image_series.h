@@ -54,7 +54,7 @@ class Image_series:public Image_base
 {
 public:
   Image_series();
-    ~Image_series();
+  ~Image_series();
   void select_plane(unsigned int plane);
   const void * get_plane_pixels() const;
   utilities::Md_store * get_plane_md(const MD_parser & parser) const;
