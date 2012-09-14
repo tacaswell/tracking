@@ -115,11 +115,6 @@ public:
   {
     return length_;
   };
-  
-  /**
-     plots the intensity as a function of position along the track
-   */
-  void plot_intensity() const;
   /**
      Outputs the particles in a track-centric format
    */
