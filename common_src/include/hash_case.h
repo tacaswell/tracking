@@ -126,7 +126,7 @@ public:
   /**
      returns the number of frames in the hash case
   */
-  int get_num_frames() const
+  unsigned int get_num_frames() const
   {
     return h_case_.size();
   }
