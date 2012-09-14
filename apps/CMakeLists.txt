@@ -1,8 +1,5 @@
-# app
-SET(GNU_PLOT_SRC
-  ${PROJECT_SOURCE_DIR}/external_src/gnu_wrapper/gnuplot_i.cpp
-)
-include_directories(${TRACKING_SOURCE_DIR}/external_src/gnu_wrapper)
+
+
 
 
 #message(status "common source is ${COMMON_SRC}")
@@ -30,7 +27,6 @@ add_executable(gofr3D gofr3D_hdf.cpp ${COMMON_SRC}
  ${UTIL_SRC}
  ${HDF_SRC}
  ${CORR_SRC}
- ${GNU_PLOT_SRC}
  ${COMMON_HASH_SRC} 
  ${COMMON_WRAPPER_SRC} 
  ${CONFIG_SRC}
@@ -83,7 +79,6 @@ set_target_properties(vanHove PROPERTIES COMPILE_DEFINITIONS  "PTYPE=1;DIM_COUNT
 
 
 add_executable(msd_sweep msd_sweep 
-  ${GNU_PLOT_SRC}
   )
 target_link_libraries(msd_sweep
   ctracking2D
