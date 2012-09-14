@@ -95,44 +95,6 @@ set_target_properties(vanHove_sweep PROPERTIES COMPILE_DEFINITIONS  "PTYPE=1;DIM
 
 
 
-# add_executable(goftheta_hdf goftheta_hdf.cpp ${COMMON_SRC}
-#  ${UTIL_SRC}
-#  ${HDF_SRC}
-#  ${CORR_SRC}
-#  ${GNU_PLOT_SRC}
-#  ${COMMON_HASH_SRC} 
-#  ${COMMON_WRAPPER_SRC} 
-# )
-# #message(STATUS "Found HDF: ${HDF5_LIBRARIES}")
-# target_link_libraries(goftheta_hdf ${HDF5_LIBRARIES} )
-# set_target_properties(goftheta_hdf PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_COUNT=2")
-
-
-# add_executable(track_stats track_stats
-#   )
-# target_link_libraries(track_stats
-#   ctracking2D
-#   )
-# set_target_properties(track_stats PROPERTIES COMPILE_DEFINITIONS  "PTYPE=1;DIM_COUNT=2")
-
-
-# add_executable(sofq sofq.cpp 
-#   ${COMMON_SRC}
-#   ${HDF_SRC}
-#   ${CORR_SRC}
-#   ${GNU_PLOT_SRC}
-#   ${COMMON_HASH_SRC} 
-#   ${COMMON_WRAPPER_SRC} 
-#   ${CONFIG_SRC}
-#   ${ACCUM_SCR}
-# )
-# target_link_libraries(sofq
-#   ${HDF5_LIBRARIES} 
-#   ${XERCESC_LIBRARY} 
-# )
-# set_target_properties(sofq PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_COUNT=2")
-
-
 
 add_executable(gofr_jb gofr_general
   ${COMMON_SRC_PATH}/wrapper_i_jb_binary.cpp
