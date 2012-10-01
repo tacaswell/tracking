@@ -4,20 +4,19 @@ development machine, website, and a short description.
 I tend to update the installed libraries semi-consistently.
 
 
-** hdf5 (1.8.5) http://www.hdfgroup.org/downloads/index.html
+** [[http://www.hdfgroup.org/downloads/index.html][hdf5 (1.8.5)]]
    - Used to store particle locations
    - set HDF5_ROOT in CMakeLists.txt to point to location if in
      non-standard location
    - own license, but very permissive
 
-** freeimage 
+** [[http://freeimage.sourceforge.net/][freeimage]]
    - (CVS version)
-   - http://freeimage.sourceforge.net/
    - Used to get image data out of *.tif
    - set FREEIMAGE_ROOT in iden/CMakeLists.txt if in non-standard location.
    - GPL or commercial, used with commercial license to play nice with IPP
 
-** IPP (5.3.4.080)  http://software.intel.com/en-us/intel-ipp/
+** [[http://software.intel.com/en-us/intel-ipp/][IPP (5.3.4.080)]]
    - Used to process images
    - set IPP_ROOT in iden/CMakeLists.txt if in non-standard location.
    - Closed license, I can not distribute the header, 
@@ -25,76 +24,86 @@ I tend to update the installed libraries semi-consistently.
      - ok against apache, hdf, and free image commercial 
    
 
-** xerces (3.0.1) http://xerces.apache.org/xerces-c/
+** [[http://xerces.apache.org/xerces-c/][xerces (3.0.1)]]
   - Used for parsing xml paramter files
   - set XERCESC_ROOT in CMakeLists.txt if in non-standard location.
   - Apache 2.0, kosher to pull into GPL project, kosher to link against IPP
 
-** Boost::date_time (from debian stable) http://www.boost.org/
+** [[http://www.boost.org/][Boost::date_time]] (from debian stable) 
  - Used to parse dates
  - if not in standard location, set BOOST_ROOT
  - super permissive license 
 
-** sqlite (3.7.3) http://www.sqlite.org/
-  - used to (in the future) talk to the database of data sets
+** [[http://www.sqlite.org/][sqlite (3.7.3)]]
+  - used to talk to the database of data sets and computations
   - public domain
 
-* external code that is in the repository
-** gnu_wrapper (modified from original) http://code.google.com/p/gnuplot-cpp/
-   + used to make plots in c++
-   + will be removed eventually
-   + GPL2
 * Required python modules:
  - h5py (svn version) http://code.google.com/p/h5py/
- - Numpy + Scipy
+ - Numpy
+ - scipy 
+ - PIL
 
 
 
 * Required External Programs
-** Cmake
- - http://www.cmake.org/
+** [[http://www.cmake.org/][Cmake]]
  - build system
  - more recent the version, the better
  - need to patch and build from source if you want to compile mex file
    (see Matlab below)
 
 ** GNU compiler
- - this is what I use, no promises anything else will work
- - if you want to compile mex, the version needs to match what your
-   copy of matlab was compiled with
+ - I do not think I use any GNU extension.
+ - if you want to compile the =mex= functions, the version needs to
+   match what your version of matlab was compiled with.
 
-** git 
- - http://git-scm.com/
- - http://github.com/tacaswell/tracking
- - git://github.com/tacaswell/tracking.git
+** [[http://git-scm.com/][git]]
+ - Version control software
+ - any version should do
 
-** doxygen
- - optional
- - used to generate documentation 
+
+
+* optional External Programs
+** [[http://www.swig.org/][SWIG]]
+ - generates python wrappers
+
+** [[http://www.stack.nl/~dimitri/doxygen/][doxygen]]
+ - used to generate [[http://jfi.uchicago.edu/~tcaswell/track_doc/][documentation]]
 
 * Compile
-Assumes that the source is in SOURCE_PATH and is being built in
-BUILD_PATH which is a different folder.  Running the builds out of
-source is crucial because there are several different configurations
-that are useful and if they are built in-source will conflict with
-each other.
+Assumes that the source is in =SOURCE_PATH= and is being built in
+=BUILD_PATH= which is a different directory.  
+
+
+The =-DCMAKE_BUILD_TYPE= option controls the compiler flags.  Useful options are
+=Release= and  =Debug= [[http://www.cmake.org/Wiki/CMake_Useful_Variables][(doc)]].
+
+
+
+** basic
+This will build a collection of analysis programs, two libraries 
+
+In =BUILD_DIR=:
+
+
+:    cmake SOURCE_PATH -DCMAKE_BUILD_TYPE=Release
+
 
 ** Iden
-This builds two programs, Iden and Iden_avg, for finding features.
-Iden_avg averages frames together before finding particles.
+This builds two programs, =Iden= and =Iden_avg=, for finding features.
+=Iden_avg= averages frames together before finding particles.
 
-In BUILD_PATH:
+In =BUILD_PATH=:
 
-<src lang='shell'> 
-   cmake SOURCE_PATH -DCOMPILE_IDEN=1 -DBUILD_TYPE=release 
-</src> 
 
-To get debugging or profiling binaries change the last argument to 'Debug'
-or 'profile'.  -DBULID_TYPE is optional.
+:   cmake SOURCE_PATH -DCOMPILE_IDEN=1 -DCMAKE_BUILD_TYPE=Release 
 
-Once that is done calling <src lang='shell'>make</src> in
-BUILD_PATH should compile everything.  If you have the resources to
-throw at it the flag '-j N' will compile in parallel.
+
+** testing
+This compiles a collection of badly documented test programs that may
+or may not test anything useful.  This might get cleaned up some day,
+but it is not high on the to-do list.
 
 ** Matlab
 This will build a collection of matlab mex files.  I do not use these
@@ -102,30 +111,14 @@ regularly and they may not compile, and if they do may be broken.
 
 In BUILD_DIR:
 
-<src lang= shell'>
-    CC=mex CXX=mex cmake MATLAB_MEX_FILE=1 SOURCE_PATH
-</src>
+
+:    CC=mex CXX=mex cmake MATLAB_MEX_FILE=1 SOURCE_PATH
+
 
 Note that this sets environment variables before calling cmake.  This
 requires a patch to cmake
 (http://public.kitware.com/Bug/view.php?id=9240) to work properly.
 Also see http://www.vtk.org/Wiki/CMake:MatlabMex
-
-** basic
-This builds a collection of programs for processing feature locations.
-These are what I use the most so they likely work properly, but are
-liable to change without warning.
-
-In BUILD_DIR:
-
-<src lang= shell'>
-    cmake SOURCE_PATH -DBULID_TYPE=release
-</src>
-
-** testing
-This compiles a collection of badly documented test programs that may
-or may not test anything useful.  This might get cleaned up some day,
-but it is not high on the to-do list.
 
 
 * Install
@@ -134,8 +127,8 @@ binaries out of the build directory or manually copy them into your
 path.
 
 For the python wrappers to work properly 
-<src lang = 'python'>
-_rel_path,_dbg_path
-</src>
+
+:_rel_path,_dbg_path
+
 in SOURCE_PATH/script_src/python/trackpy/cpp_wrapper.py
 need to point to BUILD_PATH/apps.
