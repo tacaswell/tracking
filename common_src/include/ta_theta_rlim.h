@@ -35,8 +35,9 @@ namespace tracking
 {
 
 /**
-   Track accumulator that implements computation of van Hove
-   functions.
+   Track accumulator that computes the distribution of displacement
+   direction for displacements with in the given range of displacement
+   magnitudes.
  */
 class TA_theta_rlim: public Trk_accumulator
 {
