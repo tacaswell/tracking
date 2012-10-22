@@ -43,7 +43,9 @@
 namespace tracking
 {
 /**
-   simple g(r) computation
+   simple \f$g(\theta)\f$ computation.  This is the three-point
+   correlation function of opening angle of two particles around a
+   joint particle.
  */
 class Corr_goftheta:public Corr
 {
