@@ -35,8 +35,8 @@ namespace tracking
 {
 
 /**
-   Track accumulator that implements computation of van Hove
-   functions.
+   Track accumulator that computes the distribution of \f$P(\theta)\f$ and \f$P(r)\f$ for
+   displacements.
  */
 class TA_disp: public Trk_accumulator
 {
