@@ -41,8 +41,8 @@ namespace tracking
 {
 
 /**
-   Track accumulator that implements computation of van Hove
-   functions.
+   Track accumulator that implements computation of the mean squared
+   displacement.  
  */
 class TA_msd: public Trk_accumulator
 {
