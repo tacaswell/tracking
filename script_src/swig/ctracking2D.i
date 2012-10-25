@@ -58,6 +58,7 @@ import_array();
 #include "corr.h"
 #include "corr_gofr.h"
 #include "corr_theta_2pt.h"
+#include "corr_pair_diffusion.h"
 #include "part_def.h"
 
 #include "track_box.h"
@@ -122,6 +123,26 @@ class Corr_theta_2pt :public Corr
   Corr_theta_2pt(int t_bins,float min_r, float max_r);
   void out_to_wrapper(utilities::Generic_wrapper & wrapper_out,const std::string & g_name,const utilities::Md_store * md_store) const ;
 };
+
+
+class Corr_pair_diffusion :public Corr
+{
+ public:
+  float get_max_range() const;
+  void out_to_wrapper(utilities::Generic_wrapper & wrapper_out,const std::string & g_name,const utilities::Md_store * md_store) const ;
+  Corr_pair_diffusion(unsigned int n_dbins,
+                      float max_disp,
+                      unsigned int n_rbins,
+                      float min_r,
+                      float max_r,
+                      unsigned int min_t,
+                      unsigned int t_stride,
+                      unsigned int t_step_count);
+  
+
+  
+};
+
 
 class Accumulator
 {
