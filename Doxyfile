@@ -1246,7 +1246,8 @@ INCLUDE_FILE_PATTERNS  =
 # instead of the = operator.
 
 PREDEFINED             = "DIM_COUNT=2"\
-                         "PTYPE=1"
+                         "PTYPE=1"\
+                         "TRACKING_FLG"
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then 
 # this tag can be used to specify a list of macro names that should be expanded. 
