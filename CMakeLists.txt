@@ -78,6 +78,10 @@ SET(CORR_SRC
   ${COMMON_SRC_PATH}/corr_goftheta
 )
 
+SET(CORR_TRACK_SRC
+  ${CORR_SRC}
+  ${COMMON_SRC_PATH}/corr_pair_diffusion
+)
 
 SET(ACCUM_SCR
   ${COMMON_SRC_PATH}/accum_sofq_ND.cpp
@@ -244,7 +248,7 @@ if(COMPILE_BASIC)
     ${COMMON_TRACK_SRC}
     ${HASH_TRACK_SRC}
     ${HDF_SRC}
-    ${CORR_SRC}
+    ${CORR_TRACK_SRC}
     ${CONFIG_SRC}
     ${SQL_CODE}
     ${TRK_ACCUM_SRC}
