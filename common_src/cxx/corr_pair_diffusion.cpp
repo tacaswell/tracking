@@ -29,11 +29,14 @@
 #ifdef TRACKING_FLG
 // this code only works for 2D
 #if DIM_COUNT == 2
+#include <stdexcept>
 
 #include "corr_pair_diffusion.h"
 #include "particle_track.h"
 #include "generic_wrapper.h"
-#include <stdexcept>
+#include "enum_utils.h"
+#include "md_store.h"
+
 
 
 using std::runtime_error;
@@ -41,9 +44,11 @@ using std::vector;
 using std::string;
 
 using utilities::Generic_wrapper;
+using utilities::Tuplef;
+using utilities::Md_store;
+using utilities::format_name;
 
-
-using tracking::Corr_gofr;
+using tracking::Corr_pair_diffusion;
 using tracking::particle;
 Corr_pair_diffusion::Corr_pair_diffusion(unsigned int n_dbins,
                                          float max_disp,
@@ -53,12 +58,13 @@ Corr_pair_diffusion::Corr_pair_diffusion(unsigned int n_dbins,
                                          unsigned int min_t,
                                          unsigned int t_stride,
                                          unsigned int t_step_count):
-  data_(t_step_count,vector<utilities::histogram>(n_rbins,utilities::histogram(n_dbins,-max_disp,max_disp))),
+  data_prll_(t_step_count,vector<utilities::Histogram>(n_rbins,utilities::Histogram(n_dbins,-max_disp,max_disp))),
+  data_perp_(t_step_count,vector<utilities::Histogram>(n_rbins,utilities::Histogram(n_dbins,-max_disp,max_disp))),
   min_r_(min_r),
   max_r_(max_r),
-  n_rbins_(n_rbins)
+  n_rbins_(n_rbins),
   min_r_square_(min_r*min_r),
-  max_r_square_(max_r*max_r)
+  max_r_square_(max_r*max_r),
   min_t_(min_t),
   t_stride_(t_stride),
   t_step_count_(t_step_count)
@@ -70,11 +76,12 @@ Corr_pair_diffusion::Corr_pair_diffusion(unsigned int n_dbins,
   
 
 
-void Corr_gofr::compute(const particle * p_in,const vector<const particle*> & nhood)
+void Corr_pair_diffusion::compute(const particle * p_in,const vector<const particle*> & nhood)
 {
 
   unsigned int max_j = nhood.size();
-  tuplef pos_in = p_in->get_position()
+  Tuplef pos_in = p_in->get_position();
+  
   for(unsigned int j = 0; j<max_j;++j)
   {
     // pick out the next particle from the neighborhood 
@@ -83,101 +90,122 @@ void Corr_gofr::compute(const particle * p_in,const vector<const particle*> & nh
     if(p_in == p_nhood)
       continue;
     
-    tuplef pos_nhood = p_nhood->get_position();
+    Tuplef pos_nhood = p_nhood->get_position();
     
     // make sure we only do each pair once.
     if( pos_nhood[0] < pos_in[0])
-      continue
+      continue;
+    
 
     float tmp_d = p_in->distancesq(p_nhood);
-    if(tmp_d<max_r_square_ || tmp_d > min_r_square_)
+    if(tmp_d<max_r_square_ && tmp_d > min_r_square_)
     {
       // set up variables
-      tuplef prll_director = pos_nhood - pos_in;
+      Tuplef prll_director = pos_nhood - pos_in;
       prll_director.make_unit();
-      tuplef perp_director = tuplef(-prll_director[1],prll_director[0]);
+      Tuplef perp_director = Tuplef(-prll_director[1],prll_director[0]);
       
-      unsigned int r_ind = (unsigned int) (n_rbins * (sqrt(tmp_d) - min_r_)/(max_r_-min_r_);
-      const particle * p_in_nxt,p_nhood_nxt,p_in_cur,p_nhood_cur;
-      p_in_cur = p_in;
-      p_nhood_cur = p_nhood;
+      unsigned int r_ind = (unsigned int) (n_rbins_ * (sqrt(tmp_d) - min_r_)/(max_r_-min_r_));
       
+      const particle * p_in_nxt=NULL;
+      const particle * p_nhood_nxt=NULL;
+            
       // get first set of displacements
       if(!(p_in->step_forwards(min_t_,p_in_nxt) && 
            p_nhood->step_forwards(min_t_,p_nhood_nxt)))
         continue;
       for(unsigned int t = 0; t<t_step_count_;++t)
       {
-        tuplef rel_disp = (p_nhood->get_corrected_disp(p_nhood_nxt) -
+        Tuplef rel_disp = (p_nhood->get_corrected_disp(p_nhood_nxt) -
                            p_in->get_corrected_disp(p_in_nxt));
         
         data_prll_.at(t).at(r_ind).add_data_point(prll_director.dot(rel_disp));
         data_perp_.at(t).at(r_ind).add_data_point(perp_director.dot(rel_disp));
 
-        // set the cur pointer to point to the next objects
-        p_in_cur = p_in_nxt;
-        p_nhood_cur = p_nhood_nxt;
         // get the new next objects
-        if(!(p_in->step_forwards(t_stride_,p_in_nxt) && 
-             p_nhood->step_forwards(t_stride_,p_nhood_nxt)))
+        if(!(p_in_nxt->step_forwards(t_stride_,p_in_nxt) && 
+             p_nhood_nxt->step_forwards(t_stride_,p_nhood_nxt)))
           // if either track does not go that far, break out of this loop
           break;
         
-        
       }
-      
-
     }
   }
-  
-
-  
-
 }
 
+                                           
 
-void Corr_gofr::out_to_wrapper(Generic_wrapper & in,
+void Corr_pair_diffusion::out_to_wrapper(Generic_wrapper & wrapper_out,
 			       const std::string & g_name,
 			       const utilities::Md_store * md_store)const
 {
   bool opened_wrapper = false;
-  
-  vector<float> tmp;
-  float rho = normalize(tmp);
 
-  if(!in.is_open())
+
+  if(!wrapper_out.is_open())
   {
-    in.open_wrapper();
+    wrapper_out.open_wrapper();
     opened_wrapper = true;
     
   }
-  
-  in.open_group(g_name);
-  //in.add_metadata();
-  
-  const float * yar = &tmp.front();
-  
-  in.add_dset(1,&n_bins_,utilities::V_FLOAT,yar,"bin_count");
-  yar = &bin_edges_.front();
-  in.add_dset(1,&n_bins_,utilities::V_FLOAT,yar,"bin_edges");
-  
+ 
+  wrapper_out.open_group(g_name);
 
   if(md_store)
-    in.add_meta_data(md_store);
-  in.add_meta_data("rho", rho );
+    wrapper_out.add_meta_data(md_store);
+  // shove in MD stuff 
+  wrapper_out.add_meta_data("min_r",min_r_);
+  wrapper_out.add_meta_data("max_r",max_r_);
+  wrapper_out.add_meta_data("n_rbins",n_rbins_);
+
+  wrapper_out.add_meta_data("min_t",min_t_);
+  wrapper_out.add_meta_data("t_stride",t_stride_);
+  wrapper_out.add_meta_data("t_step_count",t_step_count_);
+  wrapper_out.close_group();    // close the group (has to do with poor state choice in my design)
+
+  std::string t_group_name = g_name + "/time_step";
+
+  std::string edge_name = "edges";
+  std::string count_name = "count";
   
-  in.add_meta_data("max_range",max_range_);
-  in.add_meta_data("nbins",n_bins_);
-  in.add_meta_data("total_number",parts_added_);
-  in.add_meta_data("plane_count",plane_count_);
-  in.add_meta_data("temperature",temperature_sum_/plane_count_);
+  // loop over 
+  for( unsigned int j = 0; j < t_step_count_; ++j) {
+    Md_store time_level_md(); // shove relevant stuff into unsigned int
+    unsigned int t = min_t_ + j*t_stride_;
+    std::string local_t_group_name = format_name(t_group_name,j);
+    wrapper_out.open_group(local_t_group_name);
+    std::cout<<local_t_group_name<<std::endl;
+    
+    wrapper_out.add_meta_data("time_lag",t);
+    wrapper_out.close_group(); 
+    for (unsigned int k = 0; k < n_rbins_; ++k)
+    {
+      std::string rd_perp_name = format_name(local_t_group_name + "/perp_rbin",k);
+      std::string rd_prll_name = format_name(local_t_group_name + "/prll_rbin",k);
+       
+      Md_store group_md;
+      group_md.set_value("r_start",min_r_ + ((max_r_ - min_r_)/n_rbins_)*k);
+      group_md.set_value("r_end",min_r_ + ((max_r_ - min_r_)/n_rbins_)*(k+1));
+
+      data_prll_[j][k].output_to_wrapper(&wrapper_out,rd_prll_name,count_name,edge_name,&group_md);
+      data_perp_[j][k].output_to_wrapper(&wrapper_out,rd_perp_name,count_name,edge_name,&group_md);
+
+      
+
+
+      
+    }
+    
+    
+  }
   
-  in.close_group();
   
+
+
   if(opened_wrapper)
-    in.close_wrapper();
+    wrapper_out.close_wrapper();
   
 }
 
-#endif DIM_COUNT == 2
-#endif TRACKING_FLG
+#endif 
+#endif 

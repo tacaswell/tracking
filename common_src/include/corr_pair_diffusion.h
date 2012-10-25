@@ -57,8 +57,12 @@ class Corr_pair_diffusion:public Corr
 public:
   // basic inherited stuff
   void compute(const particle *,const std::vector<const particle*> & ) ;
+  void out_to_wrapper(utilities::Generic_wrapper & wrapper_out,
+                                           const std::string & g_name,
+                                           const utilities::Md_store * md_store)const;
   
-  void out_to_wrapper(utilities::Generic_wrapper &,const std::string& name ) const ;
+  
+
 
   
   /**
@@ -95,8 +99,8 @@ private:
      inner layer is initial separation.  Histogram object take care of
      the displacement layer.
    */
-  std::vector< std::vector<utilities::histogram> > data_prll_;
-  std::vector< std::vector<utilities::histogram> > data_perp_;
+  std::vector< std::vector<utilities::Histogram> > data_prll_;
+  std::vector< std::vector<utilities::Histogram> > data_perp_;
   
   const float min_r_;
   const float max_r_;
