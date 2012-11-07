@@ -37,6 +37,8 @@
 //this Program grant you additional permission to convey the resulting
 #include <iostream>
 #include <stdexcept>
+#include <getopt.h>
+
 #include "part_def.h"
 
 #include "wrapper_i_plu.h"
@@ -60,6 +62,8 @@
 #include "mm_md_parser.h"
 #include "md_parser_dummy.h"
 #include "H5Cpp.h"
+
+
 //#include "gnuplot_i.hpp" //Gnuplot class handles POSIX-Pipe-communikation with Gnuplot
 
 using std::cout;
