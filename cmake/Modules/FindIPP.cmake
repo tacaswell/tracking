@@ -29,18 +29,23 @@ SET(IPP_PROCESS_INCLUDES  IPP_PROCESS_INCLUDE)
 # Finally the library itself
 find_library(IPPI_LIB 
   NAMES ippiem64t    
+  HINTS $ENV{IPP_ROOT}/sharedlib
 )		     
 find_library(IPPS_LIB
   NAMES ippsem64t    
+  HINTS $ENV{IPP_ROOT}/sharedlib
 )		     
 find_library(IPPV_LIB
   NAMES ippvmem64t
+  HINTS $ENV{IPP_ROOT}/sharedlib
 )
 find_library(IPPC_LIB
   NAMES ippcoreem64t
+  HINTS $ENV{IPP_ROOT}/sharedlib
 )
 find_library(IPPCV_LIB
   NAMES ippcvem64t
+  HINTS $ENV{IPP_ROOT}/sharedlib
 )
 
 
