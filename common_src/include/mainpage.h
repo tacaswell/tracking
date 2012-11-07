@@ -1,4 +1,4 @@
-//Copyright 2008,2009,2010 Thomas A Caswell
+//Copyright 2008-2012 Thomas A Caswell
 //tcaswell@uchicago.edu
 //http://jfi.uchicago.edu/~tcaswell
 //
