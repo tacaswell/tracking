@@ -267,10 +267,10 @@ class Wrapper_i_generic:public Wrapper_in{
   bool set_data_type(D_TYPE dtype);
 %apply (int* IN_ARRAY1, int DIM1) {(int* data, int N)}  
   bool add_int_data(int * data,int N);
-%clear (int* std::vector, int length);
+%clear (int* data, int N);
 %apply (float* IN_ARRAY1, int DIM1) {(float* data, int N)}
   bool add_float_data(float * data,int N);
-%clear (float* std::vector, int length);
+%clear (float* data, int N);
   //  bool set_meta_data(const Md_store & md_store);
   bool close_frame();
   bool finalize_wrapper();
