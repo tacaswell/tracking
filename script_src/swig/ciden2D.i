@@ -60,6 +60,7 @@ import_array();
 #include "iden.h"
 #include "image_base.h"
 #include "image_stack.h"
+#include "image1.h"
 #include "image_series.h"
 #include "md_parser.h"
 #include "mm_md_parser.h"
@@ -140,14 +141,22 @@ public:
   
  } ;
  
-class Wrapper_i_plu:public utilities::Wrapper_in{
+
+ 
+class Wrapper_i_plu: public Wrapper_in
+{
 public:
+  int get_num_entries(int frame);
+  int get_num_entries();
+  int get_num_frames();
+
   
-  
-  
-  int get_num_entries(unsigned int j) const;
-  
-  int get_num_entries() const;
+  Wrapper_i_plu(int);    
+  Wrapper_i_plu(int,utilities::Tuplef);    
+  ~Wrapper_i_plu();
+  void set_dims(const utilities::Tuplef&);
+
+
   int get_value(int& out,int ind,utilities::D_TYPE type, int frame) const;
   float get_value(float &out,int ind, utilities::D_TYPE type,int frame )const;
   %extend
@@ -160,21 +169,38 @@ public:
      }
    }
   
-  int get_num_frames()const;
-  utilities::Tuple<float,2> get_dims() const;
+};
 
+class Image2D
+{
+public:
+
+  Image2D(const int image_length, const int image_width);
+  /* Image2D(const Image2D & other); */
+  /* Image2D(const float * IN_ARRAY2,int DIM1,int DIM2); */
+  ~Image2D();
   
-  Wrapper_i_plu(int,utilities::Tuple<float,2>);  
-  virtual ~Wrapper_i_plu();
+  /* void set_data(const Image_base & image); */
+  /* void add_data(const Image_base & image); */
+  %apply (float * IN_ARRAY2,int DIM1,int DIM2){(const float* data, int n, int m)}  ;
+  void set_data(const float * data,int n,int m);
+  //  void add_data(const float * data,int n,int m);
+  %clear (const float* data, int n, int m);
   
+  /* Ipp32f *get_image2D() const; */
+  /* int get_stepsize() const; */
+  /* int get_width() const; */
+  /* int get_numberofpixels() const; */
+  /* int get_height() const; */
   
 };
+
 
  class Iden
 {
 public:
   Iden(const utilities::Md_store& in);
-  ~Iden(){};
+  ~Iden();
   
   void set_image_src(Image_base * image);
   void set_md_parser(MD_parser * parser);
@@ -182,8 +208,14 @@ public:
   
   Wrapper_i_plu * fill_wrapper(unsigned int frames=0,unsigned int start=0);
   Wrapper_i_plu * fill_wrapper_avg(unsigned int frames=0,unsigned int start=0);
+
+
+  void process_frame(const Image2D & img_in,
+                     unsigned int frame_number,
+                     const utilities::Md_store * md_store_in,
+                     Wrapper_i_plu & wrapper_out) const;
+  
 };
  
  
-
 }

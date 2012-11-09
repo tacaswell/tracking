@@ -146,6 +146,9 @@ Wrapper_i_plu::Wrapper_i_plu(int frames,Tuple<float,2> dims):data_(frames,NULL),
 {
   cout<<"data_ size: "<<data_.size()<<endl;
   
+    // set the size of the md_store
+  set_Md_store_size(frames);
+
   data_map_.set_lookup(D_XPOS,1);
   data_map_.set_lookup(D_YPOS,2);
   data_map_.set_lookup(D_DX  ,3);
@@ -165,6 +168,37 @@ Wrapper_i_plu::Wrapper_i_plu(int frames,Tuple<float,2> dims):data_(frames,NULL),
 		  D_E,
 		  D_FRAME};
   data_types_ = set<D_TYPE>(tmp, tmp+9);
+}
+
+
+Wrapper_i_plu::Wrapper_i_plu(int frames):data_(frames,NULL),frame_count_(frames,0),count_ (0)
+{
+  set_Md_store_size(frames);
+  
+  data_map_.set_lookup(D_XPOS,1);
+  data_map_.set_lookup(D_YPOS,2);
+  data_map_.set_lookup(D_DX  ,3);
+  data_map_.set_lookup(D_DY  ,4);
+  data_map_.set_lookup(D_I   ,5);
+  data_map_.set_lookup(D_R2  ,6);
+  data_map_.set_lookup(D_MULT,7);
+  data_map_.set_lookup(D_E   ,8);
+ 
+  D_TYPE tmp[] = {D_XPOS,
+		  D_YPOS,
+		  D_DX,
+		  D_DY,
+		  D_I,
+		  D_R2,
+		  D_MULT,
+		  D_E,
+		  D_FRAME};
+  data_types_ = set<D_TYPE>(tmp, tmp+9);
+}
+
+void Wrapper_i_plu::set_dims(const Tuple<float,2>& dims)
+{
+  dims_ = dims;
 }
 
 

@@ -539,3 +539,94 @@ Wrapper_i_plu * Iden::fill_wrapper_avg(unsigned int frames,unsigned int start)
   
 
 }
+
+void Iden::process_frame(const Image2D & img_in,
+                         unsigned int frame_number,
+                         const Md_store * md_store_in,
+                         Wrapper_i_plu & wrapper_out) const
+{
+  
+  Md_store *  md_store_local = new Md_store();
+  if (! md_store_in)
+    md_store_local->add_elements(md_store_in);
+  
+  float hwhm,thresh,top_cut,a,b;
+  int feature_rad,dilation_rad, mask_rad;
+  unsigned int avg_count;
+  
+  // the parameters should be verified when, they are set, but the try
+  // can't hurt.
+  try
+  {
+    params_.get_value("threshold",thresh);
+    params_.get_value("p_rad",feature_rad);
+    params_.get_value("hwhm",hwhm);
+    params_.get_value("d_rad",dilation_rad);
+    params_.get_value("mask_rad",mask_rad);
+    params_.get_value("top_cut",top_cut);
+  }
+  catch(logic_error & e)
+  {
+    std::cerr<<"Iden::error parsing the parameters"<<std::endl;
+    std::cerr<<e.what()<<std::endl;
+    throw;
+    
+  }
+
+  unsigned int height = img_in.get_height();
+  unsigned int width = img_in.get_width();
+
+
+
+  // object for holding band passed image
+  Image2D image_bpass(height,width);
+  // object for holding the thresholded band passed image
+  Image2D image_bpass_thresh(height,width);
+  // object that holds the local max
+  Image2D image_localmax(height,width);
+
+
+
+
+  // local mutable copy of image
+  Image2D image_in_local(img_in);    
+  RecenterImage(image_in_local);
+
+
+  IppStatus status;
+    
+  status = BandPass_2D(image_in_local,
+                       image_bpass,
+                       feature_rad,
+                       hwhm);
+        
+  status = FindLocalMax_2D(image_bpass,
+                           image_bpass_thresh,
+                           image_localmax,
+                           thresh,
+                           dilation_rad);
+    
+    
+    
+    
+  RecenterImage(image_bpass_thresh);
+  
+  // get out massive nx9 array
+  int counter;
+  Ipp32f (*particledata)[9] =
+    ParticleStatistics(image_localmax,
+                       image_bpass_thresh, 
+                       mask_rad,
+                       feature_rad,
+                       counter);
+        
+  
+  // set data in wrapper
+  wrapper_out.add_frame_data(particledata,frame_number,counter);
+  // set metadata in wrapper
+
+  // the wrapper takes responsibility for the object
+  wrapper_out.set_Md_store(frame_number,md_store_local);
+
+  // clean up wrapper
+}

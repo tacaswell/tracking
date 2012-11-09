@@ -68,9 +68,13 @@ public:
   float get_value(float &out,int ind, utilities::D_TYPE type,int frame )const;
   std::complex<float> get_value(std::complex<float> &out,int ind, utilities::D_TYPE type,int frame )const
   {throw std::logic_error("wrapper_i_plu:wrapper has no complex support");}
-
+  void set_dims(const utilities::Tuple<float,2>&);
+  
   
   Wrapper_i_plu(int,utilities::Tuple<float,2>);  
+  Wrapper_i_plu(int);  
+  
+
   virtual ~Wrapper_i_plu();
   
   

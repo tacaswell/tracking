@@ -1,4 +1,4 @@
-//Copyright 2008,2009 Thomas A Caswell
+//Copyright 2008,2009,2012 Thomas A Caswell
 //tcaswell@uchicago.edu
 //http://jfi.uchicago.edu/~tcaswell
 //
@@ -61,6 +61,7 @@ namespace iden
 class Wrapper_i_plu;
 class Image_base;
 class MD_parser;
+class Image2D;
 
 
 /**
@@ -74,13 +75,42 @@ public:
   };			// needs arguements
   ~Iden(){};
   
+  /**
+     \deprecated don't use this
+   */
   void set_image_src(Image_base * image);
+
   void set_md_parser(MD_parser * parser);
+
+  /**
+     Set the parameters used by this iden object to extract features
+   */
   void set_params(const utilities::Md_store& param_in);
   
+  /**
+     \deprecated don't use this
+   */
   Wrapper_i_plu * fill_wrapper(unsigned int frames=0,unsigned int start=0);
+
+  /**
+     \deprecated don't use this
+   */
   Wrapper_i_plu * fill_wrapper_avg(unsigned int frames=0,unsigned int start=0);
   
+  void process_frame(const Image2D & img_in,
+                     unsigned int frame_number,
+                     const utilities::Md_store * md_store_in,
+                     Wrapper_i_plu & wrapper_out) const;
+  void process_frames(const Image_base & imgs,
+                      unsigned int start_frame, 
+                      unsigned int frames,
+                      Wrapper_i_plu & wrapper_out) const;
+
+  void process_frames_avg(const Image_base & imgs,
+                          unsigned int avg_count,
+                          unsigned int start_frame, 
+                          unsigned int frames,
+                          Wrapper_i_plu & wrapper_out) const;
 private:
   /**
      The source of the images to process

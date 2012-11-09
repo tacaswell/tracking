@@ -114,6 +114,25 @@ Image2D::Image2D(const int image_length, const int image_width):
   
 }
 
+// tac 2012-11-07
+// added copy constructor
+Image2D::Image2D(const Image2D & other):
+  imagedata_(NULL), 
+  stepsize_(other.stepsize_), 
+  width_(other.width_), 
+  height_(other.height_),
+  numberofpixels_(other.numberofpixels_),
+  ROIfull_(other.ROIfull_)
+{
+  imagedata_ = ippsMalloc_32f(numberofpixels_);
+  ippiCopy_32f_C1R(other.imagedata_,
+                   other.stepsize_,
+                   imagedata_,
+                   stepsize_,
+                   ROIfull_);
+  
+}
+
 
 
 Image2D::~Image2D()
@@ -275,58 +294,33 @@ void Image2D::trim_max(float cut_percent)
   
 }
 
+void Image2D::set_data(const float * IN_ARRAY2,int DIM1,int DIM2)
+{
+  // free the data we currently have
+  ippsFree(imagedata_);
+  imagedata_ = NULL;  
 
+  height_ = DIM1;
+  width_ = DIM2;
+  numberofpixels_ = width_*height_;
+    
+  imagedata_ = ippsMalloc_32f(numberofpixels_);
+  stepsize_ = 4 * width_;
+  
+  ROIfull_.width = width_;
+  ROIfull_.height = height_;
+  
 
+  
 
-
-
-// void wait_for_key();
+  imagedata_ = ippsMalloc_32f(numberofpixels_);
+  ippiCopy_32f_C1R(IN_ARRAY2,
+                   stepsize_,
+                   imagedata_,
+                   stepsize_,
+                   ROIfull_);
  
-// void Image2D::display_image() const
-// {
-//   Gnuplot g;
-//   cout << "displaying image data" << endl;
-//    const int iWidth  = width_;
-//    const int iHeight = height_;
-// //  const int iWidth  = 500;
-// //  const int iHeight = 200;
   
-//   g.set_xrange(0,iWidth).set_yrange(0,iHeight).set_cbrange(0,255);
-
-//   g.cmd("set palette gray");
-//   unsigned char ucPicBuf[iWidth*iHeight];
-//   // generate a greyscale image
-//   Ipp32f max = -1;
-//   ippiMax_32f_C1R(imagedata_,stepsize_,ROIfull_,&max);
-//   cout<<"Max: "<<max<<endl;
-//   for(int oIndex = 0; oIndex < iHeight; oIndex++)
-//   {
-//     for(int iIndex = 0;iIndex<iWidth;++iIndex)
-//     {
-//       *(ucPicBuf + iIndex +iWidth*oIndex) =
-// 	(unsigned char)(((*(imagedata_ +iIndex +stepsize_/sizeof(Ipp32f) * oIndex))/max)*255);
-//     }
-//   }
-//   g.plot_image(ucPicBuf,iWidth,iHeight,"greyscale");
-//   wait_for_key();
-//   g.remove_tmpfiles();
-  
-// }
+}
 
 
-// void wait_for_key ()
-// {
-// #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__TOS_WIN__)  // every keypress registered, also arrow keys
-//   cout << endl << "Press any key to continue..." << endl;
-
-//   FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
-//   _getch();
-// #elif defined(unix) || defined(__unix) || defined(__unix__) || defined(__APPLE__)
-//   cout << endl << "Press ENTER to continue..." << endl;
-
-//   std::cin.clear();
-//   std::cin.ignore(std::cin.rdbuf()->in_avail());
-//   std::cin.get();
-// #endif
-//   return;
-// }

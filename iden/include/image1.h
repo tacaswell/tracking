@@ -86,9 +86,11 @@ class Image2D
 public:
   Image2D();
   Image2D(const int image_length, const int image_width);
+  Image2D(const Image2D & other);
+  Image2D(const float * IN_ARRAY2,int DIM1,int DIM2);
 
-  
   ~Image2D();
+  
   
   /**
      given the index of image data, returns x-position in pixels
@@ -121,6 +123,16 @@ public:
      Accumulate data from an Image_base object
    */
   void add_data(const Image_base & image);
+
+  /**
+     Fill the image with data from an Image_base object
+  */
+  void set_data(const float * IN_ARRAY2,int DIM1,int DIM2);
+  /**
+     Accumulate data from an Image_base object
+   */
+  void add_data(const float * IN_ARRAY2,int DIM1,int DIM2);
+
   
   /**
         let the outside world see the pointer, 
