@@ -242,9 +242,12 @@ class IdenGui(QtGui.QMainWindow):
     def create_diag(self):
         
         # make top level stuff
-        self.diag = QtGui.QDialog(parent=self)
+        self.diag = QtGui.QDockWidget('controls',parent=self)
+        self.diag.setFloating(True)
+        diag_widget = QtGui.QWidget(self.diag)
+        self.diag.setWidget(diag_widget)
         diag_layout = QtGui.QVBoxLayout()
-        self.diag.setLayout(diag_layout)
+        diag_widget.setLayout(diag_layout)
         
 
         # frame number lives on top
@@ -305,8 +308,9 @@ class IdenGui(QtGui.QMainWindow):
         self.prog_bar = QtGui.QProgressBar()
         self.prog_bar.setRange(0,0)
         self.prog_bar.hide()
-        self.statusBar().addPermanentWidget(self.status_text, 1)
         self.statusBar().addWidget(self.prog_bar, 1)
+        self.statusBar().addPermanentWidget(self.status_text, 1)
+
 
     def show_cntrls(self):
         self.diag.show()
