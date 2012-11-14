@@ -17,6 +17,8 @@
 
 import numpy as np
 import ciden2 as ci
+import copy
+import json
 
 class IdenProcessBackend(object):
     '''A class to wrap the details of dealing with the swig wrapers '''
@@ -84,7 +86,16 @@ class IdenProcessBackend(object):
 
         pass
         
+    def save_params(self,fname_out):
+        f = open(fname_out,'w')
+        f.write(json.dumps(self.params))
+        f.close()
 
+    def set_param_from_file(self,fname_in):
+        f = open(fname_in,'r')
+        self.params = json.loads(f.readline())
+        f.close()
+                
 
 
 
