@@ -49,6 +49,11 @@ class idenWorker(QtCore.QObject):
             self.points = None
         self.frame_proced.emit(True,True)
 
+    @QtCore.Slot(str)
+    def save(self,fname):
+        self.idenpb.save_params(fname)
+
+    
     def get_points(self):
         return self.points
 
@@ -72,6 +77,7 @@ class IdenGui(QtGui.QMainWindow):
     '''A class for providing a gui interface for playing with iden parameters ''' 
 
     proc = QtCore.Signal(int,bool)
+    save_sig = QtCore.Signal(str)
     
     spinner_lst = [
         {'name':'p_rad','min':0,'max':50,'step':1,'type':np.int,'default':4},
@@ -110,6 +116,7 @@ class IdenGui(QtGui.QMainWindow):
         self.worker.frame_proced.connect(self.on_draw)        
         
         self.proc.connect(self.worker.proc_frame)    
+        self.save_sig.connect(self.worker.save)    
 
         self.create_main_frame()
         self.create_diag()
@@ -282,6 +289,11 @@ class IdenGui(QtGui.QMainWindow):
         self.proc_flag_button.stateChanged.connect(self.set_proc_flag)
         diag_layout.addWidget(self.proc_flag_button)
 
+        
+        self.save_params_button = QtGui.QPushButton('Save Parameters')
+        self.save_params_button.clicked.connect(self.save_config)
+        diag_layout.addWidget(self.save_params_button)
+
         # button to grab initial spline
         # grab_button = QtGui.QPushButton('Grab Spline')
         # grab_button.clicked.connect(self.grab_sf_curve)
@@ -307,3 +319,7 @@ class IdenGui(QtGui.QMainWindow):
 
 
         
+
+    def save_config(self):
+        fname,_ = QtGui.QFileDialog.getSaveFileName(self,caption='Save File')
+        self.save_sig.emit(fname)
