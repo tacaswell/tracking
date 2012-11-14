@@ -119,9 +119,12 @@ class IdenGui(QtGui.QMainWindow):
         self.save_sig.connect(self.worker.save)    
 
         self.create_main_frame()
+        self.create_actions()
+        self.create_menu_bar()        
         self.create_diag()
         self.create_status_bar()
-        
+
+
         
 
 
@@ -216,16 +219,13 @@ class IdenGui(QtGui.QMainWindow):
         # layout with box sizers
         # 
         
-        self.ctrl_button = QtGui.QPushButton("Show &Controls")
-        self.ctrl_button.clicked.connect(self.show_cntrls)
-
 
         
         hbox = QtGui.QHBoxLayout()
 
 
         
-        for w in [self.ctrl_button ]:
+        for w in [ ]:
             hbox.addWidget(w)
             hbox.setAlignment(w, QtCore.Qt.AlignVCenter)
 
@@ -243,7 +243,7 @@ class IdenGui(QtGui.QMainWindow):
         
         # make top level stuff
         self.diag = QtGui.QDockWidget('controls',parent=self)
-        self.diag.setFloating(True)
+        self.addDockWidget(QtCore.Qt.LeftDockWidgetArea,self.diag)
         diag_widget = QtGui.QWidget(self.diag)
         self.diag.setWidget(diag_widget)
         diag_layout = QtGui.QVBoxLayout()
@@ -294,7 +294,7 @@ class IdenGui(QtGui.QMainWindow):
 
         
         self.save_params_button = QtGui.QPushButton('Save Parameters')
-        self.save_params_button.clicked.connect(self.save_config)
+        self.save_params_button.clicked.connect(self.save_param_acc.trigger)
         diag_layout.addWidget(self.save_params_button)
 
         # button to grab initial spline
@@ -311,23 +311,36 @@ class IdenGui(QtGui.QMainWindow):
         self.statusBar().addWidget(self.prog_bar, 1)
         self.statusBar().addPermanentWidget(self.status_text, 1)
 
+    def create_actions(self):
+        self.show_cntrl_acc = QtGui.QAction(u'show controls',self)
+        self.show_cntrl_acc.triggered.connect(self.show_diag)
 
-    def show_cntrls(self):
-        self.diag.show()
+        self.save_param_acc = QtGui.QAction(u'Save Parameters',self)
+        self.save_param_acc.triggered.connect(self.save_config)
         
-
+        
+    def create_menu_bar(self):
+        menubar = self.menuBar()
+        fileMenu = menubar.addMenu('&File')
+        fileMenu.addAction(self.show_cntrl_acc)
+        fileMenu.addAction(self.save_param_acc)
+        
+    def show_diag(self):
+        self.diag.show()
 
 
     def _gen_update_closure(self,name):
         return lambda x :self.update_param(name,x)
 
-
+    
         
 
     def save_config(self):
         fname,_ = QtGui.QFileDialog.getSaveFileName(self,caption='Save File')
         self.save_sig.emit(fname)
 
+
+        
     def closeEvent(self,ce):
         self.diag.close()
         QtGui.QMainWindow.closeEvent(self,ce)
