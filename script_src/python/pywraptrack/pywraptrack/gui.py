@@ -27,9 +27,52 @@ from matplotlib.figure import Figure
 
 import numpy as np
 from .swig_wrappers import *
+from .img import *
 
+class idenWorker(QtCore.QObject):
+    frame_proced = QtCore.Signal(bool,bool)
+    
+    def __init__(self,params,img_src,parent=None):
+        QtCore.QObject.__init__(self,parent)
+
+        self.img_src = img_src
+        self.idenpb = IdenProcessBackend(params)
+        
+        self.points = None
+
+    @QtCore.Slot(int,bool)
+    def proc_frame(self,i,proc):
+        self.img = self.img_src[i]
+        if proc:
+            self.points = self.idenpb.process_single_frame(self.img)
+        else:
+            self.points = None
+        self.frame_proced.emit(True,True)
+
+    def get_points(self):
+        return self.points
+
+    def get_next_curve(self):
+        return self.next_curve
+
+    def update_param(self,key,val):
+        self.idenpb.update_param(key,val)
+
+    def get_frame(self):
+        return self.img
+
+    def clear(self):
+        self.points = None
+        self.img = None
+
+    def __len__(self):
+        return len(self.img_src)
+    
 class IdenGui(QtGui.QMainWindow):
-     
+    '''A class for providing a gui interface for playing with iden parameters ''' 
+
+    proc = QtCore.Signal(int,bool)
+    
     spinner_lst = [
         {'name':'p_rad','min':0,'max':50,'step':1,'type':np.int,'default':4},
         {'name':'d_rad','min':0,'max':50,'step':1,'type':np.int,'default':3},
@@ -51,59 +94,86 @@ class IdenGui(QtGui.QMainWindow):
     def __init__(self,img_src, parent=None):
         QtGui.QMainWindow.__init__(self, parent)
         self.setWindowTitle('Feature Finder')
-        
+
+        params = dict((d['name'],d['default']) for d in IdenGui.spinner_lst)
+                
         self.cur_frame = 0
         self.proc_flag = False
         self.refresh_points = False
         self.refresh_img = False
-        self.img_src = img_src
+        
+        self.thread = QtCore.QThread(parent=self)
+
+        self.worker = idenWorker(params,img_src,parent=None)
+        self.worker.proc_frame(self.cur_frame,False)
+        self.worker.moveToThread(self.thread)
+        self.worker.frame_proced.connect(self.on_draw)        
+        
+        self.proc.connect(self.worker.proc_frame)    
+
         self.create_main_frame()
         self.create_diag()
         self.create_status_bar()
-        self.params = dict((d['name'],d['default']) for d in IdenGui.spinner_lst)
         
-        self.idenpb = IdenProcessBackend(self.params)
+        
+
+
+        self.show()
+        self.thread.start()
+        #        self.thread.exec_()
+        QtGui.qApp.exec_()
+
+
      
         self.points = None
-        self.on_draw()
-    
-    def on_draw(self):
+
+
+    @QtCore.Slot(bool,bool)
+    def on_draw(self,refresh_img=True,refresh_points=True):
         """ Redraws the figure
         """
-        if self.refresh_img:
+        if refresh_img:
+            self.im.set_data(self.worker.get_frame())
 
-            self.im.set_data(self.img)
-            self.refresh_img = False
 
-        if self.refresh_points:
-            self.pt_plt.set_xdata(self.points[0])
-            self.pt_plt.set_ydata(self.points[1])
-            #            print 'update the points'
-            self.refresh_points = False
+        if refresh_points:
+            points = self.worker.get_points()
+            if points is not None and self.plot_pts:
+                self.pt_plt.set_xdata(points[0])
+                self.pt_plt.set_ydata(points[1])
+            else:
+                self.pt_plt.set_xdata([])
+                self.pt_plt.set_ydata([])
+
 
         self.canvas.draw()
         self.status_text.setNum(self.cur_frame)
-
+        self.prog_bar.hide()                        
+        self.diag.setEnabled(True)
 
     def proc_frame(self):
-        if self.proc_flag:
-            if self.refresh_img:
-                self.img = self.img_src[self.cur_frame]
-            self.points = self.idenpb.process_single_frame(self.img)
+        self.prog_bar.show()                        
+        self.diag.setEnabled(False)
+        self.proc.emit(self.cur_frame,self.proc_flag)
 
-            self.refresh_points = True
             
-        self.prog_bar.hide()            
-        self.on_draw()
         
     def set_cur_frame(self,i):
         print 'set_cur_frame'
-        if self.cur_frame != i:
-            self.refresh_img = True
         self.cur_frame = i
-        self.prog_bar.show()
-        QtCore.QTimer.singleShot(1,self.proc_frame)
+        self.proc_frame()
 
+
+    def update_param(self,name,x):
+        print name,x
+        self.worker.update_param(name,x)
+        self.proc_frame()
+
+
+    def set_proc_flag(self,i):
+        self.proc_flag = bool(i)
+        self.plot_pts = self.proc_flag
+        self.proc_frame()
 
 
     def create_main_frame(self):
@@ -122,7 +192,7 @@ class IdenGui(QtGui.QMainWindow):
         # work.
         #
         self.axes = self.fig.add_subplot(111)
-        self.img = np.asarray(self.img_src[self.cur_frame])
+        self.img = np.asarray(self.worker.get_frame())
         self.im = self.axes.imshow(self.img,cmap='cubehelix')
         self.axes.set_aspect('equal')
 
@@ -172,7 +242,7 @@ class IdenGui(QtGui.QMainWindow):
 
         # frame number lives on top
         self.frame_spinner = QtGui.QSpinBox()
-        self.frame_spinner.setRange(0,len(self.img_src)-1)
+        self.frame_spinner.setRange(0,len(self.worker)-1)
         self.frame_spinner.valueChanged.connect(self.set_cur_frame)
         fs_form = QtGui.QFormLayout()
         fs_form.addRow(QtGui.QLabel('frame #'),self.frame_spinner)
@@ -223,29 +293,17 @@ class IdenGui(QtGui.QMainWindow):
         self.prog_bar = QtGui.QProgressBar()
         self.prog_bar.setRange(0,0)
         self.prog_bar.hide()
-        self.statusBar().addWidget(self.status_text, 1)
+        self.statusBar().addPermanentWidget(self.status_text, 1)
         self.statusBar().addWidget(self.prog_bar, 1)
 
     def show_cntrls(self):
         self.diag.show()
-
-    def set_proc_flag(self,i):
-        self.proc_flag = bool(i)
-        self.proc_frame()
         
-        self.on_draw()
+
 
 
     def _gen_update_closure(self,name):
         return lambda x :self.update_param(name,x)
-
-    def update_param(self,name,x):
-        print name,x
-            
-        self.idenpb.update_param(name,x)
-        self.prog_bar.show()
-
-        QtCore.QTimer.singleShot(1,self.proc_frame)
 
 
         
