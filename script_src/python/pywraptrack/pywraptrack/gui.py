@@ -323,3 +323,7 @@ class IdenGui(QtGui.QMainWindow):
     def save_config(self):
         fname,_ = QtGui.QFileDialog.getSaveFileName(self,caption='Save File')
         self.save_sig.emit(fname)
+
+    def closeEvent(self,ce):
+        self.diag.close()
+        QtGui.QMainWindow.closeEvent(self,ce)
