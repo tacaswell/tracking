@@ -180,7 +180,7 @@ class IdenGui(QtGui.QMainWindow):
 
 
         self.canvas.draw()
-        self.status_text.setNum(self.cur_frame)
+
         self.prog_bar.hide()                        
         self.diag.setEnabled(True)
 
@@ -325,7 +325,7 @@ class IdenGui(QtGui.QMainWindow):
         # # button to process this frame
         
     def create_status_bar(self):
-        self.status_text = QtGui.QLabel(str(self.cur_frame))
+        self.status_text = QtGui.QLabel('')
         self.prog_bar = QtGui.QProgressBar()
         self.prog_bar.setRange(0,0)
         self.prog_bar.hide()
@@ -382,7 +382,9 @@ class IdenGui(QtGui.QMainWindow):
         self.diag.setEnabled(False)
 
         new_src = Series_wrapper.create_wrapper(fname)
+
         if new_src is not None:          
+            self.status_text.setText(str(new_src))
             self.set_new_img_src_sig.emit(new_src)
         
 
@@ -399,6 +401,7 @@ class IdenGui(QtGui.QMainWindow):
         new_src = Stack_wrapper(fname)
 
         if new_src is not None:          
+            self.status_text.setText(str(new_src))
             self.set_new_img_src_sig.emit(new_src)
         
 

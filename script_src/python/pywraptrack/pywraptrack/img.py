@@ -34,10 +34,18 @@ class Image_wrapper(object):
 
     def get_frame(self,j):
         raise NotImplementedError
-    
+
+    def __str__(self):
+        try:
+            fn = self.format_name
+        except:
+            fn = ''
+        return fn
+
 class Stack_wrapper(Image_wrapper):
     def __init__(self,fname):
         '''fname is the full path '''
+        self.format_name = fname
         self.im  = PIL.Image.open(fname)
 
         self.im.seek(0)
@@ -124,7 +132,7 @@ class Series_wrapper(Image_wrapper):
         :param img_num_off_set: the number of the first frame (to map to the first frame = 0)
         
         '''
-        self.format_name = 
+        self.format_name = base_name
         self.base_name = base_name + '%0' + str(padding) + 'd.' + ext
 
         self._im_num_offset = img_num_off_set
