@@ -78,13 +78,40 @@ class IdenProcessBackend(object):
                               for j in range(wrap_plu.get_num_entries(0))])
         # filter step that isn't written yet
         return x,y
-    def process_stack(self,conn,dset_key):
-        '''Process the entire dataset '''
+    def process_sequence(self,img_src):
+        '''Process the entire sequence
         
-        #img_data =  ci.Image_series()
-        #        img_data.init(base_name)
+        Returns a Wrapper_i_plu object.
+        '''
 
-        pass
+        # create new md_store object
+        iden_prams = ci.Md_store()
+        for key in IdenProcessBackend.int_params:
+            iden_prams.set_value_i(key, int(self.params[key]))
+
+        for key in IdenProcessBackend.float_params:
+            iden_prams.set_value_f(key,float(self.params[key]))
+
+        md_parser = ci.Mm_md_parser()
+        #        print 'all that noise set up'
+        iden = ci.Iden(iden_prams)
+        iden.set_md_parser(md_parser)
+        #        print 'made iden object'
+        dim = ci.Tuplef(*img.shape)
+        #        print 'made tuple'
+        wrap_plu = ci.Wrapper_i_plu(len(img_src),dim)
+        #        print 'made wrapper'
+        md = ci.Md_store()
+        #        print 'objects all set up'
+
+        for j,img in enumerate(img_src):
+            img2d = ci.Image2D(*img.shape)
+            img2d.set_data(img)
+            iden.process_frame(img2d,j,md,wrap_plu)
+        
+
+        
+        return 
         
     def save_params(self,fname_out):
         f = open(fname_out,'w')
