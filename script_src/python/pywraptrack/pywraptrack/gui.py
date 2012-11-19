@@ -50,7 +50,7 @@ class idenWorker(QtCore.QObject):
         self.frame_proced.emit(True,True)
 
     @QtCore.Slot(str)
-    def save(self,fname):
+    def save_parametrs(self,fname):
         self.idenpb.save_params(fname)
 
     
@@ -76,8 +76,12 @@ class idenWorker(QtCore.QObject):
 class IdenGui(QtGui.QMainWindow):
     '''A class for providing a gui interface for playing with iden parameters ''' 
 
-    proc = QtCore.Signal(int,bool)
-    save_sig = QtCore.Signal(str)
+    proc = QtCore.Signal(int,bool)        # signal to worker to process the frame
+    save_parametrs_sig = QtCore.Signal(str)         # signal to save the configuration
+    redraw_sig = QtCore.Signal(bool,bool) # signal (to be primarily to be connected to self) to re-draw
+
+
+    
     
     spinner_lst = [
         {'name':'p_rad','min':0,'max':50,'step':1,'type':np.int,'default':4},
@@ -116,7 +120,7 @@ class IdenGui(QtGui.QMainWindow):
         self.worker.frame_proced.connect(self.on_draw)        
         
         self.proc.connect(self.worker.proc_frame)    
-        self.save_sig.connect(self.worker.save)    
+        self.save_parametrs_sig.connect(self.worker.save_parametrs)    
 
         self.create_main_frame()
         self.create_actions()
@@ -338,7 +342,7 @@ class IdenGui(QtGui.QMainWindow):
     def save_config(self):
         fname,_ = QtGui.QFileDialog.getSaveFileName(self,caption='Save File')
         if len(fname) > 0:
-            self.save_sig.emit(fname)
+            self.save_parametrs_sig.emit(fname)
 
 
         
