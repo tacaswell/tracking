@@ -408,6 +408,8 @@ class IdenGui(QtGui.QMainWindow):
         
     def closeEvent(self,ce):
         self.diag.close()
+        self.thread.quit()
+        self.thread.wait()
         QtGui.QMainWindow.closeEvent(self,ce)
 
         
@@ -419,7 +421,8 @@ class IdenGui(QtGui.QMainWindow):
 
     @QtCore.Slot(int)
     def update_base_image(self):
-        self.proc_flag = False
+        self.proc_flag_button.setChecked(False)
+
         self.im = None
         self.frame_spinner.setRange(0,len(self.worker)-1)        
         img = self.worker.get_frame()
@@ -428,7 +431,8 @@ class IdenGui(QtGui.QMainWindow):
 
         img = np.asarray(img)
 
-        self.im = self.axes.imshow(img,cmap='cubehelix')
+        self.im = self.axes.imshow(img,cmap='cubehelix',extent=[0,img.shape[1],0,img.shape[0]],origin='lower',interpolation='nearest')
         self.axes.set_aspect('equal')
+        print 'really hit here!'
         self.redraw_sig.emit(True,True)
 
