@@ -20,7 +20,7 @@ import os.path
 
 import PIL.Image
 import numpy as np
-
+import re
 
 # needed for plotting
 class Image_wrapper(object):
@@ -101,17 +101,33 @@ class Stack_wrapper(Image_wrapper):
 
        
 class Series_wrapper(Image_wrapper):
-    def __init__(self,base_name,ext,padding = None):
-        '''base name includes the full path up to the numbering
-        assumes that the numbering is left padded with 0 to padding places
-        the extension does not include the .'''
-        if padding is None:
-            im_guess = len(os.listdir(os.path.dirname(base_name)))
-            padding = int(np.log10(im_guess))+1
-            
+    prog = re.compile(r'(.*?)([0-9]+)\.([a-zA-Z]+)')
+    @classmethod
+    def create_wrapper(cls,first_fname):
+        '''
+        :param first_fname: the full path to the first image in the series
+        
+        Uses regular expressions to guess the basename, offset, padding and extension. ''' 
+
+        res = cls.prog.search(first_fname)
+        if res is None:
+            return None
+        basename,num,ext = res.groups()
+        padding = len(num)
+        return cls(basename,ext,int(num),padding)
+    
+    def __init__(self,base_name,ext,img_num_off_set,padding):
+        '''
+        :param base_name: the  the full path up to the numbering
+        :param ext: file extension
+        :param padding: the number of digits the numbers are padded to
+        :param img_num_off_set: the number of the first frame (to map to the first frame = 0)
+        
+        '''
+        self.format_name = 
         self.base_name = base_name + '%0' + str(padding) + 'd.' + ext
-        # added extra +1 to cope with mm starting naming at 1, not the god-given 0
-        self._im_num_offset = 1
+
+        self._im_num_offset = img_num_off_set
         j = 0
         while os.path.isfile(self.base_name%(j+self._im_num_offset)):
             j +=1
@@ -121,7 +137,7 @@ class Series_wrapper(Image_wrapper):
     def __len__(self):
         return self._len
     def get_frame(self,j):
-        '''Extracts the jth frame from the image sequence.
+        '''Extracts the jth (off set) frame from the image sequence.
         if the frame does not exist return None'''
         try:
             im = PIL.Image.open(self.base_name%(j+self._im_num_offset))

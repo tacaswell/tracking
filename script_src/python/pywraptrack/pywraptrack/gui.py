@@ -31,17 +31,20 @@ from .img import *
 
 class idenWorker(QtCore.QObject):
     frame_proced = QtCore.Signal(bool,bool)
+    img_src_updated_sig = QtCore.Signal()
     
     def __init__(self,params,img_src,parent=None):
         QtCore.QObject.__init__(self,parent)
 
         self.img_src = img_src
         self.idenpb = IdenProcessBackend(params)
-        
+        self.img = None
         self.points = None
 
     @QtCore.Slot(int,bool)
     def proc_frame(self,i,proc):
+        if self.img_src is None:
+            return
         self.img = self.img_src[i]
         if proc:
             self.points = self.idenpb.process_single_frame(self.img)
@@ -53,12 +56,19 @@ class idenWorker(QtCore.QObject):
     def save_parametrs(self,fname):
         self.idenpb.save_params(fname)
 
-    
+    @QtCore.Slot(Image_wrapper)
+    def set_img_src(self,new_src):
+
+        self.clear()
+        if new_src is None:
+            return
+
+        self.img_src = new_src
+        self.img_src_updated_sig.emit()
+        self.proc_frame(0,False)
+        
     def get_points(self):
         return self.points
-
-    def get_next_curve(self):
-        return self.next_curve
 
     def update_param(self,key,val):
         self.idenpb.update_param(key,val)
@@ -71,6 +81,8 @@ class idenWorker(QtCore.QObject):
         self.img = None
 
     def __len__(self):
+        if self.img_src is None:
+            return 1
         return len(self.img_src)
     
 class IdenGui(QtGui.QMainWindow):
@@ -79,8 +91,8 @@ class IdenGui(QtGui.QMainWindow):
     proc = QtCore.Signal(int,bool)        # signal to worker to process the frame
     save_parametrs_sig = QtCore.Signal(str)         # signal to save the configuration
     redraw_sig = QtCore.Signal(bool,bool) # signal (to be primarily to be connected to self) to re-draw
-
-
+    set_new_img_src_sig  = QtCore.Signal(Image_wrapper) # signal to pass a new image source to the 
+    
     
     
     spinner_lst = [
@@ -101,7 +113,7 @@ class IdenGui(QtGui.QMainWindow):
 
 
     
-    def __init__(self,img_src, parent=None):
+    def __init__(self,img_src=None, parent=None):
         QtGui.QMainWindow.__init__(self, parent)
         self.setWindowTitle('Feature Finder')
 
@@ -118,9 +130,11 @@ class IdenGui(QtGui.QMainWindow):
         self.worker.proc_frame(self.cur_frame,False)
         self.worker.moveToThread(self.thread)
         self.worker.frame_proced.connect(self.on_draw)        
+        self.worker.img_src_updated_sig.connect(self.update_base_image)        
         
         self.proc.connect(self.worker.proc_frame)    
         self.save_parametrs_sig.connect(self.worker.save_parametrs)    
+        self.set_new_img_src_sig.connect(self.worker.set_img_src)    
 
         self.create_main_frame()
         self.create_actions()
@@ -128,6 +142,7 @@ class IdenGui(QtGui.QMainWindow):
         self.create_diag()
         self.create_status_bar()
 
+        self.update_base_image()
 
         
 
@@ -146,8 +161,12 @@ class IdenGui(QtGui.QMainWindow):
     def on_draw(self,refresh_img=True,refresh_points=True):
         """ Redraws the figure
         """
-        if refresh_img:
-            self.im.set_data(self.worker.get_frame())
+        if refresh_img and self.im is not None:
+
+            img = self.worker.get_frame()
+
+            if img is not None:
+                self.im.set_data(img)
 
 
         if refresh_points:
@@ -173,13 +192,13 @@ class IdenGui(QtGui.QMainWindow):
             
         
     def set_cur_frame(self,i):
-        print 'set_cur_frame'
+
         self.cur_frame = i
         self.proc_frame()
 
 
     def update_param(self,name,x):
-        print name,x
+
         self.worker.update_param(name,x)
         self.proc_frame()
 
@@ -206,9 +225,7 @@ class IdenGui(QtGui.QMainWindow):
         # work.
         #
         self.axes = self.fig.add_subplot(111)
-        self.img = np.asarray(self.worker.get_frame())
-        self.im = self.axes.imshow(self.img,cmap='cubehelix')
-        self.axes.set_aspect('equal')
+        self.im = None
 
         self.pt_plt, = self.axes.plot([],[],linestyle='none',marker='x',color='k')
 
@@ -312,22 +329,32 @@ class IdenGui(QtGui.QMainWindow):
         self.prog_bar = QtGui.QProgressBar()
         self.prog_bar.setRange(0,0)
         self.prog_bar.hide()
-        self.statusBar().addWidget(self.prog_bar, 1)
-        self.statusBar().addPermanentWidget(self.status_text, 1)
+        self.statusBar().addPermanentWidget(self.status_text)
+        self.statusBar().addWidget(self.prog_bar)
+
 
     def create_actions(self):
         self.show_cntrl_acc = QtGui.QAction(u'show controls',self)
         self.show_cntrl_acc.triggered.connect(self.show_diag)
 
-        self.save_param_acc = QtGui.QAction(u'Save Parameters',self)
+        self.save_param_acc = QtGui.QAction(u'&Save Parameters',self)
         self.save_param_acc.triggered.connect(self.save_config)
+
+        self.open_series_acc =  QtGui.QAction(u'Open Se&ries',self)
+        self.open_series_acc.triggered.connect(self.open_series)
+
         
+        self.open_stack_acc =  QtGui.QAction(u'Open S&tack',self)
+        self.open_stack_acc.triggered.connect(self.open_stack)
+
         
     def create_menu_bar(self):
         menubar = self.menuBar()
         fileMenu = menubar.addMenu('&File')
         fileMenu.addAction(self.show_cntrl_acc)
         fileMenu.addAction(self.save_param_acc)
+        fileMenu.addAction(self.open_stack_acc)
+        fileMenu.addAction(self.open_series_acc)
         
     def show_diag(self):
         self.diag.show()
@@ -345,7 +372,60 @@ class IdenGui(QtGui.QMainWindow):
             self.save_parametrs_sig.emit(fname)
 
 
+    def open_series(self):
+        fname,_ = QtGui.QFileDialog.getOpenFileName(self,caption='Select first image')
+        if len(fname) == 0:
+            return
+
+        
+        self.prog_bar.show()
+        self.diag.setEnabled(False)
+
+        new_src = Series_wrapper.create_wrapper(fname)
+        if new_src is not None:          
+            self.set_new_img_src_sig.emit(new_src)
+        
+
+
+    def open_stack(self):
+        fname,_ = QtGui.QFileDialog.getOpenFileName(self,caption='Select image stack')
+        if len(fname) == 0:
+            return
+
+
+        self.prog_bar.show()
+        self.diag.setEnabled(False)
+
+        new_src = Stack_wrapper(fname)
+
+        if new_src is not None:          
+            self.set_new_img_src_sig.emit(new_src)
+        
+
         
     def closeEvent(self,ce):
         self.diag.close()
         QtGui.QMainWindow.closeEvent(self,ce)
+
+        
+    def destroy(self,dw=True,dsw=True):
+        print 'i died!'
+        self.thread.quit()
+        self.thread.wait()
+        QtGui.QMainWindow.destroy(self,dw,dsw)
+
+    @QtCore.Slot(int)
+    def update_base_image(self):
+        self.proc_flag = False
+        self.im = None
+        self.frame_spinner.setRange(0,len(self.worker)-1)        
+        img = self.worker.get_frame()
+        if img is None:
+            return
+
+        img = np.asarray(img)
+
+        self.im = self.axes.imshow(img,cmap='cubehelix')
+        self.axes.set_aspect('equal')
+        self.redraw_sig.emit(True,True)
+
