@@ -79,9 +79,6 @@ void Wrapper_i_plu::add_frame_data(Ipp32f data[][9], int frame,int num)
 {
   if(data_.at(frame) !=NULL)
     throw runtime_error("already data at this frame");
-
-  if (frame%50==0)
-    cout<<"frame "<<frame<<endl;
   
   data_.at(frame) = data;
   frame_count_.at(frame) = num;
@@ -144,7 +141,7 @@ Wrapper_i_plu::~Wrapper_i_plu()
 
 Wrapper_i_plu::Wrapper_i_plu(int frames,Tuple<float,2> dims):data_(frames,NULL),frame_count_(frames,0),count_ (0),dims_(dims)
 {
-  cout<<"data_ size: "<<data_.size()<<endl;
+
   
     // set the size of the md_store
   set_Md_store_size(frames);
