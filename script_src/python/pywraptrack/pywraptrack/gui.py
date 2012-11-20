@@ -28,10 +28,10 @@ from matplotlib.figure import Figure
 import numpy as np
 from .swig_wrappers import *
 from .img import *
-
+function = type(lambda x:x)
 class idenWorker(QtCore.QObject):
     frame_proced = QtCore.Signal(bool,bool)
-    img_src_updated_sig = QtCore.Signal()
+    img_src_updated_sig = QtCore.Signal(str)
     
     def __init__(self,params,img_src,parent=None):
         QtCore.QObject.__init__(self,parent)
@@ -56,16 +56,18 @@ class idenWorker(QtCore.QObject):
     def save_parametrs(self,fname):
         self.idenpb.save_params(fname)
 
-    @QtCore.Slot(Image_wrapper)
-    def set_img_src(self,new_src):
-
-        self.clear()
+    @QtCore.Slot(str,function)
+    def set_img_src(self,fname,wrap_fun):
+        new_src = wrap_fun(fname)
         if new_src is None:
+            print 'failed to open'
             return
+        self.clear()
 
+        
         self.img_src = new_src
-        self.img_src_updated_sig.emit()
-        self.proc_frame(0,False)
+        self.img = new_src[0]
+        self.img_src_updated_sig.emit(str(new_src))
         
     def get_points(self):
         return self.points
@@ -91,7 +93,7 @@ class IdenGui(QtGui.QMainWindow):
     proc = QtCore.Signal(int,bool)        # signal to worker to process the frame
     save_parametrs_sig = QtCore.Signal(str)         # signal to save the configuration
     redraw_sig = QtCore.Signal(bool,bool) # signal (to be primarily to be connected to self) to re-draw
-    set_new_img_src_sig  = QtCore.Signal(Image_wrapper) # signal to pass a new image source to the 
+    set_new_img_src_sig  = QtCore.Signal(str,function) # signal to pass a new image source to the 
     
     
     
@@ -135,14 +137,15 @@ class IdenGui(QtGui.QMainWindow):
         self.proc.connect(self.worker.proc_frame)    
         self.save_parametrs_sig.connect(self.worker.save_parametrs)    
         self.set_new_img_src_sig.connect(self.worker.set_img_src)    
-
+        self.redraw_sig.connect(self.on_draw)
+        
         self.create_main_frame()
         self.create_actions()
         self.create_menu_bar()        
         self.create_diag()
         self.create_status_bar()
 
-        self.update_base_image()
+        self.update_base_image('')
 
         
 
@@ -161,6 +164,7 @@ class IdenGui(QtGui.QMainWindow):
     def on_draw(self,refresh_img=True,refresh_points=True):
         """ Redraws the figure
         """
+
         if refresh_img and self.im is not None:
 
             img = self.worker.get_frame()
@@ -377,15 +381,10 @@ class IdenGui(QtGui.QMainWindow):
         if len(fname) == 0:
             return
 
-        
+        self.diag.setEnabled(False)        
         self.prog_bar.show()
-        self.diag.setEnabled(False)
 
-        new_src = Series_wrapper.create_wrapper(fname)
-
-        if new_src is not None:          
-            self.status_text.setText(str(new_src))
-            self.set_new_img_src_sig.emit(new_src)
+        self.set_new_img_src_sig.emit(fname, Series_wrapper.create_wrapper)
         
 
 
@@ -394,15 +393,9 @@ class IdenGui(QtGui.QMainWindow):
         if len(fname) == 0:
             return
 
-
-        self.prog_bar.show()
         self.diag.setEnabled(False)
-
-        new_src = Stack_wrapper(fname)
-
-        if new_src is not None:          
-            self.status_text.setText(str(new_src))
-            self.set_new_img_src_sig.emit(new_src)
+        self.prog_bar.show()
+        self.set_new_img_src_sig.emit(fname, Stack_wrapper)
         
 
         
@@ -419,9 +412,13 @@ class IdenGui(QtGui.QMainWindow):
         self.thread.wait()
         QtGui.QMainWindow.destroy(self,dw,dsw)
 
-    @QtCore.Slot(int)
-    def update_base_image(self):
+    @QtCore.Slot(str)
+    def update_base_image(self,label):
+
         self.proc_flag_button.setChecked(False)
+
+        self.frame_spinner.setValue(0)
+        
 
         self.im = None
         self.frame_spinner.setRange(0,len(self.worker)-1)        
@@ -433,6 +430,6 @@ class IdenGui(QtGui.QMainWindow):
 
         self.im = self.axes.imshow(img,cmap='cubehelix',extent=[0,img.shape[1],0,img.shape[0]],origin='lower',interpolation='nearest')
         self.axes.set_aspect('equal')
-        print 'really hit here!'
+        self.status_text.setText(label)
         self.redraw_sig.emit(True,True)
 
