@@ -1,15 +1,10 @@
 # testing
 
-SET(GNU_PLOT_SRC
-  ${PROJECT_SOURCE_DIR}/external_src/gnu_wrapper/gnuplot_i.cpp
-)
-include_directories(${TRACKING_SOURCE_DIR}/external_src/gnu_wrapper)
-
 
 add_executable(track_test track_test.cpp 
   ${COMMON_SRC} 
   ${UTIL_SRC} 
-  ${GNU_PLOT_SRC} 
+   
   ${COMMON_TRACK_SRC}
   )
 set_target_properties(track_test PROPERTIES COMPILE_DEFINITIONS  "PTYPE=1;DIM_COUNT=2;TESTING")
@@ -43,7 +38,7 @@ add_executable(hdf_add add_to_hdf_test.cpp
   ${UTIL_SRC} 
   ${COMMON_HASH_SRC}
   ${HDF_SRC}
-  ${GNU_PLOT_SRC} 
+   
   ${CONFIG_SRC}
   )
 set_target_properties(hdf_add PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_COUNT=2;TESTING")
@@ -55,7 +50,7 @@ add_executable(fake_hdf make_fake_hdf.cpp
   ${UTIL_SRC} 
   ${COMMON_HASH_SRC}
   ${HDF_SRC}
-  ${GNU_PLOT_SRC} 
+   
   ${CONFIG_SRC}
   )
 set_target_properties(fake_hdf PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_COUNT=2;TESTING")
@@ -77,7 +72,7 @@ add_executable(read_write_add_test read_write_add_test.cpp
   ${UTIL_SRC} 
   ${COMMON_HASH_SRC}
   ${HDF_SRC}
-  ${GNU_PLOT_SRC} 
+   
   ${CONFIG_SRC}
   ${COMMON_TRACK_SRC}
   )
@@ -90,7 +85,7 @@ set_target_properties(template_test PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM
 add_executable(sofq_ND_test sofq_ND_test.cpp
   ${COMMON_SRC}
   ${CORR_SRC}
-  ${GNU_PLOT_SRC}
+  
   ${COMMON_HASH_SRC}
   ${ACCUM_SCR}
   )
@@ -100,7 +95,7 @@ set_target_properties(sofq_ND_test PROPERTIES COMPILE_DEFINITIONS  "PTYPE=0;DIM_
 add_executable(sofq_test sofq_test.cpp
   ${COMMON_SRC}
   ${CORR_SRC}
-  ${GNU_PLOT_SRC}
+  
   ${COMMON_HASH_SRC}
   ${ACCUM_SCR}
   )
@@ -138,7 +133,7 @@ add_executable(rtt_hc rtt_hc.cpp
   ${COMMON_SRC}
   ${UTIL_SRC}
   ${HDF_SRC}
-  ${GNU_PLOT_SRC}
+  
   ${COMMON_TRACK_SRC}
   ${COMMON_HASH_SRC} 
   ${HASH_TRACK_SRC}
@@ -157,7 +152,7 @@ add_executable(rtt_ts rtt_ts.cpp
   ${COMMON_SRC}
   ${UTIL_SRC}
   ${HDF_SRC}
-  ${GNU_PLOT_SRC}
+  
   ${COMMON_TRACK_SRC}
   ${COMMON_HASH_SRC} 
   ${HASH_TRACK_SRC}
