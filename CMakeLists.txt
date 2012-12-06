@@ -174,7 +174,7 @@ if(COMPILE_IDEN)
   MESSAGE(STATUS "making the identification functionality")
   SET(CMAKE_CXX_FLAGS "-ansi -D_GNU_SOURCE -fPIC -fno-omit-frame-pointer -pthread -Wall ")
 
-  set(ENV{IPP_ROOT} "/home/tcaswell/intel/ipp/5.3.4.080/em64t/")
+  set(ENV{IPP_ROOT} "/opt/intel/ipp/")
   find_package(IPP REQUIRED)
   set(ENV{FREEIMAGE_ROOT} "/home/tcaswell/local_installs/usr/")
   find_package(FreeImage REQUIRED)
