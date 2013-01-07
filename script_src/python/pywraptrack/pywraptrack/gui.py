@@ -176,8 +176,8 @@ class IdenGui(QtGui.QMainWindow):
         if refresh_points:
             points = self.worker.get_points()
             if points is not None and self.plot_pts:
-                self.pt_plt.set_xdata(points[0])
-                self.pt_plt.set_ydata(points[1])
+                self.pt_plt.set_xdata(np.array(points[0])+.5)
+                self.pt_plt.set_ydata(np.array(points[1])+.5)
             else:
                 self.pt_plt.set_xdata([])
                 self.pt_plt.set_ydata([])
