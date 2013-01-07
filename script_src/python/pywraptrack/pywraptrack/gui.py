@@ -33,23 +33,65 @@ class idenWorker(QtCore.QObject):
     frame_proced = QtCore.Signal(bool,bool)
     img_src_updated_sig = QtCore.Signal(str)
     
-    def __init__(self,params,img_src,parent=None):
+    def __init__(self,params,filter_params,img_src,parent=None):
         QtCore.QObject.__init__(self,parent)
 
         self.img_src = img_src
         self.idenpb = IdenProcessBackend(params)
+        self.filter_params = filter_params
         self.img = None
         self.points = None
+        self.res_dict = None
 
+
+        
+        def filter_fun(res_dict, f_params):
+            if f_params is None:
+                f_params = {}
+            
+            if res_dict is None:
+                return None
+            
+            index = np.ones(res_dict['x'].shape,dtype=bool)
+
+            if 'I' in res_dict and 'Imax' in f_params:
+                I_indx = res_dict['I'] < f_params['Imax']
+                index *= I_indx
+                
+            if 'I' in res_dict and 'Imin' in f_params:
+                I_indx = res_dict['I'] > f_params['Imax']
+                index *= I_indx
+
+            if 'e' in res_dict and 'e_cut' in f_params:
+                e_indx = res_dict['e'] < f_params['e_cut']
+                index *= e_indx
+
+            if 'dx' in res_dict and 'dy' in res_dict and 'shift_cut' in f_params:
+                shift_indx = np.hypot(res_dict['dx'], res_dict['dy']) < f_params['shift_cut']
+                index *= shift_indx
+                
+            if 'r2' in res_dict and 'rg_cut' in f_params:
+                r2_indx = res_dict['r2'] < f_params['rg_cut']
+                index *= r2_indx
+
+
+            return res_dict['x'][index],res_dict['y'][index]
+
+        self.filter_fun = filter_fun
+        
     @QtCore.Slot(int,bool)
     def proc_frame(self, i, proc):
         if self.img_src is None:
             return
+        
         self.img = self.img_src[i]
         if proc:
-            self.points = self.idenpb.process_single_frame(self.img)
+            self.res_dict = self.idenpb.process_single_frame(self.img, ('x', 'y', 'dx', 'dy', 'e', 'r2'))
+            self.points = self.filter_fun(self.res_dict, self.filter_params)
         else:
+            self.res_dict = None
             self.points = None
+            
         self.frame_proced.emit(True,True)
 
     @QtCore.Slot(str)
@@ -60,6 +102,9 @@ class idenWorker(QtCore.QObject):
     def set_img_src(self,fname,wrap_fun):
         new_src = wrap_fun(fname)
         if new_src is None:
+            self.img = None
+            self.img_src = None
+            self.img_src_updated_sig.emit('')
             print 'failed to open'
             return
         self.clear()
@@ -74,6 +119,14 @@ class idenWorker(QtCore.QObject):
 
     def update_param(self,key,val):
         self.idenpb.update_param(key,val)
+        
+    def update_filter_params(self, f_params):
+        if f_params is None:
+            f_params = {}
+        self.filter_params = f_params
+        if self.res_dict is not None:
+            self.points = self.filter_fun(self.res_dict, self.filter_params)
+            self.frame_proced.emit(True,True)
 
     def get_frame(self):
         return self.img
@@ -97,18 +150,20 @@ class IdenGui(QtGui.QMainWindow):
     
     
     
-    spinner_lst = [
-        {'name':'p_rad','min':0,'max':50,'step':1,'type':np.int,'default':4},
-        {'name':'d_rad','min':0,'max':50,'step':1,'type':np.int,'default':3},
-        {'name':'mask_rad','min':0,'max':50,'step':1,'type':np.int,'default':5},
+    spinner_lst_compute = [
+        {'name':'p_rad', 'min':0,'max':50,'step':1,'type':np.int,'default':4},
+        {'name':'d_rad', 'min':0,'max':50,'step':1,'type':np.int,'default':3},
+        {'name':'mask_rad', 'min':0,'max':50,'step':1,'type':np.int,'default':5},
         
-        {'name':'top_cut','min':0,'max':1,'step':.001,'prec':4,'type':np.float,'default':.001},
-        {'name':'threshold','min':0,'max':100,'step':1,'prec':1,'type':np.float,'default':1.0},
-        {'name':'hwhm','min':0,'max':50,'step':.1,'prec':1,'type':np.float,'default':1.3},
-
-        {'name':'shift_cut','min':0,'max':5,'step':.1,'prec':1,'type':np.float,'default':1.5},
-        {'name':'rg_cut','min':0,'max':100,'step':1,'prec':1,'type':np.float,'default':10},
-        {'name':'e_cut','min':0,'max':1,'step':.1,'prec':2,'type':np.float,'default':.5},
+        {'name':'top_cut', 'min':0,'max':1,'step':.001,'prec':4,'type':np.float,'default':.001},
+        {'name':'threshold', 'min':0,'max':100,'step':1,'prec':1,'type':np.float,'default':1.0},
+        {'name':'hwhm', 'min':0,'max':50,'step':.1,'prec':1,'type':np.float,'default':1.3},
+        ]
+    
+    spinner_lst_filter = [
+        {'name':'shift_cut', 'min':0,'max':5,'step':.1,'prec':1,'type':np.float,'default':1.5},
+        {'name':'rg_cut', 'min':0,'max':100,'step':1,'prec':1,'type':np.float,'default':10},
+        {'name':'e_cut', 'min':0,'max':1,'step':.1,'prec':2,'type':np.float,'default':.5},
 
         
         ]
@@ -119,17 +174,20 @@ class IdenGui(QtGui.QMainWindow):
         QtGui.QMainWindow.__init__(self, parent)
         self.setWindowTitle('Feature Finder')
 
-        params = dict((d['name'],d['default']) for d in IdenGui.spinner_lst)
+        params = dict((d['name'],d['default']) for d in IdenGui.spinner_lst_compute)
+        
                 
         self.cur_frame = 0
         self.proc_flag = False
         self.refresh_points = False
         self.refresh_img = False
+
+        self.filter_spinners = {}
         
         self.thread = QtCore.QThread(parent=self)
 
-        self.worker = idenWorker(params,img_src,parent=None)
-        self.worker.proc_frame(self.cur_frame,False)
+        self.worker = idenWorker(params,{},img_src,parent=None)
+        #        self.worker.proc_frame(self.cur_frame,False)
         self.worker.moveToThread(self.thread)
         self.worker.frame_proced.connect(self.on_draw)        
         self.worker.img_src_updated_sig.connect(self.update_base_image)        
@@ -284,9 +342,38 @@ class IdenGui(QtGui.QMainWindow):
         
 
         # section for dealing with fringe finding 
-        
+        compute_group_box = QtGui.QGroupBox("compute parameters")
+        compute_fs_layout = QtGui.QFormLayout()
         # fill the spinners
-        for spin_prams in IdenGui.spinner_lst:
+        for spin_prams in IdenGui.spinner_lst_compute:
+
+            s_type = np.dtype(spin_prams['type']).kind
+
+            if s_type == 'i':
+                spin_box = QtGui.QSpinBox(parent=self)
+            elif s_type== 'f':
+                spin_box = QtGui.QDoubleSpinBox(parent=self)
+                spin_box.setDecimals(spin_prams['prec'])
+            else:
+                print s_type
+                continue
+            spin_box.setKeyboardTracking(False)
+            spin_box.setRange(spin_prams['min'],spin_prams['max'])
+            spin_box.setSingleStep(spin_prams['step'])
+            spin_box.setValue(spin_prams['default'])
+            name = spin_prams['name']
+
+            spin_box.valueChanged.connect(self._gen_update_closure(name))
+            compute_fs_layout.addRow(QtGui.QLabel(spin_prams['name']),spin_box)
+
+        compute_group_box.setLayout(compute_fs_layout)
+        diag_layout.addWidget(compute_group_box)
+
+        ##### set up the filter parameters 
+        filter_group_box = QtGui.QGroupBox("filter parameters")
+        compute_fs_layout = QtGui.QFormLayout()
+        
+        for spin_prams in IdenGui.spinner_lst_filter:
 
             s_type = np.dtype(spin_prams['type']).kind
 
@@ -299,16 +386,29 @@ class IdenGui(QtGui.QMainWindow):
                 print s_type
                 continue
             
+            spin_box.setKeyboardTracking(False)
+            
             spin_box.setRange(spin_prams['min'],spin_prams['max'])
             spin_box.setSingleStep(spin_prams['step'])
             spin_box.setValue(spin_prams['default'])
             name = spin_prams['name']
 
+            self.filter_spinners[name] = spin_box
+            spin_box.setEnabled(False)
+            
+            l_checkbox = QtGui.QCheckBox('enable')
+            l_checkbox.stateChanged.connect(spin_box.setEnabled)
+            l_checkbox.stateChanged.connect(self.update_filters_acc.trigger)
+            spin_box.valueChanged.connect(self.update_filters_acc.trigger)
+            l_h_layout = QtGui.QHBoxLayout()
+            l_h_layout.addWidget(spin_box)
+            l_h_layout.addWidget(l_checkbox)
 
-            spin_box.valueChanged.connect(self._gen_update_closure(name))
-            fs_form.addRow(QtGui.QLabel(spin_prams['name']),spin_box)
+            compute_fs_layout.addRow(QtGui.QLabel(spin_prams['name']),l_h_layout)
 
-
+        filter_group_box.setLayout(compute_fs_layout)
+        diag_layout.addWidget(filter_group_box)
+        diag_layout.addStretch()
         
         self.proc_flag_button = QtGui.QCheckBox('process frame')
         self.proc_flag_button.stateChanged.connect(self.set_proc_flag)
@@ -347,6 +447,8 @@ class IdenGui(QtGui.QMainWindow):
         self.open_stack_acc =  QtGui.QAction(u'Open S&tack', self)
         self.open_stack_acc.triggered.connect(self.open_stack)
 
+        self.update_filters_acc = QtGui.QAction(u'Update Filters',  self)
+        self.update_filters_acc.triggered.connect(self.update_filter)
         
     def create_menu_bar(self):
         menubar = self.menuBar()
@@ -419,3 +521,12 @@ class IdenGui(QtGui.QMainWindow):
         self.status_text.setText(label)
         self.redraw_sig.emit(True,True)
 
+    @QtCore.Slot()
+    def update_filter(self):
+        filter_params = {}
+        for name,box in self.filter_spinners.iteritems():
+            if box.isEnabled():
+                filter_params[name] = box.value()
+
+
+        self.worker.update_filter_params(filter_params)
