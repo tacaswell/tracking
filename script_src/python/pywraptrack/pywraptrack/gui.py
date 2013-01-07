@@ -42,7 +42,7 @@ class idenWorker(QtCore.QObject):
         self.points = None
 
     @QtCore.Slot(int,bool)
-    def proc_frame(self,i,proc):
+    def proc_frame(self, i, proc):
         if self.img_src is None:
             return
         self.img = self.img_src[i]
@@ -147,9 +147,6 @@ class IdenGui(QtGui.QMainWindow):
 
         self.update_base_image('')
 
-        
-
-
         self.show()
         self.thread.start()
         #        self.thread.exec_()
@@ -231,7 +228,7 @@ class IdenGui(QtGui.QMainWindow):
         self.axes = self.fig.add_subplot(111)
         self.im = None
 
-        self.pt_plt, = self.axes.plot([],[],linestyle='none',marker='x',color='k')
+        self.pt_plt, = self.axes.plot([],[],linestyle='none', marker='x', color='k')
 
 
         
@@ -267,7 +264,7 @@ class IdenGui(QtGui.QMainWindow):
     def create_diag(self):
         
         # make top level stuff
-        self.diag = QtGui.QDockWidget('controls',parent=self)
+        self.diag = QtGui.QDockWidget('controls', parent=self)
         self.addDockWidget(QtCore.Qt.LeftDockWidgetArea,self.diag)
         diag_widget = QtGui.QWidget(self.diag)
         self.diag.setWidget(diag_widget)
@@ -327,7 +324,7 @@ class IdenGui(QtGui.QMainWindow):
         # grab_button.clicked.connect(self.grab_sf_curve)
         # fc_vboxes.addWidget(grab_button)
         # # button to process this frame
-        
+
     def create_status_bar(self):
         self.status_text = QtGui.QLabel('')
         self.prog_bar = QtGui.QProgressBar()
@@ -336,19 +333,18 @@ class IdenGui(QtGui.QMainWindow):
         self.statusBar().addPermanentWidget(self.status_text)
         self.statusBar().addWidget(self.prog_bar)
 
-
     def create_actions(self):
-        self.show_cntrl_acc = QtGui.QAction(u'show controls',self)
+        self.show_cntrl_acc = QtGui.QAction(u'show controls', self)
         self.show_cntrl_acc.triggered.connect(self.show_diag)
 
-        self.save_param_acc = QtGui.QAction(u'&Save Parameters',self)
+        self.save_param_acc = QtGui.QAction(u'&Save Parameters', self)
         self.save_param_acc.triggered.connect(self.save_config)
 
-        self.open_series_acc =  QtGui.QAction(u'Open Se&ries',self)
+        self.open_series_acc =  QtGui.QAction(u'Open Se&ries', self)
         self.open_series_acc.triggered.connect(self.open_series)
 
         
-        self.open_stack_acc =  QtGui.QAction(u'Open S&tack',self)
+        self.open_stack_acc =  QtGui.QAction(u'Open S&tack', self)
         self.open_stack_acc.triggered.connect(self.open_stack)
 
         
@@ -363,18 +359,13 @@ class IdenGui(QtGui.QMainWindow):
     def show_diag(self):
         self.diag.show()
 
-
     def _gen_update_closure(self,name):
         return lambda x :self.update_param(name,x)
-
-    
-        
 
     def save_config(self):
         fname,_ = QtGui.QFileDialog.getSaveFileName(self,caption='Save File')
         if len(fname) > 0:
             self.save_parametrs_sig.emit(fname)
-
 
     def open_series(self):
         fname,_ = QtGui.QFileDialog.getOpenFileName(self,caption='Select first image')
@@ -386,8 +377,6 @@ class IdenGui(QtGui.QMainWindow):
 
         self.set_new_img_src_sig.emit(fname, Series_wrapper.create_wrapper)
         
-
-
     def open_stack(self):
         fname,_ = QtGui.QFileDialog.getOpenFileName(self,caption='Select image stack')
         if len(fname) == 0:
@@ -397,15 +386,12 @@ class IdenGui(QtGui.QMainWindow):
         self.prog_bar.show()
         self.set_new_img_src_sig.emit(fname, Stack_wrapper)
         
-
-        
     def closeEvent(self,ce):
         self.diag.close()
         self.thread.quit()
         self.thread.wait()
         QtGui.QMainWindow.closeEvent(self,ce)
 
-        
     def destroy(self,dw=True,dsw=True):
         print 'i died!'
         self.thread.quit()
@@ -428,7 +414,7 @@ class IdenGui(QtGui.QMainWindow):
 
         img = np.asarray(img)
 
-        self.im = self.axes.imshow(img,cmap='cubehelix',extent=[0,img.shape[1],0,img.shape[0]],origin='lower',interpolation='nearest')
+        self.im = self.axes.imshow(img,cmap='cubehelix', extent=[0,img.shape[1],0,img.shape[0]],origin='lower', interpolation='nearest')
         self.axes.set_aspect('equal')
         self.status_text.setText(label)
         self.redraw_sig.emit(True,True)
