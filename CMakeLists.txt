@@ -126,7 +126,7 @@ SET(TRK_ACCUM_SRC
   ${COMMON_SRC_PATH}/ta_theta_rlim
   ${COMMON_SRC_PATH}/accum_chi4_self
 )
-SET(ENV{HDF5_ROOT} "/home/tcaswell/local_installs")
+SET(ENV{HDF5_ROOT} "$ENV{HOME}/local_installs")
 SET(HDF5_USE_STATIC_LIBRARIES FALSE)
 find_package(HDF5 REQUIRED CXX)
 
@@ -139,13 +139,13 @@ find_package(Boost COMPONENTS date_time REQUIRED)
 MESSAGE (STATUS "${Boost_LIBRARIES}")
 
 
-set(ENV{XERCESC_ROOT} "/home/tcaswell/local_installs")
+set(ENV{XERCESC_ROOT} "$ENV{HOME}/local_installs")
 find_package(XercesC REQUIRED)
 include_directories(${XERCESC_INCLUDE_DIR})
 
 
 
-set(ENV{SQLITE3_ROOT} "/home/tcaswell/local_installs")
+set(ENV{SQLITE3_ROOT} "$ENV{HOME}/local_installs")
 find_package(SQLITE3 REQUIRED)
 include_directories(${SQLITE3_INCLUDE_DIR})
 
@@ -174,10 +174,10 @@ if(COMPILE_IDEN)
   MESSAGE(STATUS "making the identification functionality")
   SET(CMAKE_CXX_FLAGS "-ansi -D_GNU_SOURCE -fPIC -fno-omit-frame-pointer -pthread -Wall ")
 
-  set(ENV{IPP_ROOT} "/home/tcaswell/intel/ipp/5.3.4.080/em64t/")
+  set(ENV{IPP_ROOT} "$ENV{HOME}/intel/ipp/5.3.4.080/em64t/")
   # set(ENV{IPP_ROOT} "/opt/intel/ipp/")
   find_package(IPP REQUIRED)
-  set(ENV{FREEIMAGE_ROOT} "/home/tcaswell/local_installs/usr/")
+  set(ENV{FREEIMAGE_ROOT} "$ENV{HOME}/local_installs/usr/")
   find_package(FreeImage REQUIRED)
   set(IDEN_SRC_PATH ${PROJECT_SOURCE_DIR}/iden/cxx)
   set(IDEN_INC_PATH ${PROJECT_SOURCE_DIR}/iden/include)
