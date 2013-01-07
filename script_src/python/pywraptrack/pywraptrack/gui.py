@@ -24,10 +24,12 @@ import matplotlib
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt4agg import NavigationToolbar2QTAgg as NavigationToolbar
 from matplotlib.figure import Figure
+import matplotlib.gridspec as gridspec
 
 import numpy as np
 from .swig_wrappers import *
 from .img import *
+
 function = type(lambda x:x)
 class idenWorker(QtCore.QObject):
     frame_proced = QtCore.Signal(bool,bool)
@@ -208,13 +210,17 @@ class IdenGui(QtGui.QMainWindow):
         self.show()
         self.thread.start()
         #        self.thread.exec_()
-        QtGui.qApp.exec_()
-
-
+        
      
         self.points = None
 
 
+
+
+
+        QtGui.qApp.exec_()
+
+        
     @QtCore.Slot(bool,bool)
     def on_draw(self,refresh_img=True,refresh_points=True):
         """ Redraws the figure
@@ -233,6 +239,7 @@ class IdenGui(QtGui.QMainWindow):
             if points is not None and self.plot_pts:
                 self.pt_plt.set_xdata(np.array(points[0])+.5)
                 self.pt_plt.set_ydata(np.array(points[1])+.5)
+                self.hmod1_window.update_axes(hist_plot,points[0],points[1])
             else:
                 self.pt_plt.set_xdata([])
                 self.pt_plt.set_ydata([])
@@ -242,6 +249,8 @@ class IdenGui(QtGui.QMainWindow):
 
         self.prog_bar.hide()                        
         self.diag.setEnabled(True)
+
+        
 
     def proc_frame(self):
         self.prog_bar.show()                        
@@ -318,6 +327,8 @@ class IdenGui(QtGui.QMainWindow):
         self.main_frame.setLayout(vbox)
         self.setCentralWidget(self.main_frame)
 
+        self.hmod1_window = GraphDialog((1,1),self)
+        
 
     def create_diag(self):
         
@@ -419,12 +430,9 @@ class IdenGui(QtGui.QMainWindow):
         self.save_params_button.clicked.connect(self.save_param_acc.trigger)
         diag_layout.addWidget(self.save_params_button)
 
-        # button to grab initial spline
-        # grab_button = QtGui.QPushButton('Grab Spline')
-        # grab_button.clicked.connect(self.grab_sf_curve)
-        # fc_vboxes.addWidget(grab_button)
-        # # button to process this frame
 
+
+        
     def create_status_bar(self):
         self.status_text = QtGui.QLabel('')
         self.prog_bar = QtGui.QProgressBar()
@@ -449,6 +457,11 @@ class IdenGui(QtGui.QMainWindow):
 
         self.update_filters_acc = QtGui.QAction(u'Update Filters',  self)
         self.update_filters_acc.triggered.connect(self.update_filter)
+
+        self.toggle_hist_acc = QtGui.QAction(u'toggle Hist mod1',  self)
+        self.toggle_hist_acc.setCheckable(True)
+        self.toggle_hist_acc.toggled.connect(self.hmod1_window.setVisible)
+        self.toggle_hist_acc.setChecked(True)
         
     def create_menu_bar(self):
         menubar = self.menuBar()
@@ -457,6 +470,9 @@ class IdenGui(QtGui.QMainWindow):
         fileMenu.addAction(self.save_param_acc)
         fileMenu.addAction(self.open_stack_acc)
         fileMenu.addAction(self.open_series_acc)
+
+        diagnosticMenue = menubar.addMenu('&Diagnostic')
+        diagnosticMenue.addAction(self.toggle_hist_acc)
         
     def show_diag(self):
         self.diag.show()
@@ -530,3 +546,37 @@ class IdenGui(QtGui.QMainWindow):
 
 
         self.worker.update_filter_params(filter_params)
+
+
+        
+class GraphDialog(QtGui.QDialog):
+    def __init__(self, grid_size=(1, 1), parent=None):
+        QtGui.QDialog.__init__(self, parent)
+        
+        self.fig = Figure((10, 10))
+        self.canvas = FigureCanvas(self.fig)
+        self.canvas.setParent(self)
+        self.canvas.setSizePolicy(QtGui.QSizePolicy.Expanding,
+                                  QtGui. QSizePolicy.Expanding)
+        self.gs = gridspec.GridSpec(*grid_size)
+        self.axes_list = [self.fig.add_subplot(s) for s in self.gs]
+        self.gs.tight_layout(self.fig, rect=[0, 0, 1, 1])
+        
+    def update_axes(self, fun, *args,**kwargs):
+        fun(self.axes_list, *args,**kwargs)
+        self.gs.tight_layout(self.fig)
+        self.canvas.draw()
+
+    def resizeEvent(self, re):
+        QtGui.QDialog.resizeEvent(self, re)
+        self.canvas.resize(re.size().width(), re.size().height())
+        self.gs.tight_layout(self.fig, rect=[0, 0, 1, 1],pad=0)
+
+def hist_plot(axes_lst,x,y):
+    ax = axes_lst[0]
+    ax.cla()
+    ax.axhline(1)
+    ax.hist(np.mod(x,1),100,histtype='step',normed=True)
+    ax.hist(np.mod(y,1),100,histtype='step',normed=True)
+    ax.set_ylim(.7,1.3)
+
