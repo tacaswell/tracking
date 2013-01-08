@@ -77,7 +77,11 @@ class idenWorker(QtCore.QObject):
                 index *= r2_indx
 
 
-            return res_dict['x'][index],res_dict['y'][index]
+            out_dict = {}
+            for key in res_dict:
+                out_dict[key] = res_dict[key][index]
+
+            return out_dict
 
         self.filter_fun = filter_fun
         
@@ -237,9 +241,12 @@ class IdenGui(QtGui.QMainWindow):
         if refresh_points:
             points = self.worker.get_points()
             if points is not None and self.plot_pts:
-                self.pt_plt.set_xdata(np.array(points[0])+.5)
-                self.pt_plt.set_ydata(np.array(points[1])+.5)
-                self.hmod1_window.update_axes(hist_plot,points[0],points[1])
+                x = points['x'] +.5
+                y = points['y'] +.5
+                self.pt_plt.set_xdata(x)
+                self.pt_plt.set_ydata(y)
+                self.hmod1_window.update_axes(hist_plot,x,y)
+                self.ph.res_dict = points
             else:
                 self.pt_plt.set_xdata([])
                 self.pt_plt.set_ydata([])
@@ -287,6 +294,7 @@ class IdenGui(QtGui.QMainWindow):
         self.canvas = FigureCanvas(self.fig)
         self.canvas.setParent(self.main_frame)
 
+        self.ph = PickerHandler(self.canvas)
         # Since we have only one plot, we can use add_axes 
         # instead of add_subplot, but then the subplot
         # configuration tool in the navigation toolbar wouldn't
@@ -295,7 +303,11 @@ class IdenGui(QtGui.QMainWindow):
         self.axes = self.fig.add_subplot(111)
         self.im = None
 
-        self.pt_plt, = self.axes.plot([],[],linestyle='none', marker='x', color='k')
+        self.pt_plt, = self.axes.plot([],[],
+                                      linestyle='none', 
+                                      marker='x', 
+                                      color='k',
+                                      picker=1)
 
 
         
@@ -579,4 +591,27 @@ def hist_plot(axes_lst,x,y):
     ax.hist(np.mod(x,1),100,histtype='step',normed=True)
     ax.hist(np.mod(y,1),100,histtype='step',normed=True)
     ax.set_ylim(.7,1.3)
+
+
+    
+class PickerHandler(object):
+    def __init__(self,canv,fun = None):
+        canv.mpl_connect('pick_event',self.on_pick)
+        self.fun = fun
+        self.res_dict = None
+        
+    def on_pick(self,event):
+        art = event.artist
+        # if not a Line2D, don't want to deal with it
+        if not isinstance(art,matplotlib.lines.Line2D):
+            return
+        if self.res_dict is None:
+            return
+        
+        if len(event.ind):
+            for i in event.ind:
+                print 'Particle :', i
+                for k in self.res_dict:
+                    print k,': ', self.res_dict[k][i],' '
+                print '======'
 
