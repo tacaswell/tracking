@@ -155,25 +155,94 @@ class IdenGui(QtGui.QMainWindow):
     set_new_img_src_sig  = QtCore.Signal(str,function) # signal to pass a new image source to the 
     
     
-    
     spinner_lst_compute = [
-        {'name':'p_rad', 'min':0,'max':50,'step':1,'type':np.int,'default':4},
-        {'name':'d_rad', 'min':0,'max':50,'step':1,'type':np.int,'default':3},
-        {'name':'mask_rad', 'min':0,'max':50,'step':1,'type':np.int,'default':5},
+        {'name':'p_rad',
+         'min':0,
+         'max':50,
+         'step':1,
+         'type':np.int,
+         'default':4,
+         'tooltip':'The radius[pixel] of the mask used in the band pass filter'},
+                  
+        {'name':'hwhm',
+         'min':0,
+         'max':50,
+         'step':.1,
+         'prec':1,
+         'type':np.float,
+         'default':1.3,
+         'tooltip':'The half-width half-max of the Gaussian used for the band pass'},
+
+         
+         {'name':'d_rad',
+          'min':0,
+          'max':50,
+          'step':1,
+          'type':np.int,
+          'default':3,
+          'tooltip':'The radius[pixel] of dilation used to locate local maximums'},
+          
+        {'name':'mask_rad',
+         'min':0,
+         'max':50,
+         'step':1,
+         'type':np.int,
+         'default':5,
+         'tooltip':'The mask radius[pixel] used for computing sub-pixel accuracy'},
+         
+         
+        {'name':'top_cut',
+         'min':0,
+         'max':1,
+         'step':.001,
+         'prec':4,
+         'type':np.float,
+         'default':.001,
+         'tooltip':'The fraction of brightest pixels to squash down to the highest non-squashed value'},
+         
+        {'name':'threshold',
+         'min':0,
+         'max':100,
+         'step':1,
+         'prec':1,
+         'type':np.float,
+         'default':1.0,
+         'tooltip':'Pixels below this value (after the band pass which re-scales all pixels to [0-100]) are set to 0'},
+
+         ]
         
-        {'name':'top_cut', 'min':0,'max':1,'step':.001,'prec':4,'type':np.float,'default':.001},
-        {'name':'threshold', 'min':0,'max':100,'step':1,'prec':1,'type':np.float,'default':1.0},
-        {'name':'hwhm', 'min':0,'max':50,'step':.1,'prec':1,'type':np.float,'default':1.3},
-        ]
-    
     spinner_lst_filter = [
-        {'name':'shift_cut', 'min':0,'max':5,'step':.1,'prec':1,'type':np.float,'default':1.5},
-        {'name':'rg_cut', 'min':0,'max':100,'step':1,'prec':1,'type':np.float,'default':10},
-        {'name':'e_cut', 'min':0,'max':1,'step':.1,'prec':2,'type':np.float,'default':.5},
-
-        
-        ]
-
+        {'name':'shift_cut',
+         'min':0,
+         'max':5,
+         'step':.1,
+         'prec':1,
+         'type':np.float,
+         'default':1.5,
+         'tooltip':'Particles that move more than this in [pixel] are filtered out'},
+         
+        {'name':'rg_cut',
+         'min':0,
+         'max':100,
+         'step':1,
+         'prec':1,
+         'type':np.float,
+         'default':10,
+         'tooltip':'Particles with radius of gyration greater than this are filtered out'},
+              
+        {'name':'e_cut',
+         'min':0,
+         'max':1,
+         'step':.1,
+         'prec':2,
+         'type':np.float,
+         'default':.5,
+         'tooltip':'Particles with eccentricity greater than this will be filtered out'},
+         
+         
+         
+         ]
+            
 
     
     def __init__(self,img_src=None, parent=None):
