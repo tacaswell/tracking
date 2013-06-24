@@ -419,7 +419,7 @@ class IdenGui(QtGui.QMainWindow):
             spin_box.valueChanged.connect(self._gen_update_closure(name))
             l_label = QtGui.QLabel(spin_prams['name'])
             if 'tooltip' in spin_prams:
-                l_label.setTooltip(spin_prams['tooltip'])
+                l_label.setToolTip(spin_prams['tooltip'])
             compute_fs_layout.addRow(l_label, spin_box)
 
         compute_group_box.setLayout(compute_fs_layout)
