@@ -1,0 +1,9 @@
+<map id="iden::Iden" name="iden::Iden">
+<area shape="rect" id="node2" href="$classutilities_1_1Md__store.html" title="A class to hold meta data. " alt="" coords="165,430,285,458"/>
+<area shape="rect" id="node6" href="$structutilities_1_1Md__store_1_1Md__element.html" title="A struct to store meta data information, (key,type,val) as strings to make passing this stuff around ..." alt="" coords="105,195,225,239"/>
+<area shape="rect" id="node8" title="STL class. " alt="" coords="28,102,103,130"/>
+<area shape="rect" id="node10" title="STL class. " alt="" coords="5,6,125,50"/>
+<area shape="rect" id="node16" title="STL class. " alt="" coords="253,203,363,231"/>
+<area shape="rect" id="node20" href="$classiden_1_1MD__parser.html" title="A base class for parsers that extract meta data from image files. " alt="" coords="309,430,424,458"/>
+<area shape="rect" id="node22" href="$classiden_1_1Image__base.html" title="This is an ABC for different file layouts, ie to make dealing with multi&#45;part files and the spew that..." alt="" coords="448,430,571,458"/>
+</map>

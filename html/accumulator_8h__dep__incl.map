@@ -1,0 +1,15 @@
+<map id="common_src/include/accumulator.h" name="common_src/include/accumulator.h">
+<area shape="rect" id="node3" href="$master__box__t_8cpp.html" title="common_src/cxx/master\l_box_t.cpp" alt="" coords="5,99,168,143"/>
+<area shape="rect" id="node5" href="$accum__case_8h.html" title="common_src/include\l/accum_case.h" alt="" coords="363,99,504,143"/>
+<area shape="rect" id="node11" href="$accum__chi4__self_8h.html" title="common_src/include\l/accum_chi4_self.h" alt="" coords="192,99,333,143"/>
+<area shape="rect" id="node16" href="$accum__sofq_8h.html" title="common_src/include\l/accum_sofq.h" alt="" coords="543,99,684,143"/>
+<area shape="rect" id="node25" href="$accum__sofq__ND_8h.html" title="common_src/include\l/accum_sofq_ND.h" alt="" coords="1029,99,1171,143"/>
+<area shape="rect" id="node7" href="$function__cascades_8cpp.html" title="common_src/cxx/function\l_cascades.cpp" alt="" coords="352,193,520,237"/>
+<area shape="rect" id="node9" href="$accum__case__test_8cpp.html" title="testing/accum_case\l_test.cpp" alt="" coords="192,193,328,237"/>
+<area shape="rect" id="node13" href="$accum__chi4__self_8cpp.html" title="common_src/cxx/accum\l_chi4_self.cpp" alt="" coords="5,193,168,237"/>
+<area shape="rect" id="node18" href="$sofq_8cpp.html" title="apps/sofq.cpp" alt="" coords="707,201,808,229"/>
+<area shape="rect" id="node20" href="$accum__sofq_8cpp.html" title="common_src/cxx/accum\l_sofq.cpp" alt="" coords="832,193,995,237"/>
+<area shape="rect" id="node23" href="$sofq__test_8cpp.html" title="testing/sofq_test.cpp" alt="" coords="544,201,683,229"/>
+<area shape="rect" id="node27" href="$accum__sofq__ND_8cpp.html" title="common_src/cxx/accum\l_sofq_ND.cpp" alt="" coords="1019,193,1181,237"/>
+<area shape="rect" id="node29" href="$sofq__ND__test_8cpp.html" title="testing/sofq_ND_test.cpp" alt="" coords="1205,201,1371,229"/>
+</map>

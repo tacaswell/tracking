@@ -1,0 +1,11 @@
+<map id="utilities::Wrapper_i_jb_binary" name="utilities::Wrapper_i_jb_binary">
+<area shape="rect" id="node2" href="$classutilities_1_1Wrapper__in.html" title="A mostly abstract base class for input wrappers. " alt="" coords="1629,77,1763,105"/>
+<area shape="rect" id="node26" href="$classutilities_1_1Wrapper__i__generic.html" title="Wrapper class for eating data from arbitrary sources. " alt="" coords="1961,391,2076,435"/>
+<area shape="rect" id="node6" href="$classutilities_1_1Md__store.html" title="A class to hold meta data. " alt="" coords="1055,163,1175,191"/>
+<area shape="rect" id="node10" href="$structutilities_1_1Md__store_1_1Md__element.html" title="A struct to store meta data information, (key,type,val) as strings to make passing this stuff around ..." alt="" coords="369,70,489,114"/>
+<area shape="rect" id="node12" title="STL class. " alt="" coords="180,23,255,51"/>
+<area shape="rect" id="node14" title="STL class. " alt="" coords="7,15,127,59"/>
+<area shape="rect" id="node20" title="STL class. " alt="" coords="375,351,484,379"/>
+<area shape="rect" id="node39" href="$classutilities_1_1Data__map.html" title="class to handle translation from D_TYPE to column position for flat data structures. " alt="" coords="1471,510,1596,538"/>
+<area shape="rect" id="node59" title="STL class. " alt="" coords="1333,835,1427,863"/>
+</map>

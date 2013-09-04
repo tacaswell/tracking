@@ -1,0 +1,5 @@
+<map id="utilities::Filter" name="utilities::Filter">
+<area shape="rect" id="node3" href="$classutilities_1_1Filter__ers.html" title="A basic filter, does rg (top), shift (top) and eccentricity (top) cuts. " alt="" coords="5,83,125,111"/>
+<area shape="rect" id="node5" href="$classutilities_1_1Filter__ersI.html" title="A basic filter, does rg (top), shift (top), eccentricity (top), and I (bottom) cuts. " alt="" coords="149,83,275,111"/>
+<area shape="rect" id="node7" href="$classutilities_1_1Filter__trivial.html" title="a trivial filter class that does nothing " alt="" coords="299,83,432,111"/>
+</map>
