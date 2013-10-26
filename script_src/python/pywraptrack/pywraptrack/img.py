@@ -159,6 +159,9 @@ class Series_wrapper(Image_wrapper):
             return None
         img_sz = im.size[::-1]
         return np.reshape(im.getdata(), img_sz).astype('uint16')
+    
+    def __iter__(self):
+        return (self.get_frame(j) for j in xrange(self._im_num_offset, self._im_num_offset + self._len))
 
 
 def _parse_xml_string(xml_str):
